@@ -1,5 +1,5 @@
 {
-  "name": "kevoree-web-editor",
+  "name": "kevoree-web-editor-client",
   "version": "0.0.1",
   "description": "Static Kevoree Web Editor client",
   "scripts": {
