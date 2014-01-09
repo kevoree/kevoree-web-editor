@@ -6,7 +6,18 @@
     <packaging>pom</packaging>
     <name>Kevoree :: Web Editor</name>
     <version>0.0.1</version>
-    
+
+    <organization>
+        <name>Kevoree Project</name>
+        <url>http://kevoree.org</url>
+    </organization>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
     <build>
         <plugins>
             <plugin>
@@ -40,5 +51,51 @@
             </plugin>
         </plugins>
     </build>
+
+    <scm>
+        <connection>scm:git:git@github.com:kevoree/kevoree-web-editor.git</connection>
+        <developerConnection>scm:git:git@github.com:kevoree/kevoree-web-editor.git</developerConnection>
+        <url>http://github.com/kevoree/kevoree-web-editor.git</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>
+                GNU Library or Lesser General Public License (LGPL)
+            </name>
+            <url>http://www.gnu.org/licenses/lgpl.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Maxime Tricoire</name>
+            <id>max.tricoire</id>
+            <email>max.tricoire@gmail.com</email>
+            <roles>
+                <role>admin</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+2</timezone>
+        </developer>
+    </developers>
+
+    <distributionManagement>
+        <repository>
+            <id>kevoree.oss.release</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+        <snapshotRepository>
+            <id>kevoree.oss.snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>kevoree-oss</id>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
+        </repository>
+    </repositories>
 
 </project>
