@@ -1,0 +1,24 @@
+//- WARNING: remember to compile this .jade template each time you made a change using:
+    jade-amd --from views/templates --to public/js/app/templates
+    otherwise your pre-compiled Javascript template in public/js/app/templates won't be up-to-date
+
+div.tab-pane(id='node-link-'+id, class=(isActive)?'active':null, data-node-link-id=id)
+  div.row-fluid
+    div.input-prepend.span4
+      span.add-on.add-on-gray Type
+      input.input-medium(id='node-link-type-'+id, type='text', placeholder='LAN, Wifi...', value=type)
+    div.input-prepend.offset4.span3
+      span.add-on.add-on-gray Rate
+      input.input-small(id='node-link-rate-'+id, type='number', min=minRate, max=maxRate, placeholder='Trust 0~100', value=rate)
+  div.row-fluid
+    div#network-properties-container.well
+      h5
+        span.span4 Network properties
+        div.btn-group.span2.offset6
+          button.btn.btn-danger.btn-mini.disabled(id='network-property-delete-'+id)
+            i.icon-trash.icon-white
+          button.btn.btn-info.btn-mini(id='network-property-add-'+id)
+            i.icon-plus.icon-white
+      div.row-fluid(id='network-property-list-'+id)
+        each prop in props
+          != prop.HTML

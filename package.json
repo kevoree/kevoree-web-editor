@@ -1,0 +1,31 @@
+{
+  "name": "kevoree-web-editor",
+  "version": "0.0.1",
+  "description": "Static Kevoree Web Editor client",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kevoree/kevoree-web-editor"
+  },
+  "keywords": [
+    "kevoree",
+    "web",
+    "editor",
+    "static",
+    "client"
+  ],
+  "author": "Maxime Tricoire <max.tricoire@gmail.com>",
+  "license": "LGPL-v3",
+  "bugs": {
+    "url": "https://github.com/kevoree/kevoree-web-editor/issues"
+  },
+  "homepage": "https://github.com/kevoree/kevoree-web-editor",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-jade": "~0.4.0",
+    "grunt-contrib-requirejs": "~0.4.1",
+    "grunt-copy-to": "0.0.10"
+  }
+}

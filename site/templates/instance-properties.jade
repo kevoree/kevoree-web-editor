@@ -1,0 +1,25 @@
+//- WARNING: remember to compile this .jade template each time you made a change using:
+    jade-amd --from views/templates --to public/js/app/templates
+    otherwise your pre-compiled Javascript template in public/js/app/templates won't be up-to-date
+
+
+div.row-fluid
+  div.row-fluid
+    div.span4 Instance name
+    input#instance-attr-name.span8(type='text', placeholder='Name', value=name)
+    //- append unescaped non fragment dictionary content
+    != dictionary
+
+if fragments.length > 0
+  div.row-fluid
+    div.well
+      ul.nav.nav-tabs
+        each fragment, i in fragments
+          li(class=(i==0)?'active':null)
+            a(href='#fragment-props-'+fragment.name, data-toggle='tab') #{fragment.name}
+
+      div.tab-content
+        each fragment, i in fragments
+          div.tab-pane(class=(i==0)?'active':null, id='fragment-props-'+fragment.name)
+            //- append unescaped fragDepAttrsHTML content
+            != fragment.attributesHTML

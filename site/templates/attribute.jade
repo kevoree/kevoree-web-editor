@@ -1,0 +1,20 @@
+//- WARNING: remember to compile this .jade template each time you made a change using:
+    jade-amd --from views/templates --to public/js/app/templates
+    otherwise your pre-compiled Javascript template in public/js/app/templates won't be up-to-date
+- var attrID = name;
+- if (node) attrID = node+'-'+name;
+
+div.row-fluid
+  div.span4
+    - if (!optional)
+      i.icon-exclamation-sign.mandatory-attribute(title='Mandatory attribute')
+      | &nbsp
+    | #{name}
+  //- if attribute type is 'enum', then display items within a <select>
+  if type == 'enum'
+    select.span8(id='instance-attr-'+attrID)
+      for item, i in possibleValues
+        option(value=item, selected=(i == selected)?'selected':null) #{item}
+  //- else display a basic <input type="text">
+  else
+    input.span8(id='instance-attr-'+attrID, type='text', value=value)

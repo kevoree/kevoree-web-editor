@@ -1,0 +1,10 @@
+each lib in libz
+  ul.nav.nav-list
+    li.nav-header.cursor-pointer.lib-tree-library
+      i.lib-subtree-icon.icon-arrow-right.icon-white
+      | #{lib.name}
+
+    each item in lib.components
+      - if (item.type != 'UnknownType')
+        li.lib-item(data-entity=item.type, data-version=item.version)
+          div.lib-item-name #{item.name}/#{item.version}

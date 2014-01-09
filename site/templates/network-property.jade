@@ -1,0 +1,12 @@
+//- WARNING: remember to compile this .jade template each time you made a change using:
+    jade-amd --from views/templates --to public/js/app/templates
+    otherwise your pre-compiled Javascript template in public/js/app/templates won't be up-to-date
+
+div.row-fluid.network-property-row(data-net-prop-id=id)
+  div.row-fluid
+    div.control-group.span3
+      input(id='network-property-key-'+link.id+'-'+id, type='text', placeholder='IP', value=key)
+    div.control-group.span7.offset2
+      input(id='network-property-val-'+link.id+'-'+id, type='text', placeholder='192.168.0.1', value=value)
+  div.row-fluid.hide(id='network-property-err-'+link.id+'-'+id)
+    small.text-error

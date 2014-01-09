@@ -1,0 +1,18 @@
+//- WARNING: remember to compile this .jade template each time you made a change using:
+    jade-amd --from views/templates --to public/js/app/templates
+    otherwise your pre-compiled Javascript template in public/js/app/templates won't be up-to-date
+
+div.well.vertical-scroll.corelibrary-items-list
+  label.checkbox
+    input(id='corelib-selectall-'+platform, type='checkbox')
+    strong Select all
+  each item, i in items
+    if filter === 'all'
+      each version in item.versions
+        label.corelib-item-label.checkbox
+          input.corelib-item(type='checkbox', data-library-platform=platform, data-library-id=i, data-library-version=version)
+          span(data-entity=item.type, style=(item.type ? 'padding-left: 20px':null)) #{item.simpleName+'/'+version}
+    else if filter === 'latest'
+      label.corelib-item-label.checkbox
+        input.corelib-item(type='checkbox', data-library-platform=platform, data-library-id=i, , data-library-version=item.latest)
+        span(data-entity=item.type, style=(item.type ? 'padding-left: 20px':null)) #{item.simpleName+'/'+item.latest}

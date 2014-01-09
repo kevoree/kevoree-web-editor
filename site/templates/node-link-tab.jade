@@ -1,0 +1,6 @@
+//- WARNING: remember to compile this .jade template each time you made a change using:
+    jade-amd --from views/templates --to public/js/app/templates
+    otherwise your pre-compiled Javascript template in public/js/app/templates won't be up-to-date
+
+li(id='node-link-root-'+id, class=(isActive)?'active':null, data-node-link-id=id)
+  a(id='node-link-tab-val-'+id, href='#node-link-'+id, data-toggle='tab') #{type}

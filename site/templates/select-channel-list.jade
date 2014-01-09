@@ -1,0 +1,8 @@
+//- WARNING: remember to compile this .jade template each time you made a change using:
+    jade-amd --from views/templates --to public/js/app/templates
+    otherwise your pre-compiled Javascript template in public/js/app/templates won't be up-to-date
+
+each channel, i in channels
+  label.radio
+    input.channel-type-item(type='radio', name='channel-type-radios', data-channel-id=i)
+    | #{channel}
