@@ -24,11 +24,12 @@ define(
       // load libraries from server function
       function loadLibs(platform) {
         $.ajax({
-          url: 'load',
+          url: '<%= remoteServer.host + remoteServer.actions.load %>',
           timeout: 60000, // 60 seconds timeout
           data: { platform: platform },
-          dataType: 'json',
+          dataType: 'jsonp',
           success: function (data) {
+            console.log('DATA', data);
             switch (data.result) {
               case 1:
                 // load libraries

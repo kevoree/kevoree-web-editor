@@ -1,10 +1,21 @@
 module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    clean: {
+      all: ['dist', 'templato'],
+      dist: ['dist'],
+      templato: ['templato']
+    },
+    templato: {
+      all: {
+        files: { templato: 'site' },
+        values: grunt.file.readJSON('config.json')
+      }
+    },
     jade: {
       html: {
         files: {
-          'dist/': ['site/views/*.jade']
+          'dist/': ['templato/views/*.jade']
         },
         options: {
           client: false,
@@ -16,7 +27,7 @@ module.exports = function(grunt) {
       },
       amd: {
         files: {
-          'site/js/app/templates/': ['site/templates/*.jade']
+          'site/js/app/templates/': ['templato/templates/*.jade']
         },
         options: {
           wrap: 'amd',
@@ -27,7 +38,7 @@ module.exports = function(grunt) {
     requirejs: {
       compile: {
         options: {
-          baseUrl: 'site/js',
+          baseUrl: 'templato/js',
           paths: {
             util:         'app/util',
             abstraction:  'app/editor/abstraction',
@@ -48,10 +59,10 @@ module.exports = function(grunt) {
       }
     },
     copyto: {
-      stuff: {
+      prod: {
         files: [
           {
-            cwd: 'site/',
+            cwd: 'templato/',
             src: [ '**/*' ],
             dest: 'dist/'
           }
@@ -59,20 +70,55 @@ module.exports = function(grunt) {
         options: {
           // array of ignored paths
           ignore: [
-            'site/js/app{,/**/*}',
-            'site/js/lib{,/**/*}',
-            'site/js/editor.js',
-            'site/views{,/**/*}',
-            'site/templates{,/**/*}'
+            'templato/js/app{,/**/*}',
+            'templato/js/lib{,/**/*}',
+            'templato/js/editor.js',
+            'templato/views{,/**/*}',
+            'templato/templates{,/**/*}'
           ]
+        }
+      },
+      dev: {
+        files: [
+          {
+            cwd: 'templato/',
+            src: [ '**/*' ],
+            dest: 'dist/'
+          }
+        ],
+        options: {
+          // array of ignored paths
+          ignore: [
+            'templato/views{,/**/*}',
+            'templato/templates{,/**/*}'
+          ]
+        }
+      }
+    },
+    watch: {
+      scripts: {
+        files: ['templato/**/*'],
+        tasks: ['dev'],
+        options: {
+          spawn: false
         }
       }
     }
   });
 
+  grunt.loadNpmTasks('grunt-templato');
   grunt.loadNpmTasks('grunt-jade');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-copy-to');
   
-  grunt.registerTask('default', ['jade', 'requirejs', 'copyto']);
+  grunt.registerTask( 'default',
+    'Compile jade templates, optimize requireJS AMD files with r.js and copy files to dist/ directory',
+    ['clean', 'templato', 'jade', 'requirejs', 'copyto:prod', 'clean:templato']
+  );
+  grunt.registerTask( 'dev',
+    'Same as default, but without optimizing AMD files (time consuming)',
+    ['clean', 'templato', 'jade', 'copyto:dev', 'clean:templato']
+  );
 }

@@ -44,9 +44,9 @@ define(
 
         $.ajax({
           type: 'POST',
-          url: 'merge',
+          url: '<%= remoteServer.host + remoteServer.actions.merge %>',
           data: { libz: libraries },
-          dataType: 'json',
+          dataType: 'jsonp',
           success: function (data) {
             switch (data.result) {
               case 1:
@@ -80,7 +80,6 @@ define(
             }
           },
           error: function (err) {
-            console.error(err);
             $('#loading-corelib').hide();
             $('#load-corelib').show();
 

@@ -10,13 +10,14 @@ define(
 
       resolve: function (deployUnit, callback) {
         $.ajax({
-          url: 'resolve',
+          url: '<%= remoteServer.host + remoteServer.actions.resolve %>',
           type: 'POST',
           timeout: 60000,
           data: {
             name: deployUnit.name,
             version: deployUnit.version
           },
+          dataType: 'jsonp',
           success: function (res) {
             switch (res.result) {
               case 1:

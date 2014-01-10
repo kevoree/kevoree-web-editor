@@ -57,11 +57,11 @@ define(
               // for TCP request, we need to ask server to do the process
               // because I can't create a TCP socket in a browser
               $.ajax({
-                url: 'open',
+                url: '<%= remoteServer.host + remoteServer.actions.open %>',
                 type: 'POST',
                 timeout: 10000, // 10 seconds timeout
                 data: {uri: uri},
-                dataType: 'json',
+                dataType: 'jsonp',
                 success: function (data) {
                   switch (data.result) {
                     case -1:

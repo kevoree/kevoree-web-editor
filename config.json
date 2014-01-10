@@ -1,0 +1,11 @@
+{
+  "remoteServer": {
+    "host": "http://localhost:3042/",
+    "actions": {
+      "load": "load",
+      "merge": "merge",
+      "open": "open",
+      "resolve": "resolve"
+    }
+  }
+}
