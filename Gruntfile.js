@@ -15,7 +15,7 @@ module.exports = function(grunt) {
     jade: {
       html: {
         files: {
-          'dist/': ['templato/views/*.jade']
+          'templato/': ['templato/views/*.jade']
         },
         options: {
           client: false,
@@ -27,7 +27,7 @@ module.exports = function(grunt) {
       },
       amd: {
         files: {
-          'site/js/app/templates/': ['templato/templates/*.jade']
+          'templato/js/app/templates/': ['templato/templates/*.jade']
         },
         options: {
           wrap: 'amd',
