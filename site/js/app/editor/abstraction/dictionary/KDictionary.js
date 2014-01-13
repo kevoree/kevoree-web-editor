@@ -64,6 +64,7 @@ define(
     }
 
     KDictionary.prototype.setName = function (name) {
+      if (this._instance) this._instance.setName(name);
       this._name = name;
     }
 

@@ -45,7 +45,7 @@ define(
             break;
           }
         }
-
+        
         // so if there is at least one fragDep attribute
         if (fragDicNeeded) {
           // try to retrieve fragment dictionary by name

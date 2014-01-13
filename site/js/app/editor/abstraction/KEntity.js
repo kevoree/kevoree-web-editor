@@ -23,7 +23,19 @@ define(
     }
 
     KEntity.prototype.setName = function(name) {
-      if (this._instance) this._instance.setName(name);
+      // if this entity has an instance in the current Kevoree model
+      // then it should update its name
+      if (this._instance) {
+        // plus it should update all other fragmentDictionnary names
+        var entities = this._editor.getEntities();
+        for (var i in entities) {
+          if (entities[i]._fragDictionaries.length > 0) {
+            var dics = entities[i]._fragDictionaries;
+            for (var j in dics) if (dics[j]._name === this._name) dics[j].setName(name);
+          }
+        }
+        this._instance.setName(name);
+      }
       this._name = name;
     }
 
