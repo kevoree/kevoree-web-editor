@@ -65,7 +65,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>grunt</executable>
+                            <executable>node_modules/grunt-cli/bin/grunt</executable>
                         </configuration>
                     </execution>
                 </executions>

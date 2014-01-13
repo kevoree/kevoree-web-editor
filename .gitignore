@@ -1,4 +1,6 @@
 target/
+templato/
+.DS_Store
 lib-cov
 *.seed
 *.log
