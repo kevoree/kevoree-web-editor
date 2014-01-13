@@ -1,6 +1,7 @@
 {
   "remoteServer": {
-    "host": "http://localhost:3042/",
+    "host": "localhost",
+    "port": "3042",
     "actions": {
       "load": "load",
       "merge": "merge",

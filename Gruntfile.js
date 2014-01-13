@@ -97,7 +97,7 @@ module.exports = function(grunt) {
     },
     watch: {
       scripts: {
-        files: ['templato/**/*'],
+        files: ['site/**/*'],
         tasks: ['dev'],
         options: {
           spawn: false

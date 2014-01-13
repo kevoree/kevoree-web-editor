@@ -13,7 +13,7 @@ define(
       this._timeoutID = null;
     };
 
-    OpenFromNodeCommand.prototype.execute = function (protocol, uri, editor, popupShown) {
+    OpenFromNodeCommand.prototype.execute = function (uri, editor, popupShown) {
       clearTimeout(this._timeoutID);
 
       // hide alert when popup is closed
@@ -51,103 +51,34 @@ define(
             loadTimeout(popupShown, uri);
           }, 10000);
 
-          // use TCP or HTTP or WebSocket
-          switch (protocol) {
-            case Config.TCP:
-              // for TCP request, we need to ask server to do the process
-              // because I can't create a TCP socket in a browser
-              $.ajax({
-                url: '<%= remoteServer.host + remoteServer.actions.open %>',
-                type: 'POST',
-                timeout: 10000, // 10 seconds timeout
-                data: {uri: uri},
-                dataType: 'jsonp',
-                success: function (data) {
-                  switch (data.result) {
-                    case -1:
-                    default:
-                      // something went wrong server-side, check data.message for the 'why?'
-                      console.warn('Unable to open from node ('+uri+'): '+ data.message);
-                      loadFailed(popupShown, uri, timeoutID);
-                      break;
-
-                    case 1:
-                      try {
-                        // open from node: ok, model is in data.model (string)
-                        var loader = new Kevoree.org.kevoree.loader.JSONModelLoader();
-                        var model = loader.loadModelFromString(data.model).get(0);
-                        editor.setModel(model);
-                        loadSucceed(timeoutID);
-                      } catch (err) {
-                        loadFailed(popupShown, uri, timeoutID);
-                      }
-                      break;
-                  }
-                },
-                error: function () {
-                  loadFailed(popupShown, uri, timeoutID);
-                }
-              });
-              break;
-
-            case Config.HTTP:
-              uri = protocol + uri;
-              $.ajax({
-                url: uri,
-                timeout: 10000, // 10 seconds timeout
-                dataType: 'json',
-                success: function (data) {
-                  try {
-                    // load model into editor
-                    var loader = new Kevoree.org.kevoree.loader.JSONModelLoader();
-                    var model = loader.loadModelFromString(JSON.stringify(data)).get(0);
-                    editor.setModel(model);
-                    loadSucceed(timeoutID);
-                  } catch (err) {
-                    loadFailed(popupShown, uri, timeoutID);
-                  }
-                },
-                error: function () {
-                  loadFailed(popupShown, uri, timeoutID);
-                }
-              });
-              break;
-
-            case Config.WS:
-              uri = protocol + uri;
-              var ws = new WebSocket(uri);
-              ws.binaryType = "arraybuffer";
-              ws.onmessage = function (event) {
-                try {
-                  var loader = new Kevoree.org.kevoree.loader.JSONModelLoader();
-                  // TODO this will work only if model is in JSON
-                  var modelStr = '';
-                  if (typeof(event.data) === "string") {
-                    modelStr = event.data;
-                  } else {
-                    modelStr = String.fromCharCode.apply(null, new Uint8Array(event.data));
-                  }
-                  var model = loader.loadModelFromString(modelStr).get(0);
-                  editor.setModel(model);
-                  loadSucceed(timeoutID);
-                } catch (err) {
-                  loadFailed(popupShown, uri, timeoutID);
-                } finally {
-                  ws.close();
-                }
+          // open from WS
+          var ws = new WebSocket('ws://'+uri);
+          ws.binaryType = "arraybuffer";
+          ws.onmessage = function (event) {
+            try {
+              var loader = new Kevoree.org.kevoree.loader.JSONModelLoader();
+              var modelStr = '';
+              if (typeof(event.data) === "string") {
+                modelStr = event.data;
+              } else {
+                modelStr = String.fromCharCode.apply(null, new Uint8Array(event.data));
               }
+              var model = loader.loadModelFromString(modelStr).get(0);
+              editor.setModel(model);
+              loadSucceed(timeoutID);
+            } catch (err) {
+              loadFailed(popupShown, uri, timeoutID);
+            } finally {
+              ws.close();
+            }
+          }
 
-              ws.onopen = function () {
-                ws.send(PULL);
-              }
+          ws.onopen = function () {
+            ws.send(PULL);
+          }
 
-              ws.onerror = function () {
-                loadFailed(popupShown, uri, timeoutID);
-              }
-              break;
-
-            default:
-              break;
+          ws.onerror = function () {
+            loadFailed(popupShown, uri, timeoutID);
           }
 
         } else {

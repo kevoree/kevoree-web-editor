@@ -77,6 +77,7 @@ html
                 ul.dropdown-menu
                   li
                     a#settings(href="#") Settings
+                    a#remote-server(href="#remote-server-popup", data-toggle='modal') Remote server
             form.navbar-form.pull-right
               input#model-name.span2(type='text', placeholder='Name your model', title='This is used on model saving')
 
@@ -157,13 +158,10 @@ html
         div#open-node-alert.alert.alert-error.fade.hide.in
           button.close(href='#', type='button', data-dismiss='alert') &times;
           span#open-node-alert-content
-        p Remote target node web ressource
-        div.controls-row
-          select#open-node-protocol.span1
-            option(value='ws://') ws
-            option(value='tcp') tcp
-            option(value='http://') http
-          input#open-node-uri.span4(type='text', placeholder='ex: kevoree.org/model/json', value='127.0.0.1:9000')
+        p Please, be sure that you used a Kevoree group that provides a WebSocket interface. Otherwise, <em>open from node</em> feature won't be able to work properly
+        div.input-prepend
+          span.add-on ws://
+          input#open-node-uri.span4(type='text', placeholder='ex: kevoree.org:9000', value='127.0.0.1:9000')
       div.modal-footer
         button.btn(data-dismiss='modal', aria-hidden='true') Close
         button#open-from-node.btn.btn-primary Open
@@ -278,7 +276,7 @@ html
       div.modal-body
         p#local-storage-unavailable.hide: em
           strong HTML5 Local Storage
-          |  is not avaible on this browser.
+          | &nbsp;is not avaible on this browser.
           br
           | You should consider using a real web browser like
           a(href='https://www.google.com/intl/fr/chrome/browser/') &nbsp;Google Chrome&nbsp;
@@ -303,6 +301,24 @@ html
       div.modal-footer
         button.btn(data-dismiss='modal', aria-hidden='true') Close
         button#save-settings.btn.btn-primary(data-dismiss='modal') Save
+    //- ===============
+    
+    //- ===============
+    //- REMOTE SERVER POPUP
+    div#remote-server-popup.modal.hide.fade(tabindex='-1', role='dialog')
+      div.modal-header
+        button.close(href='#', type='button', data-dismiss='modal') &times;
+        h3 Remote server settings
+      div.modal-body
+        div.input-prepend
+          span.add-on Host
+          input#remote-server-host.span3(type='text', placeholder='ex: <%= remoteServer.host %>', value='<%= remoteServer.host %>')
+        div.input-prepend
+          span.add-on Port
+          input#remote-server-port.span3(type='number', placeholder='ex: <%= remoteServer.port %>', value='<%= remoteServer.port %>')
+      div.modal-footer
+        button#reset-remote-server.btn(data-dismiss='modal') Reset
+        button#save-remote-server.btn.btn-primary(data-dismiss='modal') Save
     //- ===============
 
     //- ===============

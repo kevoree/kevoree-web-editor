@@ -1,18 +1,21 @@
 define(
   [
     'lib/kevoree-commons',
-    'lib/kevoree'
+    'lib/kevoree',
+    'util/Config'
   ],
 
-  function (KevoreeCommons, Kevoree) {
+  function (KevoreeCommons, Kevoree, Config) {
     return KevoreeCommons.Resolver.extend({
       toString: 'NPMResolver',
 
       resolve: function (deployUnit, callback) {
+        var host = $('#remote-server-host').val() || Config.REMOTE_HOST;
+        var port = $('#remote-server-port').val() || Config.REMOTE_PORT;
         $.ajax({
-          url: '<%= remoteServer.host + remoteServer.actions.resolve %>',
+          url: 'http://'+host+':'+port+'/'+Config.REMOTE_RESOLVE,
           type: 'POST',
-          timeout: 60000,
+          timeout: 30000,
           data: {
             name: deployUnit.name,
             version: deployUnit.version

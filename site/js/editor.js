@@ -47,6 +47,8 @@ define(
     'command/LoadSettingsCommand',
     'command/MergeCommand',
     'command/ListenToCommand',
+    'command/SaveRemoteServerSettingsCommand',
+    'command/ResetRemoteServerSettingsCommand',
     'bootstrap/tooltip',
     'bootstrap/modal',
     'bootstrap/collapse',
@@ -64,7 +66,8 @@ define(
             SaveCommand, SaveAsKevsCommand, SaveAsPNGCommand, LoadCommand, OpenKevsEditorCommand, RunKevScriptCommand,
             SettingsCommand, LoadCoreLibrariesCommand, MergeDefaultLibraryCommand, ClearCommand, ClearInstancesCommand,
             OpenFromNodeCommand, ZoomInCommand, ZoomDefaultCommand, ZoomToCommand, ZoomOutCommand, ShowStatsCommand,
-            CheckModelCommand, LoadSettingsCommand, MergeCommand, ListenToCommand) {
+            CheckModelCommand, LoadSettingsCommand, MergeCommand, ListenToCommand, SaveRemoteServerSettingsCommand,
+            ResetRemoteServerSettingsCommand) {
 
     // init editor
     var editor = CFactory.getInstance().newEditor(Config.CONTAINER_ID);
@@ -103,13 +106,9 @@ define(
       },
       open: {
         deps: ['protocol'],
-        hasDeps: function (openVal, protocolVal) {
-          // slight rewrite rules: allows 'ws' for 'ws://' and 'http' for 'http://'
-          if      (protocolVal.indexOf('ws') == 0)    protocolVal = Config.WS;
-          else if (protocolVal.indexOf('http') == 0)  protocolVal = Config.HTTP;
-
+        hasDeps: function (openVal) {
           var cmd = new OpenFromNodeCommand();
-          cmd.execute(protocolVal, openVal, editor, false);
+          cmd.execute(openVal, editor, false);
         },
         missDep: function (missField) {
           console.warn("Open from node impossible: '"+missField+"' field value required in URL with 'open' (http://example.com/?open="+Config.DEFAULT_HOST+":"+Config.DEFAULT_PORT_VAL+"&protocol=tcp)");
@@ -179,10 +178,9 @@ define(
     $('#open-node-uri').on('keyup', function (e) {
       if (e.which == 13) {
         var cmd = new OpenFromNodeCommand();
-        var protocol = $('#open-node-protocol option:selected').val();
         var uri = $(this).val();
 
-        cmd.execute(protocol, uri, editor, false);
+        cmd.execute(uri, editor, false);
       }
     });
 
@@ -250,10 +248,9 @@ define(
 
     $('#open-from-node').click(function (e) {
       var cmd = new OpenFromNodeCommand();
-      var protocol = $('#open-node-protocol option:selected').val();
       var uri = $('#open-node-uri').val();
 
-      cmd.execute(protocol, uri, editor, true);
+      cmd.execute(uri, editor, true);
       e.preventDefault();
     });
 
@@ -363,6 +360,16 @@ define(
       var cmd = new ListenToCommand(),
         uri = $('#listen-to-uri').val();
       cmd.execute(editor, uri);
+    });
+
+    $('#save-remote-server').click(function () {
+      var cmd = new SaveRemoteServerSettingsCommand();
+      cmd.execute();
+    });
+
+    $('#reset-remote-server').click(function () {
+      var cmd = new ResetRemoteServerSettingsCommand();
+      cmd.execute();
     });
     // END Listeners that trigger Cmd.execute()
     // ========================================

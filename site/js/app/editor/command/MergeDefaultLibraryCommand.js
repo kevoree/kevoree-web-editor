@@ -3,10 +3,11 @@ define(
     'jquery',
     'util/ModelHelper',
     'util/AlertPopupHelper',
+    'util/Config',
     'lib/kevoree'
   ],
 
-  function ($, ModelHelper, AlertPopupHelper, Kevoree) {
+  function ($, ModelHelper, AlertPopupHelper, Config, Kevoree) {
     var NAMESPACE = ".merge-default-library-command";
 
     function MergeDefaultLibraryCommand() {}
@@ -42,9 +43,11 @@ define(
           });
         });
 
+        var host = $('#remote-server-host').val() || Config.REMOTE_HOST;
+        var port = $('#remote-server-port').val() || Config.REMOTE_PORT;
         $.ajax({
           type: 'POST',
-          url: '<%= remoteServer.host + remoteServer.actions.merge %>',
+          url: 'http://'+host+':'+port+'/'+Config.REMOTE_MERGE,
           data: { libz: libraries },
           dataType: 'jsonp',
           success: function (data) {
