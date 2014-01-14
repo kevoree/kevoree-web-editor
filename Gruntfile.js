@@ -21,7 +21,8 @@ module.exports = function(grunt) {
           client: false,
           pretty: true,
           locals: {
-            title: 'Kevoree Web Editor - <%= pkg.version %>'
+            title: 'Kevoree Web Editor',
+            version: 'v<%= pkg.version %>'
           }
         }
       },
