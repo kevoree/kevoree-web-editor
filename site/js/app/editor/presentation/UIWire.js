@@ -82,7 +82,7 @@ define(
       // Properties popup
       // ================
       var props = new UIWireProps(ctrl);
-      this._shape.on('dblclick dbltap', function(e) {
+      this._shape.on('click tap', function(e) {
         // prevent children from getting the event too
         e.cancelBubble = true;
         // display the properties popup
