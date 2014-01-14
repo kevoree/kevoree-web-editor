@@ -17,7 +17,6 @@ define(
     Config.REMOTE_PORT    = '<%= remoteServer.port %>';             // default "3042"
     Config.REMOTE_LOAD    = '<%= remoteServer.actions.load %>';     // default "load"
     Config.REMOTE_MERGE   = '<%= remoteServer.actions.merge %>';    // default "merge"
-    Config.REMOTE_RESOLVE = '<%= remoteServer.actions.resolve %>';  // default "resolve"
 
     // Local Storage Constants
     Config.LS_ASK_BEFORE_LEAVING = 'askBeforeLeaving';

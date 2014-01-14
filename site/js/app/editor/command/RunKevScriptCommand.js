@@ -3,10 +3,11 @@ define(
     'util/AlertPopupHelper',
     'lib/kevoree-kevscript',
     'lib/kevoree',
-    'resolver/NPMResolver'
+    'resolver/NPMResolver',
+    'resolver/MVNResolver'
   ],
 
-  function (AlertPopupHelper, KevScript, Kevoree, NPMResolver) {
+  function (AlertPopupHelper, KevScript, Kevoree, NPMResolver, MVNResolver) {
     var NAMESPACE = '.kevscript-editor'
 
     function RunKevScriptCommand() {}
@@ -18,10 +19,10 @@ define(
         $('#kevs-editor-error').addClass('hide');
       });
 
-      var npmResolver = new NPMResolver();
       var options = {
         resolvers: {
-          npm: npmResolver
+          npm: new NPMResolver(),
+          mvn: new MVNResolver()
         }
       }
 

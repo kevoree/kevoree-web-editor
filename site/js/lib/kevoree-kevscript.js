@@ -977,23 +977,39 @@ module.exports = function (model, statements, stmt, opts, cb) {
   var du = factory.createDeployUnit();
   var type = statements[stmt.children[0].type](model, statements, stmt.children[0], opts, cb);
   var mergeDef = statements[stmt.children[1].type](model, statements, stmt.children[1], opts, cb);
-
-  if (type == 'npm' && opts.resolvers.npm) {
-    var colon = mergeDef.split(':');
+  
+  if (opts.resolvers[type]) {
+    var colons = mergeDef.split(':');
     var arobas = mergeDef.split('@');
-    if (colon.length == 1 && arobas.length == 1) {
+    if (colons.length === 1 && arobas.length === 1) {
+      // mergeDef looks like: foo
       du.name = mergeDef;
-    } else if (colon.length == 1 && arobas.length == 2) {
+      
+    } else if (colons.length === 1 && arobas.length === 2) {
+      // mergeDef looks like: foo@version
       du.name = arobas[0];
       du.version = arobas[1];
-    } else if (colon.length == 2 && arobas.length == 1) {
-      du.name = colon[0];
-      du.version = colon[1];
-    } else {
-      return cb(new Error('Unable to parse include statement "'+mergeDef+'"'));
+      
+    } else if (colons.length === 2 && arobas.length === 1) {
+      // mergeDef looks like: foo:version
+      du.name = colons[0];
+      du.version = colons[1];
+    
+    } else if (colons.length === 3 && arobas.length === 1) {
+      // mergeDef looks like: foo:bar:version
+      du.groupName = colons[0];
+      du.name = colons[1];
+      du.version = colons[2];
+      
+    } else if (colons.length === 2 && arobas.length === 2) {
+      // mergeDef looks like: foo:bar@version
+      var subSplit = arobas[0].split(':');
+      du.groupName = subSplit[0];
+      du.name = subSplit[1];
+      du.version = arobas[1];
     }
-
-    opts.resolvers.npm.resolve(du, function (err, Clazz, duModel) {
+    
+    opts.resolvers[type].resolve(du, function (err, Clazz, duModel) {
       if (err) return cb(err);
 
       var loader = new kevoree.loader.JSONModelLoader();
@@ -1004,35 +1020,10 @@ module.exports = function (model, statements, stmt, opts, cb) {
       mergeSeq.applyOn(model);
       return cb();
     });
-
-  } else if (type == 'file' && opts.resolvers.file) {
-    var pkg = require(path.resolve(mergeDef, 'package.json'));
-    du.name = pkg.name;
-    du.version = pkg.version;
-    du.type = 'file';
-    du.url = mergeDef;
-    opts.resolvers.file.resolve(du, function (err, Clazz, duModel) {
-      var loader = new kevoree.loader.JSONModelLoader();
-      var serializer = new kevoree.serializer.JSONModelSerializer();
-
-      var tmp = loader.loadModelFromString(serializer.serialize(duModel)).get(0);
-      var mergeSeq = compare.merge(model, tmp);
-      mergeSeq.applyOn(model);
-      var dus = model.deployUnits.iterator();
-      while (dus.hasNext()) {
-        var deployUnit = dus.next();
-        if (deployUnit.name == du.name) {
-          deployUnit.type = 'file';
-          deployUnit.url = mergeDef;
-        }
-      }
-      return cb();
-    });
-
+    
   } else {
-    // TODO handle mvn type and others
-    console.log('Ignored: include '+type+':'+mergeDef+' (Unable to handle "'+type+'" include type yet. Sorry :/)');
-    cb();
+    // no resolver set for include statements with "type"
+    return cb(new Error('Error: include '+type+':'+mergeDef+' (Unable to handle "'+type+'" include type. Did you add a resolver for that?)'));
   }
 }
 },{"kevoree-library":35,"path":30}],14:[function(require,module,exports){

@@ -45,6 +45,7 @@ define(
 
         var host = $('#remote-server-host').val() || Config.REMOTE_HOST;
         var port = $('#remote-server-port').val() || Config.REMOTE_PORT;
+        console.log("merge data to send", libraries);
         $.ajax({
           type: 'POST',
           url: 'http://'+host+':'+port+'/'+Config.REMOTE_MERGE,

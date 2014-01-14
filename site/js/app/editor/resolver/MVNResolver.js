@@ -7,7 +7,7 @@ define(
 
   function (KevoreeCommons, Kevoree, Config) {
     return KevoreeCommons.Resolver.extend({
-      toString: 'NPMResolver',
+      toString: 'MVNResolver',
 
       resolve: function (deployUnit, callback) {
         var host = $('#remote-server-host').val() || Config.REMOTE_HOST;
@@ -18,8 +18,9 @@ define(
           timeout: 30000,
           data: {
             libz: {
-              javascript: [
+              java: [
                 {
+                  groupID:    deployUnit.groupName,
                   artifactID: deployUnit.name,
                   version:    deployUnit.version
                 }
