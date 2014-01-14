@@ -1,6 +1,6 @@
 {
   "name": "kevoree-web-editor-client",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Static Kevoree Web Editor client",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -24,7 +24,7 @@
   "homepage": "https://github.com/kevoree/kevoree-web-editor",
   "devDependencies": {
     "grunt": "~0.4.2",
-	"grunt-cli": "~0.1.0",
+    "grunt-cli": "~0.1.0",
     "grunt-jade": "~0.4.0",
     "grunt-contrib-requirejs": "~0.4.1",
     "grunt-copy-to": "0.0.10",
