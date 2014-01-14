@@ -3,9 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.kevoree</groupId>
     <artifactId>org.kevoree.webeditor</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <name>Kevoree :: Web Editor</name>
-    <version>0.0.1</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <organization>
         <name>Kevoree Project</name>
@@ -20,6 +20,27 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>exec-maven-plugin</artifactId>
                 <groupId>org.codehaus.mojo</groupId>
@@ -44,12 +65,31 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>grunt</executable>
+                            <executable>node_modules/grunt-cli/bin/grunt</executable>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.kevoree.maventools</groupId>
+                <artifactId>org.kevoree.maventools.settings.ci</artifactId>
+                <version>2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>set</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+        <resources>
+            <resource>
+               <directory>
+                   ${basedir}/dist
+               </directory>
+            </resource>
+        </resources>
     </build>
 
     <scm>
@@ -78,6 +118,15 @@
             </roles>
             <timezone>+2</timezone>
         </developer>
+        <developer>
+            <name>Francois Fouquet</name>
+            <id>francois.fouquet</id>
+            <email>fouquet.f@gmail.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>+2</timezone>
+        </developer>
     </developers>
 
     <distributionManagement>
@@ -90,12 +139,5 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>kevoree-oss</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
-    </repositories>
 
 </project>
