@@ -1034,6 +1034,23 @@ module.exports = function (model, statements, stmt, opts, cb) {
   }
 
   return {
+    /**
+     * 'a.b.c' with expect(2, 4, function (err, one, two, three, four) {
+     *   if (err) {
+     *     // something went wrong with instancePath.expect parsing
+     *   }
+     *   
+     *   // when parsing 'a.b.c' with expect(2, 4, ...) you get:
+     *   // one   === null
+     *   // two   === 'a'
+     *   // three === 'b'
+     *   // four  === 'c'
+     * }
+     * @param min minimum expected values in instancePath (ex: a.b.c with "min" = 4 will return an error in callback)
+     * @param max maximum expected values in instancePath (same as minimum but for maximum :D )
+     * @param callback function (err, [arg0, arg1, ...])
+     * @returns {*}
+     */
     expect: function (min, max, callback) {
       if (instancePath.length > max || instancePath.length < min) {
         return callback(new Error('InstancePath does not match requirements (path: '+instancePath.join('.')+', length: '+instancePath.length+', min: '+min+', max: '+max+')'));
@@ -1411,26 +1428,18 @@ var factory = new kevoree.impl.DefaultKevoreeFactory();
 var helper  = require('../model-helper');
 
 module.exports = function (model, statements, stmt, opts, cb) {
-  var attr, node, value;
-  if (stmt.children.length === 2) {
-    attr  = statements[stmt.children[0].type](model, statements, stmt.children[0], opts, cb);
-    value = statements[stmt.children[1].type](model, statements, stmt.children[1], opts, cb);
-
-  } else if (stmt.children.length === 3) {
-    attr  = statements[stmt.children[0].type](model, statements, stmt.children[0], opts, cb);
-    node  = statements[stmt.children[1].type](model, statements, stmt.children[1], opts, cb);
-    value = statements[stmt.children[2].type](model, statements, stmt.children[2], opts, cb);
-  }
-
-  function setAttribute2(attrName, dictionary) {
-    var dicValue = dictionary.findValuesByID(attrName);
+  var attr  = null,
+      node  = null,
+      value = null;
+  
+  function processAttribute(dic, attrName) {
+    var dicValue = dic.findValuesByID(attrName);
     if (dicValue) {
-      // dictionary value for attribute named attrName already exists: overwrite it
+      // update value
       dicValue.value = value;
-
     } else {
       // dictionary value for attribute named attrName does not exist yet: create it and add it if possible
-      var attrs = dictionary.eContainer().typeDefinition.dictionaryType.attributes.iterator();
+      var attrs = dic.eContainer().typeDefinition.dictionaryType.attributes.iterator();
       while (attrs.hasNext()) {
         // by doing this, we will kinda fail silently if you are trying to set an inexisting
         // attribute value in one of the instances
@@ -1438,102 +1447,137 @@ module.exports = function (model, statements, stmt, opts, cb) {
           dicValue = factory.createDictionaryValue();
           dicValue.name = attrName;
           dicValue.value = value;
-          dictionary.addValues(dicValue);
+          dic.addValues(dicValue);
           break;
         }
       }
     }
   }
-
-  function setAttribute1(attrName, instance) {
+  
+  function processNodeAndCompsAttribute(node, compName, attrName) {
+    if (compName === '*') {
+      var comps = node.components.iterator();
+      while (comps.hasNext()) processInstanceAttribute(comps.next(), attrName);
+      
+    } else {
+      var comp = helper.findComponentByName(model, node.name, compName);
+      if (comp) {
+        processInstanceAttribute(comp, attrName);
+        
+      } else {
+        return cb(new Error('Unable to find component "'+compName+'" in "'+node.name+'" model (set '+attr.toString()+' = "'+value+'")'));
+      }
+    }
+  }
+  
+  function processInstanceAttribute(instance, attrName) {
     if (node) {
-      // fragDep attribute
-      node.expect(1, 2, function (err, namespace, nodeName) {
-        if (err) {
-          err.message += ' (set '+attr.toString()+'/'+node.toString()+' = '+value+')';
-          return cb(err);
-        }
+      // fragment dependant attribute
+      var dics = instance.fragmentDictionary.iterator();
+      while (dics.hasNext()) {
+        var dic = dics.next();
+        processAttribute(dic, attrName);
+      }
+      
+    } else {
+      // non-fragment dependant attribute
+      if (!instance.dictionary) instance.dictionary = factory.createDictionary();
+      processAttribute(instance.dictionary, attrName);
+    }
+  }
 
-        if (namespace) {
-          // TODO
-          return cb(new Error('Namespaces are not handled yet :/ Sorry (set '+attr.toString()+'/'+node.toString()+' = '+value+')'));
+  if (stmt.children.length === 2) {
+    // set statement looks like: set an.instance.path = 'aValue'
+    attr  = statements[stmt.children[0].type](model, statements, stmt.children[0], opts, cb);
+    value = statements[stmt.children[1].type](model, statements, stmt.children[1], opts, cb);
 
-        } else {
-          if (nodeName === '*') {
-            var dics = instance.fragmentDictionary.iterator();
-            while (dics.hasNext()) setAttribute2(attrName, dics.next());
+    attr.expect(2, 4, function (err, ns, two, three, four) {
+      if (err) {
+        err.message += ' (set '+attr.toString()+' = "'+value+'")';
+        return cb(err);
+      }
+      
+      if (ns) {
+        // TODO
+        return cb(new Error('Namespaces are not handled yet :/ Sorry (set '+attr.toString()+' = "'+value+'")'));
+        
+      } else {
+        if (two) {
+          // statement looks like foo.bar.baz = '42'
+          if (two === '*') {
+            // TODO handle namespaces too when using '*' ?
+            var nodes = model.nodes.iterator();
+            while (nodes.hasNext()) processNodeAndCompsAttribute(nodes.next(), three, four);
 
           } else {
-            var fragDic = instance.findFragmentDictionaryByID(nodeName);
-            if (fragDic) {
-              setAttribute2(attrName, fragDic);
+            // check whether "two" is a namespace or a node name
+            var nodeInstance = model.findNodesByID(two);
+            if (nodeInstance) {
+              processNodeAndCompsAttribute(nodeInstance, three, four);
+
             } else {
-              // fragment dictionary needs to be created and added
-              fragDic = factory.createFragmentDictionary();
-              fragDic.name = nodeName;
-              instance.addFragmentDictionary(fragDic);
-              setAttribute2(attrName, fragDic);
+              // TODO
+              return cb(new Error('Namespaces are not handled yet :/ Sorry (set '+attr.toString()+' = "'+value+'")'));
+            }
+          }
+        
+        } else {
+          // statement looks like foo.bar = '42'
+          var instance = helper.findEntityByName(model, three);
+          if (instance) {
+            processInstanceAttribute(instance, four);
+            
+          } else {
+            return cb(new Error('Unable to find instance "'+two+'" in model (set '+attr.toString()+' = "'+value+'")'));
+          }
+        }
+      }
+    });
+
+  } else if (stmt.children.length === 3) {
+    // set statement looks like: set an.instance.path/aNode = 'aValue'
+    attr  = statements[stmt.children[0].type](model, statements, stmt.children[0], opts, cb);
+    node  = statements[stmt.children[1].type](model, statements, stmt.children[1], opts, cb);
+    value = statements[stmt.children[2].type](model, statements, stmt.children[2], opts, cb);
+
+    attr.expect(2, 3, function (err, ns, instanceName, attrName) {
+      if (err) {
+        err.message += ' (set '+attr.toString()+'/'+node.toString()+' = "'+value+'")';
+        return cb(err);
+      }
+
+      if (ns) {
+        // TODO
+        return cb(new Error('Namespaces are not handled yet :/ Sorry (set '+attr.toString()+'/'+node.toString()+' = "'+value+'")'));
+
+      } else {
+        if (instanceName === '*') {
+          var groups = model.groups.iterator();
+          while (groups.hasNext()) processInstanceAttribute(groups.next(), attrName);
+          var hubs = model.hubs.iterator();
+          while (hubs.hasNext()) processInstanceAttribute(hubs.next(), attrName);
+
+        } else {
+          // instance is whether a group or a channel
+          var groups = model.groups.iterator();
+          while (groups.hasNext()) {
+            var grp = groups.next();
+            if (grp.name === instanceName) {
+              return processInstanceAttribute(grp, attrName);
+            }
+          }
+
+          var chans = model.hubs.iterator();
+          while (chans.hasNext()) {
+            var hub = chans.next();
+            if (hub.name === instanceName) {
+              return processInstanceAttribute(hub, attrName);
             }
           }
         }
-      });
-
-    } else {
-      // non fragDep attribute
-      if (!instance.dictionary) instance.dictionary = factory.createDictionary();
-      setAttribute2(attrName, instance.dictionary);
-    }
-  }
-
-  function setAttribute0(attrName, instance) {
-    if (attrName === '*') {
-      var attrs = instance.typeDefinition.dictionaryType.attributes.iterator();
-      while (attrs.hasNext()) {
-        setAttribute1(attrs.next().name, instance);
       }
-
-    } else {
-      setAttribute1(attrName, instance);
-    }
+    });
   }
-
-  attr.expect(2, 3, function (err, namespace, instanceName, attrName) {
-    if (err) {
-      err.message += ' (set '+attr.toString()+((node) ? '/'+node.toString() : '')+' = '+value+')';
-      return cb(err);
-    }
-
-    if (namespace) {
-      // TODO
-      return cb(new Error('Namespaces are not handled yet :/ Sorry (set '+attr.toString()+((node) ? '/'+node.toString() : '')+' = '+value+')'));
-
-    } else {
-      if (instanceName === '*') {
-        var groups = model.groups.iterator();
-        while (groups.hasNext()) setAttribute0(attrName, groups.next());
-
-        var chans = model.hubs.iterator();
-        while (chans.hasNext()) setAttribute0(attrName, chans.next());
-
-        var nodes = model.nodes.iterator();
-        while (nodes.hasNext()) {
-          var node = nodes.next();
-          setAttribute0(attrName, node);
-
-          var comps = node.components.iterator();
-          while (comps.hasNext()) setAttribute0(attrName, comps.next());
-        }
-
-      } else {
-        var instance = helper.findEntityByName(model, instanceName);
-        if (instance) {
-          setAttribute0(attrName, instance);
-        } else {
-          return cb(new Error('Unable to find instance "'+instanceName+'" in model (set '+attr.toString()+((node) ? '/'+node.toString() : '')+' = '+value+')'));
-        }
-      }
-    }
-  });
 
   cb();
 }
