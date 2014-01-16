@@ -1,5 +1,5 @@
 define(
-  function (attributeTemplate) {
+  function () {
 
     function UIValue(ctrl) {
       this._ctrl = ctrl;
@@ -12,7 +12,7 @@ define(
     UIValue.prototype.onHTMLAppended = function () {}
 
     UIValue.prototype.getValue = function () {
-      var fragName = (this._ctrl.getFragmentName()) ? this._ctrl.getFragmentName()+'-' : '';
+      var fragName = (this._ctrl.getFragmentName() && this._ctrl.getNodeName()) ? this._ctrl.getNodeName()+'-'+this._ctrl.getFragmentName()+'-' : '';
       return $('#instance-attr-'+fragName+this._ctrl.getName()).val();
     }
 

@@ -31,12 +31,20 @@ define(
       this._name = name;
     }
 
-    KValue.prototype.setFragmentName = function (nodeName) {
-      this._fragmentName = nodeName;
+    KValue.prototype.setFragmentName = function (fragmentName) {
+      this._fragmentName = fragmentName;
     }
 
     KValue.prototype.getFragmentName = function () {
       return this._fragmentName;
+    }
+
+    KValue.prototype.setNodeName = function (nodeName) {
+      this._nodeName = nodeName;
+    }
+
+    KValue.prototype.getNodeName = function () {
+      return this._nodeName;
     }
 
     KValue.prototype.accept = function (visitor) {

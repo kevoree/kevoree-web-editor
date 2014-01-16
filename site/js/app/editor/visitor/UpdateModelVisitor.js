@@ -259,14 +259,38 @@ define(
       var update = (dict._instance) ? true : false;
       dict._instance = dict._instance || this._factory.createDictionary();
 
-      for (var i=0; i < dict.getValues().length; i++) {
-        var value = dict.getValues()[i];
-        var addValue = (value._instance) ? false : true;
-        value.accept(this);
-        if (addValue && value._instance) dict._instance.addValues(value._instance);
+      function addOrRemove(dict, value) {
+        if (value.getValue() && value.getValue().length > 0) {
+          // there is a value, so add it
+          dict._instance.addValues(value._instance);
+        } else {
+          // there is no more value for this instance, meaning that we should remove it from dictionary
+          dict._instance.removeValues(value._instance);
+          delete value._instance;
+        }
       }
 
-      if (!update && dict.getValues().length > 0) dict.getEntity()._instance.setDictionary(dict._instance);
+      for (var i=0; i < dict.getValues().length; i++) {
+        var value = dict.getValues()[i];
+        var isValueInModel = (value._instance) ? true : false;
+        value.accept(this);
+
+        if (!isValueInModel) {
+          // value has not been added to model yet
+          if (value._instance) {
+            // we have created (just now or before) an kevoree model instance for this value
+            // if we have a value for this one, then add it to dictionary
+            addOrRemove(dict, value);
+          }
+        } else {
+          // value has already been added to dictionary
+          addOrRemove(dict, value);
+        }
+      }
+      
+      if (!update && dict._instance.getValues().size() > 0) {
+        dict.getEntity()._instance.setDictionary(dict._instance); 
+      }
 
       this._listener.call(this);
     }
@@ -276,14 +300,38 @@ define(
       dict._instance = dict._instance || this._factory.createFragmentDictionary();
       dict._instance.setName(dict.getName());
 
+      function addOrRemove(dict, value) {
+        if (value.getValue() && value.getValue().length > 0) {
+          // there is a value, so add it
+          dict._instance.addValues(value._instance);
+        } else {
+          // there is no more value for this instance, meaning that we should remove it from dictionary
+          dict._instance.removeValues(value._instance);
+          delete value._instance;
+        }
+      }
+      
       for (var i=0; i < dict.getValues().length; i++) {
         var value = dict.getValues()[i];
-        var addValue = (value._instance) ? false : true;
+        var isValueInModel = (value._instance) ? true : false;
         value.accept(this);
-        if (addValue && value._instance) dict._instance.addValues(value._instance);
+
+        if (!isValueInModel) {
+          // value has not been added to model yet
+          if (value._instance) {
+            // we have created (just now or before) an kevoree model instance for this value
+            // if we have a value for this one, then add it to dictionary
+            addOrRemove(dict, value);
+          }
+        } else {
+          // value has already been added to dictionary
+          addOrRemove(dict, value);
+        }
       }
 
-      if (!update && dict.getValues().length > 0) dict.getEntity()._instance.addFragmentDictionary(dict._instance);
+      if (!update && dict._instance.getValues().size() > 0) {
+        dict.getEntity()._instance.addFragmentDictionary(dict._instance);
+      }
 
       this._listener.call(this);
     }

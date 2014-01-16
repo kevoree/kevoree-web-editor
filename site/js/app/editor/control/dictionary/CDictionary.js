@@ -23,14 +23,17 @@ define(
       for (var i = 0; i < attrs.length; i++) {
         if (attrs[i].getFragmentDependant() === this.isFragment()) {
           var val = this.getValue(attrs[i].getName());
-          if (val == null) {
+          if (!val) {
             // no value created for this argument yet
             val = factory.newValue();
             val.setName(attrs[i].getName());
             this.addValue(val);
           }
 
-          if (this.isFragment()) val.setFragmentName(this.getName());
+          if (this.isFragment()) {
+            val.setNodeName(this.getName());
+            val.setFragmentName(this.getEntity().getName());
+          }
           val.setValue(val.getUI().getValue());
         }
       }

@@ -142,26 +142,6 @@ define(
       this.getNode().getEditor().updateModel(this);
     }
 
-    function checkIpAndPort(options) {
-      var ip, port;
-      for (var i in options.values) {
-        if (options.values[i].getTargetNode()) {
-          if (options.values[i].getTargetNode().getName() == options.nodeName) {
-            if (options.values[i].getAttribute().getName() == 'ip') {
-              ip = options.values[i].getValue();
-            }
-            if (options.values[i].getAttribute().getName() == 'port') {
-              port = options.values[i].getValue();
-            }
-          }
-        }
-        if (ip && port) break;
-      }
-
-      if (ip && port) options.found.call(this, ip, port);
-      else options.none.call();
-    }
-
     return CNodeProperties;
   }
 );

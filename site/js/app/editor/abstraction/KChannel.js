@@ -57,6 +57,7 @@ define(
             fragDic.setName(fragmentName);
             // add it to the channel
             this.addFragmentDictionary(fragDic);
+            console.log('FragDic added on '+this._name+' with name "'+fragDic.getName()+'"');
           }
         }
       }

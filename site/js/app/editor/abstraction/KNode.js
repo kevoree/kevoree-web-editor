@@ -121,6 +121,7 @@ define(
             fragDic.setName(this._name);
             // add it to the group
             wire.getOrigin().addFragmentDictionary(fragDic);
+            console.log('FragDic added on '+wire.getOrigin()._name+' with name "'+fragDic.getName()+'"');
           }
         }
       }

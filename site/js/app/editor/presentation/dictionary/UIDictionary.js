@@ -25,6 +25,7 @@ define(
             html += attributeTemplate({
               node:           this._ctrl.getName(),
               name:           attrs[i].getName(),
+              fragment:       this._ctrl.getEntity().getName(),
               value:          value,
               type:           attrs[i].getType(),
               possibleValues: attrs[i].getPossibleValues(),
