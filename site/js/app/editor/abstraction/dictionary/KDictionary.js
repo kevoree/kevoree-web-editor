@@ -71,6 +71,17 @@ define(
     KDictionary.prototype.getName = function () {
       return this._name;
     }
+    
+    KDictionary.prototype.getAttributes = function () {
+      var attrs = [];
+      var allAttrs = this.getEntity().getDictionaryAttributes();
+      for (var i=0; i < allAttrs.length; i++) {
+        if (allAttrs[i].getFragmentDependant() === this.isFragment()) {
+          attrs.push(allAttrs[i]);
+        }
+      }
+      return attrs;
+    }
 
     KDictionary.prototype.isFragment = function () {
       return this._isFragment;

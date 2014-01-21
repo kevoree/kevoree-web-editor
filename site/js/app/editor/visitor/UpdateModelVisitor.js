@@ -263,9 +263,11 @@ define(
         if (value.getValue() && value.getValue().length > 0) {
           // there is a value, so add it
           dict._instance.addValues(value._instance);
+          console.log("Kevoree model addValue '"+value._instance.getValue()+"' for '"+value._instance.getName()+"' in '"+dict.getEntity().getName()+"'");
         } else {
           // there is no more value for this instance, meaning that we should remove it from dictionary
           dict._instance.removeValues(value._instance);
+          console.log("Kevoree model delValue '"+value._instance.getValue()+"' for '"+value._instance.getName()+"' in '"+dict.getEntity().getName()+"'");
           delete value._instance;
         }
       }
@@ -304,9 +306,11 @@ define(
         if (value.getValue() && value.getValue().length > 0) {
           // there is a value, so add it
           dict._instance.addValues(value._instance);
+          console.log("Kevoree model addValue '"+value._instance.getValue()+"' for '"+value._instance.getName()+"' in '"+dict.getEntity().getName()+"@"+dict._instance.getName()+"'");
         } else {
           // there is no more value for this instance, meaning that we should remove it from dictionary
           dict._instance.removeValues(value._instance);
+          console.log("Kevoree model delValue '"+value._instance.getValue()+"' for '"+value._instance.getName()+"' in '"+dict.getEntity().getName()+"@"+dict._instance.getName()+"'");
           delete value._instance;
         }
       }

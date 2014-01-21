@@ -13,6 +13,7 @@ define(
 
     UIValue.prototype.getValue = function () {
       var fragName = (this._ctrl.getFragmentName() && this._ctrl.getNodeName()) ? this._ctrl.getNodeName()+'-'+this._ctrl.getFragmentName()+'-' : '';
+      console.log("UIValue: "+'#instance-attr-'+fragName+this._ctrl.getName());
       return $('#instance-attr-'+fragName+this._ctrl.getName()).val();
     }
 

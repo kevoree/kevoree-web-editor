@@ -9,7 +9,6 @@ define(
 
     function KValue() {
       Observable.prototype.constructor.call(this);
-      this._name = null;
       this._value = null;
       this._name = null;
     }
@@ -20,6 +19,7 @@ define(
 
     KValue.prototype.setValue = function (val) {
       this._value = val;
+      console.log("Value "+this._value+" set for "+this._name+((this._fragmentName && this._nodeName) ? " ("+this._fragmentName+"@"+this._nodeName+")" : ""));
       this.notifyObservers();
     }
 
