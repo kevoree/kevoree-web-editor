@@ -1,7 +1,11 @@
 var KevWebEditor = require('../../lib/control/KevWebEditor');
+var LoadModel = require('../../lib/command/ui/LoadModel');
 
 $(function () {
-  $('#editor').css('top', $('#editor-navbar').outerHeight);
-
   var editor = new KevWebEditor();
+
+  Mousetrap.bind(['command+l', 'ctrl+l'], function () {
+    var cmd = new LoadModel();
+    cmd.execute(editor);
+  });
 });

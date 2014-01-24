@@ -4,7 +4,10 @@
   "dependencies": {
     "bootstrap": "~3.0.3",
     "jquery": "~1.10.2",
-    "jquery-ui": "~1.10.3"
+    "jquery-ui": "~1.10.3",
+    "kineticjs": "~5.0.1",
+    "mousetrap": "~1.4.6",
+    "hogan": "~3.0.0"
   },
   "devDependencies": {}
 }
