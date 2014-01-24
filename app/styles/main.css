@@ -1,0 +1,164 @@
+.browsehappy {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+#editor-navbar {
+    margin-bottom: 0;
+    border-radius: 0;
+    z-index: 1000;
+}
+
+#navbar-logo {
+    padding: 8px 15px 0px;
+}
+
+#editor {
+    position: absolute;
+    z-index: 998;
+    top: 52px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+#type-definition-list {
+    position: absolute;
+    z-index: 999;
+    top: 52px;
+    bottom: 0;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+}
+
+#type-definition-list .list-group {
+    position: absolute;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#type-definition-list-search-form {
+    width: 85%;
+}
+
+#type-definition-list-hide-btn {
+    position: absolute;
+    top: 13px;
+    right: 10px;
+}
+
+#type-definition-list, #type-definition-list .panel-heading, .type-definition-item {
+    background-color: #222;
+    border-color: #333;
+    color: #999;
+    border-radius: 0;
+}
+
+[data-tdef='group'] {
+    background: url('../images/group-ico.png') center left no-repeat;
+    padding-left: 22px;
+}
+
+[data-tdef='channel'] {
+    background: url('../images/channel-ico.png') center left no-repeat;
+    padding-left: 22px;
+}
+
+[data-tdef='node'] {
+    background: url('../images/node-ico.png') center left no-repeat;
+    padding-left: 22px;
+}
+
+[data-tdef='component'] {
+    background: url('../images/component-ico.png') center left no-repeat;
+    padding-left: 22px;
+}
+
+.whitish, .whitish a {
+    color: #999;
+}
+
+.type-definition-item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 0;
+}
+
+.type-definition-item .typedef-name {
+    float: left;
+}
+
+.type-definition-item .badge {
+    margin-left: 8px;
+}
+
+.type-definition-item:hover {
+    cursor: move;
+    background-color: #444;
+    border-radius: 0;
+}
+
+.list-group-item:last-child {
+    border-radius: 0;
+}
+
+#type-definition-list-show-btn {
+    background-color: #222;
+    position: absolute;
+    z-index: 999;
+    top: 52px;
+    left: 0;
+}
+
+.dragged {
+    z-index: 1001;
+}
+
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+    .container {
+        max-width: 730px;
+    }
+
+    /* Remove the padding we set earlier */
+    .header,
+    .footer {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* Space out the masthead */
+    .header {
+        margin-bottom: 30px;
+    }
+
+    #type-definition-list {
+        width: 260px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    #type-definition-list {
+        width: auto;
+        min-height: 51px;
+        max-height: 300px;
+        bottom: auto;
+    }
+
+    #type-definition-list .list-group {
+        bottom: auto;
+        max-height: 249px;
+    }
+}
