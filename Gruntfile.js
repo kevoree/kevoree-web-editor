@@ -315,6 +315,9 @@ module.exports = function (grunt) {
                 'browserify'
             ]
         },
+
+        // Creates compiled templates from templates/**/*.html using hogan (mustachejs-like)
+        // Makes your-template.html compiled js script available in window Global Scope as EditorTemplates['your-template']
         hogan: {
             main: {
                 options: {

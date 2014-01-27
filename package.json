@@ -8,7 +8,8 @@
   "dependencies": {
     "kevoree-library": "0.0.3",
     "pseudoclass": "~0.3.0",
-    "kevoree-kotlin": "0.0.2"
+    "kevoree-kotlin": "0.0.2",
+    "semver": "~2.2.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
