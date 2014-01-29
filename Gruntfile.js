@@ -36,7 +36,10 @@ module.exports = function (grunt) {
             },
             hogan: {
                 files: ['templates/**/*'],
-                tasks: ['hogan']
+                tasks: ['hogan'],
+                options: {
+                    livereload: true
+                }
             },
             jstest: {
                 files: ['test/spec/{,*/}*.js'],
@@ -303,7 +306,8 @@ module.exports = function (grunt) {
         concurrent: {
             server: [
                 'copy:styles',
-                'browserify'
+                'browserify',
+                'hogan'
             ],
             test: [
                 'copy:styles'
@@ -328,7 +332,7 @@ module.exports = function (grunt) {
                     }
                 },
                 files:{
-                    "app/scripts/templates.js": ["templates/**/*.html"]
+                    ".tmp/scripts/templates.js": ["templates/**/*.html"]
                 }
             }
         }

@@ -1,0 +1,10 @@
+<div id="alert" class="alert alert-{{type}} alert-dismissable hide fade in">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    {{#html}}
+    {{{html}}}
+    {{/html}}
+    {{^html}}
+    <h4>{{title}}</h4>
+    <p>{{content}}</p>
+    {{/html}}
+</div>

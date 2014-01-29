@@ -137,6 +137,16 @@
 
 .dragged {
     z-index: 1001;
+    cursor: move;
+}
+
+#alert {
+    position: absolute;
+    right: 20px;
+    top: 70px;
+    z-index: 1002;
+    opacity: 0.95;
+    box-shadow: 1px 2px 2px 1px rgba(0, 0, 0, 0.7);
 }
 
 /* Responsive */
@@ -145,12 +155,20 @@
         max-width: 730px;
     }
 
+    .modal-dialog {
+        margin: 70px auto;
+    }
+
     #type-definition-list {
         width: 250px;
     }
 
     .type-definition-item .typedef-name {
         max-width: 85%;
+    }
+
+    #popup {
+        width: 300px;
     }
 }
 
