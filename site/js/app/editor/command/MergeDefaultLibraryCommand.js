@@ -53,7 +53,7 @@ define(
           success: function (data) {
             switch (data.result) {
               case 1:
-                try {
+//                try {
                   var loader = new Kevoree.org.kevoree.loader.JSONModelLoader(),
                     receivedModel = loader.loadModelFromString(JSON.stringify(data.model)).get(0);
                   editor.mergeModel(receivedModel);
@@ -62,14 +62,14 @@ define(
 
                   // close popup
                   $('#load-corelib-popup').modal('hide');
-                } catch (err) {
-                  $('#loading-corelib').hide();
-                  $('#load-corelib').show();
-
-                  $('#load-corelib-popup-error-content').html("Unable to load received model.<br/>"+err.message);
-                  $('#load-corelib-popup-error').removeClass('hide');
-                  $('#load-corelib-popup-error').addClass('in');
-                }
+//                } catch (err) {
+//                  $('#loading-corelib').hide();
+//                  $('#load-corelib').show();
+//
+//                  $('#load-corelib-popup-error-content').html("Unable to load received model.<br/>"+err.message);
+//                  $('#load-corelib-popup-error').removeClass('hide');
+//                  $('#load-corelib-popup-error').addClass('in');
+//                }
                 break;
 
               default:

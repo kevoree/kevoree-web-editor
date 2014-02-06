@@ -406,7 +406,7 @@ define(
         }
         return r;
       },
-      reverse_0: function ($receiver) {
+      reverse: function ($receiver) {
         var list = _.kotlin.toCollection($receiver, new Kotlin.ArrayList());
         Kotlin.reverse(list);
         return list;
@@ -1244,14 +1244,16 @@ define(
         return result;
       },
       max: function ($receiver) {
-        var max = null;
+        if (_.kotlin.isEmpty_0($receiver))
+          return null;
+        var max = $receiver[0];
+        var tmp$0;
         {
-          var tmp$0 = Kotlin.arrayIterator($receiver);
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (max == null || (max != null ? max : Kotlin.throwNPE()) < e) {
+          tmp$0 = _.kotlin.get_lastIndex_0($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (max < e)
               max = e;
-            }
           }
         }
         return max;
@@ -1276,14 +1278,16 @@ define(
         return maxElem;
       },
       min: function ($receiver) {
-        var min = null;
+        if (_.kotlin.isEmpty_0($receiver))
+          return null;
+        var min = $receiver[0];
+        var tmp$0;
         {
-          var tmp$0 = Kotlin.arrayIterator($receiver);
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (min == null || (min != null ? min : Kotlin.throwNPE()) > e) {
+          tmp$0 = _.kotlin.get_lastIndex_0($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (min > e)
               min = e;
-            }
           }
         }
         return min;
@@ -1367,7 +1371,7 @@ define(
         }
         return r;
       },
-      reverse_1: function ($receiver) {
+      reverse_0: function ($receiver) {
         var list = _.kotlin.toCollection_0($receiver, new Kotlin.ArrayList());
         Kotlin.reverse(list);
         return list;
@@ -1690,14 +1694,16 @@ define(
         return result;
       },
       max_0: function ($receiver) {
-        var max = null;
+        if (_.kotlin.isEmpty_1($receiver))
+          return null;
+        var max = $receiver[0];
+        var tmp$0;
         {
-          var tmp$0 = Kotlin.arrayIterator($receiver);
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (max == null || (max != null ? max : Kotlin.throwNPE()) < e) {
+          tmp$0 = _.kotlin.get_lastIndex_1($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (max < e)
               max = e;
-            }
           }
         }
         return max;
@@ -1722,14 +1728,16 @@ define(
         return maxElem;
       },
       min_0: function ($receiver) {
-        var min = null;
+        if (_.kotlin.isEmpty_1($receiver))
+          return null;
+        var min = $receiver[0];
+        var tmp$0;
         {
-          var tmp$0 = Kotlin.arrayIterator($receiver);
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (min == null || (min != null ? min : Kotlin.throwNPE()) > e) {
+          tmp$0 = _.kotlin.get_lastIndex_1($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (min > e)
               min = e;
-            }
           }
         }
         return min;
@@ -1813,7 +1821,7 @@ define(
         }
         return r;
       },
-      reverse_2: function ($receiver) {
+      reverse_1: function ($receiver) {
         var list = _.kotlin.toCollection_2($receiver, new Kotlin.ArrayList());
         Kotlin.reverse(list);
         return list;
@@ -2106,14 +2114,16 @@ define(
         return result;
       },
       max_1: function ($receiver) {
-        var max = null;
+        if (_.kotlin.isEmpty_2($receiver))
+          return null;
+        var max = $receiver[0];
+        var tmp$0;
         {
-          var tmp$0 = Kotlin.arrayIterator($receiver);
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (max == null || (max != null ? max : Kotlin.throwNPE()) < e) {
+          tmp$0 = _.kotlin.get_lastIndex_2($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (max < e)
               max = e;
-            }
           }
         }
         return max;
@@ -2138,14 +2148,16 @@ define(
         return maxElem;
       },
       min_1: function ($receiver) {
-        var min = null;
+        if (_.kotlin.isEmpty_2($receiver))
+          return null;
+        var min = $receiver[0];
+        var tmp$0;
         {
-          var tmp$0 = Kotlin.arrayIterator($receiver);
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (min == null || (min != null ? min : Kotlin.throwNPE()) > e) {
+          tmp$0 = _.kotlin.get_lastIndex_2($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (min > e)
               min = e;
-            }
           }
         }
         return min;
@@ -2229,7 +2241,7 @@ define(
         }
         return r;
       },
-      reverse_3: function ($receiver) {
+      reverse_2: function ($receiver) {
         var list = _.kotlin.toCollection_3($receiver, new Kotlin.ArrayList());
         Kotlin.reverse(list);
         return list;
@@ -2668,6 +2680,21 @@ define(
         }
         return result;
       },
+      max_2: function ($receiver) {
+        if (_.kotlin.isEmpty_3($receiver))
+          return null;
+        var max = $receiver[0];
+        var tmp$0;
+        {
+          tmp$0 = _.kotlin.get_lastIndex_3($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (max < e)
+              max = e;
+          }
+        }
+        return max;
+      },
       maxBy_3: function ($receiver, f) {
         if (_.kotlin.isEmpty_3($receiver))
           return null;
@@ -2686,6 +2713,21 @@ define(
           }
         }
         return maxElem;
+      },
+      min_2: function ($receiver) {
+        if (_.kotlin.isEmpty_3($receiver))
+          return null;
+        var min = $receiver[0];
+        var tmp$0;
+        {
+          tmp$0 = _.kotlin.get_lastIndex_3($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (min > e)
+              min = e;
+          }
+        }
+        return min;
       },
       minBy_3: function ($receiver, f) {
         if ($receiver.length === 0)
@@ -2766,7 +2808,7 @@ define(
         }
         return r;
       },
-      reverse_4: function ($receiver) {
+      reverse_3: function ($receiver) {
         var list = _.kotlin.toCollection_4($receiver, new Kotlin.ArrayList());
         Kotlin.reverse(list);
         return list;
@@ -3176,16 +3218,17 @@ define(
         }
         return result;
       },
-      max_2: function ($receiver) {
-        var max = null;
-        var tmp$0, tmp$1, tmp$2;
+      max_3: function ($receiver) {
+        if (_.kotlin.isEmpty_4($receiver))
+          return null;
+        var max = $receiver[0];
+        var tmp$0;
         {
-          tmp$0 = $receiver, tmp$1 = tmp$0.length;
-          for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
-            var e = tmp$0[tmp$2];
-            if (max == null || (max != null ? max : Kotlin.throwNPE()) < e) {
+          tmp$0 = _.kotlin.get_lastIndex_4($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (max < e)
               max = e;
-            }
           }
         }
         return max;
@@ -3209,16 +3252,17 @@ define(
         }
         return maxElem;
       },
-      min_2: function ($receiver) {
-        var min = null;
-        var tmp$0, tmp$1, tmp$2;
+      min_3: function ($receiver) {
+        if (_.kotlin.isEmpty_4($receiver))
+          return null;
+        var min = $receiver[0];
+        var tmp$0;
         {
-          tmp$0 = $receiver, tmp$1 = tmp$0.length;
-          for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
-            var e = tmp$0[tmp$2];
-            if (min == null || (min != null ? min : Kotlin.throwNPE()) > e) {
+          tmp$0 = _.kotlin.get_lastIndex_4($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (min > e)
               min = e;
-            }
           }
         }
         return min;
@@ -3303,7 +3347,7 @@ define(
         }
         return r;
       },
-      reverse_5: function ($receiver) {
+      reverse_4: function ($receiver) {
         var list = _.kotlin.toCollection_6($receiver, new Kotlin.ArrayList());
         Kotlin.reverse(list);
         return list;
@@ -3597,15 +3641,17 @@ define(
         }
         return result;
       },
-      max_3: function ($receiver) {
-        var max = null;
+      max_4: function ($receiver) {
+        if (_.kotlin.isEmpty_5($receiver))
+          return null;
+        var max = $receiver[0];
+        var tmp$0;
         {
-          var tmp$0 = Kotlin.arrayIterator($receiver);
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (max == null || (max != null ? max : Kotlin.throwNPE()) < e) {
+          tmp$0 = _.kotlin.get_lastIndex_5($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (max < e)
               max = e;
-            }
           }
         }
         return max;
@@ -3629,15 +3675,17 @@ define(
         }
         return maxElem;
       },
-      min_3: function ($receiver) {
-        var min = null;
+      min_4: function ($receiver) {
+        if (_.kotlin.isEmpty_5($receiver))
+          return null;
+        var min = $receiver[0];
+        var tmp$0;
         {
-          var tmp$0 = Kotlin.arrayIterator($receiver);
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (min == null || (min != null ? min : Kotlin.throwNPE()) > e) {
+          tmp$0 = _.kotlin.get_lastIndex_5($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (min > e)
               min = e;
-            }
           }
         }
         return min;
@@ -3721,7 +3769,7 @@ define(
         }
         return r;
       },
-      reverse_6: function ($receiver) {
+      reverse_5: function ($receiver) {
         var list = _.kotlin.toCollection_7($receiver, new Kotlin.ArrayList());
         Kotlin.reverse(list);
         return list;
@@ -4348,15 +4396,17 @@ define(
         }
         return result;
       },
-      max_4: function ($receiver) {
-        var max = null;
+      max_5: function ($receiver) {
+        if (_.kotlin.isEmpty_6($receiver))
+          return null;
+        var max = $receiver[0];
+        var tmp$0;
         {
-          var tmp$0 = Kotlin.arrayIterator($receiver);
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (max == null || (max != null ? max : Kotlin.throwNPE()) < e) {
+          tmp$0 = _.kotlin.get_lastIndex_6($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (max < e)
               max = e;
-            }
           }
         }
         return max;
@@ -4380,15 +4430,17 @@ define(
         }
         return maxElem;
       },
-      min_4: function ($receiver) {
-        var min = null;
+      min_5: function ($receiver) {
+        if (_.kotlin.isEmpty_6($receiver))
+          return null;
+        var min = $receiver[0];
+        var tmp$0;
         {
-          var tmp$0 = Kotlin.arrayIterator($receiver);
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (min == null || (min != null ? min : Kotlin.throwNPE()) > e) {
+          tmp$0 = _.kotlin.get_lastIndex_6($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (min > e)
               min = e;
-            }
           }
         }
         return min;
@@ -4472,7 +4524,7 @@ define(
         }
         return r;
       },
-      reverse_7: function ($receiver) {
+      reverse_6: function ($receiver) {
         var list = _.kotlin.toCollection_8($receiver, new Kotlin.ArrayList());
         Kotlin.reverse(list);
         return list;
@@ -4764,16 +4816,15 @@ define(
         }
         return result;
       },
-      max_5: function ($receiver) {
-        var max = null;
-        {
-          var tmp$0 = $receiver.iterator();
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (max == null || (max != null ? max : Kotlin.throwNPE()) < e) {
-              max = e;
-            }
-          }
+      max_6: function ($receiver) {
+        var iterator = $receiver.iterator();
+        if (!iterator.hasNext())
+          return null;
+        var max = iterator.next();
+        while (iterator.hasNext()) {
+          var e = iterator.next();
+          if (max < e)
+            max = e;
         }
         return max;
       },
@@ -4793,16 +4844,15 @@ define(
         }
         return maxElem;
       },
-      min_5: function ($receiver) {
-        var min = null;
-        {
-          var tmp$0 = $receiver.iterator();
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (min == null || (min != null ? min : Kotlin.throwNPE()) > e) {
-              min = e;
-            }
-          }
+      min_6: function ($receiver) {
+        var iterator = $receiver.iterator();
+        if (!iterator.hasNext())
+          return null;
+        var min = iterator.next();
+        while (iterator.hasNext()) {
+          var e = iterator.next();
+          if (min > e)
+            min = e;
         }
         return min;
       },
@@ -4883,7 +4933,7 @@ define(
         }
         return $receiver != null ? $receiver : Kotlin.throwNPE();
       },
-      reverse: function ($receiver) {
+      reverse_7: function ($receiver) {
         var list = _.kotlin.toCollection_5($receiver, new Kotlin.ArrayList());
         Kotlin.reverse(list);
         return list;
@@ -5041,7 +5091,7 @@ define(
         return _.kotlin.get_size($receiver) - 1;
       }},
       get_head: {value: function ($receiver) {
-        return $receiver.get(0);
+        return _.kotlin.isNotEmpty_9($receiver) ? $receiver.get(0) : null;
       }},
       get_tail: {value: function ($receiver) {
         return _.kotlin.drop_7($receiver, 1);
@@ -5324,16 +5374,14 @@ define(
         }
         return result;
       },
-      max_6: function ($receiver) {
-        var max = null;
-        {
-          var tmp$0 = $receiver;
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (max == null || (max != null ? max : Kotlin.throwNPE()) < e) {
-              max = e;
-            }
-          }
+      max_7: function ($receiver) {
+        if (!$receiver.hasNext())
+          return null;
+        var max = $receiver.next();
+        while ($receiver.hasNext()) {
+          var e = $receiver.next();
+          if (max < e)
+            max = e;
         }
         return max;
       },
@@ -5352,16 +5400,14 @@ define(
         }
         return maxElem;
       },
-      min_6: function ($receiver) {
-        var min = null;
-        {
-          var tmp$0 = $receiver;
-          while (tmp$0.hasNext()) {
-            var e = tmp$0.next();
-            if (min == null || (min != null ? min : Kotlin.throwNPE()) > e) {
-              min = e;
-            }
-          }
+      min_7: function ($receiver) {
+        if (!$receiver.hasNext())
+          return null;
+        var min = $receiver.next();
+        while ($receiver.hasNext()) {
+          var e = $receiver.next();
+          if (min > e)
+            min = e;
         }
         return min;
       },
@@ -5738,16 +5784,17 @@ define(
         }
         return result;
       },
-      max_7: function ($receiver) {
-        var max = null;
-        var tmp$0, tmp$1, tmp$2;
+      max_8: function ($receiver) {
+        if (_.kotlin.isEmpty_7($receiver))
+          return null;
+        var max = $receiver[0];
+        var tmp$0;
         {
-          tmp$0 = $receiver, tmp$1 = tmp$0.length;
-          for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
-            var e = tmp$0[tmp$2];
-            if (max == null || (max != null ? max : Kotlin.throwNPE()) < e) {
+          tmp$0 = _.kotlin.get_lastIndex_7($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (max < e)
               max = e;
-            }
           }
         }
         return max;
@@ -5771,16 +5818,17 @@ define(
         }
         return maxElem;
       },
-      min_7: function ($receiver) {
-        var min = null;
-        var tmp$0, tmp$1, tmp$2;
+      min_8: function ($receiver) {
+        if (_.kotlin.isEmpty_7($receiver))
+          return null;
+        var min = $receiver[0];
+        var tmp$0;
         {
-          tmp$0 = $receiver, tmp$1 = tmp$0.length;
-          for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
-            var e = tmp$0[tmp$2];
-            if (min == null || (min != null ? min : Kotlin.throwNPE()) > e) {
+          tmp$0 = _.kotlin.get_lastIndex_7($receiver) + 1;
+          for (var i = 1; i !== tmp$0; i++) {
+            var e = $receiver[i];
+            if (min > e)
               min = e;
-            }
           }
         }
         return min;
@@ -7413,6 +7461,16 @@ define(
               }, function () {
                 this.maps = new Kotlin.PrimitiveHashMap();
               }, /** @lends _.org.kevoree.modeling.api.persistence.MemoryDataStore.prototype */ {
+                getSegmentKeys: function (segment) {
+                  if (this.maps.containsKey(segment)) {
+                    var tmp$0;
+                    ((tmp$0 = this.maps.get(segment)) != null ? tmp$0 : Kotlin.throwNPE()).keySet();
+                  }
+                  return new Kotlin.PrimitiveHashSet();
+                },
+                getSegments: function () {
+                  return this.maps.keySet();
+                },
                 sync: function () {
                 },
                 getOrCreateSegment: function (segment) {
@@ -7566,7 +7624,6 @@ define(
                       var tmp$1;
                       var elem = (tmp$1 = this.create(typeName)) != null ? tmp$1 : Kotlin.throwNPE();
                       this.elem_cache.put(path2, elem);
-                      elem.originFactory = this;
                       elem.isResolved = false;
                       elem.setOriginPath(path2);
                       return elem;
@@ -7626,15 +7683,37 @@ define(
               }, null, /** @lends _.org.kevoree.modeling.api.time.RelativeTimeStrategy */ {
                 object_initializer$: function () {
                   return Kotlin.createEnumEntries({
-                    RELATIVE_FIRST: new _.org.kevoree.modeling.api.time.RelativeTimeStrategy(),
-                    BEGINNING_OF_TIME_FIRST: new _.org.kevoree.modeling.api.time.RelativeTimeStrategy(),
-                    LATEST_FIRST: new _.org.kevoree.modeling.api.time.RelativeTimeStrategy()
+                    RELATIVE: new _.org.kevoree.modeling.api.time.RelativeTimeStrategy(),
+                    ABSOLUTE: new _.org.kevoree.modeling.api.time.RelativeTimeStrategy(),
+                    LATEST: new _.org.kevoree.modeling.api.time.RelativeTimeStrategy()
                   });
                 }
               }),
               TimeAwareKMFFactory: Kotlin.createTrait(function () {
                 return [_.org.kevoree.modeling.api.persistence.PersistenceKMFFactory];
               }, /** @lends _.org.kevoree.modeling.api.time.TimeAwareKMFFactory.prototype */ {
+                previous: function (currentNow, path) {
+                  var currentNowString = currentNow.toString();
+                  var tmp$0, tmp$1;
+                  var previousPrevious = ((tmp$0 = this.datastore) != null ? tmp$0 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.PREVIOUS.name(), currentNowString + '/' + path);
+                  if (previousPrevious != null) {
+                    return _.org.kevoree.modeling.api.time.TimePoint.object.create(previousPrevious != null ? previousPrevious : Kotlin.throwNPE());
+                  }
+                  previousPrevious = ((tmp$1 = this.datastore) != null ? tmp$1 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.ORIGIN.name(), currentNowString + '/' + path);
+                  if (previousPrevious != null) {
+                    return _.org.kevoree.modeling.api.time.TimePoint.object.create(previousPrevious != null ? previousPrevious : Kotlin.throwNPE());
+                  }
+                  return null;
+                },
+                next: function (currentNow, path) {
+                  var currentNowString = currentNow.toString();
+                  var tmp$0;
+                  var previousPrevious = ((tmp$0 = this.datastore) != null ? tmp$0 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.NEXT.name(), currentNowString + '/' + path);
+                  if (previousPrevious != null) {
+                    return _.org.kevoree.modeling.api.time.TimePoint.object.create(previousPrevious != null ? previousPrevious : Kotlin.throwNPE());
+                  }
+                  return null;
+                },
                 shiftElem: function (path, relativeNow) {
                 },
                 shiftQuery: function (query, relativeNow) {
@@ -7655,14 +7734,6 @@ define(
                     this.$queryMap_hz4fx8$ = tmp$0;
                   }
                 },
-                timedElement: {
-                  get: function () {
-                    return this.$timedElement_j30cnn$;
-                  },
-                  set: function (tmp$0) {
-                    this.$timedElement_j30cnn$ = tmp$0;
-                  }
-                },
                 relativityStrategy: {
                   get: function () {
                     return this.$relativityStrategy_lzxf4$;
@@ -7670,6 +7741,10 @@ define(
                   set: function (tmp$0) {
                     this.$relativityStrategy_lzxf4$ = tmp$0;
                   }
+                },
+                setPrevious: function (p) {
+                  var tmp$0;
+                  ((tmp$0 = this.datastore) != null ? tmp$0 : Kotlin.throwNPE()).put(_.org.kevoree.modeling.api.time.TimeSegment.object.ORIGIN.name(), this.relativeTime.toString(), p.toString());
                 },
                 persist: function (elem) {
                   if (this.datastore != null) {
@@ -7680,19 +7755,82 @@ define(
                     if (currentNow == null) {
                       currentNow = this.relativeTime;
                     }
-                    var tmp$0, tmp$1, tmp$2, tmp$3, tmp$4;
+                    var tmp$0, tmp$1, tmp$3, tmp$4, tmp$5;
                     var currentPath = (tmp$0 = elem.path()) != null ? tmp$0 : Kotlin.throwNPE();
                     ((tmp$1 = this.datastore) != null ? tmp$1 : Kotlin.throwNPE()).put(_.org.kevoree.modeling.api.time.TimeSegment.object.RAW.name(), Kotlin.toString(currentNow) + '/' + currentPath, traceSeq.exportToString());
-                    ((tmp$2 = this.datastore) != null ? tmp$2 : Kotlin.throwNPE()).put(_.org.kevoree.modeling.api.time.TimeSegment.object.LATEST.name(), currentPath, Kotlin.toString(currentNow));
-                    var previousType = ((tmp$3 = this.datastore) != null ? tmp$3 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.TYPE.name(), (tmp$4 = elem.path()) != null ? tmp$4 : Kotlin.throwNPE());
-                    if (previousType == null) {
-                      var tmp$5, tmp$6;
-                      ((tmp$5 = this.datastore) != null ? tmp$5 : Kotlin.throwNPE()).put(_.org.kevoree.modeling.api.time.TimeSegment.object.TYPE.name(), (tmp$6 = elem.path()) != null ? tmp$6 : Kotlin.throwNPE(), elem.metaClassName());
+                    if (Kotlin.isType(elem, _.org.kevoree.modeling.api.time.TimeAwareKMFContainer)) {
+                      if (elem.previousTimePoint != null) {
+                        var tmp$2;
+                        ((tmp$2 = this.datastore) != null ? tmp$2 : Kotlin.throwNPE()).put(_.org.kevoree.modeling.api.time.TimeSegment.object.ORIGIN.name(), Kotlin.toString(currentNow) + '/' + currentPath, Kotlin.toString(elem.previousTimePoint));
+                      }
                     }
-                    if (Kotlin.isType(elem, _.org.kevoree.modeling.api.persistence.KMFContainerProxy)) {
-                      elem.originFactory = this;
+                    var currentLatestString = ((tmp$3 = this.datastore) != null ? tmp$3 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.LATEST.name(), currentPath);
+                    var currentLatest = null;
+                    if (currentLatestString != null) {
+                      currentLatest = _.org.kevoree.modeling.api.time.TimePoint.object.create(currentLatestString != null ? currentLatestString : Kotlin.throwNPE());
+                    }
+                    var previousType = ((tmp$4 = this.datastore) != null ? tmp$4 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.TYPE.name(), (tmp$5 = elem.path()) != null ? tmp$5 : Kotlin.throwNPE());
+                    if (previousType == null) {
+                      var tmp$6, tmp$7;
+                      ((tmp$6 = this.datastore) != null ? tmp$6 : Kotlin.throwNPE()).put(_.org.kevoree.modeling.api.time.TimeSegment.object.TYPE.name(), (tmp$7 = elem.path()) != null ? tmp$7 : Kotlin.throwNPE(), elem.metaClassName());
+                    }
+                     else {
+                      if (!Kotlin.equals(previousType, elem.metaClassName())) {
+                        throw new Error('Unconsitant typing : previous was : ' + previousType + ' , can persist ' + elem.metaClassName());
+                      }
+                    }
+                    if (currentLatest == null || (currentLatest != null ? currentLatest : Kotlin.throwNPE()).compareTo(currentNow != null ? currentNow : Kotlin.throwNPE()) < 0) {
+                      var tmp$8;
+                      ((tmp$8 = this.datastore) != null ? tmp$8 : Kotlin.throwNPE()).put(_.org.kevoree.modeling.api.time.TimeSegment.object.LATEST.name(), currentPath, Kotlin.toString(currentNow));
+                      if (currentLatest != null) {
+                        var tmp$9, tmp$10;
+                        ((tmp$9 = this.datastore) != null ? tmp$9 : Kotlin.throwNPE()).put(_.org.kevoree.modeling.api.time.TimeSegment.object.PREVIOUS.name(), Kotlin.toString(currentNow) + '/' + currentPath, Kotlin.toString(currentLatest));
+                        ((tmp$10 = this.datastore) != null ? tmp$10 : Kotlin.throwNPE()).put(_.org.kevoree.modeling.api.time.TimeSegment.object.NEXT.name(), Kotlin.toString(currentLatest) + '/' + currentPath, Kotlin.toString(currentNow));
+                      }
+                    }
+                     else {
+                      var tmp$11;
+                      var previousGlobal = ((tmp$11 = this.datastore) != null ? tmp$11 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.ORIGIN.name(), Kotlin.toString(currentNow));
+                      if (previousGlobal == null) {
+                        var immediatePreviousVersion = this.lookupImmediatePreviousVersionOf(currentNow != null ? currentNow : Kotlin.throwNPE(), currentPath);
+                        var immediatePreviousVersionString = Kotlin.toString(immediatePreviousVersion);
+                        var tmp$12, tmp$15, tmp$16;
+                        var previousPrevious = ((tmp$12 = this.datastore) != null ? tmp$12 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.PREVIOUS.name(), immediatePreviousVersionString + '/' + currentPath);
+                        if (previousPrevious != null) {
+                          var tmp$13, tmp$14;
+                          ((tmp$13 = this.datastore) != null ? tmp$13 : Kotlin.throwNPE()).put(_.org.kevoree.modeling.api.time.TimeSegment.object.PREVIOUS.name(), Kotlin.toString(currentNow) + '/' + currentPath, Kotlin.toString(previousPrevious));
+                          ((tmp$14 = this.datastore) != null ? tmp$14 : Kotlin.throwNPE()).put(_.org.kevoree.modeling.api.time.TimeSegment.object.NEXT.name(), Kotlin.toString(previousPrevious) + '/' + currentPath, Kotlin.toString(currentNow));
+                        }
+                        ((tmp$15 = this.datastore) != null ? tmp$15 : Kotlin.throwNPE()).put(_.org.kevoree.modeling.api.time.TimeSegment.object.PREVIOUS.name(), immediatePreviousVersionString + '/' + currentPath, Kotlin.toString(currentNow));
+                        ((tmp$16 = this.datastore) != null ? tmp$16 : Kotlin.throwNPE()).put(_.org.kevoree.modeling.api.time.TimeSegment.object.NEXT.name(), Kotlin.toString(currentNow) + '/' + currentPath, immediatePreviousVersionString.toString());
+                      }
                     }
                   }
+                },
+                lookupImmediatePreviousVersionOf: function (currentNow, path) {
+                  var tmp$0, tmp$1;
+                  var currentLatest = ((tmp$0 = this.datastore) != null ? tmp$0 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.LATEST.name(), path);
+                  var result = null;
+                  if (currentLatest != null) {
+                    result = _.org.kevoree.modeling.api.time.TimePoint.object.create(currentLatest != null ? currentLatest : Kotlin.throwNPE());
+                  }
+                  var currentLatestPreviousString = ((tmp$1 = this.datastore) != null ? tmp$1 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.PREVIOUS.name(), Kotlin.toString(currentLatest) + '/' + path);
+                  if (currentLatestPreviousString == null) {
+                    var tmp$2;
+                    currentLatestPreviousString = ((tmp$2 = this.datastore) != null ? tmp$2 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.ORIGIN.name(), Kotlin.toString(currentLatest));
+                  }
+                  while (currentLatestPreviousString != null && _.org.kevoree.modeling.api.time.TimePoint.object.create(currentLatestPreviousString != null ? currentLatestPreviousString : Kotlin.throwNPE()).compareTo(currentNow) > 0) {
+                    result = _.org.kevoree.modeling.api.time.TimePoint.object.create(currentLatestPreviousString != null ? currentLatestPreviousString : Kotlin.throwNPE());
+                    var tmp$3;
+                    currentLatestPreviousString = ((tmp$3 = this.datastore) != null ? tmp$3 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.PREVIOUS.name(), Kotlin.toString(currentLatestPreviousString) + '/' + path);
+                    if (currentLatestPreviousString == null) {
+                      var tmp$4;
+                      currentLatestPreviousString = ((tmp$4 = this.datastore) != null ? tmp$4 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.ORIGIN.name(), Kotlin.toString(currentLatestPreviousString));
+                    }
+                  }
+                  return result;
+                },
+                removeVersion: function (t) {
                 },
                 remove: function (elem) {
                   if (this.datastore != null) {
@@ -7702,19 +7840,13 @@ define(
                     ((tmp$4 = this.datastore) != null ? tmp$4 : Kotlin.throwNPE()).remove(_.org.kevoree.modeling.api.time.TimeSegment.object.LATEST.name(), (tmp$5 = elem.path()) != null ? tmp$5 : Kotlin.throwNPE());
                   }
                 },
-                resolvedTimeFromParams: function (path) {
-                  {
-                    var tmp$0 = _.kotlin.iterator(this.timedElement);
-                    while (tmp$0.hasNext()) {
-                      var staticPathV = tmp$0.next();
-                      if (Kotlin.equals(_.kotlin.get_key(staticPathV), path)) {
-                        return _.kotlin.get_value(staticPathV);
-                      }
-                    }
-                  }
-                  return null;
+                lookupFromTime: function (path, time) {
+                  return this.internal_lookupFrom(path, null, time);
                 },
                 lookupFrom: function (path, origin) {
+                  return this.internal_lookupFrom(path, origin, null);
+                },
+                internal_lookupFrom: function (path, origin, time) {
                   var path2 = path;
                   if (Kotlin.equals(path2, '/')) {
                     path2 = '';
@@ -7723,45 +7855,44 @@ define(
                     path2 = path2.substring(1);
                   }
                   var currentTime = origin != null ? origin.now : null;
-                  var tmp$0 = this.relativityStrategy;
-                  if (tmp$0 === _.org.kevoree.modeling.api.time.RelativeTimeStrategy.object.BEGINNING_OF_TIME_FIRST) {
-                    currentTime = this.relativeTime;
-                    var resolved = this.resolvedTimeFromParams(path2);
-                    if (resolved != null) {
-                      currentTime = resolved;
-                    }
+                  if (time != null) {
+                    currentTime = time;
                   }
-                   else if (tmp$0 === _.org.kevoree.modeling.api.time.RelativeTimeStrategy.object.LATEST_FIRST) {
+                  var tmp$0 = this.relativityStrategy;
+                  if (tmp$0 === _.org.kevoree.modeling.api.time.RelativeTimeStrategy.object.ABSOLUTE) {
+                    currentTime = this.relativeTime;
+                  }
+                   else if (tmp$0 === _.org.kevoree.modeling.api.time.RelativeTimeStrategy.object.LATEST) {
                     var tmp$1, tmp$2;
                     currentTime = _.org.kevoree.modeling.api.time.TimePoint.object.create((tmp$2 = ((tmp$1 = this.datastore) != null ? tmp$1 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.LATEST.name(), path2)) != null ? tmp$2 : Kotlin.throwNPE());
-                    var resolved_0 = this.resolvedTimeFromParams(path2);
-                    if (resolved_0 != null) {
-                      currentTime = resolved_0;
-                    }
                   }
-                   else if (tmp$0 === _.org.kevoree.modeling.api.time.RelativeTimeStrategy.object.RELATIVE_FIRST) {
+                   else if (tmp$0 === _.org.kevoree.modeling.api.time.RelativeTimeStrategy.object.RELATIVE) {
                     if (currentTime == null) {
                       currentTime = this.relativeTime;
+                    }
+                    var tmp$3;
+                    var existingVersion = ((tmp$3 = this.datastore) != null ? tmp$3 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.RAW.name(), Kotlin.toString(currentTime) + '/' + path);
+                    if (existingVersion == null) {
+                      currentTime = this.lookupImmediatePreviousVersionOf(currentTime != null ? currentTime : Kotlin.throwNPE(), path);
                     }
                   }
                    else {
                   }
                   if (currentTime == null) {
-                    var tmp$3, tmp$4;
-                    currentTime = _.org.kevoree.modeling.api.time.TimePoint.object.create((tmp$4 = ((tmp$3 = this.datastore) != null ? tmp$3 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.LATEST.name(), path2)) != null ? tmp$4 : Kotlin.throwNPE());
+                    var tmp$4, tmp$5;
+                    currentTime = _.org.kevoree.modeling.api.time.TimePoint.object.create((tmp$5 = ((tmp$4 = this.datastore) != null ? tmp$4 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.LATEST.name(), path2)) != null ? tmp$5 : Kotlin.throwNPE());
                   }
                   var composedKey = (currentTime != null ? currentTime : Kotlin.throwNPE()).toString() + path2;
                   if (this.elem_cache.containsKey(composedKey)) {
                     return this.elem_cache.get(composedKey);
                   }
                   if (this.datastore != null) {
-                    var tmp$5;
-                    var typeName = ((tmp$5 = this.datastore) != null ? tmp$5 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.TYPE.name(), path2);
+                    var tmp$6;
+                    var typeName = ((tmp$6 = this.datastore) != null ? tmp$6 : Kotlin.throwNPE()).get(_.org.kevoree.modeling.api.time.TimeSegment.object.TYPE.name(), path2);
                     if (typeName != null) {
-                      var tmp$6;
-                      var elem = (tmp$6 = this.create(typeName)) != null ? tmp$6 : Kotlin.throwNPE();
+                      var tmp$7;
+                      var elem = (tmp$7 = this.create(typeName)) != null ? tmp$7 : Kotlin.throwNPE();
                       this.elem_cache.put(composedKey, elem);
-                      elem.originFactory = this;
                       elem.isResolved = false;
                       elem.now = currentTime != null ? currentTime : Kotlin.throwNPE();
                       elem.setOriginPath(path2);
@@ -7775,26 +7906,82 @@ define(
                 },
                 getTraces: function (origin) {
                   var currentNow = (origin != null ? origin : Kotlin.throwNPE()).now;
-                  var tmp$0, tmp$1;
+                  var tmp$0, tmp$1, tmp$3;
                   var currentPath = (tmp$0 = origin.path()) != null ? tmp$0 : Kotlin.throwNPE();
-                  var composedKey = Kotlin.toString(currentNow) + '/' + currentPath;
                   var sequence = this.compare.createSequence();
-                  var traces = (tmp$1 = this.datastore) != null ? tmp$1.get(_.org.kevoree.modeling.api.time.TimeSegment.object.RAW.name(), composedKey) : null;
+                  var traces = (tmp$1 = this.datastore) != null ? tmp$1.get(_.org.kevoree.modeling.api.time.TimeSegment.object.RAW.name(), Kotlin.toString(currentNow) + '/' + currentPath) : null;
                   if (traces != null) {
-                    sequence.populateFromString(traces);
+                    sequence.populateFromString(traces != null ? traces : Kotlin.throwNPE());
                     return sequence;
                   }
-                  return null;
+                  var previousTimePoint = (origin != null ? origin : Kotlin.throwNPE()).previousTimePoint;
+                  if (previousTimePoint != null) {
+                    var tmp$2;
+                    traces = (tmp$2 = this.datastore) != null ? tmp$2.get(_.org.kevoree.modeling.api.time.TimeSegment.object.RAW.name(), Kotlin.toString(previousTimePoint) + '/' + currentPath) : null;
+                    if (traces != null) {
+                      sequence.populateFromString(traces != null ? traces : Kotlin.throwNPE());
+                      return sequence;
+                    }
+                  }
+                  var resolved = this.resolvePreviousGetTrace(origin, this.relativeTime.toString(), sequence);
+                  if (resolved) {
+                    return sequence;
+                  }
+                  previousTimePoint = this.lookupImmediatePreviousVersionOf(currentNow != null ? currentNow : Kotlin.throwNPE(), currentPath);
+                  traces = (tmp$3 = this.datastore) != null ? tmp$3.get(_.org.kevoree.modeling.api.time.TimeSegment.object.RAW.name(), Kotlin.toString(previousTimePoint) + '/' + currentPath) : null;
+                  if (traces != null) {
+                    sequence.populateFromString(traces != null ? traces : Kotlin.throwNPE());
+                    return sequence;
+                  }
+                  return sequence;
+                },
+                resolvePreviousGetTrace: function (origin, current, sequence) {
+                  var tmp$0, tmp$1, tmp$2;
+                  var previous = (tmp$0 = this.datastore) != null ? tmp$0.get(_.org.kevoree.modeling.api.time.TimeSegment.object.ORIGIN.name(), current.toString()) : null;
+                  if (previous == null) {
+                    return false;
+                  }
+                  var currentPath = (tmp$1 = origin.path()) != null ? tmp$1 : Kotlin.throwNPE();
+                  var composedKey = Kotlin.toString(previous) + '/' + currentPath;
+                  var traces = (tmp$2 = this.datastore) != null ? tmp$2.get(_.org.kevoree.modeling.api.time.TimeSegment.object.RAW.name(), composedKey) : null;
+                  if (traces != null) {
+                    sequence.populateFromString(traces != null ? traces : Kotlin.throwNPE());
+                    return true;
+                  }
+                   else {
+                    return this.resolvePreviousGetTrace(origin, previous != null ? previous : Kotlin.throwNPE(), sequence);
+                  }
                 }
               }),
               TimeAwareKMFContainer: Kotlin.createTrait(function () {
                 return [_.org.kevoree.modeling.api.persistence.KMFContainerProxy];
               }, /** @lends _.org.kevoree.modeling.api.time.TimeAwareKMFContainer.prototype */ {
-                shift: function (timePoint) {
-                  this.now = timePoint;
+                previousTimePoint: {
+                  get: function () {
+                    return this.$previousTimePoint_y8xt5x$;
+                  },
+                  set: function (tmp$0) {
+                    this.$previousTimePoint_y8xt5x$ = tmp$0;
+                  }
                 },
-                deepShift: function (timePoint) {
-                  throw new Error('WTF exception!!!');
+                shiftOffset: function (offset) {
+                  if (this.now != null) {
+                    var tmp$0;
+                    return this.shift(((tmp$0 = this.now) != null ? tmp$0 : Kotlin.throwNPE()).shift(offset));
+                  }
+                  return null;
+                },
+                shift: function (timePoint) {
+                  if (this.originFactory != null) {
+                    var tmp$0, tmp$1, tmp$2;
+                    var newObject = (tmp$1 = ((tmp$0 = this.originFactory) != null ? tmp$0 : Kotlin.throwNPE()).create(this.metaClassName())) != null ? tmp$1 : Kotlin.throwNPE();
+                    newObject.isResolved = false;
+                    newObject.setOriginPath((tmp$2 = this.path()) != null ? tmp$2 : Kotlin.throwNPE());
+                    newObject.now = timePoint;
+                    newObject.previousTimePoint = this.now;
+                    return newObject;
+                  }
+                  return null;
                 },
                 now: {
                   get: function () {
@@ -7805,10 +7992,20 @@ define(
                   }
                 },
                 previous: function () {
-                  return this;
+                  var tmp$0, tmp$1, tmp$2;
+                  var previousTimePoint = ((tmp$0 = this.originFactory) != null ? tmp$0 : Kotlin.throwNPE()).previous((tmp$1 = this.now) != null ? tmp$1 : Kotlin.throwNPE(), (tmp$2 = this.path()) != null ? tmp$2 : Kotlin.throwNPE());
+                  if (previousTimePoint != null) {
+                    return this.shift(previousTimePoint);
+                  }
+                  return null;
                 },
                 next: function () {
-                  return this;
+                  var tmp$0, tmp$1, tmp$2;
+                  var nextTimePoint = ((tmp$0 = this.originFactory) != null ? tmp$0 : Kotlin.throwNPE()).next((tmp$1 = this.now) != null ? tmp$1 : Kotlin.throwNPE(), (tmp$2 = this.path()) != null ? tmp$2 : Kotlin.throwNPE());
+                  if (nextTimePoint != null) {
+                    return this.shift(nextTimePoint);
+                  }
+                  return null;
                 }
               }),
               TimeSegment: Kotlin.createClass(function () {
@@ -7820,7 +8017,10 @@ define(
                   return Kotlin.createEnumEntries({
                     LATEST: new _.org.kevoree.modeling.api.time.TimeSegment(),
                     RAW: new _.org.kevoree.modeling.api.time.TimeSegment(),
-                    TYPE: new _.org.kevoree.modeling.api.time.TimeSegment()
+                    TYPE: new _.org.kevoree.modeling.api.time.TimeSegment(),
+                    PREVIOUS: new _.org.kevoree.modeling.api.time.TimeSegment(),
+                    NEXT: new _.org.kevoree.modeling.api.time.TimeSegment(),
+                    ORIGIN: new _.org.kevoree.modeling.api.time.TimeSegment()
                   });
                 }
               }),
@@ -7878,6 +8078,7 @@ define(
                   origin.visit(visitor, true, true, false);
                   var visitor2 = _.org.kevoree.modeling.api.compare.ModelCompare.f1(objectsMap, inter, traces, merge, tracesRef);
                   target.visit(visitor2, true, true, false);
+                  traces.addAll(tracesRef);
                   if (!inter) {
                     if (!merge) {
                       {
@@ -7906,7 +8107,6 @@ define(
                       }
                     }
                   }
-                  traces.addAll(tracesRef);
                   return traces;
                 }
               }, /** @lends _.org.kevoree.modeling.api.compare.ModelCompare */ {
@@ -9164,43 +9364,43 @@ define(
                   var result = new Kotlin.ArrayList();
                   var tmp$0 = event.getType();
                   if (tmp$0 === _.org.kevoree.modeling.api.util.ActionType.object.REMOVE) {
-                    var tmp$1, tmp$2, tmp$3;
-                    result.add(new _.org.kevoree.modeling.api.trace.ModelRemoveTrace((tmp$1 = event.getSourcePath()) != null ? tmp$1 : Kotlin.throwNPE(), event.getElementAttributeName(), (tmp$3 = ((tmp$2 = event.getValue()) != null ? tmp$2 : Kotlin.throwNPE()).path()) != null ? tmp$3 : Kotlin.throwNPE()));
+                    var tmp$1;
+                    result.add(new _.org.kevoree.modeling.api.trace.ModelRemoveTrace((tmp$1 = event.getSourcePath()) != null ? tmp$1 : Kotlin.throwNPE(), event.getElementAttributeName(), Kotlin.toString(event.getPreviousValue())));
                   }
                    else if (tmp$0 === _.org.kevoree.modeling.api.util.ActionType.object.REMOVE_ALL) {
-                    var tmp$4;
-                    result.add(new _.org.kevoree.modeling.api.trace.ModelRemoveAllTrace((tmp$4 = event.getSourcePath()) != null ? tmp$4 : Kotlin.throwNPE(), event.getElementAttributeName()));
+                    var tmp$2;
+                    result.add(new _.org.kevoree.modeling.api.trace.ModelRemoveAllTrace((tmp$2 = event.getSourcePath()) != null ? tmp$2 : Kotlin.throwNPE(), event.getElementAttributeName()));
                   }
                    else if (tmp$0 === _.org.kevoree.modeling.api.util.ActionType.object.ADD) {
-                    var tmp$5, tmp$6;
-                    var casted = (tmp$5 = event.getValue()) != null ? tmp$5 : Kotlin.throwNPE();
+                    var tmp$3, tmp$4;
+                    var casted = (tmp$3 = event.getValue()) != null ? tmp$3 : Kotlin.throwNPE();
                     var traces = this.compare.inter(casted, casted);
-                    result.add(new _.org.kevoree.modeling.api.trace.ModelAddTrace((tmp$6 = event.getSourcePath()) != null ? tmp$6 : Kotlin.throwNPE(), event.getElementAttributeName(), casted.path(), casted.metaClassName()));
+                    result.add(new _.org.kevoree.modeling.api.trace.ModelAddTrace((tmp$4 = event.getSourcePath()) != null ? tmp$4 : Kotlin.throwNPE(), event.getElementAttributeName(), casted.path(), casted.metaClassName()));
                     result.addAll(traces.traces);
                   }
                    else if (tmp$0 === _.org.kevoree.modeling.api.util.ActionType.object.ADD_ALL) {
-                    var tmp$7;
-                    var casted_0 = (tmp$7 = event.getValue()) != null ? tmp$7 : Kotlin.throwNPE();
+                    var tmp$5;
+                    var casted_0 = (tmp$5 = event.getValue()) != null ? tmp$5 : Kotlin.throwNPE();
                     {
-                      var tmp$8 = (casted_0 != null ? casted_0 : Kotlin.throwNPE()).iterator();
-                      while (tmp$8.hasNext()) {
-                        var elem = tmp$8.next();
+                      var tmp$6 = (casted_0 != null ? casted_0 : Kotlin.throwNPE()).iterator();
+                      while (tmp$6.hasNext()) {
+                        var elem = tmp$6.next();
                         var elemCasted = elem != null ? elem : Kotlin.throwNPE();
                         var traces_0 = this.compare.inter(elemCasted, elemCasted);
-                        var tmp$9;
-                        result.add(new _.org.kevoree.modeling.api.trace.ModelAddTrace((tmp$9 = event.getSourcePath()) != null ? tmp$9 : Kotlin.throwNPE(), event.getElementAttributeName(), elemCasted.path(), elemCasted.metaClassName()));
+                        var tmp$7;
+                        result.add(new _.org.kevoree.modeling.api.trace.ModelAddTrace((tmp$7 = event.getSourcePath()) != null ? tmp$7 : Kotlin.throwNPE(), event.getElementAttributeName(), elemCasted.path(), elemCasted.metaClassName()));
                         result.addAll(traces_0.traces);
                       }
                     }
                   }
                    else if (tmp$0 === _.org.kevoree.modeling.api.util.ActionType.object.SET) {
                     if (Kotlin.equals(event.getElementAttributeType(), _.org.kevoree.modeling.api.util.ElementAttributeType.object.ATTRIBUTE)) {
-                      var tmp$10;
-                      result.add(new _.org.kevoree.modeling.api.trace.ModelSetTrace((tmp$10 = event.getSourcePath()) != null ? tmp$10 : Kotlin.throwNPE(), event.getElementAttributeName(), null, _.org.kevoree.modeling.api.util.AttConverter.convFlatAtt(event.getValue()), null));
+                      var tmp$8;
+                      result.add(new _.org.kevoree.modeling.api.trace.ModelSetTrace((tmp$8 = event.getSourcePath()) != null ? tmp$8 : Kotlin.throwNPE(), event.getElementAttributeName(), null, _.org.kevoree.modeling.api.util.AttConverter.convFlatAtt(event.getValue()), null));
                     }
                      else {
-                      var tmp$11, tmp$12;
-                      result.add(new _.org.kevoree.modeling.api.trace.ModelSetTrace((tmp$11 = event.getSourcePath()) != null ? tmp$11 : Kotlin.throwNPE(), event.getElementAttributeName(), (tmp$12 = event.getValue()) != null ? tmp$12.path() : null, null, null));
+                      var tmp$9, tmp$10;
+                      result.add(new _.org.kevoree.modeling.api.trace.ModelSetTrace((tmp$9 = event.getSourcePath()) != null ? tmp$9 : Kotlin.throwNPE(), event.getElementAttributeName(), (tmp$10 = event.getValue()) != null ? tmp$10.path() : null, null, null));
                     }
                   }
                    else if (tmp$0 === _.org.kevoree.modeling.api.util.ActionType.object.RENEW_INDEX) {
@@ -9389,8 +9589,13 @@ define(
                   return true;
                 },
                 reverse: function () {
-                  var tmp$0;
-                  this.traces = (tmp$0 = _.kotlin.reverse(this.traces)) != null ? tmp$0 : Kotlin.throwNPE();
+                  var reversed = new Kotlin.ArrayList();
+                  var i = _.kotlin.get_size(this.traces);
+                  while (i > 0) {
+                    i = i - 1;
+                    reversed.add(this.traces.get(i));
+                  }
+                  this.traces = reversed;
                 }
               })
             }),
@@ -10061,8 +10266,7 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1;
-              (tmp$1 = this._subTypes) != null ? tmp$1.clear() : null;
+              this.removeAllSubTypes();
             },
             name: {
               get: function () {
@@ -10194,9 +10398,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._subTypes.size() !== 0 && this._subTypes.containsKey((subTypesP != null ? subTypesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = subTypesP.path();
                 this._subTypes.remove((subTypesP != null ? subTypesP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_subTypes, subTypesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_subTypes, subTypesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -10405,10 +10610,9 @@ define(
               }
               this.typeDefinition = null;
               this.dictionary = null;
-              var tmp$1, tmp$2, tmp$3;
-              (tmp$1 = this._fragmentDictionary) != null ? tmp$1.clear() : null;
-              (tmp$2 = this._provided) != null ? tmp$2.clear() : null;
-              (tmp$3 = this._required) != null ? tmp$3.clear() : null;
+              this.removeAllFragmentDictionary();
+              this.removeAllProvided();
+              this.removeAllRequired();
               this.namespace = null;
             },
             name: {
@@ -10589,10 +10793,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._fragmentDictionary.size() !== 0 && this._fragmentDictionary.containsKey((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = fragmentDictionaryP.path();
                 this._fragmentDictionary.remove((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()).internalGetKey());
                 ((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()) != null ? fragmentDictionaryP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllFragmentDictionaryCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_fragmentDictionary, fragmentDictionaryP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_fragmentDictionary, fragmentDictionaryP, previousPathToBeRemoved));
                 }
               }
             },
@@ -10708,10 +10913,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._provided.size() !== 0 && this._provided.containsKey((providedP != null ? providedP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = providedP.path();
                 this._provided.remove((providedP != null ? providedP : Kotlin.throwNPE()).internalGetKey());
                 ((providedP != null ? providedP : Kotlin.throwNPE()) != null ? providedP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllProvidedCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_provided, providedP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_provided, providedP, previousPathToBeRemoved));
                 }
               }
             },
@@ -10874,10 +11080,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._required.size() !== 0 && this._required.containsKey((requiredP != null ? requiredP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = requiredP.path();
                 this._required.remove((requiredP != null ? requiredP : Kotlin.throwNPE()).internalGetKey());
                 ((requiredP != null ? requiredP : Kotlin.throwNPE()) != null ? requiredP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllRequiredCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_required, requiredP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_required, requiredP, previousPathToBeRemoved));
                 }
               }
             },
@@ -11487,8 +11694,7 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1;
-              (tmp$1 = this._bindings) != null ? tmp$1.clear() : null;
+              this.removeAllBindings();
               this.portTypeRef = null;
             },
             generated_KMF_ID: {
@@ -11626,9 +11832,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._bindings.size() !== 0 && this._bindings.containsKey((bindingsP != null ? bindingsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = bindingsP.path();
                 this._bindings.remove((bindingsP != null ? bindingsP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_bindings, bindingsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_bindings, bindingsP, previousPathToBeRemoved));
                 }
                 if (setOpposite) {
                   (bindingsP != null ? bindingsP : Kotlin.throwNPE()).reflexiveMutator(_.org.kevoree.modeling.api.util.ActionType.object.SET, _.org.kevoree.util.Constants.Ref_port, null, false, fireEvents);
@@ -11891,8 +12098,7 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1;
-              (tmp$1 = this._genericTypes) != null ? tmp$1.clear() : null;
+              this.removeAllGenericTypes();
             },
             name: {
               get: function () {
@@ -12024,9 +12230,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._genericTypes.size() !== 0 && this._genericTypes.containsKey((genericTypesP != null ? genericTypesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = genericTypesP.path();
                 this._genericTypes.remove((genericTypesP != null ? genericTypesP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_genericTypes, genericTypesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_genericTypes, genericTypesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -12224,8 +12431,7 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1;
-              (tmp$1 = this._values) != null ? tmp$1.clear() : null;
+              this.removeAllValues();
             },
             name: {
               get: function () {
@@ -12359,10 +12565,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._values.size() !== 0 && this._values.containsKey((valuesP != null ? valuesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = valuesP.path();
                 this._values.remove((valuesP != null ? valuesP : Kotlin.throwNPE()).internalGetKey());
                 ((valuesP != null ? valuesP : Kotlin.throwNPE()) != null ? valuesP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllValuesCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_values, valuesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_values, valuesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -12577,13 +12784,12 @@ define(
               }
               this.typeDefinition = null;
               this.dictionary = null;
-              var tmp$1, tmp$2, tmp$3, tmp$4, tmp$5;
-              (tmp$1 = this._fragmentDictionary) != null ? tmp$1.clear() : null;
-              (tmp$2 = this._components) != null ? tmp$2.clear() : null;
-              (tmp$3 = this._hosts) != null ? tmp$3.clear() : null;
+              this.removeAllFragmentDictionary();
+              this.removeAllComponents();
+              this.removeAllHosts();
               this.host = null;
-              (tmp$4 = this._groups) != null ? tmp$4.clear() : null;
-              (tmp$5 = this._networkInformation) != null ? tmp$5.clear() : null;
+              this.removeAllGroups();
+              this.removeAllNetworkInformation();
             },
             name: {
               get: function () {
@@ -12792,10 +12998,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._fragmentDictionary.size() !== 0 && this._fragmentDictionary.containsKey((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = fragmentDictionaryP.path();
                 this._fragmentDictionary.remove((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()).internalGetKey());
                 ((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()) != null ? fragmentDictionaryP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllFragmentDictionaryCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_fragmentDictionary, fragmentDictionaryP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_fragmentDictionary, fragmentDictionaryP, previousPathToBeRemoved));
                 }
               }
             },
@@ -12914,9 +13121,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._hosts.size() !== 0 && this._hosts.containsKey((hostsP != null ? hostsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = hostsP.path();
                 this._hosts.remove((hostsP != null ? hostsP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_hosts, hostsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_hosts, hostsP, previousPathToBeRemoved));
                 }
                 if (setOpposite) {
                   (hostsP != null ? hostsP : Kotlin.throwNPE()).reflexiveMutator(_.org.kevoree.modeling.api.util.ActionType.object.SET, _.org.kevoree.util.Constants.Ref_host, null, false, fireEvents);
@@ -13060,10 +13268,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._components.size() !== 0 && this._components.containsKey((componentsP != null ? componentsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = componentsP.path();
                 this._components.remove((componentsP != null ? componentsP : Kotlin.throwNPE()).internalGetKey());
                 ((componentsP != null ? componentsP : Kotlin.throwNPE()) != null ? componentsP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllComponentsCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_components, componentsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_components, componentsP, previousPathToBeRemoved));
                 }
               }
             },
@@ -13206,10 +13415,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._networkInformation.size() !== 0 && this._networkInformation.containsKey((networkInformationP != null ? networkInformationP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = networkInformationP.path();
                 this._networkInformation.remove((networkInformationP != null ? networkInformationP : Kotlin.throwNPE()).internalGetKey());
                 ((networkInformationP != null ? networkInformationP : Kotlin.throwNPE()) != null ? networkInformationP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllNetworkInformationCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_networkInformation, networkInformationP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_networkInformation, networkInformationP, previousPathToBeRemoved));
                 }
               }
             },
@@ -13328,9 +13538,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._groups.size() !== 0 && this._groups.containsKey((groupsP != null ? groupsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = groupsP.path();
                 this._groups.remove((groupsP != null ? groupsP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_groups, groupsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_groups, groupsP, previousPathToBeRemoved));
                 }
                 if (setOpposite) {
                   (groupsP != null ? groupsP : Kotlin.throwNPE()).reflexiveMutator(_.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.util.Constants.Ref_subNodes, this, false, fireEvents);
@@ -13864,8 +14075,7 @@ define(
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
               this.ref = null;
-              var tmp$1;
-              (tmp$1 = this._mappings) != null ? tmp$1.clear() : null;
+              this.removeAllMappings();
             },
             name: {
               get: function () {
@@ -14065,10 +14275,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._mappings.size() !== 0 && this._mappings.containsKey((mappingsP != null ? mappingsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = mappingsP.path();
                 this._mappings.remove((mappingsP != null ? mappingsP : Kotlin.throwNPE()).internalGetKey());
                 ((mappingsP != null ? mappingsP : Kotlin.throwNPE()) != null ? mappingsP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllMappingsCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_mappings, mappingsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_mappings, mappingsP, previousPathToBeRemoved));
                 }
               }
             },
@@ -14330,8 +14541,7 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1;
-              (tmp$1 = this._requiredLibs) != null ? tmp$1.clear() : null;
+              this.removeAllRequiredLibs();
             },
             name: {
               get: function () {
@@ -14614,9 +14824,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._requiredLibs.size() !== 0 && this._requiredLibs.containsKey((requiredLibsP != null ? requiredLibsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = requiredLibsP.path();
                 this._requiredLibs.remove((requiredLibsP != null ? requiredLibsP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_requiredLibs, requiredLibsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_requiredLibs, requiredLibsP, previousPathToBeRemoved));
                 }
               }
             },
@@ -14865,8 +15076,7 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1;
-              (tmp$1 = this._values) != null ? tmp$1.clear() : null;
+              this.removeAllValues();
             },
             generated_KMF_ID: {
               get: function () {
@@ -15035,10 +15245,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._values.size() !== 0 && this._values.containsKey((valuesP != null ? valuesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = valuesP.path();
                 this._values.remove((valuesP != null ? valuesP : Kotlin.throwNPE()).internalGetKey());
                 ((valuesP != null ? valuesP : Kotlin.throwNPE()) != null ? valuesP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllValuesCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_values, valuesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_values, valuesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -15460,8 +15671,7 @@ define(
               }
               this.deployUnit = null;
               this.dictionaryType = null;
-              var tmp$1;
-              (tmp$1 = this._superTypes) != null ? tmp$1.clear() : null;
+              this.removeAllSuperTypes();
             },
             name: {
               get: function () {
@@ -15744,9 +15954,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._superTypes.size() !== 0 && this._superTypes.containsKey((superTypesP != null ? superTypesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = superTypesP.path();
                 this._superTypes.remove((superTypesP != null ? superTypesP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_superTypes, superTypesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_superTypes, superTypesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -16058,8 +16269,7 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1;
-              (tmp$1 = this._genericTypes) != null ? tmp$1.clear() : null;
+              this.removeAllGenericTypes();
             },
             name: {
               get: function () {
@@ -16306,9 +16516,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._genericTypes.size() !== 0 && this._genericTypes.containsKey((genericTypesP != null ? genericTypesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = genericTypesP.path();
                 this._genericTypes.remove((genericTypesP != null ? genericTypesP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_genericTypes, genericTypesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_genericTypes, genericTypesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -16562,8 +16773,7 @@ define(
               }
               this.typeDefinition = null;
               this.dictionary = null;
-              var tmp$1;
-              (tmp$1 = this._fragmentDictionary) != null ? tmp$1.clear() : null;
+              this.removeAllFragmentDictionary();
             },
             name: {
               get: function () {
@@ -16743,10 +16953,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._fragmentDictionary.size() !== 0 && this._fragmentDictionary.containsKey((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = fragmentDictionaryP.path();
                 this._fragmentDictionary.remove((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()).internalGetKey());
                 ((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()) != null ? fragmentDictionaryP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllFragmentDictionaryCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_fragmentDictionary, fragmentDictionaryP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_fragmentDictionary, fragmentDictionaryP, previousPathToBeRemoved));
                 }
               }
             },
@@ -17096,8 +17307,7 @@ define(
               }
               this.deployUnit = null;
               this.dictionaryType = null;
-              var tmp$1;
-              (tmp$1 = this._superTypes) != null ? tmp$1.clear() : null;
+              this.removeAllSuperTypes();
             },
             name: {
               get: function () {
@@ -17472,9 +17682,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._superTypes.size() !== 0 && this._superTypes.containsKey((superTypesP != null ? superTypesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = superTypesP.path();
                 this._superTypes.remove((superTypesP != null ? superTypesP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_superTypes, superTypesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_superTypes, superTypesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -17824,8 +18035,7 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1;
-              (tmp$1 = this._link) != null ? tmp$1.clear() : null;
+              this.removeAllLink();
               this.initBy = null;
               this.target = null;
             },
@@ -17981,10 +18191,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._link.size() !== 0 && this._link.containsKey((linkP != null ? linkP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = linkP.path();
                 this._link.remove((linkP != null ? linkP : Kotlin.throwNPE()).internalGetKey());
                 ((linkP != null ? linkP : Kotlin.throwNPE()) != null ? linkP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllLinkCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_link, linkP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_link, linkP, previousPathToBeRemoved));
                 }
               }
             },
@@ -18283,8 +18494,7 @@ define(
               }
               this.deployUnit = null;
               this.dictionaryType = null;
-              var tmp$1;
-              (tmp$1 = this._superTypes) != null ? tmp$1.clear() : null;
+              this.removeAllSuperTypes();
             },
             name: {
               get: function () {
@@ -18567,9 +18777,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._superTypes.size() !== 0 && this._superTypes.containsKey((superTypesP != null ? superTypesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = superTypesP.path();
                 this._superTypes.remove((superTypesP != null ? superTypesP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_superTypes, superTypesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_superTypes, superTypesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -19146,10 +19357,9 @@ define(
               }
               this.deployUnit = null;
               this.dictionaryType = null;
-              var tmp$1, tmp$2, tmp$3;
-              (tmp$1 = this._superTypes) != null ? tmp$1.clear() : null;
-              (tmp$2 = this._required) != null ? tmp$2.clear() : null;
-              (tmp$3 = this._provided) != null ? tmp$3.clear() : null;
+              this.removeAllSuperTypes();
+              this.removeAllRequired();
+              this.removeAllProvided();
             },
             name: {
               get: function () {
@@ -19414,10 +19624,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._provided.size() !== 0 && this._provided.containsKey((providedP != null ? providedP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = providedP.path();
                 this._provided.remove((providedP != null ? providedP : Kotlin.throwNPE()).internalGetKey());
                 ((providedP != null ? providedP : Kotlin.throwNPE()) != null ? providedP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllProvidedCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_provided, providedP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_provided, providedP, previousPathToBeRemoved));
                 }
               }
             },
@@ -19553,10 +19764,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._required.size() !== 0 && this._required.containsKey((requiredP != null ? requiredP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = requiredP.path();
                 this._required.remove((requiredP != null ? requiredP : Kotlin.throwNPE()).internalGetKey());
                 ((requiredP != null ? requiredP : Kotlin.throwNPE()) != null ? requiredP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllRequiredCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_required, requiredP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_required, requiredP, previousPathToBeRemoved));
                 }
               }
             },
@@ -19670,9 +19882,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._superTypes.size() !== 0 && this._superTypes.containsKey((superTypesP != null ? superTypesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = superTypesP.path();
                 this._superTypes.remove((superTypesP != null ? superTypesP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_superTypes, superTypesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_superTypes, superTypesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -20085,9 +20298,8 @@ define(
               }
               this.typeDefinition = null;
               this.dictionary = null;
-              var tmp$1, tmp$2;
-              (tmp$1 = this._fragmentDictionary) != null ? tmp$1.clear() : null;
-              (tmp$2 = this._subNodes) != null ? tmp$2.clear() : null;
+              this.removeAllFragmentDictionary();
+              this.removeAllSubNodes();
             },
             name: {
               get: function () {
@@ -20270,9 +20482,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._subNodes.size() !== 0 && this._subNodes.containsKey((subNodesP != null ? subNodesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = subNodesP.path();
                 this._subNodes.remove((subNodesP != null ? subNodesP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_subNodes, subNodesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_subNodes, subNodesP, previousPathToBeRemoved));
                 }
                 if (setOpposite) {
                   (subNodesP != null ? subNodesP : Kotlin.throwNPE()).reflexiveMutator(_.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.util.Constants.Ref_groups, this, false, fireEvents);
@@ -20396,10 +20609,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._fragmentDictionary.size() !== 0 && this._fragmentDictionary.containsKey((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = fragmentDictionaryP.path();
                 this._fragmentDictionary.remove((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()).internalGetKey());
                 ((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()) != null ? fragmentDictionaryP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllFragmentDictionaryCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_fragmentDictionary, fragmentDictionaryP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_fragmentDictionary, fragmentDictionaryP, previousPathToBeRemoved));
                 }
               }
             },
@@ -20791,8 +21005,7 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1;
-              (tmp$1 = this._networkProperties) != null ? tmp$1.clear() : null;
+              this.removeAllNetworkProperties();
             },
             networkType: {
               get: function () {
@@ -21018,10 +21231,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._networkProperties.size() !== 0 && this._networkProperties.containsKey((networkPropertiesP != null ? networkPropertiesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = networkPropertiesP.path();
                 this._networkProperties.remove((networkPropertiesP != null ? networkPropertiesP : Kotlin.throwNPE()).internalGetKey());
                 ((networkPropertiesP != null ? networkPropertiesP : Kotlin.throwNPE()) != null ? networkPropertiesP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllNetworkPropertiesCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_networkProperties, networkPropertiesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_networkProperties, networkPropertiesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -21281,17 +21495,16 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1, tmp$2, tmp$3, tmp$4, tmp$5, tmp$6, tmp$7, tmp$8, tmp$9, tmp$10;
-              (tmp$1 = this._nodes) != null ? tmp$1.clear() : null;
-              (tmp$2 = this._typeDefinitions) != null ? tmp$2.clear() : null;
-              (tmp$3 = this._repositories) != null ? tmp$3.clear() : null;
-              (tmp$4 = this._dataTypes) != null ? tmp$4.clear() : null;
-              (tmp$5 = this._libraries) != null ? tmp$5.clear() : null;
-              (tmp$6 = this._hubs) != null ? tmp$6.clear() : null;
-              (tmp$7 = this._mBindings) != null ? tmp$7.clear() : null;
-              (tmp$8 = this._deployUnits) != null ? tmp$8.clear() : null;
-              (tmp$9 = this._nodeNetworks) != null ? tmp$9.clear() : null;
-              (tmp$10 = this._groups) != null ? tmp$10.clear() : null;
+              this.removeAllNodes();
+              this.removeAllTypeDefinitions();
+              this.removeAllRepositories();
+              this.removeAllDataTypes();
+              this.removeAllLibraries();
+              this.removeAllHubs();
+              this.removeAllMBindings();
+              this.removeAllDeployUnits();
+              this.removeAllNodeNetworks();
+              this.removeAllGroups();
             },
             generated_KMF_ID: {
               get: function () {
@@ -21425,10 +21638,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._libraries.size() !== 0 && this._libraries.containsKey((librariesP != null ? librariesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = librariesP.path();
                 this._libraries.remove((librariesP != null ? librariesP : Kotlin.throwNPE()).internalGetKey());
                 ((librariesP != null ? librariesP : Kotlin.throwNPE()) != null ? librariesP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllLibrariesCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_libraries, librariesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_libraries, librariesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -21544,10 +21758,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._mBindings.size() !== 0 && this._mBindings.containsKey((mBindingsP != null ? mBindingsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = mBindingsP.path();
                 this._mBindings.remove((mBindingsP != null ? mBindingsP : Kotlin.throwNPE()).internalGetKey());
                 ((mBindingsP != null ? mBindingsP : Kotlin.throwNPE()) != null ? mBindingsP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllMBindingsCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_mBindings, mBindingsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_mBindings, mBindingsP, previousPathToBeRemoved));
                 }
               }
             },
@@ -21663,10 +21878,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._repositories.size() !== 0 && this._repositories.containsKey((repositoriesP != null ? repositoriesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = repositoriesP.path();
                 this._repositories.remove((repositoriesP != null ? repositoriesP : Kotlin.throwNPE()).internalGetKey());
                 ((repositoriesP != null ? repositoriesP : Kotlin.throwNPE()) != null ? repositoriesP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllRepositoriesCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_repositories, repositoriesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_repositories, repositoriesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -21782,10 +21998,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._nodeNetworks.size() !== 0 && this._nodeNetworks.containsKey((nodeNetworksP != null ? nodeNetworksP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = nodeNetworksP.path();
                 this._nodeNetworks.remove((nodeNetworksP != null ? nodeNetworksP : Kotlin.throwNPE()).internalGetKey());
                 ((nodeNetworksP != null ? nodeNetworksP : Kotlin.throwNPE()) != null ? nodeNetworksP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllNodeNetworksCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_nodeNetworks, nodeNetworksP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_nodeNetworks, nodeNetworksP, previousPathToBeRemoved));
                 }
               }
             },
@@ -21901,10 +22118,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._typeDefinitions.size() !== 0 && this._typeDefinitions.containsKey((typeDefinitionsP != null ? typeDefinitionsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = typeDefinitionsP.path();
                 this._typeDefinitions.remove((typeDefinitionsP != null ? typeDefinitionsP : Kotlin.throwNPE()).internalGetKey());
                 ((typeDefinitionsP != null ? typeDefinitionsP : Kotlin.throwNPE()) != null ? typeDefinitionsP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllTypeDefinitionsCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_typeDefinitions, typeDefinitionsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_typeDefinitions, typeDefinitionsP, previousPathToBeRemoved));
                 }
               }
             },
@@ -22020,10 +22238,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._nodes.size() !== 0 && this._nodes.containsKey((nodesP != null ? nodesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = nodesP.path();
                 this._nodes.remove((nodesP != null ? nodesP : Kotlin.throwNPE()).internalGetKey());
                 ((nodesP != null ? nodesP : Kotlin.throwNPE()) != null ? nodesP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllNodesCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_nodes, nodesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_nodes, nodesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -22139,10 +22358,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._dataTypes.size() !== 0 && this._dataTypes.containsKey((dataTypesP != null ? dataTypesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = dataTypesP.path();
                 this._dataTypes.remove((dataTypesP != null ? dataTypesP : Kotlin.throwNPE()).internalGetKey());
                 ((dataTypesP != null ? dataTypesP : Kotlin.throwNPE()) != null ? dataTypesP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllDataTypesCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_dataTypes, dataTypesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_dataTypes, dataTypesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -22258,10 +22478,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._deployUnits.size() !== 0 && this._deployUnits.containsKey((deployUnitsP != null ? deployUnitsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = deployUnitsP.path();
                 this._deployUnits.remove((deployUnitsP != null ? deployUnitsP : Kotlin.throwNPE()).internalGetKey());
                 ((deployUnitsP != null ? deployUnitsP : Kotlin.throwNPE()) != null ? deployUnitsP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllDeployUnitsCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_deployUnits, deployUnitsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_deployUnits, deployUnitsP, previousPathToBeRemoved));
                 }
               }
             },
@@ -22377,10 +22598,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._groups.size() !== 0 && this._groups.containsKey((groupsP != null ? groupsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = groupsP.path();
                 this._groups.remove((groupsP != null ? groupsP : Kotlin.throwNPE()).internalGetKey());
                 ((groupsP != null ? groupsP : Kotlin.throwNPE()) != null ? groupsP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllGroupsCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_groups, groupsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_groups, groupsP, previousPathToBeRemoved));
                 }
               }
             },
@@ -22496,10 +22718,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._hubs.size() !== 0 && this._hubs.containsKey((hubsP != null ? hubsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = hubsP.path();
                 this._hubs.remove((hubsP != null ? hubsP : Kotlin.throwNPE()).internalGetKey());
                 ((hubsP != null ? hubsP : Kotlin.throwNPE()) != null ? hubsP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllHubsCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_hubs, hubsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_hubs, hubsP, previousPathToBeRemoved));
                 }
               }
             },
@@ -23141,8 +23364,7 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1;
-              (tmp$1 = this._elements) != null ? tmp$1.clear() : null;
+              this.removeAllElements();
             },
             name: {
               get: function () {
@@ -23274,9 +23496,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._elements.size() !== 0 && this._elements.containsKey((elementsP != null ? elementsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = elementsP.path();
                 this._elements.remove((elementsP != null ? elementsP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_elements, elementsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_elements, elementsP, previousPathToBeRemoved));
                 }
               }
             },
@@ -23483,9 +23706,8 @@ define(
               }
               this.deployUnit = null;
               this.dictionaryType = null;
-              var tmp$1, tmp$2;
-              (tmp$1 = this._superTypes) != null ? tmp$1.clear() : null;
-              (tmp$2 = this._filters) != null ? tmp$2.clear() : null;
+              this.removeAllSuperTypes();
+              this.removeAllFilters();
             },
             name: {
               get: function () {
@@ -23791,9 +24013,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._superTypes.size() !== 0 && this._superTypes.containsKey((superTypesP != null ? superTypesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = superTypesP.path();
                 this._superTypes.remove((superTypesP != null ? superTypesP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_superTypes, superTypesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_superTypes, superTypesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -23903,9 +24126,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._filters.size() !== 0 && this._filters.containsKey((filtersP != null ? filtersP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = filtersP.path();
                 this._filters.remove((filtersP != null ? filtersP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_filters, filtersP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_filters, filtersP, previousPathToBeRemoved));
                 }
               }
             },
@@ -24273,8 +24497,7 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1;
-              (tmp$1 = this._parameters) != null ? tmp$1.clear() : null;
+              this.removeAllParameters();
               this.returnType = null;
             },
             name: {
@@ -24409,10 +24632,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._parameters.size() !== 0 && this._parameters.containsKey((parametersP != null ? parametersP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = parametersP.path();
                 this._parameters.remove((parametersP != null ? parametersP : Kotlin.throwNPE()).internalGetKey());
                 ((parametersP != null ? parametersP : Kotlin.throwNPE()) != null ? parametersP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllParametersCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_parameters, parametersP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_parameters, parametersP, previousPathToBeRemoved));
                 }
               }
             },
@@ -24677,9 +24901,8 @@ define(
               }
               this.typeDefinition = null;
               this.dictionary = null;
-              var tmp$1, tmp$2;
-              (tmp$1 = this._fragmentDictionary) != null ? tmp$1.clear() : null;
-              (tmp$2 = this._bindings) != null ? tmp$2.clear() : null;
+              this.removeAllFragmentDictionary();
+              this.removeAllBindings();
             },
             name: {
               get: function () {
@@ -24862,9 +25085,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._bindings.size() !== 0 && this._bindings.containsKey((bindingsP != null ? bindingsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = bindingsP.path();
                 this._bindings.remove((bindingsP != null ? bindingsP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_bindings, bindingsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_bindings, bindingsP, previousPathToBeRemoved));
                 }
                 if (setOpposite) {
                   (bindingsP != null ? bindingsP : Kotlin.throwNPE()).reflexiveMutator(_.org.kevoree.modeling.api.util.ActionType.object.SET, _.org.kevoree.util.Constants.Ref_hub, null, false, fireEvents);
@@ -24988,10 +25212,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._fragmentDictionary.size() !== 0 && this._fragmentDictionary.containsKey((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = fragmentDictionaryP.path();
                 this._fragmentDictionary.remove((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()).internalGetKey());
                 ((fragmentDictionaryP != null ? fragmentDictionaryP : Kotlin.throwNPE()) != null ? fragmentDictionaryP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllFragmentDictionaryCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_fragmentDictionary, fragmentDictionaryP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_fragmentDictionary, fragmentDictionaryP, previousPathToBeRemoved));
                 }
               }
             },
@@ -25293,100 +25518,132 @@ define(
               return '1.0.0-SNAPSHOT';
             },
             createComponentInstance: function () {
-              return new _.org.kevoree.impl.ComponentInstanceImpl();
+              var tempElem = new _.org.kevoree.impl.ComponentInstanceImpl();
+              return tempElem;
             },
             createComponentType: function () {
-              return new _.org.kevoree.impl.ComponentTypeImpl();
+              var tempElem = new _.org.kevoree.impl.ComponentTypeImpl();
+              return tempElem;
             },
             createContainerNode: function () {
-              return new _.org.kevoree.impl.ContainerNodeImpl();
+              var tempElem = new _.org.kevoree.impl.ContainerNodeImpl();
+              return tempElem;
             },
             createContainerRoot: function () {
-              return new _.org.kevoree.impl.ContainerRootImpl();
+              var tempElem = new _.org.kevoree.impl.ContainerRootImpl();
+              return tempElem;
             },
             createPort: function () {
-              return new _.org.kevoree.impl.PortImpl();
+              var tempElem = new _.org.kevoree.impl.PortImpl();
+              return tempElem;
             },
             createNamespace: function () {
-              return new _.org.kevoree.impl.NamespaceImpl();
+              var tempElem = new _.org.kevoree.impl.NamespaceImpl();
+              return tempElem;
             },
             createDictionary: function () {
-              return new _.org.kevoree.impl.DictionaryImpl();
+              var tempElem = new _.org.kevoree.impl.DictionaryImpl();
+              return tempElem;
             },
             createFragmentDictionary: function () {
-              return new _.org.kevoree.impl.FragmentDictionaryImpl();
+              var tempElem = new _.org.kevoree.impl.FragmentDictionaryImpl();
+              return tempElem;
             },
             createDictionaryType: function () {
-              return new _.org.kevoree.impl.DictionaryTypeImpl();
+              var tempElem = new _.org.kevoree.impl.DictionaryTypeImpl();
+              return tempElem;
             },
             createDictionaryAttribute: function () {
-              return new _.org.kevoree.impl.DictionaryAttributeImpl();
+              var tempElem = new _.org.kevoree.impl.DictionaryAttributeImpl();
+              return tempElem;
             },
             createDictionaryValue: function () {
-              return new _.org.kevoree.impl.DictionaryValueImpl();
+              var tempElem = new _.org.kevoree.impl.DictionaryValueImpl();
+              return tempElem;
             },
             createPortTypeRef: function () {
-              return new _.org.kevoree.impl.PortTypeRefImpl();
+              var tempElem = new _.org.kevoree.impl.PortTypeRefImpl();
+              return tempElem;
             },
             createServicePortType: function () {
-              return new _.org.kevoree.impl.ServicePortTypeImpl();
+              var tempElem = new _.org.kevoree.impl.ServicePortTypeImpl();
+              return tempElem;
             },
             createOperation: function () {
-              return new _.org.kevoree.impl.OperationImpl();
+              var tempElem = new _.org.kevoree.impl.OperationImpl();
+              return tempElem;
             },
             createParameter: function () {
-              return new _.org.kevoree.impl.ParameterImpl();
+              var tempElem = new _.org.kevoree.impl.ParameterImpl();
+              return tempElem;
             },
             createTypedElement: function () {
-              return new _.org.kevoree.impl.TypedElementImpl();
+              var tempElem = new _.org.kevoree.impl.TypedElementImpl();
+              return tempElem;
             },
             createMessagePortType: function () {
-              return new _.org.kevoree.impl.MessagePortTypeImpl();
+              var tempElem = new _.org.kevoree.impl.MessagePortTypeImpl();
+              return tempElem;
             },
             createRepository: function () {
-              return new _.org.kevoree.impl.RepositoryImpl();
+              var tempElem = new _.org.kevoree.impl.RepositoryImpl();
+              return tempElem;
             },
             createDeployUnit: function () {
-              return new _.org.kevoree.impl.DeployUnitImpl();
+              var tempElem = new _.org.kevoree.impl.DeployUnitImpl();
+              return tempElem;
             },
             createTypeLibrary: function () {
-              return new _.org.kevoree.impl.TypeLibraryImpl();
+              var tempElem = new _.org.kevoree.impl.TypeLibraryImpl();
+              return tempElem;
             },
             createPortTypeMapping: function () {
-              return new _.org.kevoree.impl.PortTypeMappingImpl();
+              var tempElem = new _.org.kevoree.impl.PortTypeMappingImpl();
+              return tempElem;
             },
             createChannel: function () {
-              return new _.org.kevoree.impl.ChannelImpl();
+              var tempElem = new _.org.kevoree.impl.ChannelImpl();
+              return tempElem;
             },
             createMBinding: function () {
-              return new _.org.kevoree.impl.MBindingImpl();
+              var tempElem = new _.org.kevoree.impl.MBindingImpl();
+              return tempElem;
             },
             createNodeNetwork: function () {
-              return new _.org.kevoree.impl.NodeNetworkImpl();
+              var tempElem = new _.org.kevoree.impl.NodeNetworkImpl();
+              return tempElem;
             },
             createNodeLink: function () {
-              return new _.org.kevoree.impl.NodeLinkImpl();
+              var tempElem = new _.org.kevoree.impl.NodeLinkImpl();
+              return tempElem;
             },
             createNetworkInfo: function () {
-              return new _.org.kevoree.impl.NetworkInfoImpl();
+              var tempElem = new _.org.kevoree.impl.NetworkInfoImpl();
+              return tempElem;
             },
             createNetworkProperty: function () {
-              return new _.org.kevoree.impl.NetworkPropertyImpl();
+              var tempElem = new _.org.kevoree.impl.NetworkPropertyImpl();
+              return tempElem;
             },
             createChannelType: function () {
-              return new _.org.kevoree.impl.ChannelTypeImpl();
+              var tempElem = new _.org.kevoree.impl.ChannelTypeImpl();
+              return tempElem;
             },
             createInstance: function () {
-              return new _.org.kevoree.impl.InstanceImpl();
+              var tempElem = new _.org.kevoree.impl.InstanceImpl();
+              return tempElem;
             },
             createGroup: function () {
-              return new _.org.kevoree.impl.GroupImpl();
+              var tempElem = new _.org.kevoree.impl.GroupImpl();
+              return tempElem;
             },
             createGroupType: function () {
-              return new _.org.kevoree.impl.GroupTypeImpl();
+              var tempElem = new _.org.kevoree.impl.GroupTypeImpl();
+              return tempElem;
             },
             createNodeType: function () {
-              return new _.org.kevoree.impl.NodeTypeImpl();
+              var tempElem = new _.org.kevoree.impl.NodeTypeImpl();
+              return tempElem;
             },
             create: function (metaClassName) {
               if (metaClassName === _.org.kevoree.util.Constants.org_kevoree_ComponentInstance) {
@@ -25679,8 +25936,7 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1;
-              (tmp$1 = this._values) != null ? tmp$1.clear() : null;
+              this.removeAllValues();
             },
             generated_KMF_ID: {
               get: function () {
@@ -25814,10 +26070,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._values.size() !== 0 && this._values.containsKey((valuesP != null ? valuesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = valuesP.path();
                 this._values.remove((valuesP != null ? valuesP : Kotlin.throwNPE()).internalGetKey());
                 ((valuesP != null ? valuesP : Kotlin.throwNPE()) != null ? valuesP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllValuesCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_values, valuesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_values, valuesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -26019,8 +26276,7 @@ define(
                 var tmp$0;
                 ((tmp$0 = this.internal_unsetCmd) != null ? tmp$0 : Kotlin.throwNPE()).run();
               }
-              var tmp$1;
-              (tmp$1 = this._attributes) != null ? tmp$1.clear() : null;
+              this.removeAllAttributes();
             },
             generated_KMF_ID: {
               get: function () {
@@ -26154,10 +26410,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._attributes.size() !== 0 && this._attributes.containsKey((attributesP != null ? attributesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = attributesP.path();
                 this._attributes.remove((attributesP != null ? attributesP : Kotlin.throwNPE()).internalGetKey());
                 ((attributesP != null ? attributesP : Kotlin.throwNPE()) != null ? attributesP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllAttributesCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_attributes, attributesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_attributes, attributesP, previousPathToBeRemoved));
                 }
               }
             },
@@ -26668,9 +26925,8 @@ define(
               }
               this.deployUnit = null;
               this.dictionaryType = null;
-              var tmp$1, tmp$2;
-              (tmp$1 = this._superTypes) != null ? tmp$1.clear() : null;
-              (tmp$2 = this._operations) != null ? tmp$2.clear() : null;
+              this.removeAllSuperTypes();
+              this.removeAllOperations();
             },
             name: {
               get: function () {
@@ -27001,10 +27257,11 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._operations.size() !== 0 && this._operations.containsKey((operationsP != null ? operationsP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = operationsP.path();
                 this._operations.remove((operationsP != null ? operationsP : Kotlin.throwNPE()).internalGetKey());
                 ((operationsP != null ? operationsP : Kotlin.throwNPE()) != null ? operationsP : Kotlin.throwNPE()).setEContainer(null, null, null);
                 if (!this.removeAllOperationsCurrentlyProcessing && fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_operations, operationsP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.CONTAINMENT, _.org.kevoree.util.Constants.Ref_operations, operationsP, previousPathToBeRemoved));
                 }
               }
             },
@@ -27118,9 +27375,10 @@ define(
                 throw new Error(_.org.kevoree.util.Constants.READ_ONLY_EXCEPTION);
               }
               if (this._superTypes.size() !== 0 && this._superTypes.containsKey((superTypesP != null ? superTypesP : Kotlin.throwNPE()).internalGetKey())) {
+                var previousPathToBeRemoved = superTypesP.path();
                 this._superTypes.remove((superTypesP != null ? superTypesP : Kotlin.throwNPE()).internalGetKey());
                 if (fireEvents) {
-                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_superTypes, superTypesP, null));
+                  this.fireModelEvent(new _.org.kevoree.modeling.api.events.ModelEvent(this.path(), _.org.kevoree.modeling.api.util.ActionType.object.REMOVE, _.org.kevoree.modeling.api.util.ElementAttributeType.object.REFERENCE, _.org.kevoree.util.Constants.Ref_superTypes, superTypesP, previousPathToBeRemoved));
                 }
               }
             },

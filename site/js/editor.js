@@ -80,7 +80,7 @@ define(
     // use Behave.js for KevScript Editor
     var kevsEditor = document.getElementById('kev-script');
     new Behave({ textarea: kevsEditor });
-    kevsEditor.innerHTML = "// simple chat example written in KevScript\ninclude npm:kevoree-node-javascript\ninclude npm:kevoree-group-websocket\ninclude npm:kevoree-chan-websocket\ninclude npm:kevoree-comp-fakeconsole\n\nadd node0, node1 : JavascriptNode/0.0.1\nadd sync : WebSocketGroup/0.0.4\nadd chan0, chan1 : WebSocketChannel/0.0.4\nadd node0.comp0, node1.comp1 : FakeConsole/0.0.3\n\nattach node0, node1 sync\n\nbind node0.comp0.inMsg chan0\nbind node0.comp0.sendMsg chan1\n\nbind node1.comp1.inMsg chan1\nbind node1.comp1.sendMsg chan0\n\nset sync.port/node0 = '9000'\nset chan0.port/node0 = '9001'\nset chan1.port/node0 = '9002'\n\nnetwork node0 127.0.0.1";
+    kevsEditor.innerHTML = "// simple chat example written in KevScript\ninclude npm:kevoree-node-javascript\ninclude npm:kevoree-group-websocket\ninclude npm:kevoree-chan-websocket\ninclude npm:kevoree-comp-fakeconsole\n\nadd node0, node1 : JavascriptNode\nadd sync : WebSocketGroup\nadd chan0, chan1 : WebSocketChannel\nadd node0.comp0, node1.comp1 : FakeConsole\n\nattach node0, node1 sync\n\nbind node0.comp0.inMsg chan0\nbind node0.comp0.sendMsg chan1\n\nbind node1.comp1.inMsg chan1\nbind node1.comp1.sendMsg chan0\n\nset sync.port/node0 = '9000'\nset chan0.port/node0 = '9001'\nset chan1.port/node0 = '9002'\n\nnetwork node0 127.0.0.1";
 
     // create the controller that handles parameters in URL
     var qs = new QueryString();
