@@ -34,10 +34,19 @@ $(function () {
     Mousetrap.bind(['command+z', 'ctrl+z'], executeCmd(Undo));
     Mousetrap.bind(['command+y', 'ctrl+y'], executeCmd(Redo));
     Mousetrap.bind(['alt+s', 'alt+s'],      executeCmd(Settings));
-    Mousetrap.bind('escape',                executeCmd(CloseModal));
-    Mousetrap.bind('enter',                 executeCmd(SaveModal));
     Mousetrap.bind('up up down down left right left right b a enter', function() {
         console.log("Yeah, you mate know your classics!");
+    });
+    
+    var modal = $('#modal');
+    modal.on('show.bs.modal', function () {
+        Mousetrap.bind('escape', executeCmd(CloseModal));
+        Mousetrap.bind('enter', executeCmd(SaveModal));
+    });
+    
+    modal.on('hide.bs.modal', function () {
+        Mousetrap.unbind('escape');
+        Mousetrap.unbind('enter'); 
     });
 
     // Also allow model to be loaded from drag'n'drop
