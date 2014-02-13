@@ -1,3 +1,4 @@
+#!/bin/sh
 npm install
-bower install
-grunt build
+./node_modules/.bin/bower install
+./node_modules/.bin/grunt build
