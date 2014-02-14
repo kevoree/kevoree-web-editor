@@ -9,7 +9,8 @@
     "kevoree-library": "0.0.5",
     "pseudoclass": "~0.3.0",
     "kevoree-kotlin": "0.0.3",
-    "semver": "~2.2.1"
+    "semver": "~2.2.1",
+    "underscore.string": "~2.3.3"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
