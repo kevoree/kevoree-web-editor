@@ -161,6 +161,73 @@ body {
     padding-top: 10px;
 }
 
+#push-pull-panel {
+    margin-top: 15px;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.props-title {
+    margin-bottom: 5px;
+}
+
+.props-title .row:last-child {
+    padding-right: 0;
+}
+
+#net-props-heading {
+    cursor: pointer;
+}
+
+.net-prop-pairs .ui-selecting { background: #c9c9c9; }
+.net-prop-pairs .ui-selected { background: #d3d3d3; }
+.net-prop-pairs .row {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.btn-black {
+    color: #fff;
+    background-color: #222;
+    border-color: #000;
+}
+.btn-black:hover,
+.btn-black:focus,
+.btn-black:active,
+.btn-black.active,
+.open .dropdown-toggle.btn-black {
+    color: #fff;
+    background-color: #111;
+    border-color: #000;
+}
+.btn-black:active,
+.btn-black.active,
+.open .dropdown-toggle.btn-black {
+    background-image: none;
+}
+.btn-black.disabled,
+.btn-black[disabled],
+fieldset[disabled] .btn-black,
+.btn-black.disabled:hover,
+.btn-black[disabled]:hover,
+fieldset[disabled] .btn-black:hover,
+.btn-black.disabled:focus,
+.btn-black[disabled]:focus,
+fieldset[disabled] .btn-black:focus,
+.btn-black.disabled:active,
+.btn-black[disabled]:active,
+fieldset[disabled] .btn-black:active,
+.btn-black.disabled.active,
+.btn-black[disabled].active,
+fieldset[disabled] .btn-black.active {
+    background-color: #222;
+    border-color: #000;
+}
+.btn-black .badge {
+    color: #000;
+    background-color: #fff;
+}
+
 /* Responsive */
 @media screen and (min-width: 768px) {
     .container {
