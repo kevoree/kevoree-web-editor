@@ -17,7 +17,7 @@
                             <div class="row-fluid">
                                 <ul class="nav nav-tabs">
                                     {{#netProps}}
-                                    <li class="{{active}}"><a href="#{{type}}" data-toggle="tab">{{type}}</a></li>
+                                    <li class="{{active}}"><a href="#{{id}}" data-toggle="tab">{{type}}</a></li>
                                     {{/netProps}}
                                     <!--<div class="btn-group btn-group-sm pull-right">-->
                                         <!--<button id="del-node-link" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>-->
@@ -27,7 +27,7 @@
 
                                 <div class="tab-content">
                                     {{#netProps}}
-                                    <div class="tab-pane {{active}} well" id="{{type}}">
+                                    <div class="tab-pane {{active}} well" id="{{id}}">
                                         <div class="form-horizontal">
                                             <div class="form-group">
                                                 <label for="link-type-{{id}}" class="col-sm-2 control-label">Type</label>
