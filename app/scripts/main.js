@@ -1,20 +1,22 @@
-var KevWebEditor = require('../../lib/engine/KevWebEditor'),
-    LoadModel    = require('../../lib/command/ui/LoadModel'),
-    MergeModel   = require('../../lib/command/ui/MergeModel'),
-    SaveModel    = require('../../lib/command/ui/SaveModel'),
-    Settings     = require('../../lib/command/ui/Settings'),
-    CloseModal   = require('../../lib/command/ui/CloseModal'),
-    Debug        = require('../../lib/command/ui/Debug'),
-    Undo         = require('../../lib/command/Undo'),
-    Redo         = require('../../lib/command/Redo'),
-    SaveModal    = require('../../lib/command/ui/SaveModal');
+var KevWebEditor   = require('../../lib/engine/KevWebEditor'),
+    LoadModel      = require('../../lib/command/ui/LoadModel'),
+    MergeModel     = require('../../lib/command/ui/MergeModel'),
+    SaveModel      = require('../../lib/command/ui/SaveModel'),
+    Settings       = require('../../lib/command/ui/Settings'),
+    CloseModal     = require('../../lib/command/ui/CloseModal'),
+    Debug          = require('../../lib/command/ui/Debug'),
+    Undo           = require('../../lib/command/Undo'),
+    Redo           = require('../../lib/command/Redo'),
+    SaveModal      = require('../../lib/command/ui/SaveModal'),
+    ClearAll       = require('../../lib/command/model/ClearAll'),
+    ClearInstances = require('../../lib/command/model/ClearInstances');
 
 $(function () {
     var editor = new KevWebEditor();
 
     function executeCmd(Command, param) {
+        var cmd = new Command(editor);
         return function (e) {
-            var cmd = new Command(editor);
             cmd.execute(param);
             e.preventDefault();
         }
@@ -27,6 +29,8 @@ $(function () {
     $('#settings').click(executeCmd(Settings));
     $('#undo').click(executeCmd(Undo));
     $('#redo').click(executeCmd(Redo));
+    $('#clear-all').click(executeCmd(ClearAll));
+    $('#clear-instances').click(executeCmd(ClearInstances));
 
     // Keyboard shortcuts
     Mousetrap.bind(['command+l', 'ctrl+l'], executeCmd(LoadModel));
