@@ -7,7 +7,7 @@
         <div class="form-group">
             <label for="src-instance-name" class="col-sm-3 control-label">{{srcType}}</label>
             <div class="col-sm-9">
-                <input type="text" class="form-control mousetrap" id="src-instance-name" placeholder="Specify a name" value="{{srcName}}">
+                <input type="text" class="form-control mousetrap" id="src-instance-name" placeholder="Specify a name" value="{{srcName}}" {{#disableSrc}}disabled{{/disableSrc}}>
             </div>
         </div>
         <div class="form-group">
