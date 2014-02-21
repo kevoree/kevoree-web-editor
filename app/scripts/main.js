@@ -1,5 +1,6 @@
 var KevWebEditor   = require('../../lib/engine/KevWebEditor'),
-    LoadModel      = require('../../lib/command/ui/LoadModel'),
+    LoadModelFC    = require('../../lib/command/ui/LoadModelFileChooser'),
+    LoadModelDnD   = require('../../lib/command/ui/LoadModelDragNDrop'),
     MergeModel     = require('../../lib/command/ui/MergeModel'),
     SaveModel      = require('../../lib/command/ui/SaveModel'),
     Settings       = require('../../lib/command/ui/Settings'),
@@ -17,13 +18,14 @@ $(function () {
     function executeCmd(Command, param) {
         var cmd = new Command(editor);
         return function (e) {
-            cmd.execute(param);
+            cmd.execute(param || e);
             e.preventDefault();
+            e.stopPropagation();
         }
     }
 
     // Menus links
-    $('#load').click(executeCmd(LoadModel));
+    $('#load').click(executeCmd(LoadModelFC));
     $('#merge').click(executeCmd(MergeModel));
     $('#save-json').click(executeCmd(SaveModel));
     $('#settings').click(executeCmd(Settings));
@@ -33,7 +35,7 @@ $(function () {
     $('#clear-instances').click(executeCmd(ClearInstances));
 
     // Keyboard shortcuts
-    Mousetrap.bind(['command+l', 'ctrl+l'], executeCmd(LoadModel));
+    Mousetrap.bind(['command+l', 'ctrl+l'], executeCmd(LoadModelFC));
     Mousetrap.bind(['command+m', 'ctrl+m'], executeCmd(MergeModel));
     Mousetrap.bind(['command+s', 'ctrl+s'], executeCmd(SaveModel));
     Mousetrap.bind(['command+z', 'ctrl+z'], executeCmd(Undo));
@@ -62,19 +64,5 @@ $(function () {
         e.preventDefault();
         e.stopPropagation();
     });
-    domEditor.on('drop', function (e) {
-        if(e.originalEvent.dataTransfer){
-            if(e.originalEvent.dataTransfer.files.length) {
-                e.preventDefault();
-                e.stopPropagation();
-                /*UPLOAD FILES HERE*/
-                var file = e.originalEvent.dataTransfer.files[0],
-                    reader = new FileReader();
-                reader.onloadend = function(event) {
-                    executeCmd(LoadModel, event.target.result)(e);
-                };
-                reader.readAsText(file);
-            }
-        }
-    });
+    domEditor.on('drop', executeCmd(LoadModelDnD));
 });
