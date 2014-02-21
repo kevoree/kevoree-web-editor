@@ -3,6 +3,7 @@ var KevWebEditor   = require('../../lib/engine/KevWebEditor'),
     LoadModelDnD   = require('../../lib/command/ui/LoadModelDragNDrop'),
     MergeModel     = require('../../lib/command/ui/MergeModel'),
     SaveModel      = require('../../lib/command/ui/SaveModel'),
+    ServerSettings = require('../../lib/command/ui/ServerSettings'),
     Settings       = require('../../lib/command/ui/Settings'),
     CloseModal     = require('../../lib/command/ui/CloseModal'),
     Debug          = require('../../lib/command/ui/Debug'),
@@ -19,8 +20,8 @@ $(function () {
         var cmd = new Command(editor);
         return function (e) {
             cmd.execute(param || e);
-            e.preventDefault();
-            e.stopPropagation();
+//            e.preventDefault();
+//            e.stopPropagation();
         }
     }
 
@@ -29,6 +30,7 @@ $(function () {
     $('#merge').click(executeCmd(MergeModel));
     $('#save-json').click(executeCmd(SaveModel));
     $('#settings').click(executeCmd(Settings));
+    $('#server-settings').click(executeCmd(ServerSettings));
     $('#undo').click(executeCmd(Undo));
     $('#redo').click(executeCmd(Redo));
     $('#clear-all').click(executeCmd(ClearAll));

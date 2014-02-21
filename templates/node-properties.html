@@ -32,11 +32,11 @@
                                             <div class="form-group">
                                                 <label for="link-type-{{id}}" class="col-sm-2 control-label">Type</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="link-type-{{id}}" placeholder="Type" value="{{type}}">
+                                                    <input type="text" class="form-control mousetrap" id="link-type-{{id}}" placeholder="Type" value="{{type}}">
                                                 </div>
                                                 <label for="link-rate-{{id}}" class="col-sm-2 control-label">Rate</label>
                                                 <div class="col-sm-4">
-                                                    <input type="number" max="100" min="0" class="form-control" id="link-rate-{{id}}" placeholder="Rate" value="{{rate}}">
+                                                    <input type="number" max="100" min="0" class="form-control mousetrap" id="link-rate-{{id}}" placeholder="Rate" value="{{rate}}">
                                                 </div>
                                             </div>
                                         </div>
@@ -54,10 +54,10 @@
                                                 {{#values}}
                                                 <div class="row {{selected}}">
                                                     <div class="col-sm-6 col-xs-12">
-                                                        <input type="text" id="net-prop-name-{{id}}" class="form-control" placeholder="name" value="{{name}}">
+                                                        <input type="text" id="net-prop-name-{{id}}" class="form-control mousetrap" placeholder="name" value="{{name}}">
                                                     </div>
                                                     <div class="col-sm-6 col-xs-12">
-                                                        <input type="text" id="net-prop-value-{{id}}" class="form-control" placeholder="value" value="{{value}}">
+                                                        <input type="text" id="net-prop-value-{{id}}" class="form-control mousetrap" placeholder="value" value="{{value}}">
                                                     </div>
                                                 </div>
                                                 {{/values}}
@@ -79,7 +79,7 @@
             <fieldset {{#groupsDisabled}}disabled title="No connected group instance found."{{/groupsDisabled}}>
                 <button class="btn btn-black col-sm-3 col-xs-12" type="button">Push</button>
                 <div class="col-sm-4 col-sm-offset-1 col-xs-12" style="padding: 0">
-                    <select class="form-control">
+                    <select class="form-control mousetrap">
                         {{#groups}}
                         <option>{{.}}</option>
                         {{/groups}}
