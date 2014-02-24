@@ -215,6 +215,7 @@ body {
     margin-bottom: 0;
     overflow-y: scroll;
     max-height: 450px;
+    min-height: 40px;
 }
 
 .std-libs-list .list-group-item:first-child {

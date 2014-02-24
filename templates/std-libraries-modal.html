@@ -6,8 +6,24 @@
     <p id="modal-error" class="alert alert-danger hide"></p>
     <ul class="nav nav-tabs">
         {{#libraries}}
-        <li class="{{#first}}active{{/first}}"><a href="#{{name}}" data-toggle="tab" style="padding: 6px 10px">{{name}}</a></li>
+        <li class="{{#first}} active{{/first}}"><a href="#{{name}}" class="std-platform-tab" data-toggle="tab" style="padding: 6px 10px">{{name}}</a></li>
         {{/libraries}}
+        <li>
+            <div class="input-group input-group-sm">
+                <input id="keyword-std-libs-filter" type="text" class="form-control" placeholder="Filter libraries">
+                <div class="input-group-btn">
+                    <button id="filter-std-libs" type="button" class="btn btn-default" tabindex="-1"><span class="glyphicon glyphicon-search"></span></button>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+                        <span class="caret"></span>
+                        <span class="sr-only">Filter versions</span>
+                    </button>
+                    <ul class="dropdown-menu pull-right" role="menu">
+                        <li id="filter-std-libs-latest" class="active"><a href="#">Latest</a></li>
+                        <li id="filter-std-libs-all" ><a href="#">All</a></li>
+                    </ul>
+                </div>
+            </div>
+        </li>
     </ul>
 
     <div class="tab-content">
