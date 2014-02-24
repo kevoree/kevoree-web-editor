@@ -1,0 +1,9 @@
+<ul class="list-group std-libs-list" data-platform="{{platform}}">
+    {{#libraries}}
+    <li class="list-group-item std-lib-item">
+        <input type="checkbox" data-grpid="{{groupID}}" data-artid="{{artifactID}}" data-version="{{latest}}">
+        <span class="badge" data-tdef="{{type}}">{{latest}}</span>
+        <span class="typedef-name" data-tdef="{{type}}">{{simpleName}}</span>    
+    </li>
+    {{/libraries}}
+</ul>

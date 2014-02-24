@@ -42,6 +42,13 @@ body {
     padding: 0;
     margin: 0;
     border-radius: 0;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 #type-definition-list .list-group {
@@ -76,7 +83,7 @@ body {
     padding-left: 22px;
 }
 
-.typedef-name[data-tdef='channel'] {
+.typedef-name[data-tdef='channel'], .typedef-name[data-tdef='chan'] {
     background: url('../images/channel-ico.png') center left no-repeat;
     padding-left: 22px;
 }
@@ -86,7 +93,7 @@ body {
     padding-left: 22px;
 }
 
-.typedef-name[data-tdef='component'] {
+.typedef-name[data-tdef='component'], .typedef-name[data-tdef='comp'] {
     background: url('../images/component-ico.png') center left no-repeat;
     padding-left: 22px;
 }
@@ -95,7 +102,7 @@ body {
     background-color: #399342;
 }
 
-.badge[data-tdef='channel'] {
+.badge[data-tdef='channel'], .badge[data-tdef='chan'] {
     background-color: #d57129;
 }
 
@@ -103,12 +110,46 @@ body {
     background-color: #5b5b5b;
 }
 
-.badge[data-tdef='component'] {
+.badge[data-tdef='component'], .badge[data-tdef='comp'] {
     background-color: #0d0d0d;
 }
 
 .whitish, .whitish a {
     color: #999;
+}
+
+#type-definition-list-content .nav > li > a {
+    padding: 3px;
+    color: #999;
+}
+
+#type-definition-list-content .nav > li > a:focus {
+    padding: 3px;
+    color: #000 ;
+}
+
+#type-definition-list-content .nav-tabs > li.active > a,
+#type-definition-list-content .nav-tabs > li.active > a:hover,
+#type-definition-list-content .nav-tabs > li.active > a:focus {
+    color: #333;
+}
+
+.library-item {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #1c1c1c;
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: bold;
+    border: 0;
+}
+
+.library-item:hover {
+    cursor: pointer;
+}
+
+.library-name {
+    padding-left: 10px;
 }
 
 .type-definition-item {
@@ -126,7 +167,7 @@ body {
 }
 
 .type-definition-item:hover {
-    cursor: move;
+    cursor: pointer;
     background-color: #444;
     border-radius: 0;
 }
@@ -159,6 +200,42 @@ body {
 
 #modal-body .well {
     margin-bottom: 0;
+}
+
+.std-libs-pane {
+    color: #000;
+    padding: 15px;
+    background: #f5f5f5;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.std-libs-list {
+    margin-bottom: 0;
+    overflow-y: scroll;
+    max-height: 450px;
+}
+
+.std-libs-list .list-group-item:first-child {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    border-top: none;
+}
+
+.std-lib-item > input {
+    vertical-align: middle;
+    margin: 0;
+}
+
+.std-lib-item {
+    cursor: pointer;
+    padding-bottom: 6px;
+    padding-top: 6px;
+}
+
+.std-lib-item:hover, .std-lib-item:active, .std-lib-item:focus {
+    background-color: #f5f5f5;
 }
 
 .frag-dictionary-content {

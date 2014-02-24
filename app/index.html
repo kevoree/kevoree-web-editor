@@ -9,7 +9,6 @@
     <title>Kevoree Web Editor</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -58,7 +57,7 @@
                             <li><a href="#" id="clear-instances">Clear Instances</a></li>
                             <li class="divider"></li>
                             <li class="dropdown-header">Merge model</li>
-                            <li><a href="#">Kevoree Standard Libraries</a></li>
+                            <li><a href="#" id="kev-std-libs">Kevoree Standard Libraries</a></li>
                             <!--<li class="divider"></li>-->
                             <!--<li class="dropdown-header">Model statistics</li>-->
                             <!--<li><a href="#">TODO</a></li>-->
@@ -116,7 +115,25 @@
             </button>
         </div>
 
-        <div id="type-definition-list-content" class="list-group"></div>
+        <div id="type-definition-list-content">
+            <!--<ul class="nav nav-tabs">-->
+                <!--<li class="active"><a href="#my-libs" data-toggle="tab" class="lib-tab">My Libraries</a></li>-->
+                <!--<li><a href="#std-libs" data-toggle="tab" class="lib-tab">Standard Libraries</a></li>-->
+            <!--</ul>-->
+
+            <!--<div class="tab-content">-->
+                <!--<div class="tab-pane active" id="my-libs" class="list-group"></div>-->
+                <!--<div class="tab-pane" id="std-libs" class="list-group">-->
+                    <!--<div class="std-lib-pane">-->
+                        <!--<p><strong>Kevoree Standard Libraries</strong> are loading, please wait...</p>-->
+                        <!--<div class="progress progress-striped active">-->
+                            <!--<div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
     </div>
 
     <button id="type-definition-list-show-btn" class="btn-link hide" title="Show panel">

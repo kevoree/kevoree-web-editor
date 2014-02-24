@@ -1,0 +1,29 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 id="modal-title" class="modal-title">Kevoree Standard Libraries</h4>
+</div>
+<div id="modal-body" class="modal-body">
+    <ul class="nav nav-tabs">
+        {{#libraries}}
+        <li class="{{#first}}active{{/first}}"><a href="#{{name}}" data-toggle="tab" style="padding: 6px 10px">{{name}}</a></li>
+        {{/libraries}}
+    </ul>
+
+    <div class="tab-content">
+        {{#libraries}}
+        <div class="tab-pane{{#first}} active{{/first}}" id="{{name}}">
+            <div id="{{name}}-loading" class="std-libs-pane">
+                <p class="text"><strong>{{name}}</strong> libraries are loading, please wait...</p>
+                <div class="progress progress-striped active">
+                    <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/libraries}}
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button id="modal-save" type="button" class="btn btn-primary">Merge libraries</button>
+</div>
