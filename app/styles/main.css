@@ -242,6 +242,10 @@ body {
     padding-top: 10px;
 }
 
+#kevscript-editor {
+    min-height: 350px;
+}
+
 #push-pull-panel {
     margin-top: 15px;
     margin-left: 0;

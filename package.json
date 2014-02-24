@@ -11,7 +11,9 @@
     "kevoree-kotlin": "0.0.3",
     "semver": "~2.2.1",
     "underscore.string": "~2.3.3",
-    "async": "~0.2.10"
+    "async": "~0.2.10",
+    "kevoree-kevscript": "0.0.5",
+    "kevoree-commons": "0.0.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

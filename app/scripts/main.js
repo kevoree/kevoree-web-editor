@@ -6,6 +6,7 @@ var KevWebEditor     = require('../../lib/engine/KevWebEditor'),
     ServerSettings   = require('../../lib/command/ui/ServerSettings'),
     Settings         = require('../../lib/command/ui/Settings'),
     OpenStdLibsModal = require('../../lib/command/ui/OpenStdLibsModal'),
+    OpenKevSModal    = require('../../lib/command/ui/OpenKevscriptModal'),
     CloseModal       = require('../../lib/command/ui/CloseModal'),
     Debug            = require('../../lib/command/ui/Debug'),
     Undo             = require('../../lib/command/Undo'),
@@ -40,6 +41,7 @@ $(function () {
     $('#clear-all').click(executeCmd(ClearAll));
     $('#clear-instances').click(executeCmd(ClearInstances));
     $('#kev-std-libs').click(executeCmd(OpenStdLibsModal));
+    $('#open-kevscript').click(executeCmd(OpenKevSModal));
 
     // Keyboard shortcuts
     Mousetrap.bind(['command+l', 'ctrl+l'], executeCmd(LoadModelFC));
@@ -50,6 +52,8 @@ $(function () {
     Mousetrap.bind('alt+s',                 executeCmd(Settings));
     Mousetrap.bind('alt+i',                 executeCmd(ClearInstances));
     Mousetrap.bind('alt+a',                 executeCmd(ClearAll));
+    Mousetrap.bind('alt+k',                 executeCmd(OpenStdLibsModal));
+    Mousetrap.bind(['command+k', 'ctrl+k'], executeCmd(OpenKevSModal));
     Mousetrap.bind(['command shift alt d', 'ctrl shift alt d'], executeCmd(Debug));
     Mousetrap.bind('up up down down left right left right b a enter', function() {
         console.log("Yeah, you mate know your classics!");
