@@ -1,5 +1,4 @@
 #!/bin/sh
-
-npm install
-./node_modules/.bin/bower install
-./node_modules/.bin/grunt build
+mvn -N validate
+mvn -version
+mvn clean deploy --settings settings.xml 
