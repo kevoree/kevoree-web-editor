@@ -116,20 +116,6 @@ module.exports = function (grunt) {
             server: '.tmp'
         },
 
-        // Make sure code styles are up to par and there are no obvious mistakes
-//    jshint: {
-//      options: {
-//        jshintrc: '.jshintrc',
-//        reporter: require('jshint-stylish')
-//      },
-//      all: [
-//        'Gruntfile.js',
-//        '<%= yeoman.app %>/scripts/{,*/}*.js',
-//        '!<%= yeoman.app %>/scripts/vendor/*',
-//        'test/spec/{,*/}*.js'
-//      ]
-//    },
-
         // Mocha testing framework configuration options
         mocha: {
             all: {
@@ -264,27 +250,34 @@ module.exports = function (grunt) {
         //         }
         //     }
         // },
-        // concat: {
-        //     dist: {}
-        // },
+        //concat: {
+        //    dist: {}
+        //},
 
         // Copies remaining files to places other tasks can use
         copy: {
             dist: {
-                files: [{
-                    expand: true,
-                    dot: true,
-                    cwd: '<%= yeoman.app %>',
-                    dest: '<%= yeoman.dist %>',
-                    src: [
-                        '*.{ico,png,txt}',
-                        '.htaccess',
-                        'images/{,*/}*.webp',
-                        '{,*/}*.html',
-                        'styles/fonts/{,*/}*.*',
-                        'bower_components/' + (this.includeCompass ? 'sass-' : '') + 'bootstrap/' + (this.includeCompass ? 'fonts/' : 'dist/fonts/') +'*.*'
-                    ]
-                }]
+                files: [
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: '<%= yeoman.app %>',
+                        dest: '<%= yeoman.dist %>',
+                        src: [
+                            '*.{ico,png,txt}',
+                            '.htaccess',
+                            'images/{,*/}*.webp',
+                            '{,*/}*.html',
+                            'styles/fonts/{,*/}*.*'
+                        ]
+                    },
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: '<%= yeoman.app %>/bower_components/bootstrap/dist',
+                        dest: '<%= yeoman.dist %>',
+                        src: [ 'fonts/{,*/}*.*' ]
+                    }]
             },
             styles: {
                 expand: true,
@@ -292,13 +285,6 @@ module.exports = function (grunt) {
                 cwd: '<%= yeoman.app %>/styles',
                 dest: '.tmp/styles/',
                 src: '{,*/}*.css'
-            }
-        },
-
-        browserify: {
-            main: {
-                src: "app/scripts/main.js",
-                dest: ".tmp/scripts/main.js"
             }
         },
 
@@ -316,8 +302,16 @@ module.exports = function (grunt) {
                 'copy:styles',
                 'imagemin',
                 'svgmin',
-                'browserify'
+                'browserify',
+                'hogan'
             ]
+        },
+
+        browserify: {
+            main: {
+                src: "app/scripts/main.js",
+                dest: ".tmp/scripts/main.js"
+            }
         },
 
         // Creates compiled templates from templates/**/*.html using hogan (mustachejs-like)
@@ -331,7 +325,7 @@ module.exports = function (grunt) {
                         return path.basename(file, '.html');
                     }
                 },
-                files:{
+                files: {
                     ".tmp/scripts/templates.js": ["templates/**/*.html"]
                 }
             }
@@ -383,7 +377,7 @@ module.exports = function (grunt) {
         'cssmin',
         'uglify',
         'copy:dist',
-        'rev',
+//        'rev',
         'usemin',
         'htmlmin'
     ]);
