@@ -176,6 +176,14 @@ module.exports = function (grunt) {
             },
             html: '<%= yeoman.app %>/index.html'
         },
+        
+        uglify: {
+            options: {
+                mangle: {
+                    except: ['_super']
+                }
+            }
+        },
 
         // Performs rewrites based on rev and the useminPrepare configuration
         usemin: {
