@@ -16,7 +16,7 @@ grunt build
 mvn install
 ```
 
-### Dev
+## Development process
 ```sh
 grunt serve
 ```
