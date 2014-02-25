@@ -1,0 +1,96 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 id="modal-title" class="modal-title">Node properties: {{name}}</h4>
+</div>
+<div id="modal-body" class="modal-body">
+    {{> instanceProps}}
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div id="net-props-heading" class="panel-heading" data-toggle="collapse" data-target="#net-props">
+                <h4 class="panel-title">Node network<span class="glyphicon glyphicon-plus pull-right"></span></h4>
+            </div>
+            <div id="net-props" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div class="row-fluid">
+                        {{#hasNetProps}}
+                        <div class="container-fluid">
+                            <div class="row-fluid">
+                                <ul class="nav nav-tabs">
+                                    {{#netProps}}
+                                    <li class="{{active}}"><a href="#{{id}}" data-toggle="tab">{{type}}</a></li>
+                                    {{/netProps}}
+                                    <!--<div class="btn-group btn-group-sm pull-right">-->
+                                        <!--<button id="del-node-link" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>-->
+                                        <!--<button id="add-node-link" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span></button>-->
+                                    <!--</div>-->
+                                </ul>
+
+                                <div class="tab-content">
+                                    {{#netProps}}
+                                    <div class="tab-pane {{active}} well" id="{{id}}">
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label for="link-type-{{id}}" class="col-sm-2 control-label">Type</label>
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control mousetrap" id="link-type-{{id}}" placeholder="Type" value="{{type}}">
+                                                </div>
+                                                <label for="link-rate-{{id}}" class="col-sm-2 control-label">Rate</label>
+                                                <div class="col-sm-4">
+                                                    <input type="number" max="100" min="0" class="form-control mousetrap" id="link-rate-{{id}}" placeholder="Rate" value="{{rate}}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="well">
+                                            <div class="props-title row">
+                                                <strong class="col-xs-6">Properties</strong>
+                                                <!--<div class="row col-xs-6">-->
+                                                    <!--<div class="btn-group btn-group-xs pull-right">-->
+                                                        <!--<button id="del-net-prop-{{id}}" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>-->
+                                                        <!--<button id="add-net-prop-{{id}}" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span></button>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            </div>
+                                            <div class="net-prop-pairs">
+                                                {{#values}}
+                                                <div class="row {{selected}}">
+                                                    <div class="col-sm-6 col-xs-12">
+                                                        <input type="text" id="net-prop-name-{{id}}" class="form-control mousetrap" placeholder="name" value="{{name}}">
+                                                    </div>
+                                                    <div class="col-sm-6 col-xs-12">
+                                                        <input type="text" id="net-prop-value-{{id}}" class="form-control mousetrap" placeholder="value" value="{{value}}">
+                                                    </div>
+                                                </div>
+                                                {{/values}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{/netProps}}
+                                </div>
+                            </div>
+                        </div>
+                        {{/hasNetProps}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div id="push-pull-panel" class="row">
+            <fieldset {{#groupsDisabled}}disabled title="No connected group instance found."{{/groupsDisabled}}>
+                <button class="btn btn-black col-sm-3 col-xs-12" type="button">Push</button>
+                <div class="col-sm-4 col-sm-offset-1 col-xs-12" style="padding: 0">
+                    <select class="form-control mousetrap">
+                        {{#groups}}
+                        <option>{{.}}</option>
+                        {{/groups}}
+                    </select>
+                </div>
+                <button class="btn btn-black col-sm-3 col-sm-offset-1 col-xs-12" type="button">Pull</button>
+            </fieldset>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button id="delete-instance" type="button" class="btn btn-danger" data-dismiss="modal">Delete</button>
+    <button id="modal-save" type="button" class="btn btn-primary">Save changes</button>
+</div>

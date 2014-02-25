@@ -1,0 +1,28 @@
+{{#hasFragDictionaries}}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <ul class="nav nav-tabs">
+            {{#fragDictionaries}}
+            <li class="{{active}}"><a href="#{{node}}" data-toggle="tab">{{node}}</a></li>
+            {{/fragDictionaries}}
+        </ul>
+
+        <div class="tab-content">
+            {{#fragDictionaries}}
+            <div class="tab-pane {{active}}" id="{{node}}">
+                <div class="frag-dictionary-content form-horizontal">
+                    {{#dictionary}}
+                    <div class="form-group">
+                        <label for="dic-{{node}}-{{name}}" class="col-sm-3 control-label">{{name}}</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control mousetrap" id="dic-{{node}}-{{name}}" value="{{value}}">
+                        </div>
+                    </div>
+                    {{/dictionary}}
+                </div>
+            </div>
+            {{/fragDictionaries}}
+        </div>
+    </div>
+</div>
+{{/hasFragDictionaries}}
