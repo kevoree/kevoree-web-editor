@@ -11,6 +11,7 @@ body {
     top: 0;
     right: 0;
     bottom: 0;
+    overflow-y: hidden;
 }
 
 #editor-navbar {
@@ -116,6 +117,11 @@ body {
 
 .whitish, .whitish a {
     color: #999;
+}
+
+#type-definition-list-content {
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 #type-definition-list-content .nav > li > a {
@@ -344,9 +350,9 @@ fieldset[disabled] .btn-black.active {
         max-height: 300px;
         bottom: auto;
     }
-
-    #type-definition-list .list-group {
+    
+    #type-definition-list-content {
         bottom: auto;
-        max-height: 249px;
+        max-height: 150px;
     }
 }
