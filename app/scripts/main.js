@@ -13,8 +13,8 @@ var KevWebEditor     = require('../../lib/engine/KevWebEditor'),
     Undo             = require('../../lib/command/Undo'),
     Redo             = require('../../lib/command/Redo'),
     SaveModal        = require('../../lib/command/ui/SaveModal'),
-    ClearAll         = require('../../lib/command/model/ClearAll'),
-    ClearInstances   = require('../../lib/command/model/ClearInstances');
+    ClearAll         = require('../../lib/command/editor/ClearAll'),
+    ClearInstances   = require('../../lib/command/editor/ClearInstances');
 
 /**
  * Main entry point of Kevoree Web Editor

@@ -52,14 +52,8 @@ body {
     user-select: none;
 }
 
-#type-definition-list .list-group {
-    position: absolute;
-    top: 51px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
+#type-definition-list-content .list-group {
+    margin-bottom: 0;
 }
 
 #type-definition-list-search-form {
@@ -192,7 +186,6 @@ body {
 
 .dragged {
     z-index: 1001;
-    cursor: move;
 }
 
 #alert {
@@ -346,7 +339,7 @@ fieldset[disabled] .btn-black.active {
 @media screen and (max-width: 767px) {
     #type-definition-list {
         width: auto;
-        min-height: 51px;
+        /*min-height: 51px;*/
         max-height: 300px;
         bottom: auto;
     }
