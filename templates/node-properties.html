@@ -6,67 +6,64 @@
     {{> instanceProps}}
     <div class="panel-group">
         <div class="panel panel-default">
-            <div id="net-props-heading" class="panel-heading" data-toggle="collapse" data-target="#net-props">
-                <h4 class="panel-title">Node network<span class="glyphicon glyphicon-plus pull-right"></span></h4>
+            <div id="node-net-infos-heading" class="panel-heading" data-toggle="collapse" data-target="#node-net-infos">
+                <h4 class="panel-title">Network information<span class="glyphicon glyphicon-plus pull-right"></span></h4>
             </div>
-            <div id="net-props" class="panel-collapse collapse">
+            <div id="node-net-infos" class="panel-collapse collapse">
                 <div class="panel-body">
                     <div class="row-fluid">
-                        {{#hasNetProps}}
-                        <div class="row-fluid">
-                            <ul class="nav nav-tabs">
-                                {{#netProps}}
-                                <li class="{{active}}"><a href="#{{id}}" data-toggle="tab">{{type}}</a></li>
-                                {{/netProps}}
-                                <!--<div class="btn-group btn-group-sm pull-right">-->
-                                <!--<button id="del-node-link" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>-->
-                                <!--<button id="add-node-link" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span></button>-->
-                                <!--</div>-->
-                            </ul>
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs nav-tabs-sm">
+                            {{#netInfos}}
+                            <li class="net-info-tab{{#first}} active{{/first}}"><a href="#{{netName}}" data-toggle="tab">{{netName}}</a></li>
+                            {{/netInfos}}
+                            <div class="btn-group btn-group-xs pull-right">
+                                <button id="del-network" type="button" class="btn btn-danger" title="Remove selected network"><span class="glyphicon glyphicon-trash"></span></button>
+                                <button id="add-network" type="button" class="btn btn-primary" title="Add new network"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                            </div>
+                        </ul>
 
-                            <div class="tab-content">
-                                {{#netProps}}
-                                <div class="tab-pane {{active}} well" id="{{id}}">
-                                    <div class="form-horizontal">
-                                        <div class="form-group">
-                                            <label for="link-type-{{id}}" class="col-sm-2 control-label">Type</label>
-                                            <div class="col-sm-4">
-                                                <input type="text" class="form-control mousetrap" id="link-type-{{id}}" placeholder="Type" value="{{type}}">
-                                            </div>
-                                            <label for="link-rate-{{id}}" class="col-sm-2 control-label">Rate</label>
-                                            <div class="col-sm-4">
-                                                <input type="number" max="100" min="0" class="form-control mousetrap" id="link-rate-{{id}}" placeholder="Rate" value="{{rate}}">
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            {{#netInfos}}
+                            <div class="tab-pane net-info-tab-content clearfix{{#first}} active{{/first}}" id="{{netName}}">
+                                <div class="form-horizontal">
+                                    <!-- Network info name -->
+                                    <div class="row">
+                                        <div class="col-xs-10 col-xs-offset-1">
+                                            <label for="net-info-{{netName}}" class="col-sm-4 control-label input-sm">NetworkInfo name</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control input-sm" id="net-info-{{netName}}" placeholder="Name: ip, bluetooth, etc." value="{{netName}}">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="well">
-                                        <div class="props-title row">
-                                            <strong class="col-xs-6">Properties</strong>
-                                            <!--<div class="row col-xs-6">-->
-                                            <!--<div class="btn-group btn-group-xs pull-right">-->
-                                            <!--<button id="del-net-prop-{{id}}" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>-->
-                                            <!--<button id="add-net-prop-{{id}}" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span></button>-->
-                                            <!--</div>-->
-                                            <!--</div>-->
+
+                                    <!-- Network properties list -->
+                                    <div id="net-props-list">
+                                        <div class="header">
+                                            Network properties:
+                                            <div class="btn-group btn-group-xs pull-right">
+                                                <button id="del-net-prop-{{netName}}" type="button" class="btn btn-danger" title="Remove selected property"><span class="glyphicon glyphicon-trash"></span></button>
+                                                <button id="add-net-prop-{{netName}}" type="button" class="btn btn-primary" title="Add new property"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                                            </div>
                                         </div>
-                                        <div class="net-prop-pairs">
+                                        <div class="form-horizontal net-prop-pairs">
                                             {{#values}}
-                                            <div class="row {{selected}}">
-                                                <div class="col-sm-6 col-xs-12">
-                                                    <input type="text" id="net-prop-name-{{id}}" class="form-control mousetrap net-prop-name" placeholder="name" value="{{name}}">
+                                            <div class="net-prop row-fluid clearfix{{#first}} ui-selected{{/first}}" data-net-info="{{netName}}" data-prop-name="{{name}}">
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control input-sm net-prop-name" id="net-prop-{{netName}}-{{name}}" placeholder="Name: ip, bluetooth, etc." value="{{name}}">
                                                 </div>
-                                                <div class="col-sm-6 col-xs-12">
-                                                    <input type="text" id="net-prop-value-{{id}}" class="form-control mousetrap net-prop-value" placeholder="value" value="{{value}}">
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control input-sm net-prop-value" id="net-prop-{{netName}}-{{name}}-value" placeholder="Name: 127.0.0.1" value="{{value}}">
                                                 </div>
                                             </div>
                                             {{/values}}
                                         </div>
                                     </div>
                                 </div>
-                                {{/netProps}}
                             </div>
+                            {{/netInfos}}
                         </div>
-                        {{/hasNetProps}}
                     </div>
                 </div>
             </div>

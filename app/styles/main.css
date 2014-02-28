@@ -260,13 +260,57 @@ body {
     padding-right: 0;
 }
 
-#net-props-heading {
+#node-net-infos-heading {
     cursor: pointer;
+    padding: 7px;
 }
 
-.net-prop-pairs .ui-selecting { background: #c9c9c9; }
-.net-prop-pairs .ui-selected { background: #d3d3d3; }
-.net-prop-pairs .row {
+#node-net-infos-heading > * {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+#node-net-infos .panel-body {
+    padding: 10px;
+}
+
+#node-net-infos .tab-content {
+    border: 1px solid #ddd;
+    border-top-color: transparent;
+    padding: 5px 10px;
+}
+
+.net-info-tab {
+    text-transform: uppercase;
+}
+
+.nav-tabs-sm > li > a {
+    padding: 4px 12px;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+#net-props-list {
+    border-top: 1px solid #ddd;
+    margin-top: 10px;
+    padding-top: 5px;
+}
+
+#net-props-list .header {
+    font-size:  12px;
+    font-weight: bold;
+    padding-bottom: 8px;
+}
+
+.net-prop-pairs .ui-selecting {
+    background: #c9c9c9;
+}
+.net-prop-pairs .ui-selected {
+    background: #d3d3d3;
+}
+
+.net-prop {
+    cursor: pointer;
     padding-top: 3px;
     padding-bottom: 3px;
 }
@@ -311,6 +355,10 @@ fieldset[disabled] .btn-black.active {
 .btn-black .badge {
     color: #000;
     background-color: #fff;
+}
+
+.no-margin {
+    margin: 0;
 }
 
 /* Responsive */
