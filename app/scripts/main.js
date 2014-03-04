@@ -1,4 +1,5 @@
 var KevWebEditor     = require('../../lib/engine/KevWebEditor'),
+    QueryParser      = require('../../lib/engine/QueryParser'),
     LoadModelFC      = require('../../lib/command/ui/LoadModelFileChooser'),
     LoadModelDnD     = require('../../lib/command/ui/LoadModelDragNDrop'),
     MergeModel       = require('../../lib/command/ui/MergeModel'),
@@ -22,6 +23,9 @@ var KevWebEditor     = require('../../lib/engine/KevWebEditor'),
 $(function () {
     // create the editor
     var editor = new KevWebEditor();
+
+    // create the QueryParser
+    var queryParser = new QueryParser(editor);
 
     // command invoker
     function executeCmd(Command, param) {
