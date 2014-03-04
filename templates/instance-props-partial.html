@@ -15,6 +15,19 @@
             <input type="text" class="form-control mousetrap" id="instance-name" placeholder="Specify a name" value="{{name}}">
         </div>
     </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">Instance state</label>
+        <div class="col-sm-9">
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default{{#started}} active{{/started}}">
+                    <input type="radio" name="options" id="start-instance"> Started
+                </label>
+                <label class="btn btn-default{{^started}} active{{/started}}">
+                    <input type="radio" name="options" id="stop-instance"> Stopped
+                </label>
+            </div>
+        </div>
+    </div>
     {{#dictionary}}
     <div class="form-group">
         <label for="dic-{{name}}" class="col-sm-3 control-label">{{name}}</label>
