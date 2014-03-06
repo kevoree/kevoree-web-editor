@@ -6,7 +6,7 @@
     "author": "Maxime Tricoire <max.tricoire@gmail.com>",
     "license": "LGPL-3.0",
     "dependencies": {
-        "kevoree-library": "0.0.6",
+        "kevoree-library": "0.0.7",
         "pseudoclass": "~0.3.0",
         "kevoree-kotlin": "0.0.3",
         "semver": "~2.2.1",
