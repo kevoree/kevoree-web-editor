@@ -8,12 +8,12 @@
   "dependencies": {
     "kevoree-library": "0.1.1",
     "pseudoclass": "~0.3.0",
-    "kevoree-kotlin": "0.1.0",
+    "kevoree-kotlin": "0.1.1",
     "semver": "~2.2.1",
     "underscore.string": "~2.3.3",
     "async": "~0.2.10",
-    "kevoree-kevscript": "0.1.0",
-    "kevoree-commons": "0.1.0"
+    "kevoree-kevscript": "0.1.1",
+    "kevoree-commons": "0.1.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -42,7 +42,8 @@
     "grunt-templato": "0.0.2",
     "grunt-contrib-hogan": "~0.2.4",
     "bower": "~1.2.8",
-    "grunt-cli": "~0.1.13"
+    "grunt-cli": "~0.1.13",
+    "grunt-deps-manager": "0.0.1"
   },
   "keywords": [
     "kevoree",

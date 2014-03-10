@@ -337,10 +337,19 @@ module.exports = function (grunt) {
                     ".tmp/scripts/templates.js": ["templates/**/*.html"]
                 }
             }
+        },
+
+        deps_manager: {
+            options: {
+                version: '0.1.1',
+                pattern: 'kevoree-.*'
+            },
+            src: [ 'package.json' ]
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-hogan');
+    grunt.loadNpmTasks('grunt-deps-manager');
 
     grunt.registerTask('serve', function (target) {
         if (target === 'dist') {
