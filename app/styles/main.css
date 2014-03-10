@@ -361,6 +361,10 @@ fieldset[disabled] .btn-black.active {
     margin: 0;
 }
 
+.form-group label {
+    word-break: break-all;
+}
+
 /* Responsive */
 @media screen and (min-width: 768px) {
     .container {
