@@ -8,6 +8,7 @@ var KevWebEditor     = require('../../lib/engine/KevWebEditor'),
     Settings         = require('../../lib/command/ui/Settings'),
     OpenStdLibsModal = require('../../lib/command/ui/OpenStdLibsModal'),
     OpenNodeModal    = require('../../lib/command/ui/OpenFromNodeModal'),
+    MergeNodeModal   = require('../../lib/command/ui/MergeFromNodeModal'),
     OpenKevSModal    = require('../../lib/command/ui/OpenKevscriptModal'),
     CloseModal       = require('../../lib/command/ui/CloseModal'),
     Debug            = require('../../lib/command/ui/Debug'),
@@ -40,6 +41,7 @@ $(function () {
     $('#merge').click(executeCmd(MergeModel));
     $('#save-json').click(executeCmd(SaveModel));
     $('#open-from-node').click(executeCmd(OpenNodeModal));
+    $('#merge-from-node').click(executeCmd(MergeNodeModal));
     $('#settings').click(executeCmd(Settings));
     $('#server-settings').click(executeCmd(ServerSettings));
     $('#undo').click(executeCmd(Undo));
@@ -53,6 +55,7 @@ $(function () {
     Mousetrap.bind(['command+l', 'ctrl+l'], executeCmd(LoadModelFC));
     Mousetrap.bind(['command+m', 'ctrl+m'], executeCmd(MergeModel));
     Mousetrap.bind(['command+o', 'ctrl+o'], executeCmd(OpenNodeModal));
+    Mousetrap.bind(['command+shift+m', 'ctrl+shift+m'], executeCmd(MergeNodeModal));
     Mousetrap.bind(['command+s', 'ctrl+s'], executeCmd(SaveModel));
     Mousetrap.bind(['command+z', 'ctrl+z'], executeCmd(Undo));
     Mousetrap.bind(['command+y', 'ctrl+y'], executeCmd(Redo));
