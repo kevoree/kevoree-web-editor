@@ -1,6 +1,6 @@
 {
   "name": "kevoree-web-editor-client",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Kevoree Web Editor Client",
   "main": "index.js",
   "author": "Maxime Tricoire <max.tricoire@gmail.com>",
