@@ -68,7 +68,7 @@ module.exports = function (grunt) {
         // The actual grunt server settings
         connect: {
             options: {
-                port: 8080,
+                port: 8081,
                 livereload: 35729,
                 // Change this to '0.0.0.0' to access the server from outside
                 hostname: 'localhost'
@@ -176,7 +176,7 @@ module.exports = function (grunt) {
             },
             html: '<%= yeoman.app %>/index.html'
         },
-        
+
         uglify: {
             options: {
                 mangle: {

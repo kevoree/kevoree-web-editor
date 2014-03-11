@@ -2,7 +2,7 @@
     <div class="form-group">
         <label for="instance-version" class="col-sm-3 control-label">Version</label>
         <div class="col-sm-9">
-            <select id="instance-version" class="form-control">
+            <select id="instance-version" class="form-control input-sm">
                 {{#versions}}
                 <option {{selected}}>{{version}}</option>
                 {{/versions}}
@@ -12,17 +12,17 @@
     <div class="form-group">
         <label for="instance-name" class="col-sm-3 control-label">Name</label>
         <div class="col-sm-9">
-            <input type="text" class="form-control mousetrap" id="instance-name" placeholder="Specify a name" value="{{name}}">
+            <input type="text" class="form-control input-sm mousetrap" id="instance-name" placeholder="Specify a name" value="{{name}}">
         </div>
     </div>
     <div class="form-group">
         <label class="col-sm-3 control-label">Instance state</label>
         <div class="col-sm-9">
             <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-default{{#started}} active{{/started}}">
+                <label class="btn btn-sm btn-default{{#started}} active{{/started}}">
                     <input type="radio" name="options" id="start-instance"> Started
                 </label>
-                <label class="btn btn-default{{^started}} active{{/started}}">
+                <label class="btn btn-sm btn-default{{^started}} active{{/started}}">
                     <input type="radio" name="options" id="stop-instance"> Stopped
                 </label>
             </div>
@@ -32,7 +32,7 @@
     <div class="form-group">
         <label for="dic-{{name}}" class="col-sm-3 control-label">{{name}}</label>
         <div class="col-sm-9">
-            <input type="text" class="form-control mousetrap" id="dic-{{name}}" value="{{value}}">
+            <input type="text" class="form-control input-sm mousetrap" id="dic-{{name}}" value="{{value}}">
         </div>
     </div>
     {{/dictionary}}
