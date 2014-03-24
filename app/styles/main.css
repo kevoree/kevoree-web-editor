@@ -306,6 +306,10 @@ body {
     padding-right: 0;
 }
 
+.dic-value-multiline {
+    min-height: 100px;
+}
+
 #node-net-infos-heading {
     cursor: pointer;
     padding: 7px;
