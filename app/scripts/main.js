@@ -26,7 +26,7 @@ $(function () {
     var editor = new KevWebEditor();
 
     // create the QueryParser
-    var queryParser = new QueryParser(editor);
+    new QueryParser(editor);
 
     // command invoker
     function executeCmd(Command, param) {
