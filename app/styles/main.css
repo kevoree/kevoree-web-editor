@@ -427,6 +427,9 @@ fieldset[disabled] .btn-black.active {
 .CodeMirror-lines {
     min-height: 350px;
 }
+.CodeMirror-hints {
+    z-index: 42000;
+}
 
 /* Responsive */
 @media screen and (min-width: 768px) {
