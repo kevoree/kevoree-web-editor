@@ -146,7 +146,6 @@
                     return null;
 
                 } else if (state.expect.length === 0) {
-                    state.currentStatement = null;
                     // nothing expected, look for a new statement
                     if (stream.match(REGEX['statement'], false)) {
                         statement = stream.match(REGEX['statement'], true);
@@ -200,7 +199,7 @@
                                 state.currentStatement = null;
                                 state.stringTag = null;
                             } else {
-                                state.expect.splice(0, 0, expected);
+                                state.expect.splice(0, 0, expected); // push() value back to its old index because string isn't finished
                                 stream.skipToEnd();    // Rest of line is string
                             }
                             return 'string';          // Token style
@@ -212,7 +211,11 @@
                     } else {
                         statement = stream.match(REGEX[expected], true);
                         if (statement) {
-                            return statements[expected](stream, state);
+                            var style = statements[expected](stream, state);
+                            if (state.expect.length === 0) {
+                                state.currentStatement = null;
+                            }
+                            return style;
                         } else {
                             if (!optional) {
                                 state.expect.splice(0, 0, expected); // push() value back to its old index on fail
