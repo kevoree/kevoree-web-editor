@@ -10,13 +10,15 @@ var KevWebEditor     = require('../../lib/engine/KevWebEditor'),
     OpenNodeModal    = require('../../lib/command/ui/OpenFromNodeModal'),
     MergeNodeModal   = require('../../lib/command/ui/MergeFromNodeModal'),
     OpenKevSModal    = require('../../lib/command/ui/OpenKevscriptModal'),
+    OpenHelpModal    = require('../../lib/command/ui/OpenHelpModal'),
     CloseModal       = require('../../lib/command/ui/CloseModal'),
     Debug            = require('../../lib/command/ui/Debug'),
     Undo             = require('../../lib/command/Undo'),
     Redo             = require('../../lib/command/Redo'),
     SaveModal        = require('../../lib/command/ui/SaveModal'),
     ClearAll         = require('../../lib/command/editor/ClearAll'),
-    ClearInstances   = require('../../lib/command/editor/ClearInstances');
+    ClearInstances   = require('../../lib/command/editor/ClearInstances'),
+    ClearUnusedTDefs = require('../../lib/command/editor/ClearUnusedTDefs');
 
 /**
  * Main entry point of Kevoree Web Editor
@@ -48,8 +50,10 @@ $(function () {
     $('#redo').click(executeCmd(Redo));
     $('#clear-all').click(executeCmd(ClearAll));
     $('#clear-instances').click(executeCmd(ClearInstances));
+    $('#clear-unused-tdefs').click(executeCmd(ClearUnusedTDefs));
     $('#kev-std-libs').click(executeCmd(OpenStdLibsModal));
     $('#open-kevscript').click(executeCmd(OpenKevSModal));
+    $('#open-help').click(executeCmd(OpenHelpModal));
 
     // Keyboard shortcuts
     Mousetrap.bind(['command+l', 'ctrl+l'], executeCmd(LoadModelFC));
@@ -59,15 +63,18 @@ $(function () {
     Mousetrap.bind(['command+s', 'ctrl+s'], executeCmd(SaveModel));
     Mousetrap.bind(['command+z', 'ctrl+z'], executeCmd(Undo));
     Mousetrap.bind(['command+y', 'ctrl+y'], executeCmd(Redo));
-    Mousetrap.bind('alt+s',                 executeCmd(Settings));
-    Mousetrap.bind('alt+i',                 executeCmd(ClearInstances));
-    Mousetrap.bind('alt+a',                 executeCmd(ClearAll));
-    Mousetrap.bind('alt+k',                 executeCmd(OpenStdLibsModal));
+    Mousetrap.bind(['command+y', 'ctrl+y'], executeCmd(Redo));
     Mousetrap.bind(['command+k', 'ctrl+k'], executeCmd(OpenKevSModal));
+    Mousetrap.bind(['command+h', 'ctrl+h'], executeCmd(OpenHelpModal));
     Mousetrap.bind(['command shift alt d', 'ctrl shift alt d'], executeCmd(Debug));
     Mousetrap.bind('up up down down left right left right b a enter', function() {
         console.log("Yeah, you mate know your classics!");
     });
+    Mousetrap.bind('alt+s', executeCmd(Settings));
+    Mousetrap.bind('alt+i', executeCmd(ClearInstances));
+    Mousetrap.bind('alt+a', executeCmd(ClearAll));
+    Mousetrap.bind('alt+u', executeCmd(ClearUnusedTDefs));
+    Mousetrap.bind('alt+k', executeCmd(OpenStdLibsModal));
     
     var modal = $('#modal');
     // bind shorcuts "ESC" & "ENTER" when #modal is shown
