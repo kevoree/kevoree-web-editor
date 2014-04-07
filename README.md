@@ -1,5 +1,6 @@
 # Kevoree Web Editor [![Build Status](https://drone.io/github.com/kevoree/kevoree-web-editor/status.png)](https://drone.io/github.com/kevoree/kevoree-web-editor/latest)
 
+Demo [here](http://editor.kevoree.org)
 
 ## Build
 Either ways will produce a `dist/` folder containing the static Web client  
