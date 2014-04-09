@@ -160,7 +160,6 @@ module.exports = function (grunt) {
                     src: [
                         '<%= yeoman.dist %>/scripts/{,*/}*.js',
                         '<%= yeoman.dist %>/styles/{,*/}*.css',
-                        '<%= yeoman.dist %>/images/{,*/}*.{gif,jpeg,jpg,png,webp}',
                         '<%= yeoman.dist %>/styles/fonts/{,*/}*.*'
                     ]
                 }
@@ -181,6 +180,9 @@ module.exports = function (grunt) {
             options: {
                 mangle: {
                     except: ['_super']
+                },
+                compress: {
+                    drop_console: true
                 }
             }
         },
@@ -235,32 +237,6 @@ module.exports = function (grunt) {
                 }]
             }
         },
-
-        // By default, your `index.html`'s <!-- Usemin block --> will take care of
-        // minification. These next options are pre-configured if you do not wish
-        // to use the Usemin blocks.
-        // cssmin: {
-        //     dist: {
-        //         files: {
-        //             '<%= yeoman.dist %>/styles/main.css': [
-        //                 '.tmp/styles/{,*/}*.css',
-        //                 '<%= yeoman.app %>/styles/{,*/}*.css'
-        //             ]
-        //         }
-        //     }
-        // },
-        // uglify: {
-        //     dist: {
-        //         files: {
-        //             '<%= yeoman.dist %>/scripts/scripts.js': [
-        //                 '<%= yeoman.dist %>/scripts/scripts.js'
-        //             ]
-        //         }
-        //     }
-        // },
-        //concat: {
-        //    dist: {}
-        //},
 
         // Copies remaining files to places other tasks can use
         copy: {
@@ -350,6 +326,7 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-hogan');
     grunt.loadNpmTasks('grunt-deps-manager');
+    grunt.loadNpmTasks('grunt-remove-logging');
 
     grunt.registerTask('serve', function (target) {
         if (target === 'dist') {
@@ -394,7 +371,7 @@ module.exports = function (grunt) {
         'cssmin',
         'uglify',
         'copy:dist',
-//        'rev',
+        'rev',
         'usemin',
         'htmlmin'
     ]);
