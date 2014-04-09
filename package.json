@@ -1,7 +1,7 @@
 {
-  "name": "kevoree-web-editor-client",
+  "name": "kevoree-web-editor",
   "version": "0.1.4",
-  "description": "Kevoree Web Editor Client",
+  "description": "Kevoree Web Editor - Static Web Client",
   "main": "index.js",
   "author": "Maxime Tricoire <max.tricoire@gmail.com>",
   "license": "LGPL-3.0",
