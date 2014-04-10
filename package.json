@@ -12,7 +12,7 @@
     "semver": "~2.2.1",
     "underscore.string": "~2.3.3",
     "async": "~0.2.10",
-    "kevoree-kevscript": "^0.4.1",
+    "kevoree-kevscript": "^0.4.13",
     "kevoree-commons": "^0.4.1"
   },
   "devDependencies": {
