@@ -10,6 +10,7 @@
 .cm-s-kevscript .cm-string2 { color: #9999cc; }
 .cm-s-kevscript .cm-typedef { color: #78CF8A; }
 .cm-s-kevscript .cm-version { color: #24C2C7; }
+.cm-s-kevscript .cm-escapedstring { color: #FF9D00; }
 
 .cm-s-kevscript .cm-atom { color: #CF7EA9; }
 .cm-s-kevscript .cm-def { color: #aac6e3; }
@@ -24,7 +25,6 @@
 .cm-s-kevscript .cm-header {color: blue;}
 .cm-s-kevscript .cm-hr { color: pink; }
 .cm-s-kevscript .cm-link { color: #F4C20B; }
-.cm-s-kevscript .cm-special { color: #FF9D00; }
 .cm-s-kevscript .cm-error { color: #AF2018; }
 
 .cm-s-kevscript .CodeMirror-matchingbracket { color: #0f0; }
