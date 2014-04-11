@@ -15,6 +15,9 @@
     /*color: #AF2018;*/
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/qH1jAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QUXCToH00Y1UgAAACFJREFUCNdjPMDBUc/AwNDAAAFMTAwMDA0OP34wQgX/AQBYgwYEx4f9lQAAAABJRU5ErkJggg==) repeat-x bottom left;
 }
+.cm-s-kevscript .cm-searching {
+    background: rgba(255, 255, 255, 0.1);
+}
 
 .cm-s-kevscript .cm-atom { color: #CF7EA9; }
 .cm-s-kevscript .cm-def { color: #aac6e3; }
