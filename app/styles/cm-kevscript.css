@@ -11,6 +11,10 @@
 .cm-s-kevscript .cm-typedef { color: #78CF8A; }
 .cm-s-kevscript .cm-version { color: #24C2C7; }
 .cm-s-kevscript .cm-escapedstring { color: #FF9D00; }
+.cm-s-kevscript .cm-error {
+    /*color: #AF2018;*/
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/qH1jAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QUXCToH00Y1UgAAACFJREFUCNdjPMDBUc/AwNDAAAFMTAwMDA0OP34wQgX/AQBYgwYEx4f9lQAAAABJRU5ErkJggg==) repeat-x bottom left;
+}
 
 .cm-s-kevscript .cm-atom { color: #CF7EA9; }
 .cm-s-kevscript .cm-def { color: #aac6e3; }
@@ -25,7 +29,6 @@
 .cm-s-kevscript .cm-header {color: blue;}
 .cm-s-kevscript .cm-hr { color: pink; }
 .cm-s-kevscript .cm-link { color: #F4C20B; }
-.cm-s-kevscript .cm-error { color: #AF2018; }
 
 .cm-s-kevscript .CodeMirror-matchingbracket { color: #0f0; }
 .cm-s-kevscript .CodeMirror-nonmatchingbracket { color: #f22; }
