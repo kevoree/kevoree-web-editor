@@ -326,7 +326,6 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-hogan');
     grunt.loadNpmTasks('grunt-deps-manager');
-    grunt.loadNpmTasks('grunt-remove-logging');
 
     grunt.registerTask('serve', function (target) {
         if (target === 'dist') {
