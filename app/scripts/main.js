@@ -5,7 +5,7 @@ var KevWebEditor     = require('../../lib/engine/KevWebEditor'),
     MergeModel       = require('../../lib/command/ui/MergeModel'),
     SaveModel        = require('../../lib/command/ui/SaveModel'),
     ServerSettings   = require('../../lib/command/ui/ServerSettings'),
-    Settings         = require('../../lib/command/ui/Settings'),
+    SettingsModal    = require('../../lib/command/ui/OpenSettingsModal'),
     OpenStdLibsModal = require('../../lib/command/ui/OpenStdLibsModal'),
     OpenNodeModal    = require('../../lib/command/ui/OpenFromNodeModal'),
     MergeNodeModal   = require('../../lib/command/ui/MergeFromNodeModal'),
@@ -13,9 +13,9 @@ var KevWebEditor     = require('../../lib/engine/KevWebEditor'),
     OpenHelpModal    = require('../../lib/command/ui/OpenHelpModal'),
     CloseModal       = require('../../lib/command/ui/CloseModal'),
     Debug            = require('../../lib/command/ui/Debug'),
-    Undo             = require('../../lib/command/Undo'),
-    Redo             = require('../../lib/command/Redo'),
     SaveModal        = require('../../lib/command/ui/SaveModal'),
+    Undo             = require('../../lib/command/editor/Undo'),
+    Redo             = require('../../lib/command/editor/Redo'),
     ClearAll         = require('../../lib/command/editor/ClearAll'),
     ClearInstances   = require('../../lib/command/editor/ClearInstances'),
     ClearUnusedTDefs = require('../../lib/command/editor/ClearUnusedTDefs');
@@ -44,7 +44,7 @@ $(function () {
     $('#save-json').click(executeCmd(SaveModel));
     $('#open-from-node').click(executeCmd(OpenNodeModal));
     $('#merge-from-node').click(executeCmd(MergeNodeModal));
-    $('#settings').click(executeCmd(Settings));
+    $('#settings').click(executeCmd(SettingsModal));
     $('#server-settings').click(executeCmd(ServerSettings));
     $('#undo').click(executeCmd(Undo));
     $('#redo').click(executeCmd(Redo));
@@ -70,7 +70,7 @@ $(function () {
     Mousetrap.bind('up up down down left right left right b a enter', function() {
         console.log("Yeah, you mate know your classics!");
     });
-    Mousetrap.bind('alt+s', executeCmd(Settings));
+    Mousetrap.bind('alt+s', executeCmd(SettingsModal));
     Mousetrap.bind('alt+i', executeCmd(ClearInstances));
     Mousetrap.bind('alt+a', executeCmd(ClearAll));
     Mousetrap.bind('alt+u', executeCmd(ClearUnusedTDefs));

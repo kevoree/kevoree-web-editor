@@ -251,6 +251,10 @@ body {
     margin-bottom: 0;
 }
 
+.nav > li > a.small-tab {
+    padding: 6px 10px
+}
+
 .std-libs-pane {
     color: #000;
     padding: 15px;
