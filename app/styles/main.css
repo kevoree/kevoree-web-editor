@@ -416,6 +416,10 @@ fieldset[disabled] .btn-black.active {
     font-size: 12px;
 }
 
+.form-group label.setting-label {
+    font-size: 14px;
+}
+
 .CodeMirror {
     border: 1px solid #eee;
     height: auto;
