@@ -317,7 +317,7 @@ module.exports = function (grunt) {
 
         deps_manager: {
             options: {
-                version: '^0.5.0',
+                version: '^0.6.0',
                 pattern: 'kevoree-.*'
             },
             src: [ 'package.json' ]

@@ -6,14 +6,14 @@
   "author": "Maxime Tricoire <max.tricoire@gmail.com>",
   "license": "LGPL-3.0",
   "dependencies": {
-    "kevoree-library": "^0.5.0",
+    "kevoree-library": "^0.6.0",
     "pseudoclass": "~0.3.0",
-    "kevoree-kotlin": "^0.5.0",
+    "kevoree-kotlin": "^0.6.0",
     "semver": "~2.2.1",
     "underscore.string": "~2.3.3",
     "async": "~0.2.10",
-    "kevoree-kevscript": "^0.5.0",
-    "kevoree-commons": "^0.5.0"
+    "kevoree-kevscript": "^0.6.0",
+    "kevoree-commons": "^0.6.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
