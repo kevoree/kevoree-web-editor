@@ -21,4 +21,4 @@ mvn install
 ```sh
 grunt serve
 ```
-This will start a livereload server on port :8080 that will be autorefreshed each time a modification occurs in the code
+This will start a livereload server on port :8081 that will be autorefreshed each time a modification occurs in the code
