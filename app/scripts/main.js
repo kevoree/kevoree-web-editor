@@ -7,6 +7,7 @@ var KevWebEditor     = require('../../lib/engine/KevWebEditor'),
     ServerSettings   = require('../../lib/command/ui/ServerSettings'),
     SettingsModal    = require('../../lib/command/ui/OpenSettingsModal'),
     OpenStdLibsModal = require('../../lib/command/ui/OpenStdLibsModal'),
+    CustomRepoModal  = require('../../lib/command/ui/OpenCustomRepoModal'),
     OpenNodeModal    = require('../../lib/command/ui/OpenFromNodeModal'),
     MergeNodeModal   = require('../../lib/command/ui/MergeFromNodeModal'),
     OpenKevSModal    = require('../../lib/command/ui/OpenKevscriptModal'),
@@ -52,6 +53,7 @@ $(function () {
     $('#clear-instances').click(executeCmd(ClearInstances));
     $('#clear-unused-tdefs').click(executeCmd(ClearUnusedTDefs));
     $('#kev-std-libs').click(executeCmd(OpenStdLibsModal));
+    $('#from-custom-repo').click(executeCmd(CustomRepoModal));
     $('#open-kevscript').click(executeCmd(OpenKevSModal));
     $('#open-help').click(executeCmd(OpenHelpModal));
 
