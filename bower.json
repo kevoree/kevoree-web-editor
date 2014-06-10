@@ -7,7 +7,7 @@
     "jquery-ui": "~1.10.3",
     "kineticjs": "~5.1.0",
     "mousetrap": "~1.4.6",
-    "hogan": "~3.0.0",
+    "hogan": "3.0.0",
     "codemirror": "~3.22.0"
   },
   "devDependencies": {}

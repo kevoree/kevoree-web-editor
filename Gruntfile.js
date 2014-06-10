@@ -324,7 +324,6 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.loadNpmTasks('grunt-contrib-hogan');
     grunt.loadNpmTasks('grunt-deps-manager');
 
     grunt.registerTask('serve', function (target) {
