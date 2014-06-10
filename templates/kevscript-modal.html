@@ -4,13 +4,19 @@
 </div>
 <div id="modal-body" class="modal-body">
     <div id="modal-error" class="alert alert-danger hide"></div>
-    <p>KevScript Editor automatically sets its content according to current model</p>
-    <textarea id="kevscript-editor" class="form-control hide">
-// this is an example of KevScript (because current model in editor is empty)
-include npm:kevoree-node-javascript:latest
-
-add node0 : JavascriptNode
-</textarea>
+    <div class="row" style="margin-bottom: 10px">
+        <div class="col-md-9">
+            KevScript Editor automatically sets its content according to current model (by default). But you can change the content (we provide some examples) by using the select dropdown.
+        </div>
+        <div class="col-md-3">
+            <select id="kevscript-source-selector" class="form-control input-sm">
+                {{#sources}}
+                <option value="{{id}}">{{name}}</option>
+                {{/sources}}
+            </select>
+        </div>
+    </div>
+    <textarea id="kevscript-editor" class="form-control hide"></textarea>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
