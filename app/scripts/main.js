@@ -19,7 +19,8 @@ var KevWebEditor     = require('../../lib/engine/KevWebEditor'),
     Redo             = require('../../lib/command/editor/Redo'),
     ClearAll         = require('../../lib/command/editor/ClearAll'),
     ClearInstances   = require('../../lib/command/editor/ClearInstances'),
-    ClearUnusedTDefs = require('../../lib/command/editor/ClearUnusedTDefs');
+    ClearUnusedTDefs = require('../../lib/command/editor/ClearUnusedTDefs'),
+    CustomPushModal  = require('../../lib/command/ui/OpenCustomPushModal');
 
 /**
  * Main entry point of Kevoree Web Editor
@@ -56,6 +57,7 @@ $(function () {
     $('#from-custom-repo').click(executeCmd(CustomRepoModal));
     $('#open-kevscript').click(executeCmd(OpenKevSModal));
     $('#open-help').click(executeCmd(OpenHelpModal));
+    $('#custom-push').click(executeCmd(CustomPushModal));
 
     // Keyboard shortcuts
     Mousetrap.bind(['command+l', 'ctrl+l'], executeCmd(LoadModelFC));
