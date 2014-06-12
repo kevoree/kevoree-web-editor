@@ -1,24 +1,13 @@
 # Kevoree Web Editor [![Build Status](https://drone.io/github.com/kevoree/kevoree-web-editor/status.png)](https://drone.io/github.com/kevoree/kevoree-web-editor/latest)
 
-Demo [here](http://editor.kevoree.org)
+Web app for Kevoree model management  
+You can use the demo version here [editor.kevoree.org](http://editor.kevoree.org)
 
-## Build
-Either ways will produce a `dist/` folder containing the static Web client  
+## Overview
+ - [What is it for ?](README.md#user-content-what-is-it-for-)
+ - [How do you use it ?](README.md#user-content-how-do-you-use-it-)
+ - [How do I contribute ?](README.md#user-content-how-do-i-contribute-)
 
-### Javascript way
-```sh
-npm install
-bower install
-grunt build
-```
-
-### Maven way
-```sh
-mvn install
-```
-
-## Development process
-```sh
-grunt serve
-```
-This will start a livereload server on port :8081 that will be autorefreshed each time a modification occurs in the code
+## What is it for ?
+## How do you use it ?
+## How do I contribute ?
