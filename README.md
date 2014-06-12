@@ -13,6 +13,14 @@ The purpose of Kevoree Web Editor (KWE) is to provide an easy-to-use tool to man
 It is mostly written in Javascript and has been designed to work as a static standalone Web application.
 
 ## How do I use it ?
+### Overview
+ - [Prerequisites](README.md#prerequisites)
+ - [User interface basics](README.md#user-interface-basics)
+ - [Menu bar content](README.md#menu-bar-content)
+ - [KWE popups](README.md#kwe-popups)
+ - [Model edition](README.md#model-edition)
+ 
+
 ### Prerequisites
  - an up-to-date browser because it uses **WebSocket**, **LocalStorage** and **Canvas**
  - some [Kevoree-related knowledge](http://kevoree.org/doc/#getting-started)
