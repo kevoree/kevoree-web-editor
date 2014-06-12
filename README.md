@@ -75,17 +75,20 @@ Kevoree Standard Libraries are available (currently, June 2014) for 3 platforms:
  - Javascript
  - Cloud
 
-Once the list loaded, you can select wanted libraries and hit the **Merge libraries** button and wait for the server you are connected to (specified in the popup title after @), to answer your request with the according Kevoree model.
+Once the list loaded, you can select wanted libraries and hit the **Merge libraries** button and wait for the server you are connected to (specified in the popup title after @), to answer your request with the according Kevoree model.  
+
 ![KWE Std Libs](http://hosta.braindead.fr/raw/539980bd1a9879c239a1a21d)
 
 #### From custom repository
 If you want to merge your own Kevoree libraries from a custom Maven repository you can by using this popup.  
-This will trigger the resolving server-side, then it will retrieve the model of your library (still server-side) and send it back to KWE, resulting in a merge of your current KWE model and the one you have specified in this popup.
+This will trigger the resolving server-side, then it will retrieve the model of your library (still server-side) and send it back to KWE, resulting in a merge of your current KWE model and the one you have specified in this popup.  
+
 ![KWE Custom repo](http://hosta.braindead.fr/raw/539980cc1a9879c239a1a221)
 
 #### Custom push
 Sometimes you have to edit your model network attributes resulting in the impossibility for you to push your model to your platforms (your group WebSocket server won't be able to receive the model according to the new network attributes, because it is still launched on the old model network attributes)  
-Using this popup, you can specify a group WebSocket server directly and ask for a push of your current model by pressing **Push model**
+Using this popup, you can specify a group WebSocket server directly and ask for a push of your current model by pressing **Push model**  
+
 ![KWE Custom push](http://hosta.braindead.fr/raw/539980cf1a9879c239a1a222)
 
 #### KevScript
@@ -98,7 +101,8 @@ Once you are done editing, you have two choices:
 ![KWE KevScript](http://hosta.braindead.fr/raw/539993c91a9879c239a1a223)
 
 #### Help
-This popup contains the whole list of shortcuts available in KWE, plus some useful information concerning the editor.
+This popup contains the whole list of shortcuts available in KWE, plus some useful information concerning the editor.  
+
 ![KWE Help](http://hosta.braindead.fr/raw/539980c91a9879c239a1a220)
 
 ### Model edition
@@ -110,6 +114,7 @@ To add TypeDefinition to your model you have multiple choices:
  - Add `include` statements to the KevScript editor and run it
 
 Upon TypeDefinition addition, you will see the left panel being populated with items:  
+
 ![KWE Tdefs list](http://hosta.braindead.fr/raw/5399967d1a9879c239a1a224)  
 
 This list has been created using the KevScript method with the following script:  
