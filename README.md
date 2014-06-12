@@ -98,7 +98,18 @@ Once you are done editing, you have two choices:
  - **Download**: saves the current KevScript to a **.kevs** file client-side
  - **Run**: process your script and updates the current Kevoree model in KWE
 
-![KWE KevScript](http://hosta.braindead.fr/raw/539993c91a9879c239a1a223)
+![KWE KevScript](http://hosta.braindead.fr/raw/539993c91a9879c239a1a223)  
+
+The KevScript Editor also provides some shortcuts to improve user experience:
+
+ Action       |    Shortcut
+------------- | --------------
+Search        | Ctrl+F
+Find next     | Ctrl+G
+Find previous | Ctrl+Shift+G
+Replace       | Ctrl+Shift+F
+Replace all   | Ctrl+Shift+R
+
 
 #### Help
 This popup contains the whole list of shortcuts available in KWE, plus some useful information concerning the editor.  
