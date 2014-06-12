@@ -1,13 +1,29 @@
 # Kevoree Web Editor [![Build Status](https://drone.io/github.com/kevoree/kevoree-web-editor/status.png)](https://drone.io/github.com/kevoree/kevoree-web-editor/latest)
 
-Web app for Kevoree model management  
+Web app for [Kevoree](http://kevoree.org/) model management  
 You can use the demo version here [editor.kevoree.org](http://editor.kevoree.org)
 
-##Â Overview
- - [What is it for ?](README.md#user-content-what-is-it-for-)
- - [How do you use it ?](README.md#user-content-how-do-you-use-it-)
- - [How do I contribute ?](README.md#user-content-how-do-i-contribute-)
+## Overview
+ - [What is it for ?](README.md#what-is-it-for-)
+ - [How do I use it ?](README.md#how-do-i-use-it-)
+ - [How do I contribute ?](README.md#how-do-i-contribute-)
 
 ## What is it for ?
-## How do you use it ?
+The purpose of Kevoree Web Editor (KWE) is to provide an easy-to-use tool to manage your [Kevoree](http://kevoree.org/) models  & runtimes.  
+It is mostly written in Javascript and has been designed to work as a static standalone Web application.
+
+## How do I use it ?
+### Prerequisites
+ - an up-to-date browser because it uses **WebSocket**, **LocalStorage** and **Canvas**
+
+### User interface basics
+KWE's UI is composed of 3 main components:
+ - a menu bar (top panel)
+ - an item list + search/filter field (left panel)
+ - a "graph" editor (center)
+
+![KWE](http://hosta.braindead.fr/raw/539973e81a9879c239a1a21c)
+
+### 
+
 ## How do I contribute ?
