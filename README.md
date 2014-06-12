@@ -118,7 +118,7 @@ ws.onopen = function () {
 ```js
 var ws = new WebSocket('ws://example.com');
 ws.onopen = function () {
-    ws.send('pull);
+    ws.send('pull');
 };
 ws.onmessage = function (event) {
     // event.data is a Kevoree model serialized in JSON (or a byte array)
