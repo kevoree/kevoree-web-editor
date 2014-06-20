@@ -8,7 +8,7 @@
   "dependencies": {
     "async": "^0.2.10",
     "kevoree-commons": "^0.7.0",
-    "kevoree-kevscript": "^0.7.0",
+    "kevoree-kevscript": "^0.7.3",
     "kevoree-kotlin": "^0.7.0",
     "kevoree-library": "^0.7.0",
     "pseudoclass": "^0.3.0",
