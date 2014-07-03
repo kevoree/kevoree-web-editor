@@ -46,20 +46,6 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <executions>
                     <execution>
-                        <id>Run npm cache clean</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>npm</executable>
-                            <arguments>
-                                <argument>cache</argument>
-                                <argument>clean</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>Run npm install</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -73,20 +59,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>Run bower cache clean</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>node_modules/bower/bin/bower</executable>
-                            <arguments>
-                                <argument>cache</argument>
-                                <argument>clean</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>Run bower install</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -96,7 +68,6 @@
                             <executable>node_modules/bower/bin/bower</executable>
                             <arguments>
                                 <argument>install</argument>
-                                <argument>--no-cache</argument>
                             </arguments>
                         </configuration>
                     </execution>
