@@ -31,7 +31,7 @@ KWE's UI is composed of 3 main components:
  - a TypeDefinition list + search/filter field (left panel)
  - a Kevoree model editor (center)
 
-![KWE](http://hosta.braindead.fr/raw/539973e81a9879c239a1a21c)
+![KWE](http://hosta.braindead.fr/raw/539973e81a9879c239a1a21c/kwe_overview.png)
 
 ### Menu bar content
 #### File menu
@@ -74,7 +74,7 @@ To specify your own KWE-server, use this popup.
 By default, [editor.kevoree.org](http://editor.kevoree.org) uses an **Express** web server hosted on the same machine.  
  > You can clone the sources of [kevoree/kevoree-web-editor-server](https://github.com/kevoree/kevoree-web-editor-server) and deploy it on your own servers
 
-![KWE Server settings](http://hosta.braindead.fr/raw/539980c11a9879c239a1a21e)
+![KWE Server settings](http://hosta.braindead.fr/raw/539980c11a9879c239a1a21e/kwe_server_settings.png)
 
 #### Kevoree Standard Libraries
 This popup allows you to merge Kevoree's official TypeDefinitions to your current model.  
@@ -85,19 +85,19 @@ Kevoree Standard Libraries are available (currently, June 2014) for 3 platforms:
 
 Once the list loaded, you can select wanted libraries and hit the **Merge libraries** button and wait for the server you are connected to (specified in the popup title after @), to answer your request with the according Kevoree model.  
 
-![KWE Std Libs](http://hosta.braindead.fr/raw/539980bd1a9879c239a1a21d)
+![KWE Std Libs](http://hosta.braindead.fr/raw/539980bd1a9879c239a1a21d/kwe_std_libs.png)
 
 #### From custom repository
 If you want to merge your own Kevoree libraries from a custom Maven repository you can by using this popup.  
 This will trigger the resolving server-side, then it will retrieve the model of your library (still server-side) and send it back to KWE, resulting in a merge of your current KWE model and the one you have specified in this popup.  
 
-![KWE Custom repo](http://hosta.braindead.fr/raw/539980cc1a9879c239a1a221)
+![KWE Custom repo](http://hosta.braindead.fr/raw/539980cc1a9879c239a1a221/kwe_custom_repo.png)
 
 #### Custom push
 Sometimes you have to edit your model network attributes resulting in the impossibility for you to push your model to your platforms (your group WebSocket server won't be able to receive the model according to the new network attributes, because it is still launched on the old model network attributes)  
 Using this popup, you can specify a group WebSocket server directly and ask for a push of your current model by pressing **Push model**  
 
-![KWE Custom push](http://hosta.braindead.fr/raw/539980cf1a9879c239a1a222)
+![KWE Custom push](http://hosta.braindead.fr/raw/539980cf1a9879c239a1a222/kwe_custom_push.png)
 
 #### KevScript
 A [Kevoree Script](http://kevoree.org/doc/#kevoree-script-aka-kevscript) (aka KevScript) editor providing syntax highlighting and auto-completion.  
@@ -106,7 +106,7 @@ Once you are done editing, you have two choices:
  - **Download**: saves the current KevScript to a **.kevs** file client-side
  - **Run**: process your script and updates the current Kevoree model in KWE
 
-![KWE KevScript](http://hosta.braindead.fr/raw/539993c91a9879c239a1a223)  
+![KWE KevScript](http://hosta.braindead.fr/raw/539993c91a9879c239a1a223/kwe_kevscript.png)  
 
 The KevScript Editor also provides some shortcuts to improve user experience:
 
@@ -122,7 +122,7 @@ Replace all   | Ctrl+Shift+R
 #### Help
 This popup contains the whole list of shortcuts available in KWE, plus some useful information concerning the editor.  
 
-![KWE Help](http://hosta.braindead.fr/raw/539980c91a9879c239a1a220)
+![KWE Help](http://hosta.braindead.fr/raw/539980c91a9879c239a1a220/kwe_help.png)
 
 ### Model edition
 #### Add TypeDefinition to your model
@@ -134,7 +134,7 @@ To add TypeDefinition to your model you have multiple choices:
 
 Upon TypeDefinition addition, you will see the left panel being populated with items:  
 
-![KWE Tdefs list](http://hosta.braindead.fr/raw/5399967d1a9879c239a1a224)  
+![KWE Tdefs list](http://hosta.braindead.fr/raw/5399967d1a9879c239a1a224/kwe_tdef_list.png)  
 
 This list has been created using the KevScript method with the following script:  
 ```kevs
@@ -163,7 +163,7 @@ add node1 : JavaNode
 ```  
 We have added two `add` statements, one for `node0 : Javascript` and one for `node1 : JavaNode`. This will result in the addition of two nodes in the model editor canvas:
 
-![KWE add instances](http://hosta.braindead.fr/raw/539998931a9879c239a1a225)
+![KWE add instances](http://hosta.braindead.fr/raw/539998931a9879c239a1a225/kwe_add_instance.png)
 
 ### Known protocols
 #### Kevoree groups WebSocket protocol
