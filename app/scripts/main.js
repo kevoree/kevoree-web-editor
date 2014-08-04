@@ -20,7 +20,8 @@ var KevWebEditor     = require('../../lib/engine/KevWebEditor'),
     ClearAll         = require('../../lib/command/editor/ClearAll'),
     ClearInstances   = require('../../lib/command/editor/ClearInstances'),
     ClearUnusedTDefs = require('../../lib/command/editor/ClearUnusedTDefs'),
-    CustomPushModal  = require('../../lib/command/ui/OpenCustomPushModal');
+    CustomPushModal  = require('../../lib/command/ui/OpenCustomPushModal'),
+    DeleteSelected   = require('../../lib/command/ui/DeleteSelected');
 
 /**
  * Main entry point of Kevoree Web Editor
@@ -58,6 +59,7 @@ $(function () {
     $('#open-kevscript').click(executeCmd(OpenKevSModal));
     $('#open-help').click(executeCmd(OpenHelpModal));
     $('#custom-push').click(executeCmd(CustomPushModal));
+    $('#delete-selected').click(executeCmd(DeleteSelected));
 
     // Keyboard shortcuts
     Mousetrap.bind(['command+l', 'ctrl+l'], executeCmd(LoadModelFC));
@@ -78,6 +80,7 @@ $(function () {
     Mousetrap.bind('alt+i', executeCmd(ClearInstances));
     Mousetrap.bind('alt+a', executeCmd(ClearAll));
     Mousetrap.bind('alt+u', executeCmd(ClearUnusedTDefs));
+    Mousetrap.bind('del', executeCmd(DeleteSelected));
     Mousetrap.bind('alt+k', executeCmd(OpenStdLibsModal));
     
     var modal = $('#modal');
