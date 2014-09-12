@@ -295,24 +295,20 @@ module.exports = function (grunt) {
         browserify: {
             main: {
                 src: "app/scripts/main.js",
-                dest: ".tmp/scripts/main.js"
+                dest: ".tmp/scripts/main.js",
+                options: {
+//                    alias: 'lib/util/ModelHelper.js:ModelHelper'
+                }
             }
         },
 
         // Creates compiled templates from templates/**/*.html using hogan (mustachejs-like)
-        // Makes your-template.html compiled js script available in window Global Scope as EditorTemplates['your-template']
+        // Makes your-template.html compiled js script available in window Global Scope as templates['your-template']
         hogan: {
             main: {
-                options: {
-                    prettify: true,
-                    namespace: 'EditorTemplates',
-                    defaultName: function(file) {
-                        return path.basename(file, '.html');
-                    }
-                },
-                files: {
-                    ".tmp/scripts/templates.js": ["templates/**/*.html"]
-                }
+                options: { binderName: 'hulk' },
+                src: ["templates/**/*.mustache"],
+                dest: '.tmp/scripts/templates.js'
             }
         },
 

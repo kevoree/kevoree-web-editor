@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="bower_components/codemirror/lib/codemirror.css" />
     <link rel="stylesheet" href="bower_components/codemirror/addon/hint/show-hint.css" />
     <link rel="stylesheet" href="bower_components/codemirror/addon/dialog/dialog.css" />
+    <link rel="stylesheet" href="bower_components/jstree/dist/themes/default/style.css" />
     <!-- endbower -->
     <link rel="stylesheet" href="styles/cm-kevscript.css">
     <!-- endbuild -->
@@ -102,8 +103,8 @@
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a id="libs-fold" href="#">Fold all</a></li>
-                        <li><a id="libs-unfold" href="#">Unfold all</a></li>
+                        <li><a id="pkgs-fold" href="#">Fold all</a></li>
+                        <li><a id="pkgs-unfold" href="#">Unfold all</a></li>
                         <li class="divider"></li>
                         <li class="dropdown-header">Filter TDefs</li>
                         <li><a id="tdef-toggle-nodes" href="#">Nodes<span class="pull-right glyphicon glyphicon-eye-open"></span></a></li>
@@ -144,16 +145,17 @@
     </div>
 
     <!-- build:js scripts/vendor.js -->
-    <script src="bower_components/jquery/jquery.js"></script>
-    <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
     <script src="bower_components/mousetrap/mousetrap.js"></script>
-    <script src="bower_components/hogan/web/builds/2.0.0/hogan-2.0.0.mustache.js"></script>
+    <script src="bower_components/hogan/web/builds/3.0.2/hogan-3.0.2.mustache.js"></script>
     <script src="bower_components/codemirror/lib/codemirror.js"></script>
     <script src="bower_components/codemirror/addon/hint/show-hint.js"></script>
     <script src="bower_components/codemirror/addon/selection/active-line.js"></script>
     <script src="bower_components/codemirror/addon/search/search.js"></script>
     <script src="bower_components/codemirror/addon/search/searchcursor.js"></script>
     <script src="bower_components/codemirror/addon/dialog/dialog.js"></script>
+    <script src="bower_components/jstree/dist/jstree.js"></script>
     <!-- bower:js -->
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/kineticjs/kinetic.js"></script>

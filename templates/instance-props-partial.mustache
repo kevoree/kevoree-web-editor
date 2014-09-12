@@ -1,5 +1,5 @@
 <div class="form-horizontal">
-    <div class="form-group">
+    <div class="form-group dictionary-item">
         <label for="instance-version" class="col-sm-3 control-label">Version</label>
         <div class="col-sm-9">
             <select id="instance-version" class="form-control input-sm">
@@ -9,34 +9,34 @@
             </select>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group dictionary-item">
         <label for="instance-name" class="col-sm-3 control-label">Name</label>
         <div class="col-sm-9">
             <input type="text" class="form-control input-sm mousetrap" id="instance-name" placeholder="Specify a name" value="{{name}}">
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group dictionary-item">
         <label class="col-sm-3 control-label">Instance state</label>
         <div class="col-sm-9">
             <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-sm btn-default{{#started}} active{{/started}}">
+                <label class="btn btn-sm btn-default {{#started}}active{{/started}}">
                     <input type="radio" name="options" id="start-instance"> Started
                 </label>
-                <label class="btn btn-sm btn-default{{^started}} active{{/started}}">
+                <label class="btn btn-sm btn-default {{^started}}active{{/started}}">
                     <input type="radio" name="options" id="stop-instance"> Stopped
                 </label>
             </div>
         </div>
     </div>
     {{#dictionary}}
-    <div class="form-group"{{#isBoolean}} style="margin-bottom: 3px"{{/isBoolean}}>
+    <div class="form-group dictionary-item" {{#isBoolean}}style="margin-bottom: 3px"{{/isBoolean}}>
         <label for="dic-{{name}}" class="col-sm-3 control-label">{{name}}{{optional}}</label>
         <div class="col-sm-9">
             {{#isMultiline}}
             <textarea id="dic-{{name}}" class="form-control input-sm dic-value-multiline mousetrap">{{value}}</textarea>
             {{/isMultiline}}
             {{^isMultiline}}
-            <input type="{{type}}" class="{{^isBoolean}}form-control {{/isBoolean}}input-sm mousetrap" id="dic-{{name}}" value="{{value}}"{{#isBoolean}} style="width: auto;"{{#value}} checked{{/value}}{{/isBoolean}}>
+            <input type="{{type}}" class="{{^isBoolean}}form-control {{/isBoolean}}input-sm mousetrap" id="dic-{{name}}" value="{{value}}"{{#isBoolean}} style="width: auto;" {{#value}}checked{{/value}}{{/isBoolean}}>
             {{/isMultiline}}
         </div>
     </div>

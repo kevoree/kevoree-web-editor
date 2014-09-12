@@ -12,10 +12,10 @@
             <div class="tab-pane {{active}}" id="{{node}}">
                 <div class="frag-dictionary-content form-horizontal">
                     {{#dictionary}}
-                    <div class="form-group"{{#isBoolean}} style="margin-bottom: 3px"{{/isBoolean}}>
+                    <div class="form-group dictionary-item" {{#isBoolean}}style="margin-bottom: 3px"{{/isBoolean}}>
                         <label for="dic-{{node}}-{{name}}" class="col-sm-3 control-label">{{name}}</label>
                         <div class="col-sm-9">
-                            <input type="{{type}}" class="{{^isBoolean}}form-control {{/isBoolean}}input-sm mousetrap" id="dic-{{node}}-{{name}}" value="{{value}}"{{#isBoolean}} style="width: auto;"{{#value}} checked{{/value}}{{/isBoolean}}>
+                            <input type="{{type}}" class="{{^isBoolean}}form-control{{/isBoolean}} input-sm mousetrap" id="dic-{{node}}-{{name}}" value="{{value}}"{{#isBoolean}} style="width: auto;"{{#value}} checked{{/value}}{{/isBoolean}}>
                         </div>
                     </div>
                     {{/dictionary}}

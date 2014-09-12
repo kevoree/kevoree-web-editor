@@ -8,9 +8,10 @@
   "dependencies": {
     "async": "^0.2.10",
     "kevoree-commons": "^1.0.0",
-    "kevoree-kevscript": "^1.0.0",
+    "kevoree-kevscript": "^1.1.1",
     "kevoree-kotlin": "^1.0.0",
-    "kevoree-library": "^1.0.0",
+    "kevoree-library": "^5.0.1-SNAPSHOT.0",
+    "kevoree-registry-client": "^1.0.1",
     "pseudoclass": "^0.3.0",
     "semver": "^2.3.1",
     "smart-socket": "^0.1.6",
@@ -38,7 +39,7 @@
     "grunt-newer": "~0.6.0",
     "grunt-rev": "~0.1.0",
     "grunt-svgmin": "~0.2.0",
-    "grunt-templates-hogan": "^0.2.5",
+    "grunt-hogan": "^0.3.0",
     "grunt-templato": "0.0.2",
     "grunt-usemin": "~2.0.0",
     "jshint-stylish": "~0.1.3",
@@ -52,5 +53,19 @@
   ],
   "engines": {
     "node": ">=0.8.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kevoree/kevoree-web-editor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kevoree/kevoree-web-editor/issues"
+  },
+  "homepage": "https://github.com/kevoree/kevoree-web-editor"
 }

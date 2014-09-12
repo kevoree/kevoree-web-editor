@@ -184,7 +184,7 @@ body {
     color: #333;
 }
 
-.library-item {
+.package-item {
     padding-top: 5px;
     padding-bottom: 5px;
     background-color: #1c1c1c;
@@ -194,11 +194,11 @@ body {
     border: 0;
 }
 
-.library-item:hover {
+.package-item:hover {
     cursor: pointer;
 }
 
-.library-name {
+.package-name {
     padding-left: 10px;
 }
 
@@ -416,12 +416,18 @@ fieldset[disabled] .btn-black.active {
 }
 
 .form-group label {
-    word-break: break-all;
     font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .form-group label.setting-label {
     font-size: 14px;
+}
+
+.dictionary-item {
+    margin-bottom: 5px;
 }
 
 .CodeMirror {
