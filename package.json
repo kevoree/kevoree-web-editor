@@ -10,7 +10,7 @@
     "kevoree-commons": "^1.0.0",
     "kevoree-kevscript": "^1.1.1",
     "kevoree-kotlin": "^1.0.0",
-    "kevoree-library": "^5.0.1-SNAPSHOT.0",
+    "kevoree-library": "^5.0.1",
     "kevoree-registry-client": "^1.0.1",
     "pseudoclass": "^0.3.0",
     "semver": "^2.3.1",

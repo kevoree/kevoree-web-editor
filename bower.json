@@ -10,7 +10,6 @@
     "hogan": "3.0.2",
     "codemirror": "4.5.0",
     "mocha": "1.21.4",
-    "way.js": "*",
     "jstree": "~3.0.4"
   }
 }
