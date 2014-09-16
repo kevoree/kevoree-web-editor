@@ -1,9 +1,16 @@
-<ul class="list-group std-libs-list" data-platform="{{platform}}">
-    {{#libraries}}
-        <li class="list-group-item std-lib-item" data-path="{{path}}">
-            <input type="checkbox">
-            <span class="badge">{{version}}</span>
-            <span class="typedef-name"{{#type}} data-tdef="{{type}}"{{/type}}>{{name}}</span>
-        </li>
-    {{/libraries}}
-</ul>
+{{#hasLibraries}}
+    <ul class="list-group std-libs-list" data-platform="{{platform}}">
+        {{#libraries}}
+            <li class="list-group-item std-lib-item" data-path="{{path}}">
+                <input type="checkbox">
+                <span class="badge">{{version}}</span>
+                <span class="typedef-name"{{#type}} data-tdef="{{type}}"{{/type}}>{{name}}</span>
+            </li>
+        {{/libraries}}
+    </ul>
+{{/hasLibraries}}
+{{^hasLibraries}}
+    <div class="well">
+        <p>No TypeDefinition found <em>(check your filters ?)</em></p>
+    </div>
+{{/hasLibraries}}
