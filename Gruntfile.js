@@ -297,6 +297,7 @@ module.exports = function (grunt) {
                 src: "app/scripts/main.js",
                 dest: ".tmp/scripts/main.js",
                 options: {
+                    transform: ['brfs']
 //                    alias: 'lib/util/ModelHelper.js:ModelHelper'
                 }
             }
