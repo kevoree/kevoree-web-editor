@@ -33,11 +33,15 @@ $(function () {
     // create the QueryParser
     new QueryParser(editor);
 
+    var modal = $('#modal');
+
     // command invoker
     function executeCmd(Command, param) {
         var cmd = new Command(editor);
         return function (e) {
-            cmd.execute.call(cmd, e, param);
+            if (Command === SaveModal || Command === CloseModal || !modal.hasClass('in')) {
+                cmd.execute.call(cmd, e, param);
+            }
         }
     }
 
@@ -83,7 +87,6 @@ $(function () {
     Mousetrap.bind('del', executeCmd(DeleteSelected));
     Mousetrap.bind('alt+k', executeCmd(OpenStdLibsModal));
     
-    var modal = $('#modal');
     // bind shorcuts "ESC" & "ENTER" when #modal is shown
     modal.on('show.bs.modal', function () {
         Mousetrap.bind('escape', executeCmd(CloseModal));
