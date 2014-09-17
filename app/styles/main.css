@@ -264,31 +264,31 @@ body {
     border-bottom: 1px solid #ddd;
 }
 
-.std-libs-list {
+.libs-list {
     margin-bottom: 0;
     overflow-y: scroll;
     max-height: 450px;
     min-height: 40px;
 }
 
-.std-libs-list .list-group-item:first-child {
+.libs-list .list-group-item:first-child {
     border-top-right-radius: 0;
     border-top-left-radius: 0;
     border-top: none;
 }
 
-.std-lib-item > input {
+.lib-item > input {
     vertical-align: middle;
     margin: 0;
 }
 
-.std-lib-item {
+.lib-item {
     cursor: pointer;
     padding-bottom: 6px;
     padding-top: 6px;
 }
 
-.std-lib-item:hover, .std-lib-item:active, .std-lib-item:focus {
+.lib-item:hover, .lib-item:active, .lib-item:focus {
     background-color: #f5f5f5;
 }
 
