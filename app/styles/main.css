@@ -265,6 +265,7 @@ body {
 }
 
 .libs-list {
+    border: 1px solid #ddd;
     margin-bottom: 0;
     overflow-y: scroll;
     max-height: 450px;
@@ -288,8 +289,12 @@ body {
     padding-top: 6px;
 }
 
-.lib-item:hover, .lib-item:active, .lib-item:focus {
-    background-color: #f5f5f5;
+.lib-item.ui-selected {
+    background-color: #dff0d8;
+}
+
+.lib-item.ui-selecting {
+    background-color: #d6e9c6;
 }
 
 .frag-dictionary-content {

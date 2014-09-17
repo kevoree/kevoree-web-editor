@@ -1,8 +1,7 @@
 {{#hasLibraries}}
     <ul class="list-group libs-list">
         {{#libraries}}
-            <li class="list-group-item lib-item" data-path="{{path}}">
-                <input type="checkbox">
+            <li class="list-group-item lib-item" data-path="{{path}}" data-release="{{isRelease}}" data-latest="{{isLatest}}">
                 <span class="badge">{{version}}</span>
                 <span class="typedef-name"{{#type}} data-tdef="{{type}}"{{/type}}>{{name}}</span>
             </li>
