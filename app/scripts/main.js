@@ -4,7 +4,6 @@ var KevWebEditor     = require('../../lib/engine/KevWebEditor'),
     LoadModelDnD     = require('../../lib/command/ui/LoadModelDragNDrop'),
     MergeModel       = require('../../lib/command/ui/MergeModel'),
     SaveModel        = require('../../lib/command/ui/SaveModel'),
-    ServerSettings   = require('../../lib/command/ui/ServerSettings'),
     SettingsModal    = require('../../lib/command/ui/OpenSettingsModal'),
     OpenStdLibsModal = require('../../lib/command/ui/OpenStdLibsModal'),
     ListLibsModal    = require('../../lib/command/ui/OpenListLibsModal'),
@@ -52,7 +51,6 @@ $(function () {
     $('#open-from-node').click(executeCmd(OpenNodeModal));
     $('#merge-from-node').click(executeCmd(MergeNodeModal));
     $('#settings').click(executeCmd(SettingsModal));
-    $('#server-settings').click(executeCmd(ServerSettings));
     $('#undo').click(executeCmd(Undo));
     $('#redo').click(executeCmd(Redo));
     $('#clear-all').click(executeCmd(ClearAll));
