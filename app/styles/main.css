@@ -194,12 +194,23 @@ body {
     border: 0;
 }
 
+.package-item .glyphicon {
+    top: 0;
+    padding: 0 0 0 5px;
+}
+
 .package-item:hover {
     cursor: pointer;
 }
 
 .package-name {
-    padding-left: 10px;
+    padding: 0 0 0 5px;
+    font-size: 10px;
+    overflow:hidden;
+    white-space:nowrap;
+    display: inline-block;
+    text-overflow: ellipsis;
+    vertical-align: middle;
 }
 
 .type-definition-item {
