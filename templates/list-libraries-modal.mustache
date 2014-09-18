@@ -1,34 +1,54 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h4 id="modal-title" class="modal-title">List libraries from registry</h4>
+    <h4 id="modal-title" class="modal-title">Kevoree registry libraries</h4>
 </div>
 <div id="modal-body" class="modal-body">
     <p id="modal-error" class="alert alert-danger hide"></p>
-    <div class="form-horizontal">
-        <div class="input-group input-group-sm">
-            <span class="input-group-addon">package</span>
-            <input id="libs-package" type="text" class="form-control" placeholder="org.kevoree.library.js">
-            <div class="input-group-btn">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
-                    <span id="selected-versions-filter" class="small">All</span> <span class="caret"></span>
-                    <span class="sr-only">Filter versions</span>
-                </button>
-                <ul class="dropdown-menu pull-right" role="menu">
-                    <li id="filter-std-libs-all" class="active"><a href="#">All</a></li>
-                    <li id="filter-std-libs-release"><a href="#">Releases</a></li>
-                    <li id="filter-std-libs-latest"><a href="#">Latest</a></li>
-                </ul>
-            </div>
+    <div class="input-group input-group-sm">
+        <span class="input-group-addon" style="border-radius: 0"><strong>package</strong></span>
+        <input id="libs-package" type="text" class="form-control" placeholder="org.kevoree.library">
+        <div class="input-group-btn">
+            <button id="std-libs" type="button" class="btn btn-default" tabindex="-1">Std Libs</button>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1" style="border-radius: 0">
+                <span id="selected-versions-filter" class="small">Releases</span> <span class="caret"></span>
+                <span class="sr-only">Filter versions</span>
+            </button>
+            <ul class="dropdown-menu pull-right" role="menu">
+                <li id="filter-libs-all"><a href="#">All</a></li>
+                <li id="filter-libs-release" class="active"><a href="#">Releases</a></li>
+                <li id="filter-libs-latest"><a href="#">Latest</a></li>
+            </ul>
         </div>
     </div>
     <div id="libs-list">
-        <div class="well">
-            <p>You can load any TypeDefinition available on <strong>http://registry.kevoree.org</strong></p>
+        <div class="well" style="border-radius: 0">
+            <p>You can load any TypeDefinition available on <a href="http://registry.kevoree.org" target="_blank">registry.kevoree.org</a></p>
             <p>Start typing in the "package" field and the content will load automatically.</p>
+            <p>To load <strong>Kevoree Standard Libraries</strong> just click <em>Std Libs</em> button.</p>
+        </div>
+    </div>
+    <div id="empty-list" class="hide well" style="border-radius: 0">
+        <p>No TypeDefinition matches your filters</p>
+    </div>
+    <div class="input-group input-group-sm">
+        <span class="input-group-addon" style="border-radius: 0"><strong>filter</strong></span>
+        <input id="filter-libs" type="text" class="form-control" placeholder="Type to start filtering types (e.g MQTT, WS)">
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1" style="border-radius: 0">
+                <span id="selected-type-filter" class="small">All</span> <span class="caret"></span>
+                <span class="sr-only">Filter types</span>
+            </button>
+            <ul class="dropdown-menu pull-right" role="menu">
+                <li id="filter-type-all" class="active"><a href="#">All</a></li>
+                <li id="filter-type-node"><a href="#">Nodes</a></li>
+                <li id="filter-type-group"><a href="#">Groups</a></li>
+                <li id="filter-type-chan"><a href="#">Channels</a></li>
+                <li id="filter-type-comp"><a href="#">Components</a></li>
+            </ul>
         </div>
     </div>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <button id="merge-libs-btn" type="button" class="btn btn-primary">Merge libraries</button>
+    <button id="merge-libs-btn" type="button" class="btn btn-primary" disabled>Merge libraries</button>
 </div>

@@ -5,7 +5,6 @@ var KevWebEditor     = require('../../lib/engine/KevWebEditor'),
     MergeModel       = require('../../lib/command/ui/MergeModel'),
     SaveModel        = require('../../lib/command/ui/SaveModel'),
     SettingsModal    = require('../../lib/command/ui/OpenSettingsModal'),
-    OpenStdLibsModal = require('../../lib/command/ui/OpenStdLibsModal'),
     ListLibsModal    = require('../../lib/command/ui/OpenListLibsModal'),
     OpenNodeModal    = require('../../lib/command/ui/OpenFromNodeModal'),
     MergeNodeModal   = require('../../lib/command/ui/MergeFromNodeModal'),
@@ -56,8 +55,7 @@ $(function () {
     $('#clear-all').click(executeCmd(ClearAll));
     $('#clear-instances').click(executeCmd(ClearInstances));
     $('#clear-unused-tdefs').click(executeCmd(ClearUnusedTDefs));
-    $('#kev-std-libs').click(executeCmd(OpenStdLibsModal));
-    $('#list-libraries').click(executeCmd(ListLibsModal));
+    $('#kev-libs').click(executeCmd(ListLibsModal));
     $('#open-kevscript').click(executeCmd(OpenKevSModal));
     $('#open-help').click(executeCmd(OpenHelpModal));
     $('#custom-push').click(executeCmd(CustomPushModal));
@@ -83,7 +81,7 @@ $(function () {
     Mousetrap.bind('alt+a', executeCmd(ClearAll));
     Mousetrap.bind('alt+u', executeCmd(ClearUnusedTDefs));
     Mousetrap.bind('del', executeCmd(DeleteSelected));
-    Mousetrap.bind('alt+k', executeCmd(OpenStdLibsModal));
+    Mousetrap.bind('alt+k', executeCmd(ListLibsModal));
     
     // bind shorcuts "ESC" & "ENTER" when #modal is shown
     modal.on('show.bs.modal', function () {
