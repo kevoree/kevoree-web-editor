@@ -12,7 +12,7 @@
     "kevoree-kevscript": "^2.0.0",
     "kevoree-kotlin": "^1.0.0",
     "kevoree-library": "^5.0.3",
-    "kevoree-registry-client": "^1.0.1",
+    "kevoree-registry-client": "^2.1.0",
     "pseudoclass": "^0.3.0",
     "semver": "^2.3.1",
     "smart-socket": "^0.1.6",
