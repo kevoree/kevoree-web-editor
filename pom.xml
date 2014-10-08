@@ -5,7 +5,7 @@
     <artifactId>org.kevoree.webeditor</artifactId>
     <packaging>jar</packaging>
     <name>Kevoree :: Web Editor</name>
-    <version>5.1.3-SNAPSHOT</version>
+    <version>5.2.0-SNAPSHOT</version>
 
     <organization>
         <name>Kevoree Project</name>
