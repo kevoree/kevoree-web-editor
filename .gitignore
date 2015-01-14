@@ -8,4 +8,5 @@ test/bower_components
 .idea/
 **iml
 target/
+npm-debug.log
 

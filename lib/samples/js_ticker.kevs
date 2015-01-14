@@ -1,0 +1,21 @@
+add node0, node1:  JavascriptNode
+
+add node0.ticker:  Ticker
+add node0.broker:  WSMsgBroker
+
+add node1.printer: ConsolePrinter
+
+add sync:          WSGroup
+add chan:          WSChan
+
+attach node0, node1 sync
+
+bind node0.ticker.tick     chan
+bind node1.printer.input   chan
+
+set sync.master =       'node0'
+set node0.broker.port = '9050'
+set chan.host =         'localhost'
+set chan.port =         '9050'
+
+network node0.ip.lan 127.0.0.1
