@@ -1,6 +1,6 @@
 {
   "name": "kevoree-web-editor",
-  "version": "5.2.2",
+  "version": "5.2.3",
   "description": "Kevoree Web Editor - Static Web Client",
   "main": "index.js",
   "author": "Maxime Tricoire <max.tricoire@gmail.com>",
