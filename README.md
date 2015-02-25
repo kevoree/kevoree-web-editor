@@ -1,7 +1,7 @@
 # Kevoree Web Editor [![Build Status](https://drone.io/github.com/kevoree/kevoree-web-editor/status.png)](https://drone.io/github.com/kevoree/kevoree-web-editor/latest)
 
 Web app for [Kevoree](http://kevoree.org/) model management  
-You can use the demo version here [editor.kevoree.org](http://editor.kevoree.org)
+You can use the online version here [editor.kevoree.org](http://editor.kevoree.org)
 
 ## Overview
  - [What is it for ?](README.md#what-is-it-for-)
