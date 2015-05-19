@@ -1,0 +1,32 @@
+<div class="sidebar">
+    <h5 class="pkgs-header">Type Definitions</h5>
+
+    <div class="pkgs-helper text-muted text-justify" data-ng-hide="hasPackages()">
+        <p>
+            <em>No TypeDefinition in current model</em>
+        </p>
+        <br/>
+        <p>
+            You can load a <strong>.json</strong> model from a file (Ctrl+O) or from a node somewhere using
+            WebSocket (Ctrl+Shift+O)
+        </p>
+        <br/>
+        <p>
+            You can also create your own model using the <a data-ui-sref="kevscript">KevScript Editor</a>
+            or by adding the desired TypeDefinitions from the <a data-ui-sref="libs">Kevoree Standard Libraries</a>
+        </p>
+    </div>
+
+    <div class="pkg-panel" data-ng-repeat="(pkgName, pkg) in packages">
+        <h4 class="pkg-title" data-ng-click="pkg.collapsed = !pkg.collapsed">
+            <i class="fa" data-ng-class="pkg.collapsed ? 'fa-plus' : 'fa-minus'"></i>
+            &nbsp;
+            {{ pkgName }}
+        </h4>
+        <div data-collapse="pkg.collapsed">
+            <div class="tdef-list">
+                <div class="tdef-item" data-ng-repeat="tdef in pkg.tdefs | orderBy:'tdef.name'" data-ng-class="'tdef-item-'+tdef.type">{{ tdef.name }}</div>
+            </div>
+        </div>
+    </div>
+</div>

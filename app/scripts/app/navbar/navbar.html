@@ -1,0 +1,28 @@
+<div id="navbar" class="navbar navbar-inverse navbar-top navbar-fixed-top" data-ng-style="(isDevMode()) ? {'border-color':'#31b0d5', 'border-bottom-width': '2px'}:{'border-color':'#080808', 'border-bottom-width': '1px'}" data-ng-cloak>
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-ng-click="isCollapsed = !isCollapsed">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand navbar-img">
+        <img src="images/kevoree.png">
+      </a>
+    </div>
+    <ul class="nav navbar-left navbar-nav navbar-collapse collapse" data-collapse="isCollapsed">
+      <li data-ng-class="{active: $state.includes('main')}">
+        <a data-ui-sref="main">Model Editor</a>
+      </li>
+      <li data-ng-class="{active: $state.includes('kevscript')}">
+        <a data-ui-sref="kevscript">KevScript Editor</a>
+      </li>
+    </ul>
+    <ul class="nav navbar-right navbar-nav navbar-collapse collapse" data-collapse="isCollapsed">
+      <li data-ng-class="{active: $state.includes('settings')}">
+        <a data-ui-sref="settings">Settings</a>
+      </li>
+    </ul>
+  </div>
+</div>

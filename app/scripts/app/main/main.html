@@ -1,0 +1,84 @@
+<div data-ng-cloak>
+    <div class="menubar">
+        <div class="menu-btn">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                File&nbsp;<span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li>
+                    <a data-ng-click="open($event)">
+                        <span class="name">Open</span>
+                        <span class="shortcut">Ctrl+O</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-ng-click="merge($event)">
+                        <span class="name">Merge</span>
+                        <span class="shortcut">Ctrl+M</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-ng-click="openFromNode($event)">
+                        <span class="name">Open from node</span>
+                        <span class="shortcut">Ctrl+Shift+O</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-ng-click="mergeFromNode($event)">
+                        <span class="name">Merge from node</span>
+                        <span class="shortcut">Ctrl+Shift+M</span>
+                    </a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a data-ng-click="save($event)">
+                        <span class="name">Save</span>
+                        <span class="shortcut">Ctrl+S</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="menu-btn">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                Edit&nbsp;<span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li>
+                    <a data-ng-click="undo($event)">
+                        <span class="name">Undo</span>
+                        <span class="shortcut">Ctrl+Z</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-ng-click="redo($event)">
+                        <span class="name">Redo</span>
+                        <span class="shortcut">Ctrl+Y</span>
+                    </a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a data-ng-click="deleteAll($event)">
+                        <span class="name">Delete all</span>
+                        <span class="shortcut">Alt+Shift+D</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-ng-click="deleteInstances($event)">
+                        <span class="name">Delete instances</span>
+                        <span class="shortcut">Alt+Shift+I</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-ng-click="deleteSelected($event)">
+                        <span class="name">Delete selected</span>
+                        <span class="shortcut">Del</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div data-ui-view="sidebar"></div>
+    <div data-ui-view="editor"></div>
+</div>
+
+<input id="file" type="file" data-on-data="onFileLoaded($data)" class="hide">

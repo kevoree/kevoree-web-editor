@@ -1,0 +1,149 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>Kevoree Web Editor</title>
+    <meta name="description" content="Kevoree Web Editor - Manager your Kevoree models directly from your browser">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/codemirror/lib/codemirror.css" />
+    <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="bower_components/angular-ui-notification/dist/angular-ui-notification.min.css" />
+    <link rel="stylesheet" href="bower_components/angular-hotkeys/build/hotkeys.min.css" />
+    <!-- endbower -->
+    <link rel="stylesheet" href="bower_components/codemirror/addon/hint/show-hint.css" />
+    <link rel="stylesheet" href="bower_components/codemirror/addon/dialog/dialog.css" />
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/editor.css">
+    <link rel="stylesheet" href="styles/cm-kevscript.css">
+    <!-- endbuild -->
+  </head>
+  <body ng-app="editorApp">
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <div id="bootstrap-container">
+      <style type="text/css" scoped="scoped">
+        div.bootstrap-loading {
+          position: fixed ;
+        }
+
+        div.bootstrap-loading div.loading-message {
+          background-color: #333333 ;
+          bottom: 0;
+          left: 0;
+          opacity: 1.0;
+          position: fixed;
+          right: 0;
+          top: 0;
+          z-index: 999999 ;
+        }
+
+        div.bootstrap-loading div.loading-message.ng-leave {
+          opacity: 1.0 ;
+          transition: all linear 200ms ;
+          -webkit-transition: all linear 200ms ;
+        }
+
+        div.bootstrap-loading div.loading-message.ng-leave-active {
+          opacity: 0 ;
+        }
+
+        div.bootstrap-loading div.messaging {
+          color: #FFFFFF ;
+          font-family: monospace ;
+          left: 0;
+          margin-top: -37px ;
+          position: absolute ;
+          right: 0;
+          text-align: center ;
+          top: 50% ;
+        }
+
+        div.bootstrap-loading h1 {
+          font-size: 20px ;
+          line-height: 35px ;
+          margin: 0 0 20px 0;
+        }
+
+        div.bootstrap-loading p {
+          font-size: 16px ;
+          line-height: 14px ;
+          margin: 0;
+        }
+      </style>
+      <div class="bootstrap-loading">
+        <div class="loading-message">
+          <div class="messaging">
+            <h1>Kevoree Web Editor</h1>
+            <p>is loading...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div data-ui-view="navbar"></div>
+    <div id="container" class="container-fluid">
+
+      <div data-ui-view="content" class="row"></div>
+    </div>
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+     <script>
+       !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
+       (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
+       r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
+       }(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+       ga('create', 'UA-XXXXX-X');
+       ga('send', 'pageview');
+    </script>
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/ui-router/release/angular-ui-router.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/codemirror/lib/codemirror.js"></script>
+    <script src="bower_components/angular-ui-codemirror/ui-codemirror.js"></script>
+    <script src="bower_components/angular-ui-notification/dist/angular-ui-notification.min.js"></script>
+    <script src="bower_components/kevoree-kevscript/browser/kevoree-kevscript.js"></script>
+    <script src="bower_components/kevoree-library/browser/kevoree-library.js"></script>
+    <script src="bower_components/snap.svg/dist/snap.svg-min.js"></script>
+    <script src="bower_components/angular-hotkeys/build/hotkeys.min.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="scripts/app/app.js"></script>
+    <script src="scripts/app/app.constants.js"></script>
+    <script src="scripts/app/main/main.js"></script>
+    <script src="scripts/app/main/main.controller.js"></script>
+    <script src="scripts/app/main/sidebar/sidebar.controller.js"></script>
+    <script src="scripts/app/main/editor/editor.controller.js"></script>
+    <script src="scripts/app/navbar/navbar.controller.js"></script>
+    <script src="scripts/app/settings/settings.js"></script>
+    <script src="scripts/app/settings/settings.controller.js"></script>
+    <script src="scripts/app/kevscript/kevscript.js"></script>
+    <script src="scripts/app/kevscript/kevscript.controller.js"></script>
+    <script src="scripts/components/kevoree/editor.factory.js"></script>
+    <script src="scripts/components/kevoree/kevscript.factory.js"></script>
+    <script src="scripts/components/kevoree/ui.factory.js"></script>
+    <script src="scripts/components/services/storage.service.js"></script>
+    <script src="scripts/components/util/on-data.directive.js"></script>
+    <script src="scripts/components/util/codemirror/kevs-hint.js"></script>
+    <script src="scripts/components/util/codemirror/kevs-parser.js"></script>
+    <script src="scripts/components/util/kevoree/model-helper.factory.js"></script>
+    <!-- endbuild -->
+</body>
+</html>

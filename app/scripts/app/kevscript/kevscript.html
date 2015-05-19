@@ -1,0 +1,23 @@
+<div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 well" data-ng-cloak>
+  <div class="row-fluid clearfix">
+    <div class="col-xs-6">
+      <h5>Write some <strong>KevScript</strong>:</h5>
+    </div>
+    <div class="col-xs-offset-8">
+      <button class="btn btn-default pull-right" data-ng-click="uploadKevscript()">Upload a KevScript &nbsp;<i class="fa fa-upload"></i></button>
+    </div>
+  </div>
+  <div class="alert alert-danger" data-ng-show="parseError" style="margin-top: 20px">
+    <button type="button" class="close" data-ng-click="closeParseError()"><span>&times;</span></button>
+    {{parseError}}
+  </div>
+  <div class="row-fluid">
+    <div id="kevscript-editor" data-ui-codemirror="{onLoad: editorLoaded}" data-ui-codemirror-opts="editorOptions" data-ng-model="kevscript"></div>
+  </div>
+  <div class="row-fluid clearfix">
+    <div class="col-xs-offset-8">
+      <button class="btn btn-default pull-right" data-ng-click="merge()" data-ng-disabled="processing">Merge <i class="fa fa-cog fa-spin" data-ng-show="processing"></i></button>
+    </div>
+  </div>
+</div>
+<input id="kevscript-upload" type="file" class="hide" data-ng-model="kevscriptFile">

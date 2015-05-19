@@ -1,0 +1,10 @@
+svg#editor text {
+    cursor: default;
+}
+
+svg#editor text.group {
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

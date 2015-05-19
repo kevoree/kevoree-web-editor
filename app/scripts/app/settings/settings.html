@@ -1,0 +1,13 @@
+<div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 well" data-ng-cloak>
+  <h4>Kevoree Web Editor settings:</h4>
+  <ul class="list-group list-group-with-buttons">
+    <li class="list-group-item">
+      <strong>Version</strong>
+      <span class="pull-right">{{ VERSION }}</span>
+    </li>
+    <li class="list-group-item">
+      <strong>Clear KevScript cache</strong>
+      <button class="btn btn-sm btn-warning pull-right" data-ng-click="clearKevSCache()" data-ng-disabled="isKevSCacheEmpty()">Clear</button>
+    </li>
+  </ul>
+</div>
