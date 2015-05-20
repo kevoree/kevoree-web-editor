@@ -1,10 +1,19 @@
 svg#editor text {
-    cursor: default;
+    font-size: 13px;
+    cursor: move;
 }
 
-svg#editor text.group {
-    width: 100px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+svg#editor .group,
+svg#editor .node,
+svg#editor .comp,
+svg#editor .chan {
+    cursor: move;
+}
+
+svg#editor .instance.selected {
+    stroke: orange;
+}
+
+svg#editor circle.group-plug {
+    cursor: pointer;
 }

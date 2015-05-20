@@ -16,7 +16,8 @@ angular
         'ui.bootstrap',
         'ui.codemirror',
         'ui-notification',
-        'cfp.hotkeys'
+        'cfp.hotkeys',
+        'ngDragDrop'
     ])
     .run(function ($rootScope, Notification, VERSION) {
         $rootScope.VERSION = VERSION;

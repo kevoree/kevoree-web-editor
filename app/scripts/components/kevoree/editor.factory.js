@@ -7,6 +7,7 @@ angular.module('editorApp')
         function KevoreeEditor() {
             this.model = factory.createContainerRoot();
             this.listeners = [];
+            this.draggedElem = null;
         }
 
         KevoreeEditor.prototype = {
@@ -44,6 +45,22 @@ angular.module('editorApp')
              */
             removeListener: function (listener) {
                 this.listeners.splice(this.listeners.indexOf(listener), 1);
+            },
+
+            /**
+             *
+             * @param elem
+             */
+            setDraggedElem: function (elem) {
+                this.draggedElem = elem;
+            },
+
+            /**
+             *
+             * @returns {null|*}
+             */
+            getDraggedElem: function () {
+                return this.draggedElem;
             }
         };
 

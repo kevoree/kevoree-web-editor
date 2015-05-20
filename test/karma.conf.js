@@ -33,6 +33,9 @@ module.exports = function(config) {
       'bower_components/kevoree-library/browser/kevoree-library.js',
       'bower_components/snap.svg/dist/snap.svg-min.js',
       'bower_components/angular-hotkeys/build/hotkeys.min.js',
+      'bower_components/jquery-ui/jquery-ui.js',
+      'bower_components/angular-dragdrop/src/angular-dragdrop.js',
+      'bower_components/semver/semver.browser.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',

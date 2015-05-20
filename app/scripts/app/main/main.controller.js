@@ -20,7 +20,13 @@ angular.module('editorApp')
                     var model = loader.loadModelFromString(data).get(0);
                     kEditor.setModel(model);
                 } catch (err) {
-                    console.warn('boum', err);
+                    console.warn('[main.controller.open()] Error loading model file');
+                    console.error(err.stack);
+                    Notification.error({
+                        title: 'Open from file',
+                        message: 'Unable to load your model',
+                        delay: 5000
+                    });
                 }
             };
         };
@@ -35,7 +41,13 @@ angular.module('editorApp')
                     compare.merge(model, kEditor.getModel()).applyOn(model);
                     kEditor.setModel(model);
                 } catch (err) {
-                    console.warn('boum', err);
+                    console.warn('[main.controller.merge()] Error loading model file');
+                    console.error(err.stack);
+                    Notification.error({
+                        title: 'Merge from file',
+                        message: 'Unable to merge your model',
+                        delay: 5000
+                    });
                 }
             };
         };

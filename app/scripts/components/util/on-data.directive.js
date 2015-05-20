@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('editorApp')
     .directive('onData', function ($parse) {
         return {

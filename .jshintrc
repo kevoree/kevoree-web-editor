@@ -19,6 +19,8 @@
   "smarttabs": true,
   "globals": {
     "Snap": false,
+    "Kotlin": false,
+    "semver": false,
     "angular": false,
     "CodeMirror": false,
     "KevoreeLibrary": false,

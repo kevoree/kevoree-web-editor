@@ -25,7 +25,16 @@
         </h4>
         <div data-collapse="pkg.collapsed">
             <div class="tdef-list">
-                <div class="tdef-item" data-ng-repeat="tdef in pkg.tdefs | orderBy:'tdef.name'" data-ng-class="'tdef-item-'+tdef.type">{{ tdef.name }}</div>
+                <div
+                        class="tdef-item"
+                        data-ng-repeat="tdef in pkg.tdefs | orderBy:'tdef.name'"
+                        data-ng-class="'tdef-item-'+tdef.type"
+                        data-drag="true"
+                        data-jqyoui-draggable="dragDraggable"
+                        data-jqyoui-options="dragOptions"
+                        data-pkg-path="{{ tdef.pkgPath }}">
+                    {{ tdef.name }}
+                </div>
             </div>
         </div>
     </div>

@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * @ngdoc function
  * @name editorApp.controller:SidebarCtrl
@@ -8,6 +10,26 @@
 angular.module('editorApp')
     .controller('SidebarCtrl', function ($scope, kEditor, kModelHelper) {
         $scope.packages = {};
+
+        $scope.dragDraggable = {
+            animate: true,
+            placeholder: 'keep'
+        };
+
+        $scope.dragOptions = {
+            revert: 'invalid',
+            helper: 'clone',
+            addClasses: false,
+            scroll: false,
+            appendTo: '#tdef-drag-panel',
+            containment: '#tdef-drag-panel',
+            cursor: 'move',
+            cursorAt: {
+                top: -5,
+                right: -5
+            }
+        };
+
         $scope.hasPackages = function () {
             return Object.keys($scope.packages).length > 0;
         };
@@ -28,7 +50,8 @@ angular.module('editorApp')
 
                     $scope.packages[pkg].tdefs[tdef.name] = {
                         name: tdef.name,
-                        type: kModelHelper.getTypeDefinitionType(tdef)
+                        type: kModelHelper.getTypeDefinitionType(tdef),
+                        pkgPath: tdef.eContainer().path()
                     };
                 });
         }
