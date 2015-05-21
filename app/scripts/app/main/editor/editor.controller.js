@@ -8,7 +8,7 @@
  * Controller of the editorApp editor
  */
 angular.module('editorApp')
-    .controller('EditorCtrl', function ($scope, kEditor, uiFactory, kModelHelper) {
+    .controller('EditorCtrl', function ($scope, kEditor, uiFactory, kModelHelper, kFactory) {
         $scope.dropDroppable = {
             onDrop: 'onDrop'
         };
@@ -20,11 +20,16 @@ angular.module('editorApp')
                 var tdef = kModelHelper.findBestVersion(tdefs.array);
                 var type = kModelHelper.getTypeDefinitionType(tdef);
                 // TODO
-                console.log('TODO accept for ', pkgPath, tdef, type);
+                //console.log('TODO accept for ', pkgPath, tdef, type);
                 return true;
             }
         };
 
+        /**
+         * Adds a new instance to the model based on the dropped TypeDefinition
+         * @param evt
+         * @param obj
+         */
         $scope.onDrop = function (evt, obj) {
             var pkgPath = obj.helper[0].dataset.pkgPath;
             var tdefName = obj.helper[0].innerHTML.trim();
@@ -33,11 +38,10 @@ angular.module('editorApp')
             var type = kModelHelper.getTypeDefinitionType(tdef);
 
             var model = kEditor.getModel();
-            var factory = new KevoreeLibrary.factory.DefaultKevoreeFactory();
             var instance;
             switch (type) {
                 case 'node':
-                    instance = factory.createContainerNode();
+                    instance = kFactory.createContainerNode();
                     instance.name = 'node'+parseInt(Math.random()*1000);
                     instance.typeDefinition = tdef;
                     model.addNodes(instance);
@@ -45,7 +49,7 @@ angular.module('editorApp')
                     break;
 
                 case 'group':
-                    instance = factory.createGroup();
+                    instance = kFactory.createGroup();
                     instance.name = 'grp'+parseInt(Math.random()*1000);
                     instance.typeDefinition = tdef;
                     model.addGroups(instance);
@@ -53,7 +57,7 @@ angular.module('editorApp')
                     break;
 
                 case 'component':
-                    instance = factory.createComponentInstance();
+                    instance = kFactory.createComponentInstance();
                     instance.name = 'comp'+parseInt(Math.random()*1000);
                     instance.typeDefinition = tdef;
                     console.log('TODO add comp logic');
@@ -61,7 +65,7 @@ angular.module('editorApp')
                     break;
 
                 case 'channel':
-                    instance = factory.createChannel();
+                    instance = kFactory.createChannel();
                     instance.name = 'chan'+parseInt(Math.random()*1000);
                     instance.typeDefinition = tdef;
                     model.addHubs(instance);
@@ -70,7 +74,7 @@ angular.module('editorApp')
             }
         };
 
-        // init the UI factory
+        // init the UI kFactory
         uiFactory.init();
 
         /**
@@ -78,18 +82,40 @@ angular.module('editorApp')
          */
         function processModel() {
             var model = kEditor.getModel();
+            var visitor = new KevoreeLibrary.modeling.api.util.ModelVisitor();
+            visitor.visit = function (elem) {
+                switch (kModelHelper.getTypeDefinitionType(elem.typeDefinition)) {
+                    case 'node':
+                        uiFactory.createNode(elem);
+                        break;
 
-            model.groups.array.forEach(function (elem) {
-                uiFactory.createGroup(elem);
-            });
+                    case 'group':
+                        uiFactory.createGroup(elem);
+                        break;
 
-            model.nodes.array.forEach(function (elem) {
-                uiFactory.createNode(elem);
-            });
+                    case 'component':
+                        uiFactory.createComponent(elem);
+                        break;
 
-            model.hubs.array.forEach(function (elem) {
-                uiFactory.createChannel(elem);
-            });
+                    case 'channel':
+                        uiFactory.createChannel(elem);
+                        break;
+                }
+            };
+
+            model.visit(visitor, false, true, false);
+
+            //model.groups.array.forEach(function (elem) {
+            //    uiFactory.createGroup(elem);
+            //});
+            //
+            //model.nodes.array.forEach(function (elem) {
+            //    uiFactory.createNode(elem);
+            //});
+            //
+            //model.hubs.array.forEach(function (elem) {
+            //    uiFactory.createChannel(elem);
+            //});
         }
 
         // listen to model changes on the editor

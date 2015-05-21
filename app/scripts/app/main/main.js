@@ -18,6 +18,10 @@ angular.module('editorApp')
               'editor@main': {
                 templateUrl: 'scripts/app/main/editor/editor.html',
                 controller: 'EditorCtrl'
+              },
+              'instance@main': {
+                templateUrl: 'scripts/app/main/instance/instance.html',
+                controller: 'InstanceCtrl'
               }
             }
           });

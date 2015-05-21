@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('kEditor', function () {
+    .factory('kEditor', function (modelReactor) {
         var factory = new KevoreeLibrary.factory.DefaultKevoreeFactory();
 
         function KevoreeEditor() {
@@ -27,10 +27,22 @@ angular.module('editorApp')
                 this.listeners.forEach(function (listener) {
                     listener();
                 });
+
+                this.model.addModelElementListener({
+                    elementChanged: modelReactor
+                });
+
+                var visitor = new KevoreeLibrary.modeling.api.util.ModelVisitor();
+                visitor.visit = function (elem, ref) {
+                    if (ref === 'nodes' || ref === 'groups' || ref === 'components' || ref === 'hubs') {
+                        elem.addModelElementListener({ elementChanged: modelReactor });
+                    }
+                };
+                this.model.visit(visitor, true, true, false);
             },
 
             /**
-             *
+             * Add listener that will be invoked on each call to setModel()
              * @param {Function} listener
              */
             addListener: function (listener) {

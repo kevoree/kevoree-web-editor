@@ -10,7 +10,7 @@ svg#editor .chan {
     cursor: move;
 }
 
-svg#editor .instance.selected {
+svg#editor .instance .bg.selected {
     stroke: orange;
 }
 

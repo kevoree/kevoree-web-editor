@@ -65,15 +65,25 @@ body {
   background-color: #222;
 }
 
-.pkgs-header {
+.sidebar-header {
   margin: 0;
   color: #f6f6f6;
   background-color: #111;
   padding: 10px 5px;
+  border-bottom: 1px solid #333;
 }
 
-.pkgs-helper {
+.sidebar-header-right {
+  margin-right: 5px;
+}
+
+.sidebar-helper {
   padding: 5px;
+}
+
+.instance-form {
+  padding: 5px 8px 0 8px;
+  color: #999;
 }
 
 .menubar {
@@ -251,8 +261,28 @@ body {
   background: url('../images/channel.png') top left repeat-y;
 }
 
+.node-right-bg {
+  background: url('../images/node.png') top right repeat-y;
+}
+
+.component-right-bg {
+  background: url('../images/component.png') top right repeat-y;
+}
+
+.group-right-bg {
+  background: url('../images/group.png') top right repeat-y;
+}
+
+.channel-right-bg {
+  background: url('../images/channel.png') top right repeat-y;
+}
+
 .tooltip {
   padding: 5px;
+}
+
+.btn-group-block {
+  display: block;
 }
 
 @media (min-width: 768px) {
@@ -265,6 +295,11 @@ body {
     display: block;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  }
+
+  .sidebar-right {
+    left: auto;
+    right: 0;
   }
 
   .editor {

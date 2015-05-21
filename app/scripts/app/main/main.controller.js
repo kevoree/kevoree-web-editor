@@ -8,15 +8,13 @@
  * Controller of the editorApp main content div
  */
 angular.module('editorApp')
-    .controller('MainCtrl', function ($scope, kEditor, hotkeys, saveFile, Notification) {
-        var factory = new KevoreeLibrary.factory.DefaultKevoreeFactory();
-
+    .controller('MainCtrl', function ($scope, kEditor, hotkeys, saveFile, uiFactory, kModelHelper, kFactory, Notification) {
         $scope.open = function (evt) {
             evt.preventDefault();
             angular.element('input#file').click();
             $scope.onFileLoaded = function (data) {
                 try {
-                    var loader = factory.createJSONLoader();
+                    var loader = kFactory.createJSONLoader();
                     var model = loader.loadModelFromString(data).get(0);
                     kEditor.setModel(model);
                 } catch (err) {
@@ -33,7 +31,7 @@ angular.module('editorApp')
 
         $scope.dndLoad = function (data) {
             try {
-                var loader = factory.createJSONLoader();
+                var loader = kFactory.createJSONLoader();
                 var model = loader.loadModelFromString(data).get(0);
                 kEditor.setModel(model);
             } catch (err) {
@@ -52,8 +50,8 @@ angular.module('editorApp')
             angular.element('input#file').click();
             $scope.onFileLoaded = function (data) {
                 try {
-                    var loader = factory.createJSONLoader();
-                    var compare = factory.createModelCompare();
+                    var loader = kFactory.createJSONLoader();
+                    var compare = kFactory.createModelCompare();
                     var model = loader.loadModelFromString(data).get(0);
                     compare.merge(model, kEditor.getModel()).applyOn(model);
                     kEditor.setModel(model);
@@ -91,9 +89,7 @@ angular.module('editorApp')
 
         $scope.save = function (evt) {
             evt.preventDefault();
-
-            var factory = new KevoreeLibrary.factory.DefaultKevoreeFactory();
-            var serializer = factory.createJSONSerializer();
+            var serializer = kFactory.createJSONSerializer();
 
             try {
                 // serialize model
@@ -120,6 +116,7 @@ angular.module('editorApp')
                 delay: 3000
             });
         };
+
         $scope.deleteInstances = function (evt) {
             evt.preventDefault();
             console.log('deleteInstances');
@@ -129,13 +126,16 @@ angular.module('editorApp')
                 delay: 3000
             });
         };
+
         $scope.deleteSelected = function (evt) {
             evt.preventDefault();
-            console.log('deleteSelected');
-            Notification.warning({
-                title: 'Delete selected',
-                message: 'Not implemented yet',
-                delay: 3000
+            var model = kEditor.getModel();
+            uiFactory.getSelected().forEach(function (path) {
+                console.log('TO DELETE', path);
+                var elem = model.findByPath(path);
+                if (elem) {
+                    elem.delete();
+                }
             });
         };
 

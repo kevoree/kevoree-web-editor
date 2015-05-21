@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('uiFactory', function (kEditor) {
+    .factory('uiFactory', function () {
         var initDone = false;
 
         var factory = {
@@ -13,9 +13,12 @@ angular.module('editorApp')
                     initDone = true;
                     var editor = this.editor = new Snap('svg#editor');
                     editor.mousedown(function () {
-                        editor.selectAll('.instance').forEach(function (elem) {
+                        editor.selectAll('.instance .bg').forEach(function (elem) {
                             elem.removeClass('selected');
                         });
+                        if (factory.listener) {
+                            factory.listener();
+                        }
                     });
                 }
             },
@@ -37,7 +40,7 @@ angular.module('editorApp')
                         fill: 'green',
                         stroke: '#000',
                         strokeWidth: 4,
-                        'class': 'instance group',
+                        'class': 'bg',
                         opacity: 0.75
                     });
 
@@ -74,7 +77,7 @@ angular.module('editorApp')
 
                 return this.editor
                     .group()
-                    .data('path', elem.path())
+                    .attr({'class': 'instance group', 'data-path': elem.path() })
                     .append(bg)
                     .append(nameText)
                     .append(tdefText)
@@ -91,6 +94,7 @@ angular.module('editorApp')
                     y = 100,
                     width = 150,
                     height = 50;
+
                 var bg = this.editor
                     .rect(x, y, width, height, 10)
                     .attr({
@@ -98,11 +102,11 @@ angular.module('editorApp')
                         fillOpacity: 0.1,
                         stroke: 'white',
                         strokeWidth: 2,
-                        'class': 'instance node'
+                        'class': 'bg'
                     });
 
                 var nameText = this.editor
-                    .text(x+(width/2), y+(height/2)+5, elem.name)
+                    .text(x+(width/2), y+(height/2), elem.name)
                     .attr({
                         fill: 'white'
                     });
@@ -112,7 +116,7 @@ angular.module('editorApp')
                 });
 
                 var tdefText = this.editor
-                    .text(x+(width/2), y+(height/2)+17, elem.typeDefinition.name)
+                    .text(x+(width/2), y+(height/2)+12, elem.typeDefinition.name)
                     .attr({
                         fill: 'white'
                     });
@@ -124,7 +128,7 @@ angular.module('editorApp')
 
                 return this.editor
                     .group()
-                    .data('path', elem.path())
+                    .attr({'class': 'instance node', 'data-path': elem.path() })
                     .append(bg)
                     .append(nameText)
                     .append(tdefText)
@@ -147,7 +151,7 @@ angular.module('editorApp')
                         fill: '#d57129',
                         stroke: '#fff',
                         strokeWidth: 3,
-                        'class': 'instance chan',
+                        'class': 'bg',
                         opacity: 0.75
                     });
 
@@ -171,7 +175,7 @@ angular.module('editorApp')
 
                 return this.editor
                     .group()
-                    .data('path', elem.path())
+                    .attr({'class': 'instance chan', 'data-path': elem.path() })
                     .append(bg)
                     .append(nameText)
                     .append(tdefText)
@@ -185,8 +189,33 @@ angular.module('editorApp')
             createComponent: function (elem) {
                 return this.editor
                     .text(100, 300, elem.name)
-                    .data('path', elem.path())
+                    .attr({'class': 'instance comp', 'data-path': elem.path() })
                     .drag();
+            },
+
+            deleteInstance: function (path) {
+                var elem = this.editor.select('.instance[data-path="'+path+'"]');
+                if (elem) {
+                    elem.remove();
+                }
+                if (this.listener) {
+                    var selected = this.editor.select('.selected');
+                    if (selected) {
+                        this.listener(selected.parent().attr('data-path'));
+                    } else {
+                        this.listener(null);
+                    }
+                }
+            },
+
+            getSelected: function () {
+                return this.editor.selectAll('.selected').items.map(function (elem) {
+                    return elem.parent().attr('data-path');
+                });
+            },
+
+            setSelectedListener: function (listener) {
+                this.listener = listener;
             }
         };
 
@@ -211,33 +240,31 @@ angular.module('editorApp')
                 this.data('oy', dx.changedTouches[0].clientY );
             }
             this.data('origTransform', this.transform().local );
-            kEditor.setDraggedElem({
-                instance: kEditor.getModel().findByPath(this.data('path')),
-                isNew: false
-            });
+            //kEditor.setDraggedElem({
+            //    instance: kEditor.getModel().findByPath(this.attr('data-path')),
+            //    isNew: false
+            //});
         };
 
         var stopHandler = function () {
-            kEditor.setDraggedElem(null);
+            //kEditor.setDraggedElem(null);
         };
 
         var mouseDownHandler = function (evt) {
-            var elem = this.select('.instance');
-            if (elem.hasClass('selected')) {
-                // already selected: open settings
-                console.log('open settings', this.data('path'));
-            }
             if (!evt.ctrlKey && !evt.shiftKey) {
-                factory.editor.selectAll('.instance').forEach(function (elem) {
+                factory.editor.selectAll('.bg').forEach(function (elem) {
                     elem.removeClass('selected');
                 });
             }
-            elem.addClass('selected');
+            this.select('.bg').addClass('selected');
             evt.cancelBubble = true;
+            if (factory.listener) {
+                factory.listener(this.attr('data-path'));
+            }
         };
 
         var mouseOverNodeHandler = function () {
-            console.log('mouse over node', this.data('path'));
+            console.log('mouse over node', this.attr('data-path'));
         };
 
         return factory;
