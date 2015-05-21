@@ -8,7 +8,7 @@
  * Controller of the editorApp kevscript editor page
  */
 angular.module('editorApp')
-    .controller('KevScriptCtrl', function ($scope, $modal, $timeout, $state, kEditor, kScript) {
+    .controller('KevScriptCtrl', function ($scope, $modal, $timeout, $state, kEditor, kScript, saveFile) {
         $scope.kevscript = '';
         $scope.processing = false;
 
@@ -26,48 +26,24 @@ angular.module('editorApp')
                             size: 'sm',
                             scope: $scope,
                             controller: function ($scope, $modalInstance) {
+                                $scope.filename = new Date().getTime();
                                 $modalInstance.opened.then(function () {
                                     $timeout(function () {
                                         angular.element('#filename').focus();
                                     }, 100);
                                 });
 
-                                var suffix = '.kevs';
-
                                 $scope.save = function () {
-                                    var kevsAsBlob = new Blob([$scope.kevscript], {type: 'kevscript'});
-                                    var filename = $scope.filename;
-                                    if (!filename || filename.length === 0) {
-                                        filename = Date.now()+suffix;
-                                    } else if (!endsWith(filename, suffix)) {
-                                        filename = filename+suffix;
+                                    function endsWith(str, suffix) {
+                                        return str.indexOf(suffix, str.length - suffix.length) !== -1;
                                     }
-
-                                    var downloadLink = document.createElement('a');
-                                    downloadLink.download = filename;
-                                    downloadLink.innerHTML = 'Download Kevoree KevScript';
-                                    if (window.webkitURL !== null) {
-                                        // Chrome allows the link to be clicked
-                                        // without actually adding it to the DOM.
-                                        downloadLink.href = window.webkitURL.createObjectURL(kevsAsBlob);
-                                    } else {
-                                        // Firefox requires the link to be added to the DOM
-                                        // before it can be clicked.
-                                        downloadLink.href = window.URL.createObjectURL(kevsAsBlob);
-                                        downloadLink.onclick = function (e) {
-                                            document.body.removeChild(e.target);
-                                        };
-                                        downloadLink.style.display = 'none';
-                                        document.body.appendChild(downloadLink);
+                                    var suffix = '.kevs';
+                                    if (endsWith($scope.filename, suffix)) {
+                                        $scope.filename = $scope.filename.substr(0, $scope.filename.length - '.kevs'.length);
                                     }
-
-                                    downloadLink.click();
+                                    saveFile.save($scope.kevscript, $scope.filename, suffix, 'kevscript');
                                     $modalInstance.close();
                                 };
-
-                                function endsWith(str, suffix) {
-                                    return str.indexOf(suffix, str.length - suffix.length) !== -1;
-                                }
                             }
                         })
                         .result.finally(function () {

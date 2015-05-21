@@ -8,7 +8,7 @@
  * Controller of the editorApp main content div
  */
 angular.module('editorApp')
-    .controller('MainCtrl', function ($scope, kEditor, hotkeys, Notification) {
+    .controller('MainCtrl', function ($scope, kEditor, hotkeys, saveFile, Notification) {
         var factory = new KevoreeLibrary.factory.DefaultKevoreeFactory();
 
         $scope.open = function (evt) {
@@ -30,6 +30,23 @@ angular.module('editorApp')
                 }
             };
         };
+
+        $scope.dndLoad = function (data) {
+            try {
+                var loader = factory.createJSONLoader();
+                var model = loader.loadModelFromString(data).get(0);
+                kEditor.setModel(model);
+            } catch (err) {
+                console.warn('[main.controller.dndLoad()] Error loading model file');
+                console.error(err.stack);
+                Notification.error({
+                    title: 'Open from file (dnd)',
+                    message: 'Unable to load your model',
+                    delay: 5000
+                });
+            }
+        };
+
         $scope.merge = function (evt) {
             evt.preventDefault();
             angular.element('input#file').click();
@@ -51,6 +68,7 @@ angular.module('editorApp')
                 }
             };
         };
+
         $scope.openFromNode = function (evt) {
             evt.preventDefault();
             console.log('openFromNode');
@@ -60,6 +78,7 @@ angular.module('editorApp')
                 delay: 3000
             });
         };
+
         $scope.mergeFromNode = function (evt) {
             evt.preventDefault();
             console.log('mergeFromNode');
@@ -69,14 +88,27 @@ angular.module('editorApp')
                 delay: 3000
             });
         };
+
         $scope.save = function (evt) {
             evt.preventDefault();
-            console.log('save');
-            Notification.warning({
-                title: 'Save',
-                message: 'Not implemented yet',
-                delay: 3000
-            });
+
+            var factory = new KevoreeLibrary.factory.DefaultKevoreeFactory();
+            var serializer = factory.createJSONSerializer();
+
+            try {
+                // serialize model
+                var modelStr = serializer.serialize(kEditor.getModel());
+                // prettify model
+                modelStr = JSON.stringify(JSON.parse(modelStr), null, 2);
+                // download model on client
+                saveFile.save(modelStr, null, '.json', 'application/json');
+            } catch (err) {
+                Notification.error({
+                    title: 'Save',
+                    message: 'Unable to serialize model to JSON',
+                    delay: 5000
+                });
+            }
         };
 
         $scope.deleteAll = function (evt) {
@@ -107,24 +139,24 @@ angular.module('editorApp')
             });
         };
 
-        $scope.undo = function (evt) {
-            evt.preventDefault();
-            console.log('undo');
-            Notification.warning({
-                title: 'Undo',
-                message: 'Not implemented yet',
-                delay: 3000
-            });
-        };
-        $scope.redo = function (evt) {
-            evt.preventDefault();
-            console.log('redo');
-            Notification.warning({
-                title: 'Redo',
-                message: 'Not implemented yet',
-                delay: 3000
-            });
-        };
+        //$scope.undo = function (evt) {
+        //    evt.preventDefault();
+        //    console.log('undo');
+        //    Notification.warning({
+        //        title: 'Undo',
+        //        message: 'Not implemented yet',
+        //        delay: 3000
+        //    });
+        //};
+        //$scope.redo = function (evt) {
+        //    evt.preventDefault();
+        //    console.log('redo');
+        //    Notification.warning({
+        //        title: 'Redo',
+        //        message: 'Not implemented yet',
+        //        delay: 3000
+        //    });
+        //};
 
         hotkeys.add({
             combo: 'ctrl+o',
@@ -174,15 +206,15 @@ angular.module('editorApp')
             callback: $scope.deleteSelected
         });
 
-        hotkeys.add({
-            combo: 'ctrl+z',
-            description: 'Undo the last modification',
-            callback: $scope.undo
-        });
-
-        hotkeys.add({
-            combo: 'ctrl+y',
-            description: 'Redo the last modification',
-            callback: $scope.redo
-        });
+        //hotkeys.add({
+        //    combo: 'ctrl+z',
+        //    description: 'Undo the last modification',
+        //    callback: $scope.undo
+        //});
+        //
+        //hotkeys.add({
+        //    combo: 'ctrl+y',
+        //    description: 'Redo the last modification',
+        //    callback: $scope.redo
+        //});
     });

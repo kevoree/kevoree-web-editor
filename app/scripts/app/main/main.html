@@ -43,19 +43,19 @@
                 Edit&nbsp;<span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li>
-                    <a data-ng-click="undo($event)">
-                        <span class="name">Undo</span>
-                        <span class="shortcut">Ctrl+Z</span>
-                    </a>
-                </li>
-                <li>
-                    <a data-ng-click="redo($event)">
-                        <span class="name">Redo</span>
-                        <span class="shortcut">Ctrl+Y</span>
-                    </a>
-                </li>
-                <li class="divider"></li>
+                <!--<li>-->
+                    <!--<a data-ng-click="undo($event)">-->
+                        <!--<span class="name">Undo</span>-->
+                        <!--<span class="shortcut">Ctrl+Z</span>-->
+                    <!--</a>-->
+                <!--</li>-->
+                <!--<li>-->
+                    <!--<a data-ng-click="redo($event)">-->
+                        <!--<span class="name">Redo</span>-->
+                        <!--<span class="shortcut">Ctrl+Y</span>-->
+                    <!--</a>-->
+                <!--</li>-->
+                <!--<li class="divider"></li>-->
                 <li>
                     <a data-ng-click="deleteAll($event)">
                         <span class="name">Delete all</span>
@@ -77,7 +77,7 @@
             </ul>
         </div>
     </div>
-    <div id="tdef-drag-panel">
+    <div id="tdef-drag-panel" data-drop-target="dndLoad($data)">
         <div data-ui-view="sidebar"></div>
         <div data-ui-view="editor"></div>
     </div>

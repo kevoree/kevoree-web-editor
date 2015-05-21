@@ -13,6 +13,7 @@ angular
         'ngAnimate',
         'ngTouch',
         'ui.router',
+        'ui.keypress',
         'ui.bootstrap',
         'ui.codemirror',
         'ui-notification',
