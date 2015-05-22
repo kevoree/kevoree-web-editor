@@ -2,6 +2,16 @@
 
 angular.module('editorApp')
     .factory('uiFactory', function () {
+        var x = 100,
+            y = 100,
+            GROUP_RADIUS = 55,
+            GROUP_PLUG_RADIUS = 10,
+            NODE_WIDTH = 180,
+            NODE_HEIGHT = 50,
+            COMPONENT_WIDTH = 160,
+            COMPONENT_HEIGHT = 40,
+            CHANNEL_RADIUS = 45;
+        
         var factory = {
             /**
              * Should be called only one time to init the Editor panel
@@ -24,32 +34,38 @@ angular.module('editorApp')
              * @returns {*}
              */
             createGroup: function (elem) {
-                var x = 100,
-                    y = 100,
-                    radius = 45,
-                    plugRadius = 10;
-
                 var bg = this.editor
-                    .circle(x, y, radius)
+                    .circle(x, y, GROUP_RADIUS)
                     .attr({
                         fill: 'green',
                         stroke: '#000',
-                        strokeWidth: 4,
+                        strokeWidth: 3,
                         'class': 'bg',
                         opacity: 0.75
                     });
 
+                if (!document.getElementById('group-clip')) {
+                    var editor = document.getElementById('editor');
+                    var defs = editor.getElementsByTagName('defs')[0];
+                    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                    clipPath.id = 'group-clip';
+                    var bgClone = bg.node.cloneNode(true);
+                    bgClone.setAttribute('r', (GROUP_RADIUS-4)+'');
+                    clipPath.appendChild(bgClone);
+                    defs.appendChild(clipPath);
+                }
+
                 var plug = this.editor
-                    .circle(x, (radius/2)+y+plugRadius, plugRadius)
+                    .circle(x, (GROUP_RADIUS/2)+y+GROUP_PLUG_RADIUS, GROUP_PLUG_RADIUS)
                     .attr({
                         fill: '#f1c30f',
                         'class': 'group-plug'
                     });
                 plug.mouseover(function () {
-                    plug.attr({r: plugRadius+1});
+                    plug.attr({r: GROUP_PLUG_RADIUS+1});
                 });
                 plug.mouseout(function () {
-                    plug.attr({r: plugRadius});
+                    plug.attr({r: GROUP_PLUG_RADIUS});
                 });
 
                 var nameText = this.editor
@@ -57,19 +73,21 @@ angular.module('editorApp')
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
-                        'class': 'name'
+                        'class': 'name',
+                        'clip-path': 'url(#group-clip)'
                     });
 
                 var tdefText = this.editor
                     .text(x, y+10, elem.typeDefinition.name)
                     .attr({
                         fill: 'white',
-                        textAnchor: 'middle'
+                        textAnchor: 'middle',
+                        'clip-path': 'url(#group-clip)'
                     });
 
                 return this.editor
                     .group()
-                    .attr({'class': 'instance group', 'data-path': elem.path() })
+                    .attr({ 'class': 'instance group', 'data-path': elem.path() })
                     .append(bg)
                     .append(nameText)
                     .append(tdefText)
@@ -82,13 +100,8 @@ angular.module('editorApp')
             },
 
             createNode: function (elem) {
-                var x = 200,
-                    y = 100,
-                    width = 150,
-                    height = 50;
-
                 var bg = this.editor
-                    .rect(x, y, width, height, 10)
+                    .rect(x, y, NODE_WIDTH, NODE_HEIGHT, 8)
                     .attr({
                         fill: 'white',
                         fillOpacity: 0.1,
@@ -97,22 +110,36 @@ angular.module('editorApp')
                         'class': 'bg'
                     });
 
+                if (!document.getElementById('node-clip')) {
+                    var editor = document.getElementById('editor');
+                    var defs = editor.getElementsByTagName('defs')[0];
+                    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                    clipPath.id = 'node-clip';
+                    var bgClone = bg.node.cloneNode(true);
+                    bgClone.setAttribute('width', (NODE_WIDTH-5)+'');
+                    bgClone.setAttribute('x', (x+2)+'');
+                    clipPath.appendChild(bgClone);
+                    defs.appendChild(clipPath);
+                }
+
                 var nameText = this.editor
-                    .text(x+(width/2), y+(height/2), elem.name)
+                    .text(x+(NODE_WIDTH/2), y+(NODE_HEIGHT/2), elem.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
-                        'class': 'name'
+                        'class': 'name',
+                        'clip-path': 'url(#node-clip)'
                     });
 
                 var tdefText = this.editor
-                    .text(x+(width/2), y+(height/2)+12, elem.typeDefinition.name)
+                    .text(x+(NODE_WIDTH/2), y+(NODE_HEIGHT/2)+12, elem.typeDefinition.name)
                     .attr({
                         fill: 'white',
-                        textAnchor: 'middle'
+                        textAnchor: 'middle',
+                        'clip-path': 'url(#node-clip)'
                     });
 
-                return this.editor
+                var node = this.editor
                     .group()
                     .attr({'class': 'instance node', 'data-path': elem.path() })
                     .append(bg)
@@ -124,15 +151,23 @@ angular.module('editorApp')
                     .touchmove(moveHandler)
                     .mouseover(mouseOverNodeHandler)
                     .drag(moveHandler, startHandler, stopHandler);
+
+                for (var i=0; i < elem.components.array.length; i++) {
+                    var comp = factory.createComponent(elem.components.array[i]);
+                    var dx = (NODE_WIDTH-COMPONENT_WIDTH)/ 2,
+                        dy = (COMPONENT_HEIGHT+10)*(i+1);
+                    comp.transform('t'+dx+','+dy);
+                    node.append(comp);
+                }
+
+                bg.attr({ height: NODE_HEIGHT + (elem.components.array.length*(COMPONENT_HEIGHT+10)) + 5 });
+
+                return node;
             },
 
             createChannel: function (elem) {
-                var x = 100,
-                    y = 400,
-                    radius = 45;
-
                 var bg = this.editor
-                    .circle(x, y, radius)
+                    .circle(x, y, CHANNEL_RADIUS)
                     .attr({
                         fill: '#d57129',
                         stroke: '#fff',
@@ -141,19 +176,32 @@ angular.module('editorApp')
                         opacity: 0.75
                     });
 
+                if (!document.getElementById('chan-clip')) {
+                    var editor = document.getElementById('editor');
+                    var defs = editor.getElementsByTagName('defs')[0];
+                    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                    clipPath.id = 'chan-clip';
+                    var bgClone = bg.node.cloneNode(true);
+                    bgClone.setAttribute('r', (CHANNEL_RADIUS-4)+'');
+                    clipPath.appendChild(bgClone);
+                    defs.appendChild(clipPath);
+                }
+
                 var nameText = this.editor
                     .text(x, y-5, elem.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
-                        'class': 'name'
+                        'class': 'name',
+                        'clip-path': 'url(#chan-clip)'
                     });
 
                 var tdefText = this.editor
                     .text(x, y+10, elem.typeDefinition.name)
                     .attr({
                         fill: 'white',
-                        textAnchor: 'middle'
+                        textAnchor: 'middle',
+                        'clip-path': 'url(#chan-clip)'
                     });
 
                 return this.editor
@@ -170,10 +218,57 @@ angular.module('editorApp')
             },
 
             createComponent: function (elem) {
+                var bg = this.editor
+                    .rect(x, y, COMPONENT_WIDTH, COMPONENT_HEIGHT, 3)
+                    .attr({
+                        fill: 'black',
+                        fillOpacity: 0.75,
+                        stroke: 'white',
+                        strokeWidth: 1.5,
+                        'class': 'bg'
+                    });
+
+                if (!document.getElementById('comp-clip')) {
+                    var editor = document.getElementById('editor');
+                    var defs = editor.getElementsByTagName('defs')[0];
+                    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                    clipPath.id = 'comp-clip';
+                    var bgClone = bg.node.cloneNode(true);
+                    bgClone.setAttribute('width', (COMPONENT_WIDTH-5)+'');
+                    bgClone.setAttribute('x', (x+2)+'');
+                    clipPath.appendChild(bgClone);
+                    defs.appendChild(clipPath);
+                }
+
+                var nameText = this.editor
+                    .text(x+(COMPONENT_WIDTH/2), y+(COMPONENT_HEIGHT/2), elem.name)
+                    .attr({
+                        fill: 'white',
+                        textAnchor: 'middle',
+                        'class': 'name',
+                        'clip-path': 'url(#comp-clip)'
+                    });
+
+                var tdefText = this.editor
+                    .text(x+(COMPONENT_WIDTH/2), y+(COMPONENT_HEIGHT/2)+12, elem.typeDefinition.name)
+                    .attr({
+                        fill: 'white',
+                        textAnchor: 'middle',
+                        'clip-path': 'url(#comp-clip)'
+                    });
+
                 return this.editor
-                    .text(100, 300, elem.name)
+                    .group()
                     .attr({'class': 'instance comp', 'data-path': elem.path() })
-                    .drag();
+                    .append(bg)
+                    .append(nameText)
+                    .append(tdefText)
+                    .mousedown(mouseDownHandler)
+                    .touchstart(startHandler)
+                    .touchend(stopHandler)
+                    .touchmove(moveHandler)
+                    .mouseover(mouseOverNodeHandler)
+                    .drag(moveHandler, startHandler, stopHandler);
             },
 
             deleteInstance: function (path) {
