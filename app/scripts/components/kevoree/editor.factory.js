@@ -2,6 +2,45 @@
 
 angular.module('editorApp')
     .factory('kEditor', function (kFactory, kModelHelper, uiFactory) {
+
+        /**
+         * Updates UI according to model changes
+         * @param trace
+         */
+        function modelReactor(trace) {
+            if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.REMOVE) {
+                if (trace.elementAttributeName === 'hubs' ||
+                    trace.elementAttributeName === 'nodes' ||
+                    trace.elementAttributeName === 'groups' ||
+                    trace.elementAttributeName === 'components') {
+                    uiFactory.deleteInstance(trace.source, trace.previous_value);
+                }
+
+            } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.ADD) {
+                switch (trace.elementAttributeName) {
+                    case 'hubs':
+                        uiFactory.createChannel(trace.value);
+                        break;
+
+                    case 'nodes':
+                        uiFactory.createNode(trace.value);
+                        break;
+
+                    case 'groups':
+                        uiFactory.createGroup(trace.value);
+                        break;
+
+                    case 'components':
+                        uiFactory.createComponent(trace.value);
+                        break;
+                }
+
+            } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.SET) {
+                console.log('set', trace);
+                uiFactory.updateInstance(trace.previousPath, trace.source);
+            }
+        }
+
         function KevoreeEditor() {
             this.model = kFactory.createContainerRoot();
             this.listeners = [];
@@ -74,45 +113,5 @@ angular.module('editorApp')
             }
         };
 
-        var editor = new KevoreeEditor();
-
-        function modelReactor(trace) {
-            if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.REMOVE) {
-                if (trace.elementAttributeName === 'hubs' ||
-                    trace.elementAttributeName === 'nodes' ||
-                    trace.elementAttributeName === 'groups' ||
-                    trace.elementAttributeName === 'components') {
-                    uiFactory.deleteInstance(trace.previous_value);
-                }
-
-            } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.ADD) {
-                console.log('add', trace);
-                switch (trace.elementAttributeName) {
-                    case 'hubs':
-                        uiFactory.createChannel(trace.value);
-                        break;
-
-                    case 'nodes':
-                        uiFactory.createNode(trace.value);
-                        break;
-
-                    case 'groups':
-                        uiFactory.createGroup(trace.value);
-                        break;
-
-                    case 'components':
-                        uiFactory.createComponent(trace.value);
-                        break;
-                }
-
-            } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.SET) {
-                console.log('set', trace);
-                uiFactory.updateInstance(trace.previousPath, trace.source);
-
-            } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.REMOVE_ALL) {
-                console.log('remove all', trace.value);
-            }
-        }
-
-        return editor;
+        return new KevoreeEditor();
     });

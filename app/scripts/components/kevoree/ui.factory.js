@@ -271,10 +271,14 @@ angular.module('editorApp')
                     .drag(moveHandler, startHandler, stopHandler);
             },
 
-            deleteInstance: function (path) {
+            deleteInstance: function (parent, path) {
                 var elem = this.editor.select('.instance[data-path="'+path+'"]');
                 if (elem) {
+                    if (elem.hasClass('comp') || elem.hasClass('node')) {
+                        this.updateNodeInstance(parent);
+                    }
                     elem.remove();
+
                 }
                 if (this.listener) {
                     var selected = this.editor.select('.selected');
@@ -292,6 +296,23 @@ angular.module('editorApp')
                     elem.attr({ 'data-path': instance.path() });
                     elem.select('text.name').attr({
                         text: instance.name
+                    });
+                }
+            },
+
+            updateNodeInstance: function (node) {
+                var host = this.editor.select('.instance[data-path="'+node.path()+'"]');
+                if (host) {
+                    for (var i=0; i < node.components.array.length; i++) {
+                        var dx = (NODE_WIDTH-COMPONENT_WIDTH)/ 2,
+                            dy = (COMPONENT_HEIGHT+10)*(i+1);
+                        this.editor
+                            .select('.instance[data-path="'+node.components.array[i].path()+'"]')
+                            .transform('t'+dx+','+dy);
+                    }
+
+                    host.select('.bg').attr({
+                        height: NODE_HEIGHT + (node.components.array.length*(COMPONENT_HEIGHT+10)) + 5
                     });
                 }
             },
