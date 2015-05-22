@@ -1,19 +1,20 @@
 <div class="sidebar sidebar-right" data-ng-show="instance">
+    <!-- Main information panel -->
     <div data-ng-class="type+'-right-bg'">
-        <h5 class="sidebar-header sidebar-header-right text-capitalize point-cursor" data-ng-click="grpCollapsed = !grpCollapsed">
-            <i class="fa" data-ng-class="grpCollapsed ? 'fa-plus':'fa-minus'"></i>
+        <h5 class="sidebar-header sidebar-header-right text-capitalize point-cursor" data-ng-click="mainCollapsed = !mainCollapsed">
+            <i class="fa" data-ng-class="mainCollapsed ? 'fa-plus':'fa-minus'"></i>
             &nbsp;{{ type }}
         </h5>
     </div>
-    <div class="instance-form" data-collapse="grpCollapsed">
+    <div class="instance-form" data-collapse="mainCollapsed">
         <div class="form-group">
             <label for="version">Version</label>
             <select
                     id="version"
                     class="form-control input-sm"
                     data-ng-model="selectedVersion"
-                    data-ng-change="changeVersion(selectedVersion)">
-                <option data-ng-repeat="(index, value) in versions" value="{{ index }}">{{ value }}</option>
+                    data-ng-change="changeVersion(selectedVersion)"
+                    data-ng-options="index as value for (index, value) in versions">
             </select>
         </div>
         <div class="form-group">
@@ -28,18 +29,22 @@
             </div>
         </div>
     </div>
-    <div data-ng-class="type+'-right-bg'">
+
+    <!-- Dictionary panel -->
+    <div data-ng-class="type+'-right-bg'" data-ng-show="instance.dictionary.values.size() > 0">
         <h5 class="sidebar-header sidebar-header-right point-cursor" data-ng-click="dicCollapsed = !dicCollapsed">
             <i class="fa" data-ng-class="dicCollapsed ? 'fa-plus':'fa-minus'"></i>
             &nbsp;Dictionary
         </h5>
     </div>
     <div class="instance-form" data-collapse="dicCollapsed">
-        <div class="form-group" data-ng-repeat="(index, attr) in instance.typeDefinition.dictionaryType.select('attributes[fragmentDependant=false]').array">
-            <label for="attr{{index}}">{{ attr.name }}</label>
+        <div class="form-group" data-ng-repeat="(index, attr) in dicAttrs">
+            <label for="attr{{index}}">{{ attr.name + (isTruish(attr.optional) ? '':' *') }}</label>
             <input type="text" class="form-control input-sm" id="attr{{index}}" data-ng-model="(instance.dictionary.findValuesByID(attr.name)).value">
         </div>
     </div>
+
+    <!-- Fragment Dictionary panels -->
     <div data-ng-repeat="fragDic in instance.fragmentDictionary.array">
         <div data-ng-class="type+'-right-bg'">
             <h5 class="sidebar-header sidebar-header-right point-cursor" data-ng-click="fragCollapsed[fragDic.name] = !fragCollapsed[fragDic.name]">
@@ -48,7 +53,10 @@
             </h5>
         </div>
         <div class="instance-form" data-collapse="fragCollapsed[fragDic.name]">
-            <div class="form-group" data-ng-repeat="(index, attr) in instance.typeDefinition.dictionaryType.select('attributes[fragmentDependant=true]').array">
+            <div data-ng-hide="fragDic.values.size() > 0">
+                <p class="text-muted"><em>No value</em> - <a href="#" data-ng-click="fragDic.delete()">Delete dictionary?</a></p>
+            </div>
+            <div class="form-group" data-ng-repeat="(index, attr) in fragDicAttrs">
                 <label for="attr{{index}}-{{fragDic.name}}">{{ attr.name }}</label>
                 <input type="text" class="form-control input-sm" id="attr{{index}}-{{fragDic.name}}" data-ng-model="(fragDic.findValuesByID(attr.name)).value">
             </div>

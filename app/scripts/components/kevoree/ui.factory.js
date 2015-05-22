@@ -2,25 +2,20 @@
 
 angular.module('editorApp')
     .factory('uiFactory', function () {
-        var initDone = false;
-
         var factory = {
             /**
              * Should be called only one time to init the Editor panel
              */
             init: function () {
-                if (!initDone) {
-                    initDone = true;
-                    var editor = this.editor = new Snap('svg#editor');
-                    editor.mousedown(function () {
-                        editor.selectAll('.instance .bg').forEach(function (elem) {
-                            elem.removeClass('selected');
-                        });
-                        if (factory.listener) {
-                            factory.listener();
-                        }
+                var editor = this.editor = new Snap('svg#editor');
+                editor.mousedown(function () {
+                    editor.selectAll('.instance .bg').forEach(function (elem) {
+                        elem.removeClass('selected');
                     });
-                }
+                    if (factory.listener) {
+                        factory.listener();
+                    }
+                });
             },
 
             /**
@@ -60,20 +55,17 @@ angular.module('editorApp')
                 var nameText = this.editor
                     .text(x, y-5, elem.name)
                     .attr({
-                        fill: 'white'
+                        fill: 'white',
+                        textAnchor: 'middle',
+                        'class': 'name'
                     });
-                nameText.attr({
-                    x: '-='+angular.element(nameText.node).width()/2
-                });
 
                 var tdefText = this.editor
                     .text(x, y+10, elem.typeDefinition.name)
                     .attr({
-                        fill: 'white'
+                        fill: 'white',
+                        textAnchor: 'middle'
                     });
-                tdefText.attr({
-                    x: '-='+angular.element(tdefText.node).width()/2
-                });
 
                 return this.editor
                     .group()
@@ -108,23 +100,17 @@ angular.module('editorApp')
                 var nameText = this.editor
                     .text(x+(width/2), y+(height/2), elem.name)
                     .attr({
-                        fill: 'white'
+                        fill: 'white',
+                        textAnchor: 'middle',
+                        'class': 'name'
                     });
-
-                nameText.attr({
-                    x: '-='+angular.element(nameText.node).width()/2
-                });
 
                 var tdefText = this.editor
                     .text(x+(width/2), y+(height/2)+12, elem.typeDefinition.name)
                     .attr({
-                        fill: 'white'
+                        fill: 'white',
+                        textAnchor: 'middle'
                     });
-
-                tdefText.attr({
-                    x: '-='+angular.element(tdefText.node).width()/2
-                });
-
 
                 return this.editor
                     .group()
@@ -158,20 +144,17 @@ angular.module('editorApp')
                 var nameText = this.editor
                     .text(x, y-5, elem.name)
                     .attr({
-                        fill: 'white'
+                        fill: 'white',
+                        textAnchor: 'middle',
+                        'class': 'name'
                     });
-                nameText.attr({
-                    x: '-='+angular.element(nameText.node).width()/2
-                });
 
                 var tdefText = this.editor
                     .text(x, y+10, elem.typeDefinition.name)
                     .attr({
-                        fill: 'white'
+                        fill: 'white',
+                        textAnchor: 'middle'
                     });
-                tdefText.attr({
-                    x: '-='+angular.element(tdefText.node).width()/2
-                });
 
                 return this.editor
                     .group()
@@ -205,6 +188,16 @@ angular.module('editorApp')
                     } else {
                         this.listener(null);
                     }
+                }
+            },
+
+            updateInstance: function (previousPath, instance) {
+                var elem = this.editor.select('.instance[data-path="'+previousPath+'"]');
+                if (elem) {
+                    elem.attr({ 'data-path': instance.path() });
+                    elem.select('text.name').attr({
+                        text: instance.name
+                    });
                 }
             },
 

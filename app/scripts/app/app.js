@@ -20,10 +20,8 @@ angular
         'cfp.hotkeys',
         'ngDragDrop'
     ])
-    .run(function ($rootScope, Notification, VERSION) {
+    .run(function ($rootScope, VERSION) {
         $rootScope.VERSION = VERSION;
-
-        Notification.config({ top: 90 });
 
         // fade out the loading container when bootstrap is done
         var bootstrapContainer = angular.element('#bootstrap-container');

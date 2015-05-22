@@ -9,6 +9,8 @@
  */
 angular.module('editorApp')
     .controller('MainCtrl', function ($scope, kEditor, hotkeys, saveFile, uiFactory, kModelHelper, kFactory, Notification) {
+        Notification.config({ top: 90 });
+
         $scope.open = function (evt) {
             evt.preventDefault();
             angular.element('input#file').click();

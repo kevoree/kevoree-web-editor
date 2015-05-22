@@ -8,7 +8,9 @@
  * Controller of the editorApp kevscript editor page
  */
 angular.module('editorApp')
-    .controller('KevScriptCtrl', function ($scope, $modal, $timeout, $state, kEditor, kScript, saveFile) {
+    .controller('KevScriptCtrl', function ($scope, $modal, $timeout, $state, kEditor, kScript, saveFile, Notification) {
+        Notification.config({ top: 65 });
+
         $scope.kevscript = '';
         $scope.processing = false;
 
@@ -59,7 +61,16 @@ angular.module('editorApp')
         var editor = null;
         $scope.editorLoaded = function (_editor) {
             editor = _editor;
-            editor.setValue(kScript.parseModel(kEditor.getModel()));
+            try {
+                var modelStr = kScript.parseModel(kEditor.getModel());
+                editor.setValue(modelStr);
+            } catch (err) {
+                Notification.error({
+                    title: 'KevScript parser',
+                    message: 'Unable to convert current model to KevScript',
+                    delay: 5000
+                });
+            }
         };
 
         $scope.uploadKevscript = function () {
