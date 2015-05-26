@@ -75,6 +75,8 @@ body {
 
 .sidebar-header-right {
   margin-right: 5px;
+  border-bottom: none;
+  border-right: 1px solid #333;
 }
 
 .sidebar-helper {
@@ -263,18 +265,22 @@ body {
 
 .node-right-bg {
   background: url('../images/node.png') top right repeat-y;
+  border-bottom: 1px solid #333;
 }
 
 .component-right-bg {
   background: url('../images/component.png') top right repeat-y;
+  border-bottom: 1px solid #333;
 }
 
 .group-right-bg {
   background: url('../images/group.png') top right repeat-y;
+  border-bottom: 1px solid #333;
 }
 
 .channel-right-bg {
   background: url('../images/channel.png') top right repeat-y;
+  border-bottom: 1px solid #333;
 }
 
 .tooltip {

@@ -45,7 +45,9 @@
             &nbsp;Dictionary
         </h5>
     </div>
-    <kdic data-name="'dicForm'" data-attrs="dicAttrs" data-dictionary="instance.dictionary"  data-fragment="false" data-collapse="dicCollapsed"></kdic>
+    <div data-collapse="dicCollapsed">
+        <kdic data-name="'dicForm'" data-attrs="dicAttrs" data-dictionary="instance.dictionary"  data-fragment="false"></kdic>
+    </div>
 
     <!-- Fragment Dictionary panels -->
     <div data-ng-repeat="fragDic in instance.fragmentDictionary.array">
@@ -55,6 +57,8 @@
                 &nbsp;Fragment Dictionary - <strong>{{ fragDic.name }}</strong>
             </h5>
         </div>
-        <kdic data-name="fragDic.name" data-attrs="fragDicAttrs" data-dictionary="fragDic"  data-fragment="true" data-collapse="fragCollapsed[fragDic.name]"></kdic>
+        <div data-collapse="fragCollapsed[fragDic.name]">
+            <kdic data-name="fragDic.name" data-attrs="fragDicAttrs" data-dictionary="fragDic"  data-fragment="true"></kdic>
+        </div>
     </div>
 </div>

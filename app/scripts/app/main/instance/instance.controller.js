@@ -16,7 +16,6 @@ angular.module('editorApp')
         $scope.fragCollapsed = {};
 
         $scope.changeVersion = function (index) {
-            console.log('CHANGE VERSION', $scope.versions[index]);
             $scope.instance.typeDefinition = $scope.instance.typeDefinition.eContainer()
                 .select('**/typeDefinitions[name='+$scope.instance.typeDefinition.name+',version='+$scope.versions[index]+']').array[0];
             var oldDic = $scope.instance.dictionary;
@@ -30,7 +29,7 @@ angular.module('editorApp')
                         // set the old value in the new dictionary
                         newVal = kFactory.createValue();
                         newVal.name = attr.name;
-                        newVal.value = attr.defaultValue;
+                        newVal.value = oldVal.value;
                         $scope.instance.dictionary.addValues(newVal);
                     }
                 }
@@ -119,9 +118,6 @@ angular.module('editorApp')
                         }
                         // add default value to fragment dictionaries that does not already have them
                         $scope.instance.fragmentDictionary.array.forEach(function (fragDic) {
-                            console.log('instance', $scope.instance.name);
-                            console.log('fragDic', fragDic.name);
-                            console.log('attrName', attr.name);
                             val = fragDic.findValuesByID(attr.name);
                             if (!val) {
                                 val = kFactory.createValue();
