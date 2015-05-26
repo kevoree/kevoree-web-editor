@@ -11,8 +11,13 @@ angular.module('editorApp')
             COMPONENT_WIDTH = 160,
             COMPONENT_HEIGHT = 40,
             CHANNEL_RADIUS = 45;
-        
+
         var factory = {
+            /**
+             * Dragged instance (component or node)
+             */
+            draggedInstance: null,
+
             /**
              * Should be called only one time to init the Editor panel
              */
@@ -30,10 +35,10 @@ angular.module('editorApp')
 
             /**
              *
-             * @param elem
+             * @param instance
              * @returns {*}
              */
-            createGroup: function (elem) {
+            createGroup: function (instance) {
                 var bg = this.editor
                     .circle(x, y, GROUP_RADIUS)
                     .attr({
@@ -69,7 +74,7 @@ angular.module('editorApp')
                 });
 
                 var nameText = this.editor
-                    .text(x, y-5, elem.name)
+                    .text(x, y-5, instance.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
@@ -78,7 +83,7 @@ angular.module('editorApp')
                     });
 
                 var tdefText = this.editor
-                    .text(x, y+10, elem.typeDefinition.name)
+                    .text(x, y+10, instance.typeDefinition.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
@@ -87,7 +92,7 @@ angular.module('editorApp')
 
                 return this.editor
                     .group()
-                    .attr({ 'class': 'instance group', 'data-path': elem.path() })
+                    .attr({ 'class': 'instance group', 'data-path': instance.path() })
                     .append(bg)
                     .append(nameText)
                     .append(tdefText)
@@ -99,7 +104,7 @@ angular.module('editorApp')
                     .drag(moveHandler, startHandler, stopHandler);
             },
 
-            createNode: function (elem) {
+            createNode: function (instance) {
                 var bg = this.editor
                     .rect(x, y, NODE_WIDTH, NODE_HEIGHT, 8)
                     .attr({
@@ -123,7 +128,7 @@ angular.module('editorApp')
                 }
 
                 var nameText = this.editor
-                    .text(x+(NODE_WIDTH/2), y+(NODE_HEIGHT/2), elem.name)
+                    .text(x+(NODE_WIDTH/2), y+(NODE_HEIGHT/2), instance.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
@@ -132,7 +137,7 @@ angular.module('editorApp')
                     });
 
                 var tdefText = this.editor
-                    .text(x+(NODE_WIDTH/2), y+(NODE_HEIGHT/2)+12, elem.typeDefinition.name)
+                    .text(x+(NODE_WIDTH/2), y+(NODE_HEIGHT/2)+12, instance.typeDefinition.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
@@ -141,7 +146,7 @@ angular.module('editorApp')
 
                 var node = this.editor
                     .group()
-                    .attr({'class': 'instance node', 'data-path': elem.path() })
+                    .attr({'class': 'instance node', 'data-path': instance.path() })
                     .append(bg)
                     .append(nameText)
                     .append(tdefText)
@@ -152,20 +157,20 @@ angular.module('editorApp')
                     .mouseover(mouseOverNodeHandler)
                     .drag(moveHandler, startHandler, stopHandler);
 
-                for (var i=0; i < elem.components.array.length; i++) {
-                    var comp = factory.createComponent(elem.components.array[i]);
+                for (var i=0; i < instance.components.array.length; i++) {
+                    var comp = factory.createComponent(instance.components.array[i]);
                     var dx = (NODE_WIDTH-COMPONENT_WIDTH)/ 2,
                         dy = (COMPONENT_HEIGHT+10)*(i+1);
                     comp.transform('t'+dx+','+dy);
                     node.append(comp);
                 }
 
-                bg.attr({ height: NODE_HEIGHT + (elem.components.array.length*(COMPONENT_HEIGHT+10)) + 5 });
+                bg.attr({ height: NODE_HEIGHT + (instance.components.array.length*(COMPONENT_HEIGHT+10)) });
 
                 return node;
             },
 
-            createChannel: function (elem) {
+            createChannel: function (instance) {
                 var bg = this.editor
                     .circle(x, y, CHANNEL_RADIUS)
                     .attr({
@@ -188,7 +193,7 @@ angular.module('editorApp')
                 }
 
                 var nameText = this.editor
-                    .text(x, y-5, elem.name)
+                    .text(x, y-5, instance.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
@@ -197,7 +202,7 @@ angular.module('editorApp')
                     });
 
                 var tdefText = this.editor
-                    .text(x, y+10, elem.typeDefinition.name)
+                    .text(x, y+10, instance.typeDefinition.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
@@ -206,7 +211,7 @@ angular.module('editorApp')
 
                 return this.editor
                     .group()
-                    .attr({'class': 'instance chan', 'data-path': elem.path() })
+                    .attr({'class': 'instance chan', 'data-path': instance.path() })
                     .append(bg)
                     .append(nameText)
                     .append(tdefText)
@@ -217,12 +222,11 @@ angular.module('editorApp')
                     .drag(moveHandler, startHandler, stopHandler);
             },
 
-            createComponent: function (elem) {
+            createComponent: function (instance) {
                 var bg = this.editor
                     .rect(x, y, COMPONENT_WIDTH, COMPONENT_HEIGHT, 3)
                     .attr({
                         fill: 'black',
-                        fillOpacity: 0.75,
                         stroke: 'white',
                         strokeWidth: 1.5,
                         'class': 'bg'
@@ -241,7 +245,7 @@ angular.module('editorApp')
                 }
 
                 var nameText = this.editor
-                    .text(x+(COMPONENT_WIDTH/2), y+(COMPONENT_HEIGHT/2), elem.name)
+                    .text(x+(COMPONENT_WIDTH/2), y+(COMPONENT_HEIGHT/2), instance.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
@@ -250,16 +254,18 @@ angular.module('editorApp')
                     });
 
                 var tdefText = this.editor
-                    .text(x+(COMPONENT_WIDTH/2), y+(COMPONENT_HEIGHT/2)+12, elem.typeDefinition.name)
+                    .text(x+(COMPONENT_WIDTH/2), y+(COMPONENT_HEIGHT/2)+12, instance.typeDefinition.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
                         'clip-path': 'url(#comp-clip)'
                     });
 
+                var first = true;
+
                 return this.editor
                     .group()
-                    .attr({'class': 'instance comp', 'data-path': elem.path() })
+                    .attr({'class': 'instance comp', 'data-path': instance.path() })
                     .append(bg)
                     .append(nameText)
                     .append(tdefText)
@@ -268,7 +274,22 @@ angular.module('editorApp')
                     .touchend(stopHandler)
                     .touchmove(moveHandler)
                     .mouseover(mouseOverNodeHandler)
-                    .drag(moveHandler, startHandler, stopHandler);
+                    .drag(
+                        function () {
+                            if (first) {
+                                console.log('comp start drag');
+                                factory.setDraggedInstance(instance);
+                                instance.delete();
+                            }
+                            moveHandler.apply(this, arguments);
+                            first = false;
+                        },
+                        startHandler,
+                        function () {
+                            console.log('stop', this, arguments);
+                            stopHandler.apply(this, arguments);
+                        }
+                    );
             },
 
             deleteInstance: function (parent, path) {
@@ -276,9 +297,16 @@ angular.module('editorApp')
                 if (elem) {
                     if (elem.hasClass('comp') || elem.hasClass('node')) {
                         this.updateNodeInstance(parent);
+                        elem.remove();
+                        if (this.draggedInstance) {
+                            var parentElem = this.editor.select('.instance[data-path="'+parent.path()+'"]');
+                            if (parentElem) {
+                                elem.appendTo(parentElem);
+                            }
+                        }
+                    } else {
+                        elem.remove();
                     }
-                    elem.remove();
-
                 }
                 if (this.listener) {
                     var selected = this.editor.select('.selected');
@@ -290,6 +318,10 @@ angular.module('editorApp')
                 }
             },
 
+            setDraggedInstance: function (instance) {
+                this.draggedInstance = instance;
+            },
+
             updateInstance: function (previousPath, instance) {
                 var elem = this.editor.select('.instance[data-path="'+previousPath+'"]');
                 if (elem) {
@@ -297,6 +329,14 @@ angular.module('editorApp')
                     elem.select('text.name').attr({
                         text: instance.name
                     });
+                    if (elem.hasClass('comp')) {
+                        elem.attr({ fillOpacity: isTruish(instance.started) ? 1 : 0.65 });
+                    } else {
+                        elem.select('text.name')
+                            .attr({
+                                fill: isTruish(instance.started) ? '#fff' : '#000'
+                            });
+                    }
                 }
             },
 
@@ -312,7 +352,7 @@ angular.module('editorApp')
                     }
 
                     host.select('.bg').attr({
-                        height: NODE_HEIGHT + (node.components.array.length*(COMPONENT_HEIGHT+10)) + 5
+                        height: NODE_HEIGHT + (node.components.array.length*(COMPONENT_HEIGHT+10))
                     });
                 }
             },
@@ -349,14 +389,10 @@ angular.module('editorApp')
                 this.data('oy', dx.changedTouches[0].clientY );
             }
             this.data('origTransform', this.transform().local );
-            //kEditor.setDraggedElem({
-            //    instance: kEditor.getModel().findByPath(this.attr('data-path')),
-            //    isNew: false
-            //});
         };
 
         var stopHandler = function () {
-            //kEditor.setDraggedElem(null);
+            factory.setDraggedInstance(null);
         };
 
         var mouseDownHandler = function (evt) {
@@ -375,6 +411,10 @@ angular.module('editorApp')
         var mouseOverNodeHandler = function () {
             console.log('mouse over node', this.attr('data-path'));
         };
+
+        function isTruish(val) {
+            return (val === 'true' || val > 0 || val === true);
+        }
 
         return factory;
     });

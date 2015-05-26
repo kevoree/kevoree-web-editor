@@ -1,0 +1,18 @@
+<form name="{{ name }}" class="instance-form">
+
+    <div data-ng-hide="!fragment || dictionary.values.size() > 0">
+        <p class="text-muted"><em>No value</em> - <a href="#" data-ng-click="dictionary.delete()">Delete dictionary?</a></p>
+    </div>
+
+    <div class="form-group" data-ng-repeat="(index, attr) in attrs" data-ng-class="this[name][attr.name].$valid ? '':'has-error has-feedback'">
+        <label for="attr{{index}}">{{ attr.name + (isTruish(attr.optional) ? '':' *') }}</label>
+        <input
+                id="attr{{index}}"
+                name="{{attr.name}}"
+                type="text"
+                class="form-control input-sm"
+                data-ng-model="(dictionary.findValuesByID(attr.name)).value"
+                data-ng-required="!isTruish(attr.optional)">
+        <span class="glyphicon glyphicon-remove form-control-feedback" data-ng-hide="this[name][attr.name].$valid"></span>
+    </div>
+</form>

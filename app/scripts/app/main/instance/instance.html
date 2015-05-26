@@ -6,7 +6,7 @@
             &nbsp;{{ instance.typeDefinition.name }}
         </h5>
     </div>
-    <div class="instance-form" data-collapse="mainCollapsed">
+    <form name="form" class="instance-form" data-collapse="mainCollapsed">
         <div class="form-group">
             <label for="version">Version</label>
             <select
@@ -17,9 +17,17 @@
                     data-ng-options="index as value for (index, value) in versions">
             </select>
         </div>
-        <div class="form-group">
+        <div class="form-group" data-ng-class="form.name.$valid ? '':'has-error has-feedback'">
             <label for="name">Name</label>
-            <input type="text" class="form-control input-sm" id="name" placeholder="Instance name" data-ng-model="instance.name">
+            <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    class="form-control input-sm"
+                    placeholder="Instance name"
+                    data-ng-model="instance.name"
+                    required>
+            <span class="glyphicon glyphicon-remove form-control-feedback" data-ng-hide="form.name.$valid"></span>
         </div>
         <div class="form-group clearfix">
             <label>State</label>
@@ -28,7 +36,7 @@
                 <label class="btn btn-sm btn-default" data-ng-model="instance.started" data-btn-radio="false">Stopped</label>
             </div>
         </div>
-    </div>
+    </form>
 
     <!-- Dictionary panel -->
     <div data-ng-class="type+'-right-bg'" data-ng-show="instance.dictionary.values.size() > 0">
@@ -37,12 +45,7 @@
             &nbsp;Dictionary
         </h5>
     </div>
-    <div class="instance-form" data-collapse="dicCollapsed">
-        <div class="form-group" data-ng-repeat="(index, attr) in dicAttrs">
-            <label for="attr{{index}}">{{ attr.name + (isTruish(attr.optional) ? '':' *') }}</label>
-            <input type="text" class="form-control input-sm" id="attr{{index}}" data-ng-model="(instance.dictionary.findValuesByID(attr.name)).value">
-        </div>
-    </div>
+    <kdic data-name="'dicForm'" data-attrs="dicAttrs" data-dictionary="instance.dictionary"  data-fragment="false" data-collapse="dicCollapsed"></kdic>
 
     <!-- Fragment Dictionary panels -->
     <div data-ng-repeat="fragDic in instance.fragmentDictionary.array">
@@ -52,14 +55,6 @@
                 &nbsp;Fragment Dictionary - <strong>{{ fragDic.name }}</strong>
             </h5>
         </div>
-        <div class="instance-form" data-collapse="fragCollapsed[fragDic.name]">
-            <div data-ng-hide="fragDic.values.size() > 0">
-                <p class="text-muted"><em>No value</em> - <a href="#" data-ng-click="fragDic.delete()">Delete dictionary?</a></p>
-            </div>
-            <div class="form-group" data-ng-repeat="(index, attr) in fragDicAttrs">
-                <label for="attr{{index}}-{{fragDic.name}}">{{ attr.name }}</label>
-                <input type="text" class="form-control input-sm" id="attr{{index}}-{{fragDic.name}}" data-ng-model="(fragDic.findValuesByID(attr.name)).value">
-            </div>
-        </div>
+        <kdic data-name="fragDic.name" data-attrs="fragDicAttrs" data-dictionary="fragDic"  data-fragment="true" data-collapse="fragCollapsed[fragDic.name]"></kdic>
     </div>
 </div>

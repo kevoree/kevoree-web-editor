@@ -20,6 +20,7 @@ angular.module('editorApp')
             mode: 'kevscript',
             styleActiveLine: true,
             extraKeys: {
+                'Tab': false,
                 'Ctrl-Space': 'autocomplete',
                 'Ctrl-S': function () {
                     $modal

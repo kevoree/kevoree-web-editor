@@ -76,7 +76,6 @@ angular.module('editorApp')
                     return tdef.version;
                 });
             $scope.selectedVersion = $scope.versions.indexOf($scope.instance.typeDefinition.version)+'';
-            console.log('selected version', $scope.selectedVersion);
             $scope.dicAttrs = $scope.instance.typeDefinition.dictionaryType
                 .select('attributes[fragmentDependant=false]').array;
             $scope.fragDicAttrs = $scope.instance.typeDefinition.dictionaryType
