@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('uiFactory', function () {
+    .factory('uiFactory', function (kFactory) {
         var x = 100,
             y = 100,
             GROUP_RADIUS = 55,
@@ -14,12 +14,22 @@ angular.module('editorApp')
 
         var factory = {
             /**
-             * Dragged instance (component or node)
+             * Current editor model
              */
-            draggedInstance: null,
+            model: null,
 
             /**
-             * Should be called only one time to init the Editor panel
+             * Overed instance (node)
+             */
+            overedInstancePath: null,
+
+            /**
+             * Dragged instance path
+             */
+            draggedInstancePath: null,
+
+            /**
+             * Must be called before any other methods
              */
             init: function () {
                 var editor = this.editor = new Snap('svg#editor');
@@ -54,7 +64,9 @@ angular.module('editorApp')
                     var defs = editor.getElementsByTagName('defs')[0];
                     var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
                     clipPath.id = 'group-clip';
-                    var bgClone = bg.node.cloneNode(true);
+                    var bgClone = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    bgClone.setAttribute('cx', x+'');
+                    bgClone.setAttribute('cy', y+'');
                     bgClone.setAttribute('r', (GROUP_RADIUS-4)+'');
                     clipPath.appendChild(bgClone);
                     defs.appendChild(clipPath);
@@ -76,7 +88,7 @@ angular.module('editorApp')
                 var nameText = this.editor
                     .text(x, y-5, instance.name)
                     .attr({
-                        fill: 'white',
+                        fill: isTruish(instance.started) ? '#fff' : '#000',
                         textAnchor: 'middle',
                         'class': 'name',
                         'clip-path': 'url(#group-clip)'
@@ -98,10 +110,8 @@ angular.module('editorApp')
                     .append(tdefText)
                     .append(plug)
                     .mousedown(mouseDownHandler)
-                    .touchstart(startHandler)
-                    .touchend(stopHandler)
-                    .touchmove(moveHandler)
-                    .drag(moveHandler, startHandler, stopHandler);
+                    .touchable()
+                    .draggable();
             },
 
             createNode: function (instance) {
@@ -120,9 +130,11 @@ angular.module('editorApp')
                     var defs = editor.getElementsByTagName('defs')[0];
                     var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
                     clipPath.id = 'node-clip';
-                    var bgClone = bg.node.cloneNode(true);
+                    var bgClone = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
                     bgClone.setAttribute('width', (NODE_WIDTH-5)+'');
+                    bgClone.setAttribute('height', NODE_HEIGHT+'');
                     bgClone.setAttribute('x', (x+2)+'');
+                    bgClone.setAttribute('y', y+'');
                     clipPath.appendChild(bgClone);
                     defs.appendChild(clipPath);
                 }
@@ -130,7 +142,7 @@ angular.module('editorApp')
                 var nameText = this.editor
                     .text(x+(NODE_WIDTH/2), y+(NODE_HEIGHT/2), instance.name)
                     .attr({
-                        fill: 'white',
+                        fill: isTruish(instance.started) ? '#fff' : '#000',
                         textAnchor: 'middle',
                         'class': 'name',
                         'clip-path': 'url(#node-clip)'
@@ -144,30 +156,15 @@ angular.module('editorApp')
                         'clip-path': 'url(#node-clip)'
                     });
 
-                var node = this.editor
+                return this.editor
                     .group()
-                    .attr({'class': 'instance node', 'data-path': instance.path() })
+                    .attr({'class': 'instance node', 'data-path': instance.path()})
                     .append(bg)
                     .append(nameText)
                     .append(tdefText)
                     .mousedown(mouseDownHandler)
-                    .touchstart(startHandler)
-                    .touchend(stopHandler)
-                    .touchmove(moveHandler)
-                    .mouseover(mouseOverNodeHandler)
-                    .drag(moveHandler, startHandler, stopHandler);
-
-                for (var i=0; i < instance.components.array.length; i++) {
-                    var comp = factory.createComponent(instance.components.array[i]);
-                    var dx = (NODE_WIDTH-COMPONENT_WIDTH)/ 2,
-                        dy = (COMPONENT_HEIGHT+10)*(i+1);
-                    comp.transform('t'+dx+','+dy);
-                    node.append(comp);
-                }
-
-                bg.attr({ height: NODE_HEIGHT + (instance.components.array.length*(COMPONENT_HEIGHT+10)) });
-
-                return node;
+                    .touchable()
+                    .draggable();
             },
 
             createChannel: function (instance) {
@@ -186,7 +183,9 @@ angular.module('editorApp')
                     var defs = editor.getElementsByTagName('defs')[0];
                     var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
                     clipPath.id = 'chan-clip';
-                    var bgClone = bg.node.cloneNode(true);
+                    var bgClone = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    bgClone.setAttribute('cx', x+'');
+                    bgClone.setAttribute('cy', y+'');
                     bgClone.setAttribute('r', (CHANNEL_RADIUS-4)+'');
                     clipPath.appendChild(bgClone);
                     defs.appendChild(clipPath);
@@ -195,7 +194,7 @@ angular.module('editorApp')
                 var nameText = this.editor
                     .text(x, y-5, instance.name)
                     .attr({
-                        fill: 'white',
+                        fill: isTruish(instance.started) ? '#fff' : '#000',
                         textAnchor: 'middle',
                         'class': 'name',
                         'clip-path': 'url(#chan-clip)'
@@ -216,10 +215,8 @@ angular.module('editorApp')
                     .append(nameText)
                     .append(tdefText)
                     .mousedown(mouseDownHandler)
-                    .touchstart(startHandler)
-                    .touchend(stopHandler)
-                    .touchmove(moveHandler)
-                    .drag(moveHandler, startHandler, stopHandler);
+                    .touchable()
+                    .draggable();
             },
 
             createComponent: function (instance) {
@@ -227,6 +224,7 @@ angular.module('editorApp')
                     .rect(x, y, COMPONENT_WIDTH, COMPONENT_HEIGHT, 3)
                     .attr({
                         fill: 'black',
+                        fillOpacity: isTruish(instance.started) ? 1 : 0.65,
                         stroke: 'white',
                         strokeWidth: 1.5,
                         'class': 'bg'
@@ -237,9 +235,11 @@ angular.module('editorApp')
                     var defs = editor.getElementsByTagName('defs')[0];
                     var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
                     clipPath.id = 'comp-clip';
-                    var bgClone = bg.node.cloneNode(true);
+                    var bgClone = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
                     bgClone.setAttribute('width', (COMPONENT_WIDTH-5)+'');
+                    bgClone.setAttribute('height', COMPONENT_HEIGHT+'');
                     bgClone.setAttribute('x', (x+2)+'');
+                    bgClone.setAttribute('y', y+'');
                     clipPath.appendChild(bgClone);
                     defs.appendChild(clipPath);
                 }
@@ -261,65 +261,113 @@ angular.module('editorApp')
                         'clip-path': 'url(#comp-clip)'
                     });
 
-                var first = true;
+                var hasMoved = false,
+                    parentNode = instance.eContainer();
 
-                return this.editor
+                var comp = this.editor
                     .group()
                     .attr({'class': 'instance comp', 'data-path': instance.path() })
                     .append(bg)
                     .append(nameText)
                     .append(tdefText)
                     .mousedown(mouseDownHandler)
-                    .touchstart(startHandler)
-                    .touchend(stopHandler)
-                    .touchmove(moveHandler)
-                    .mouseover(mouseOverNodeHandler)
-                    .drag(
-                        function () {
-                            if (first) {
-                                console.log('comp start drag');
-                                factory.setDraggedInstance(instance);
-                                instance.delete();
-                            }
-                            moveHandler.apply(this, arguments);
-                            first = false;
-                        },
-                        startHandler,
-                        function () {
-                            console.log('stop', this, arguments);
-                            stopHandler.apply(this, arguments);
+                    .touchable()
+                    .draggable()
+                    .dragMove(function () {
+                        if (!hasMoved) {
+                            console.log('removed '+instance.name+' from '+parentNode.name);
+                            parentNode.removeComponents(instance);
                         }
-                    );
+                        hasMoved = true;
+                    })
+                    .dragEnd(function (evt) {
+                        if (hasMoved) {
+                            var found = false;
+                            var nodes = factory.editor.selectAll('.instance.node').items;
+                            for (var i=0; i < nodes.length; i++) {
+                                console.log(nodes[i].attr('data-path'), nodes[i].getBBox(), evt.offsetX, evt.offsetY);
+                                if (Snap.path.isPointInsideBBox(nodes[i].getBBox(), evt.offsetX, evt.offsetY)) {
+                                    console.log('intersect with ', nodes[i].attr('data-path'));
+                                    comp.remove();
+                                    factory.model.findByPath(nodes[i].attr('data-path')).addComponents(instance);
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if (!found) {
+                                // if dropped in "nothing" then put it back into its old host node
+                                comp.remove();
+                                parentNode.addComponents(instance);
+                            }
+                            parentNode = null;
+                            hasMoved = false;
+                        }
+                    }
+                );
+
+                var host = this.editor.select('.instance[data-path="'+instance.eContainer().path()+'"]');
+                var nbComp = host.selectAll('g > .comp').items.length;
+                var dx = (NODE_WIDTH-COMPONENT_WIDTH)/ 2,
+                    dy = (COMPONENT_HEIGHT+10)*(nbComp+1);
+                comp.transform('t'+dx+','+dy);
+                host.append(comp);
+                host.select('.bg').attr({
+                    height: NODE_HEIGHT + ((nbComp+1)*(COMPONENT_HEIGHT+10))
+                });
+
+                return comp;
             },
 
             deleteInstance: function (parent, path) {
                 var elem = this.editor.select('.instance[data-path="'+path+'"]');
                 if (elem) {
                     if (elem.hasClass('comp') || elem.hasClass('node')) {
+                        // update node instance graphically
                         this.updateNodeInstance(parent);
-                        elem.remove();
-                        if (this.draggedInstance) {
-                            var parentElem = this.editor.select('.instance[data-path="'+parent.path()+'"]');
-                            if (parentElem) {
-                                elem.appendTo(parentElem);
-                            }
+                        if (factory.draggedInstancePath === path) {
+                            // get elem parent in DOM
+                            var parentElem = elem.parent();
+
+                            // remove elem from DOM
+                            elem.remove();
+
+                            // append it to the editor
+                            this.editor.append(elem);
+
+                            var localTransMatrix = parentElem.transform().localMatrix,
+                                elemTransMatrix = elem.transform().localMatrix,
+                                dx = localTransMatrix.e + elemTransMatrix.e,
+                                dy = localTransMatrix.f + elemTransMatrix.f;
+                            elem.data('ot', 't'+dx+','+dy);
+                        } else {
+                            elem.remove();
                         }
                     } else {
                         elem.remove();
                     }
                 }
-                if (this.listener) {
-                    var selected = this.editor.select('.selected');
-                    if (selected) {
-                        this.listener(selected.parent().attr('data-path'));
-                    } else {
-                        this.listener(null);
-                    }
-                }
+                invokeListener();
             },
 
-            setDraggedInstance: function (instance) {
-                this.draggedInstance = instance;
+            deleteNodes: function () {
+                this.editor.selectAll('.node').remove();
+                invokeListener();
+            },
+
+            deleteGroups: function () {
+                this.editor.selectAll('.group').remove();
+                invokeListener();
+            },
+
+            deleteChannels: function () {
+                this.editor.selectAll('.chan').remove();
+                invokeListener();
+            },
+
+            deleteBindings: function () {
+                this.editor.selectAll('.binding').remove();
+                invokeListener();
             },
 
             updateInstance: function (previousPath, instance) {
@@ -330,7 +378,7 @@ angular.module('editorApp')
                         text: instance.name
                     });
                     if (elem.hasClass('comp')) {
-                        elem.attr({ fillOpacity: isTruish(instance.started) ? 1 : 0.65 });
+                        elem.select('.bg').attr({ fillOpacity: isTruish(instance.started) ? 1 : 0.65 });
                     } else {
                         elem.select('text.name')
                             .attr({
@@ -363,37 +411,96 @@ angular.module('editorApp')
                 });
             },
 
+            getNodePathAtPoint: function (x, y) {
+                var container = document.getElementById('editor-container');
+                var elems = this.editor.selectAll('.node').items;
+                for (var i=0; i < elems.length; i++) {
+                    if (Snap.path.isPointInsideBBox(elems[i].getBBox(), x-container.offsetLeft, y-container.offsetTop)) {
+                        return elems[i].attr('data-path');
+                    }
+                }
+                return null;
+            },
+
             setSelectedListener: function (listener) {
                 this.listener = listener;
+            },
+
+            setModel: function (model) {
+                this.model = model;
+                this.editor.selectAll('.instance').remove();
             }
         };
 
-        var moveHandler = function (dx, dy) {
-            var clientX, clientY;
-            if( (typeof dx === 'object') && ( dx.type === 'touchmove') ) {
-                clientX = dx.changedTouches[0].clientX;
-                clientY = dx.changedTouches[0].clientY;
-                dx = clientX - this.data('ox');
-                dy = clientY - this.data('oy');
-            }
-            this.attr({
-                transform: this.data('origTransform') + (this.data('origTransform') ? 'T' : 't') + [dx, dy]
-            });
-        };
+        Snap.plugin(function (Snap, Element) {
+            var dragStart = function (dx) {
+                factory.draggedInstancePath = this.attr('data-path');
 
-        var startHandler = function (dx) {
-            if((typeof dx === 'object') && ( dx.type === 'touchstart')) {
-                mouseDownHandler.call(this, dx); // select instance on touch event
-                dx.preventDefault();
-                this.data('ox', dx.changedTouches[0].clientX );
-                this.data('oy', dx.changedTouches[0].clientY );
-            }
-            this.data('origTransform', this.transform().local );
-        };
+                var fn = this.data('dragStart');
+                if (fn) {
+                    fn.apply(this, arguments)
+                }
+                if((typeof dx === 'object') && ( dx.type === 'touchstart')) {
+                    mouseDownHandler.call(this, dx); // select instance on touch event
+                    dx.preventDefault();
+                    this.data('ox', dx.changedTouches[0].clientX);
+                    this.data('oy', dx.changedTouches[0].clientY);
+                }
+                this.data('ot', this.transform().local );
+            };
 
-        var stopHandler = function () {
-            factory.setDraggedInstance(null);
-        };
+            var dragMove = function (dx, dy) {
+                var fn = this.data('dragMove');
+                if (fn) {
+                    fn.apply(this, arguments)
+                }
+
+                if((typeof dx === 'object') && ( dx.type === 'touchmove')) {
+                    dy = dx.changedTouches[0].clientY - this.data('oy');
+                    dx = dx.changedTouches[0].clientX - this.data('ox');
+                }
+
+                this.transform(
+                    this.data('ot')
+                    + (this.data('ot') ? 'T':'t')
+                    + [ dx, dy ]);
+            };
+
+            var dragEnd = function () {
+                var fn = this.data('dragEnd');
+                if (fn) {
+                    fn.apply(this, arguments)
+                }
+                factory.draggedInstancePath = null;
+            };
+
+            Element.prototype.draggable = function (start, move, end) {
+                start = start || dragStart;
+                move = move || dragMove;
+                end = end || dragEnd;
+                this.drag(move, start, end);
+                return this;
+            };
+
+            Element.prototype.dragStart = function (handler) {
+                return this.data('dragStart', handler);
+            };
+
+            Element.prototype.dragEnd = function (handler) {
+                return this.data('dragEnd', handler);
+            };
+
+            Element.prototype.dragMove = function (handler) {
+                return this.data('dragMove', handler);
+            };
+
+            Element.prototype.touchable = function () {
+                return this
+                    .touchstart(dragStart)
+                    .touchend(dragEnd)
+                    .touchmove(dragMove);
+            };
+        });
 
         var mouseDownHandler = function (evt) {
             if (!evt.ctrlKey && !evt.shiftKey) {
@@ -408,9 +515,16 @@ angular.module('editorApp')
             }
         };
 
-        var mouseOverNodeHandler = function () {
-            console.log('mouse over node', this.attr('data-path'));
-        };
+        var invokeListener = function () {
+            if (factory.listener) {
+                var selected = factory.editor.select('.selected');
+                if (selected) {
+                    factory.listener(selected.parent().attr('data-path'));
+                } else {
+                    factory.listener(null);
+                }
+            }
+            };
 
         function isTruish(val) {
             return (val === 'true' || val > 0 || val === true);

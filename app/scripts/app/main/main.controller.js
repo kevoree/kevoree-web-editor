@@ -97,7 +97,7 @@ angular.module('editorApp')
                 // serialize model
                 var modelStr = serializer.serialize(kEditor.getModel());
                 // prettify model
-                modelStr = JSON.stringify(JSON.parse(modelStr), null, 2);
+                modelStr = JSON.stringify(JSON.parse(modelStr), null, 4);
                 // download model on client
                 saveFile.save(modelStr, null, '.json', 'application/json');
             } catch (err) {
@@ -111,34 +111,37 @@ angular.module('editorApp')
 
         $scope.deleteAll = function (evt) {
             evt.preventDefault();
-            console.log('deleteAll');
-            Notification.warning({
-                title: 'Delete all',
-                message: 'Not implemented yet',
-                delay: 3000
-            });
+            $scope.deleteInstances(evt);
+            kEditor.getModel().removeAllPackages();
         };
 
         $scope.deleteInstances = function (evt) {
             evt.preventDefault();
-            console.log('deleteInstances');
-            Notification.warning({
-                title: 'Delete instances',
-                message: 'Not implemented yet',
-                delay: 3000
-            });
+            var model = kEditor.getModel();
+            model.removeAllNodes();
+            model.removeAllGroups();
+            model.removeAllHubs();
+            model.removeAllMBindings();
         };
 
         $scope.deleteSelected = function (evt) {
             evt.preventDefault();
             var model = kEditor.getModel();
-            uiFactory.getSelected().forEach(function (path) {
-                console.log('TO DELETE', path);
-                var elem = model.findByPath(path);
-                if (elem) {
-                    elem.delete();
-                }
-            });
+            var selected = uiFactory.getSelected();
+            if (selected.length > 0) {
+                selected.forEach(function (path) {
+                    var elem = model.findByPath(path);
+                    if (elem) {
+                        elem.delete();
+                    }
+                });
+            } else {
+                Notification.warning({
+                    title: 'Delete selected',
+                    message: 'Nothing selected',
+                    delay: 3000
+                });
+            }
         };
 
         //$scope.undo = function (evt) {

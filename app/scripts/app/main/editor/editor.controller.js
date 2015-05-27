@@ -44,6 +44,7 @@ angular.module('editorApp')
                     instance = kFactory.createContainerNode();
                     instance.name = 'node'+parseInt(Math.random()*1000);
                     instance.typeDefinition = tdef;
+                    instance.started = true;
                     model.addNodes(instance);
                     break;
 
@@ -51,6 +52,7 @@ angular.module('editorApp')
                     instance = kFactory.createGroup();
                     instance.name = 'grp'+parseInt(Math.random()*1000);
                     instance.typeDefinition = tdef;
+                    instance.started = true;
                     model.addGroups(instance);
                     break;
 
@@ -58,13 +60,21 @@ angular.module('editorApp')
                     instance = kFactory.createComponentInstance();
                     instance.name = 'comp'+parseInt(Math.random()*1000);
                     instance.typeDefinition = tdef;
-                    console.log('TODO add comp logic');
+                    instance.started = true;
+                    var path = uiFactory.getNodePathAtPoint(evt.clientX, evt.clientY);
+                    if (path) {
+                        var node = model.findByPath(path);
+                        if (node) {
+                            node.addComponents(instance);
+                        }
+                    }
                     break;
 
                 case 'channel':
                     instance = kFactory.createChannel();
                     instance.name = 'chan'+parseInt(Math.random()*1000);
                     instance.typeDefinition = tdef;
+                    instance.started = true;
                     model.addHubs(instance);
                     break;
             }
@@ -99,7 +109,7 @@ angular.module('editorApp')
                 }
             };
 
-            model.visit(visitor, false, true, false);
+            model.visit(visitor, true, true, false);
         }
 
         // listen to model changes on the editor

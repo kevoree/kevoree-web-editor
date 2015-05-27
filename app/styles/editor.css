@@ -1,19 +1,12 @@
-svg#editor text {
-    font-size: 13px;
-    cursor: move;
+svg#editor * {
+    cursor: pointer;
 }
 
-svg#editor .group,
-svg#editor .node,
-svg#editor .comp,
-svg#editor .chan {
-    cursor: move;
+svg#editor text {
+    font-size: 13px;
 }
 
 svg#editor .instance .bg.selected {
     stroke: orange;
-}
-
-svg#editor circle.group-plug {
-    cursor: pointer;
+    cursor: move;
 }
