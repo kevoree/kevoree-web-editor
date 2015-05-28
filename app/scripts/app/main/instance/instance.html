@@ -39,14 +39,16 @@
     </form>
 
     <!-- Dictionary panel -->
-    <div data-ng-class="type+'-right-bg'" data-ng-show="instance.dictionary.values.size() > 0">
-        <h5 class="sidebar-header sidebar-header-right point-cursor" data-ng-click="dicCollapsed = !dicCollapsed">
-            <i class="fa" data-ng-class="dicCollapsed ? 'fa-plus':'fa-minus'"></i>
-            &nbsp;Dictionary
-        </h5>
-    </div>
-    <div data-collapse="dicCollapsed">
-        <kdic data-name="'dicForm'" data-attrs="dicAttrs" data-dictionary="instance.dictionary"  data-fragment="false"></kdic>
+    <div data-ng-show="instance.dictionary.values.size() > 0">
+        <div data-ng-class="type+'-right-bg'">
+            <h5 class="sidebar-header sidebar-header-right point-cursor" data-ng-click="dicCollapsed = !dicCollapsed">
+                <i class="fa" data-ng-class="dicCollapsed ? 'fa-plus':'fa-minus'"></i>
+                &nbsp;Dictionary
+            </h5>
+        </div>
+        <div data-collapse="dicCollapsed">
+            <kdic data-name="'dicForm'" data-attrs="dicAttrs" data-dictionary="instance.dictionary"  data-fragment="false"></kdic>
+        </div>
     </div>
 
     <!-- Fragment Dictionary panels -->
@@ -59,6 +61,32 @@
         </div>
         <div data-collapse="fragCollapsed[fragDic.name]">
             <kdic data-name="fragDic.name" data-attrs="fragDicAttrs" data-dictionary="fragDic"  data-fragment="true"></kdic>
+        </div>
+    </div>
+
+    <!-- Network panel -->
+    <div data-ng-show="hasNetworkInformation()">
+        <div data-ng-class="type+'-right-bg'">
+            <h5 class="sidebar-header sidebar-header-right point-cursor" data-ng-click="netCollapsed = !netCollapsed">
+                <i class="fa" data-ng-class="netCollapsed ? 'fa-plus':'fa-minus'"></i>
+                &nbsp;Network Informations
+            </h5>
+        </div>
+        <div data-collapse="netCollapsed">
+            <div class="instance-form">
+                <div data-ng-repeat="net in instance.networkInformation.array">
+                    <div class="form-group" data-ng-repeat="val in net.values.array">
+                        <label for="net-{{ net.name + '-' + val.name }}">{{ net.name + '.' + val.name }}</label>
+                        <input
+                                id="net-{{ net.name + '-' + val.name }}"
+                                name="net-{{ net.name + '-' + val.name }}"
+                                type="text"
+                                class="form-control input-sm"
+                                data-ng-model="val.value">
+                    </div>
+                </div>
+                <a href="#" data-ng-click="addNetwork()">Add network info</a>
+            </div>
         </div>
     </div>
 </div>

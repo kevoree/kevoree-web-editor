@@ -15,6 +15,7 @@ angular.module('editorApp')
             evt.preventDefault();
             angular.element('input#file').click();
             $scope.onFileLoaded = function (data) {
+                var oldModel = kEditor.getModel();
                 try {
                     var loader = kFactory.createJSONLoader();
                     var model = loader.loadModelFromString(data).get(0);
@@ -27,11 +28,13 @@ angular.module('editorApp')
                         message: 'Unable to load your model',
                         delay: 5000
                     });
+                    kEditor.setModel(oldModel);
                 }
             };
         };
 
         $scope.dndLoad = function (data) {
+            var oldModel = kEditor.getModel();
             try {
                 var loader = kFactory.createJSONLoader();
                 var model = loader.loadModelFromString(data).get(0);
@@ -44,6 +47,7 @@ angular.module('editorApp')
                     message: 'Unable to load your model',
                     delay: 5000
                 });
+                kEditor.setModel(oldModel);
             }
         };
 

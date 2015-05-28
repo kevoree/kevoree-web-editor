@@ -22,11 +22,6 @@ angular.module('editorApp')
              */
             setModel: function (model) {
                 this.model = model;
-                uiFactory.setModel(model);
-
-                this.listeners.forEach(function (listener) {
-                    listener();
-                });
 
                 this.model.addModelElementListener({
                     elementChanged: modelReactor
@@ -34,6 +29,7 @@ angular.module('editorApp')
 
                 var visitor = new KevoreeLibrary.modeling.api.util.ModelVisitor();
                 visitor.visit = function (elem, ref) {
+                    console.log('VISIT', ref, elem.name || elem.path());
                     if (ref === 'nodes' ||
                         ref === 'groups' ||
                         ref === 'components' ||
@@ -43,7 +39,13 @@ angular.module('editorApp')
                         elem.addModelElementListener({ elementChanged: modelReactor });
                     }
                 };
-                this.model.visit(visitor, true, true, false);
+                this.model.visit(visitor, true, true, true);
+
+                uiFactory.setModel(model);
+
+                this.listeners.forEach(function (listener) {
+                    listener();
+                });
             },
 
             /**
@@ -127,6 +129,7 @@ angular.module('editorApp')
                 }
 
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.SET) {
+                console.log('SET', trace);
                 uiFactory.updateInstance(trace.previousPath, trace.source);
             }
         }

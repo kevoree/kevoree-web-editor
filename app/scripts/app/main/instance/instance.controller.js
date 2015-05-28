@@ -13,27 +13,15 @@ angular.module('editorApp')
         $scope.type = null;
         $scope.mainCollapsed = false;
         $scope.dicCollapsed = false;
+        $scope.netCollapsed = false;
         $scope.fragCollapsed = {};
 
         $scope.changeVersion = function (index) {
             $scope.instance.typeDefinition = $scope.instance.typeDefinition.eContainer()
                 .select('**/typeDefinitions[name='+$scope.instance.typeDefinition.name+',version='+$scope.versions[index]+']').array[0];
-            var oldDic = $scope.instance.dictionary;
-            $scope.instance.dictionary = kFactory.createDictionary();
-            $scope.instance.typeDefinition.dictionaryType.attributes.array.forEach(function (attr) {
-                var oldVal, newVal;
-                if (!$scope.isTruish(attr.fragmentDependant)) {
-                    // attribute is not fragment dependant
-                    oldVal = oldDic.findValuesByID(attr.name);
-                    if (oldVal) {
-                        // set the old value in the new dictionary
-                        newVal = kFactory.createValue();
-                        newVal.name = attr.name;
-                        newVal.value = oldVal.value;
-                        $scope.instance.dictionary.addValues(newVal);
-                    }
-                }
-                // TODO should I also put back old values from fragment dictionaries too ?
+            processDictionary($scope.instance.dictionary, $scope.instance.typeDefinition.dictionaryType, false);
+            $scope.instance.fragmentDictionary.array.forEach(function (fragDic) {
+                processDictionary(fragDic, $scope.instance.typeDefinition.dictionaryType, true);
             });
             processTypeDefinition();
         };
@@ -44,6 +32,10 @@ angular.module('editorApp')
             } else {
                 return false;
             }
+        };
+
+        $scope.hasNetworkInformation = function () {
+            return $scope.instance && (typeof ($scope.instance.networkInformation) !== 'undefined');
         };
 
         $scope.isTruish = function (val) {
@@ -128,5 +120,31 @@ angular.module('editorApp')
                         });
                     }
                 });
+        }
+
+        /**
+         * Clean dictionary from unwanted attributes (when a version change occurs, this will strip out
+         * values that depend on unknown attributes in the new version)
+         * @param dic
+         * @param dicType
+         * @param isFragment
+         */
+        function processDictionary(dic, dicType, isFragment) {
+            dic.values.array.forEach(function (val) {
+                var attr = dicType.select('attributes[name='+val.name+']').array[0];
+                if (attr) {
+                    if ($scope.isTruish(attr.fragmentDependant)) {
+                        if (!isFragment) {
+                            val.delete();
+                        }
+                    } else {
+                        if (isFragment) {
+                            val.delete();
+                        }
+                    }
+                } else {
+                    val.delete();
+                }
+            });
         }
     });

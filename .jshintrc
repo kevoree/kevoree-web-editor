@@ -19,6 +19,7 @@
   "smarttabs": true,
   "globals": {
     "Snap": false,
+    "mina": false,
     "Kotlin": false,
     "semver": false,
     "angular": false,

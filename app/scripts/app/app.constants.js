@@ -7,4 +7,6 @@ angular.module('editorApp')
 
 .constant('NPM_REGISTRY_URL', 'http://registry.npmjs.org/{name}/-/{name}-{version}.tgz')
 
+.constant('KWE_POSITION', 'kwe_position')
+
 ;

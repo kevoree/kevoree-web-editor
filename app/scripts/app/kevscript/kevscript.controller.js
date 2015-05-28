@@ -29,7 +29,7 @@ angular.module('editorApp')
                             size: 'sm',
                             scope: $scope,
                             controller: function ($scope, $modalInstance) {
-                                $scope.filename = new Date().getTime();
+                                $scope.filename = new Date().getTime()+'';
                                 $modalInstance.opened.then(function () {
                                     $timeout(function () {
                                         angular.element('#filename').focus();

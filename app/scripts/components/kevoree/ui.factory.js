@@ -1,15 +1,13 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('uiFactory', function (kFactory) {
-        var x = 100,
-            y = 100,
-            GROUP_RADIUS = 55,
+    .factory('uiFactory', function (kFactory, kModelHelper, KWE_POSITION) {
+        var GROUP_RADIUS = 55,
             GROUP_PLUG_RADIUS = 10,
             NODE_WIDTH = 180,
             NODE_HEIGHT = 50,
-            COMPONENT_WIDTH = 160,
-            COMPONENT_HEIGHT = 40,
+            CHILD_WIDTH = 160,
+            CHILD_HEIGHT = 40,
             CHANNEL_RADIUS = 45;
 
         var factory = {
@@ -32,8 +30,11 @@ angular.module('editorApp')
              * Must be called before any other methods
              */
             init: function () {
-                var editor = this.editor = new Snap('svg#editor');
+                var editor = new Snap('svg#editor');
+                editor.zpd({ zoomThreshold: [ 0.2, 1 ], zoomScale: 0.05 });
+                var zpdEditor = this.editor = editor.select('#snapsvg-zpd-'+editor.id);
                 editor.mousedown(function () {
+                    // remove all selected state
                     editor.selectAll('.instance .bg').forEach(function (elem) {
                         elem.removeClass('selected');
                     });
@@ -41,6 +42,38 @@ angular.module('editorApp')
                         factory.listener();
                     }
                 });
+
+                function updateCoords() {
+                    var matrix = zpdEditor.transform().localMatrix;
+                    editor
+                        .select('#coord-text')
+                        .removeClass('hide')
+                        .attr({
+                            text: '('+parseInt(matrix.e, 10)+', '+parseInt(matrix.f, 10)+') '+parseInt(matrix.a * 100, 10)+'%'
+                        });
+                }
+
+                editor.drag(updateCoords);
+                if (navigator.userAgent.toLowerCase().indexOf('webkit') >= 0 ||
+                    navigator.userAgent.toLowerCase().indexOf('trident') >= 0) {
+                    editor.node.addEventListener('mousewheel', updateCoords, false); // Chrome/Safari
+                }
+                else {
+                    editor.node.addEventListener('DOMMouseScroll', updateCoords, false); // Others
+                }
+
+                editor.dblclick(function () {
+                    zpdEditor.animate({transform: 's1,t0,0'}, 400, mina.ease, updateCoords);
+                });
+
+                editor
+                    .text('100%', '100%', '(0, 0) 100%')
+                    .attr({
+                        id: 'coord-text',
+                        fill: '#000',
+                        textAnchor: 'end'
+                    })
+                    .transform('t-5,-5');
             },
 
             /**
@@ -50,7 +83,7 @@ angular.module('editorApp')
              */
             createGroup: function (instance) {
                 var bg = this.editor
-                    .circle(x, y, GROUP_RADIUS)
+                    .circle(0, 0, GROUP_RADIUS)
                     .attr({
                         fill: 'green',
                         stroke: '#000',
@@ -59,21 +92,8 @@ angular.module('editorApp')
                         opacity: 0.75
                     });
 
-                if (!document.getElementById('group-clip')) {
-                    var editor = document.getElementById('editor');
-                    var defs = editor.getElementsByTagName('defs')[0];
-                    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-                    clipPath.id = 'group-clip';
-                    var bgClone = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                    bgClone.setAttribute('cx', x+'');
-                    bgClone.setAttribute('cy', y+'');
-                    bgClone.setAttribute('r', (GROUP_RADIUS-4)+'');
-                    clipPath.appendChild(bgClone);
-                    defs.appendChild(clipPath);
-                }
-
                 var plug = this.editor
-                    .circle(x, (GROUP_RADIUS/2)+y+GROUP_PLUG_RADIUS, GROUP_PLUG_RADIUS)
+                    .circle(0, (GROUP_RADIUS/2)+GROUP_PLUG_RADIUS, GROUP_PLUG_RADIUS)
                     .attr({
                         fill: '#f1c30f',
                         'class': 'group-plug'
@@ -86,7 +106,7 @@ angular.module('editorApp')
                 });
 
                 var nameText = this.editor
-                    .text(x, y-5, instance.name)
+                    .text(0, -5, instance.name)
                     .attr({
                         fill: isTruish(instance.started) ? '#fff' : '#000',
                         textAnchor: 'middle',
@@ -95,7 +115,7 @@ angular.module('editorApp')
                     });
 
                 var tdefText = this.editor
-                    .text(x, y+10, instance.typeDefinition.name)
+                    .text(0, 10, instance.typeDefinition.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
@@ -111,12 +131,18 @@ angular.module('editorApp')
                     .append(plug)
                     .mousedown(mouseDownHandler)
                     .touchable()
-                    .draggable();
+                    .draggable(instance)
+                    .relocate(instance);
             },
 
             createNode: function (instance) {
+                var treeHeight = kModelHelper.getNodeTreeHeight(instance);
+                var computedWidth = NODE_WIDTH+(20*treeHeight);
+                if (instance.host) {
+                    computedWidth = NODE_WIDTH+(20*(kModelHelper.getNodeTreeHeight(instance.host)-1));
+                }
                 var bg = this.editor
-                    .rect(x, y, NODE_WIDTH, NODE_HEIGHT, 8)
+                    .rect(0, 0, computedWidth, getNodeUIHeight(instance), 8)
                     .attr({
                         fill: 'white',
                         fillOpacity: 0.1,
@@ -125,38 +151,24 @@ angular.module('editorApp')
                         'class': 'bg'
                     });
 
-                if (!document.getElementById('node-clip')) {
-                    var editor = document.getElementById('editor');
-                    var defs = editor.getElementsByTagName('defs')[0];
-                    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-                    clipPath.id = 'node-clip';
-                    var bgClone = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                    bgClone.setAttribute('width', (NODE_WIDTH-5)+'');
-                    bgClone.setAttribute('height', NODE_HEIGHT+'');
-                    bgClone.setAttribute('x', (x+2)+'');
-                    bgClone.setAttribute('y', y+'');
-                    clipPath.appendChild(bgClone);
-                    defs.appendChild(clipPath);
-                }
-
                 var nameText = this.editor
-                    .text(x+(NODE_WIDTH/2), y+(NODE_HEIGHT/2), instance.name)
+                    .text(computedWidth/2, NODE_HEIGHT/2, instance.name)
                     .attr({
                         fill: isTruish(instance.started) ? '#fff' : '#000',
                         textAnchor: 'middle',
                         'class': 'name',
-                        'clip-path': 'url(#node-clip)'
+                        'clip-path': 'url(#node-clip-'+treeHeight+')'
                     });
 
                 var tdefText = this.editor
-                    .text(x+(NODE_WIDTH/2), y+(NODE_HEIGHT/2)+12, instance.typeDefinition.name)
+                    .text(computedWidth/2, (NODE_HEIGHT/2)+12, instance.typeDefinition.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
-                        'clip-path': 'url(#node-clip)'
+                        'clip-path': 'url(#node-clip-'+treeHeight+')'
                     });
 
-                return this.editor
+                var node = this.editor
                     .group()
                     .attr({'class': 'instance node', 'data-path': instance.path()})
                     .append(bg)
@@ -164,64 +176,31 @@ angular.module('editorApp')
                     .append(tdefText)
                     .mousedown(mouseDownHandler)
                     .touchable()
-                    .draggable();
-            },
+                    .draggable(instance);
 
-            createChannel: function (instance) {
-                var bg = this.editor
-                    .circle(x, y, CHANNEL_RADIUS)
-                    .attr({
-                        fill: '#d57129',
-                        stroke: '#fff',
-                        strokeWidth: 3,
-                        'class': 'bg',
-                        opacity: 0.75
+                if (instance.host) {
+                    var host = this.editor.select('.node[data-path="'+instance.host.path()+'"]');
+                    var children = host.selectAll('.node[data-path="'+instance.host.path()+'"] > .instance').items;
+                    var dx = (host.select('.bg').asPX('width') - computedWidth) / 2,
+                        dy = NODE_HEIGHT;
+                    children.forEach(function (child) {
+                        dy += child.select('.bg').asPX('height') + 10;
                     });
-
-                if (!document.getElementById('chan-clip')) {
-                    var editor = document.getElementById('editor');
-                    var defs = editor.getElementsByTagName('defs')[0];
-                    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-                    clipPath.id = 'chan-clip';
-                    var bgClone = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                    bgClone.setAttribute('cx', x+'');
-                    bgClone.setAttribute('cy', y+'');
-                    bgClone.setAttribute('r', (CHANNEL_RADIUS-4)+'');
-                    clipPath.appendChild(bgClone);
-                    defs.appendChild(clipPath);
+                    host.append(node);
+                    node.addClass('child').transform('t'+dx+','+dy);
+                } else {
+                    node.relocate(instance);
                 }
-
-                var nameText = this.editor
-                    .text(x, y-5, instance.name)
-                    .attr({
-                        fill: isTruish(instance.started) ? '#fff' : '#000',
-                        textAnchor: 'middle',
-                        'class': 'name',
-                        'clip-path': 'url(#chan-clip)'
-                    });
-
-                var tdefText = this.editor
-                    .text(x, y+10, instance.typeDefinition.name)
-                    .attr({
-                        fill: 'white',
-                        textAnchor: 'middle',
-                        'clip-path': 'url(#chan-clip)'
-                    });
-
-                return this.editor
-                    .group()
-                    .attr({'class': 'instance chan', 'data-path': instance.path() })
-                    .append(bg)
-                    .append(nameText)
-                    .append(tdefText)
-                    .mousedown(mouseDownHandler)
-                    .touchable()
-                    .draggable();
+                console.log('nodeUI', instance.path());
+                return node;
             },
 
             createComponent: function (instance) {
+                var host = this.editor.select('.instance[data-path="'+instance.eContainer().path()+'"]');
+                var computedWidth = host.select('.bg').asPX('width') - 20;
+                var compDepth = kModelHelper.getCompDepth(instance);
                 var bg = this.editor
-                    .rect(x, y, COMPONENT_WIDTH, COMPONENT_HEIGHT, 3)
+                    .rect(0, 0, computedWidth, CHILD_HEIGHT, 3)
                     .attr({
                         fill: 'black',
                         fillOpacity: isTruish(instance.started) ? 1 : 0.65,
@@ -230,35 +209,21 @@ angular.module('editorApp')
                         'class': 'bg'
                     });
 
-                if (!document.getElementById('comp-clip')) {
-                    var editor = document.getElementById('editor');
-                    var defs = editor.getElementsByTagName('defs')[0];
-                    var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-                    clipPath.id = 'comp-clip';
-                    var bgClone = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                    bgClone.setAttribute('width', (COMPONENT_WIDTH-5)+'');
-                    bgClone.setAttribute('height', COMPONENT_HEIGHT+'');
-                    bgClone.setAttribute('x', (x+2)+'');
-                    bgClone.setAttribute('y', y+'');
-                    clipPath.appendChild(bgClone);
-                    defs.appendChild(clipPath);
-                }
-
                 var nameText = this.editor
-                    .text(x+(COMPONENT_WIDTH/2), y+(COMPONENT_HEIGHT/2), instance.name)
+                    .text(computedWidth/2, CHILD_HEIGHT/2, instance.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
                         'class': 'name',
-                        'clip-path': 'url(#comp-clip)'
+                        'clip-path': 'url(#comp-clip-'+compDepth+')'
                     });
 
                 var tdefText = this.editor
-                    .text(x+(COMPONENT_WIDTH/2), y+(COMPONENT_HEIGHT/2)+12, instance.typeDefinition.name)
+                    .text(computedWidth/2, (CHILD_HEIGHT/2)+12, instance.typeDefinition.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
-                        'clip-path': 'url(#comp-clip)'
+                        'clip-path': 'url(#comp-clip-'+compDepth+')'
                     });
 
                 var hasMoved = false,
@@ -266,7 +231,7 @@ angular.module('editorApp')
 
                 var comp = this.editor
                     .group()
-                    .attr({'class': 'instance comp', 'data-path': instance.path() })
+                    .attr({'class': 'instance comp child', 'data-path': instance.path() })
                     .append(bg)
                     .append(nameText)
                     .append(tdefText)
@@ -275,7 +240,6 @@ angular.module('editorApp')
                     .draggable()
                     .dragMove(function () {
                         if (!hasMoved) {
-                            console.log('removed '+instance.name+' from '+parentNode.name);
                             parentNode.removeComponents(instance);
                         }
                         hasMoved = true;
@@ -306,17 +270,56 @@ angular.module('editorApp')
                     }
                 );
 
-                var host = this.editor.select('.instance[data-path="'+instance.eContainer().path()+'"]');
-                var nbComp = host.selectAll('g > .comp').items.length;
-                var dx = (NODE_WIDTH-COMPONENT_WIDTH)/ 2,
-                    dy = (COMPONENT_HEIGHT+10)*(nbComp+1);
+                var children = host.selectAll('.instance[data-path="'+instance.eContainer().path()+'"] > .instance').items;
+                var dx = (host.select('.bg').asPX('width') - computedWidth) / 2,
+                    dy = NODE_HEIGHT;
+                children.forEach(function (child) {
+                    dy += child.select('.bg').asPX('height') + 10;
+                });
                 comp.transform('t'+dx+','+dy);
                 host.append(comp);
-                host.select('.bg').attr({
-                    height: NODE_HEIGHT + ((nbComp+1)*(COMPONENT_HEIGHT+10))
-                });
 
                 return comp;
+            },
+
+            createChannel: function (instance) {
+                var bg = this.editor
+                    .circle(0, 0, CHANNEL_RADIUS)
+                    .attr({
+                        fill: '#d57129',
+                        stroke: '#fff',
+                        strokeWidth: 3,
+                        'class': 'bg',
+                        opacity: 0.75
+                    });
+
+                var nameText = this.editor
+                    .text(0, -5, instance.name)
+                    .attr({
+                        fill: isTruish(instance.started) ? '#fff' : '#000',
+                        textAnchor: 'middle',
+                        'class': 'name',
+                        'clip-path': 'url(#chan-clip)'
+                    });
+
+                var tdefText = this.editor
+                    .text(0, 10, instance.typeDefinition.name)
+                    .attr({
+                        fill: 'white',
+                        textAnchor: 'middle',
+                        'clip-path': 'url(#chan-clip)'
+                    });
+
+                return this.editor
+                    .group()
+                    .attr({'class': 'instance chan', 'data-path': instance.path() })
+                    .append(bg)
+                    .append(nameText)
+                    .append(tdefText)
+                    .mousedown(mouseDownHandler)
+                    .touchable()
+                    .draggable(instance)
+                    .relocate(instance);
             },
 
             deleteInstance: function (parent, path) {
@@ -373,12 +376,18 @@ angular.module('editorApp')
             updateInstance: function (previousPath, instance) {
                 var elem = this.editor.select('.instance[data-path="'+previousPath+'"]');
                 if (elem) {
-                    elem.attr({ 'data-path': instance.path() });
-                    elem.select('text.name').attr({
-                        text: instance.name
-                    });
+                    elem.attr({ 'data-path': instance.path() })
+                        .select('text.name').attr({
+                            text: instance.name
+                        });
+                    if (!elem.hasClass('child')) {
+                        elem.relocate(instance);
+                    }
                     if (elem.hasClass('comp')) {
-                        elem.select('.bg').attr({ fillOpacity: isTruish(instance.started) ? 1 : 0.65 });
+                        elem.select('.bg')
+                            .attr({
+                                fillOpacity: isTruish(instance.started) ? 1 : 0.65
+                            });
                     } else {
                         elem.select('text.name')
                             .attr({
@@ -391,16 +400,8 @@ angular.module('editorApp')
             updateNodeInstance: function (node) {
                 var host = this.editor.select('.instance[data-path="'+node.path()+'"]');
                 if (host) {
-                    for (var i=0; i < node.components.array.length; i++) {
-                        var dx = (NODE_WIDTH-COMPONENT_WIDTH)/ 2,
-                            dy = (COMPONENT_HEIGHT+10)*(i+1);
-                        this.editor
-                            .select('.instance[data-path="'+node.components.array[i].path()+'"]')
-                            .transform('t'+dx+','+dy);
-                    }
-
                     host.select('.bg').attr({
-                        height: NODE_HEIGHT + (node.components.array.length*(COMPONENT_HEIGHT+10))
+                        height: getNodeUIHeight(node)
                     });
                 }
             },
@@ -412,7 +413,7 @@ angular.module('editorApp')
             },
 
             getNodePathAtPoint: function (x, y) {
-                var container = document.getElementById('editor-container');
+                var container = this.getEditorContainer();
                 var elems = this.editor.selectAll('.node').items;
                 for (var i=0; i < elems.length; i++) {
                     if (Snap.path.isPointInsideBBox(elems[i].getBBox(), x-container.offsetLeft, y-container.offsetTop)) {
@@ -422,13 +423,77 @@ angular.module('editorApp')
                 return null;
             },
 
+            getEditorContainer: function () {
+                return document.getElementById('editor-container');
+            },
+
             setSelectedListener: function (listener) {
                 this.listener = listener;
             },
 
             setModel: function (model) {
                 this.model = model;
-                this.editor.selectAll('.instance').remove();
+                if (this.editor) {
+                    var editor = document.getElementById('editor');
+                    var defs = editor.getElementsByTagName('defs')[0];
+                    var clipPath;
+                    if (!document.getElementById('group-clip')) {
+                        clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                        clipPath.id = 'group-clip';
+                        var grpCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        grpCircle.setAttribute('cx', 0+'');
+                        grpCircle.setAttribute('cy', 0+'');
+                        grpCircle.setAttribute('r', (GROUP_RADIUS-4)+'');
+                        clipPath.appendChild(grpCircle);
+                        defs.appendChild(clipPath);
+                    }
+
+                    if (!document.getElementById('chan-clip')) {
+                        clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                        clipPath.id = 'chan-clip';
+                        var chanCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        chanCircle.setAttribute('cx', 0+'');
+                        chanCircle.setAttribute('cy', 0+'');
+                        chanCircle.setAttribute('r', (CHANNEL_RADIUS-4)+'');
+                        clipPath.appendChild(chanCircle);
+                        defs.appendChild(clipPath);
+                    }
+
+                    var nodeTreeHeights = kModelHelper.getNodeTreeHeights(model.nodes.array);
+                    var highest = 0;
+                    nodeTreeHeights.forEach(function (height) {
+                        if (height > highest) {
+                            highest = height;
+                        }
+                        if (!document.getElementById('node-clip-'+height)) {
+                            var nodeClip = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                            nodeClip.id = 'node-clip-'+height;
+                            var nodeRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                            nodeRect.setAttribute('width', ((NODE_WIDTH+(20*height))-5)+'');
+                            nodeRect.setAttribute('height', NODE_HEIGHT+'');
+                            nodeRect.setAttribute('x', 2+'');
+                            nodeRect.setAttribute('y', 0+'');
+                            nodeClip.appendChild(nodeRect);
+                            defs.appendChild(nodeClip);
+                        }
+                    });
+                    nodeTreeHeights.forEach(function (height) {
+                        if (!document.getElementById('comp-clip-'+height)) {
+                            var compClip = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                            compClip.id = 'comp-clip-'+height;
+                            var compRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                            compRect.setAttribute('width', ((NODE_WIDTH+(20*(highest - height)))-25)+'');
+                            compRect.setAttribute('height', NODE_HEIGHT+'');
+                            compRect.setAttribute('x', 2+'');
+                            compRect.setAttribute('y', 0+'');
+                            compClip.appendChild(compRect);
+                            defs.appendChild(compClip);
+                        }
+                    });
+
+                    this.editor.selectAll('.instance').remove();
+                    invokeListener();
+                }
             }
         };
 
@@ -438,7 +503,7 @@ angular.module('editorApp')
 
                 var fn = this.data('dragStart');
                 if (fn) {
-                    fn.apply(this, arguments)
+                    fn.apply(this, arguments);
                 }
                 if((typeof dx === 'object') && ( dx.type === 'touchstart')) {
                     mouseDownHandler.call(this, dx); // select instance on touch event
@@ -452,7 +517,7 @@ angular.module('editorApp')
             var dragMove = function (dx, dy) {
                 var fn = this.data('dragMove');
                 if (fn) {
-                    fn.apply(this, arguments)
+                    fn.apply(this, arguments);
                 }
 
                 if((typeof dx === 'object') && ( dx.type === 'touchmove')) {
@@ -460,25 +525,32 @@ angular.module('editorApp')
                     dx = dx.changedTouches[0].clientX - this.data('ox');
                 }
 
-                this.transform(
-                    this.data('ot')
-                    + (this.data('ot') ? 'T':'t')
-                    + [ dx, dy ]);
+                this.transform(this.data('ot') + (this.data('ot') ? 'T':'t') + [ dx, dy ]);
             };
 
             var dragEnd = function () {
                 var fn = this.data('dragEnd');
                 if (fn) {
-                    fn.apply(this, arguments)
+                    fn.apply(this, arguments);
                 }
                 factory.draggedInstancePath = null;
             };
 
-            Element.prototype.draggable = function (start, move, end) {
-                start = start || dragStart;
-                move = move || dragMove;
-                end = end || dragEnd;
-                this.drag(move, start, end);
+            Element.prototype.draggable = function (instance) {
+                this.drag(dragMove, dragStart, function () {
+                    if (instance) {
+                        console.log('draggable.dragEnd', instance.path());
+                        var pos = instance.findMetaDataByID(KWE_POSITION);
+                        if (!pos) {
+                            pos = kFactory.createValue();
+                            pos.name = KWE_POSITION;
+                            instance.addMetaData(pos);
+                        }
+                        var matrix = this.transform().localMatrix;
+                        pos.value = JSON.stringify({ x: matrix.e, y: matrix.f });
+                    }
+                    dragEnd.apply(this, arguments);
+                });
                 return this;
             };
 
@@ -500,6 +572,23 @@ angular.module('editorApp')
                     .touchend(dragEnd)
                     .touchmove(dragMove);
             };
+
+            Element.prototype.relocate = function (instance) {
+                console.log('relocate', instance.path());
+                var position = instance.findMetaDataByID(KWE_POSITION);
+                if (position) {
+                    try {
+                        position = JSON.parse(position.value);
+                        this.transform('t'+position.x+','+position.y);
+                    } catch (ignore) {}
+                } else {
+                    position = kFactory.createValue();
+                    position.name = KWE_POSITION;
+                    position.value = JSON.stringify({ x:100, y:100 });
+                    instance.addMetaData(position);
+                }
+                return this;
+            };
         });
 
         var mouseDownHandler = function (evt) {
@@ -515,16 +604,31 @@ angular.module('editorApp')
             }
         };
 
-        var invokeListener = function () {
+        var invokeListener = function (selected) {
             if (factory.listener) {
-                var selected = factory.editor.select('.selected');
                 if (selected) {
-                    factory.listener(selected.parent().attr('data-path'));
+                    factory.listener(selected);
                 } else {
-                    factory.listener(null);
+                    selected = factory.editor.select('.selected');
+                    if (selected) {
+                        factory.listener(selected.parent().attr('data-path'));
+                    } else {
+                        factory.listener(null);
+                    }
                 }
             }
-            };
+        };
+
+        function getNodeUIHeight(node) {
+            var height = NODE_HEIGHT; // minimum node height
+            height += node.components.size() * (CHILD_HEIGHT + 10); // add-up components height + margins
+
+            node.hosts.array.forEach(function (child) {
+                height += getNodeUIHeight(child) + 10;
+            });
+
+            return height;
+        }
 
         function isTruish(val) {
             return (val === 'true' || val > 0 || val === true);

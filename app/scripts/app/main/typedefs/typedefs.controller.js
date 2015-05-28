@@ -2,13 +2,13 @@
 
 /**
  * @ngdoc function
- * @name editorApp.controller:SidebarCtrl
+ * @name editorApp.controller:TypedefsCtrl
  * @description
- * # SidebarCtrl
- * Controller of the editorApp sidebar
+ * # TypedefsCtrl
+ * Controller of the editorApp TypeDefinition sidebar
  */
 angular.module('editorApp')
-    .controller('SidebarCtrl', function ($scope, kEditor, kModelHelper) {
+    .controller('TypedefsCtrl', function ($scope, kEditor, kModelHelper) {
         $scope.packages = {};
 
         $scope.dragDraggable = {

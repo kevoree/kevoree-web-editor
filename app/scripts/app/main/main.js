@@ -11,9 +11,9 @@ angular.module('editorApp')
                 templateUrl: 'scripts/app/main/main.html',
                 controller: 'MainCtrl'
               },
-              'sidebar@main': {
-                templateUrl: 'scripts/app/main/sidebar/sidebar.html',
-                controller: 'SidebarCtrl'
+              'typedefs@main': {
+                templateUrl: 'scripts/app/main/typedefs/typedefs.html',
+                controller: 'TypedefsCtrl'
               },
               'editor@main': {
                 templateUrl: 'scripts/app/main/editor/editor.html',

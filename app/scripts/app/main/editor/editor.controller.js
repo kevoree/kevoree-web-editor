@@ -8,7 +8,7 @@
  * Controller of the editorApp editor
  */
 angular.module('editorApp')
-    .controller('EditorCtrl', function ($scope, kEditor, uiFactory, kModelHelper, kFactory) {
+    .controller('EditorCtrl', function ($scope, kEditor, uiFactory, kModelHelper, kFactory, KWE_POSITION) {
         $scope.dropDroppable = {
             onDrop: 'onDrop'
         };
@@ -36,6 +36,16 @@ angular.module('editorApp')
             var tdefs = kEditor.getModel().select(pkgPath+'/typeDefinitions[name='+tdefName+']');
             var tdef = kModelHelper.findBestVersion(tdefs.array);
             var type = kModelHelper.getTypeDefinitionType(tdef);
+            var editor = uiFactory.getEditorContainer();
+
+            function preProcess(instance) {
+                instance.typeDefinition = tdef;
+                instance.started = true;
+                var pos = kFactory.createValue();
+                pos.name = KWE_POSITION;
+                pos.value = JSON.stringify({ x: evt.clientX - editor.offsetLeft, y: evt.clientY - editor.offsetTop });
+                instance.addMetaData(pos);
+            }
 
             var model = kEditor.getModel();
             var instance;
@@ -43,16 +53,14 @@ angular.module('editorApp')
                 case 'node':
                     instance = kFactory.createContainerNode();
                     instance.name = 'node'+parseInt(Math.random()*1000);
-                    instance.typeDefinition = tdef;
-                    instance.started = true;
+                    preProcess(instance);
                     model.addNodes(instance);
                     break;
 
                 case 'group':
                     instance = kFactory.createGroup();
                     instance.name = 'grp'+parseInt(Math.random()*1000);
-                    instance.typeDefinition = tdef;
-                    instance.started = true;
+                    preProcess(instance);
                     model.addGroups(instance);
                     break;
 
@@ -73,8 +81,7 @@ angular.module('editorApp')
                 case 'channel':
                     instance = kFactory.createChannel();
                     instance.name = 'chan'+parseInt(Math.random()*1000);
-                    instance.typeDefinition = tdef;
-                    instance.started = true;
+                    preProcess(instance);
                     model.addHubs(instance);
                     break;
             }
@@ -88,28 +95,24 @@ angular.module('editorApp')
          */
         function processModel() {
             var model = kEditor.getModel();
-            var visitor = new KevoreeLibrary.modeling.api.util.ModelVisitor();
-            visitor.visit = function (elem, ref) {
-                switch (ref) {
-                    case 'nodes':
-                        uiFactory.createNode(elem);
-                        break;
 
-                    case 'groups':
-                        uiFactory.createGroup(elem);
-                        break;
+            model.groups.array.forEach(function (instance) {
+                uiFactory.createGroup(instance);
+            });
+            model.hubs.array.forEach(function (instance) {
+                uiFactory.createChannel(instance);
+            });
 
-                    case 'components':
-                        uiFactory.createComponent(elem);
-                        break;
-
-                    case 'hubs':
-                        uiFactory.createChannel(elem);
-                        break;
-                }
-            };
-
-            model.visit(visitor, true, true, false);
+            model.nodes.array
+                .sort(function (a, b) {
+                    return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
+                })
+                .forEach(function (instance) {
+                    uiFactory.createNode(instance);
+                    instance.components.array.forEach(function (instance) {
+                        uiFactory.createComponent(instance);
+                    });
+                });
         }
 
         // listen to model changes on the editor
