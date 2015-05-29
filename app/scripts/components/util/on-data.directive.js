@@ -17,7 +17,9 @@ angular.module('editorApp')
                         });
                     };
 
-                    reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
+                    try {
+                        reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
+                    } catch (err) {}
                 });
             }
         };

@@ -6,6 +6,8 @@ angular.module('editorApp')
         function KevoreeEditor() {
             this.model = kFactory.createContainerRoot();
             this.listeners = [];
+
+            uiFactory.setModel(this.model);
         }
 
         KevoreeEditor.prototype = {
@@ -29,7 +31,6 @@ angular.module('editorApp')
 
                 var visitor = new KevoreeLibrary.modeling.api.util.ModelVisitor();
                 visitor.visit = function (elem, ref) {
-                    console.log('VISIT', ref, elem.name || elem.path());
                     if (ref === 'nodes' ||
                         ref === 'groups' ||
                         ref === 'components' ||
@@ -39,7 +40,7 @@ angular.module('editorApp')
                         elem.addModelElementListener({ elementChanged: modelReactor });
                     }
                 };
-                this.model.visit(visitor, true, true, true);
+                this.model.visit(visitor, true, true, false);
 
                 uiFactory.setModel(model);
 
@@ -81,11 +82,13 @@ angular.module('editorApp')
             }
 
             if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.REMOVE) {
+                console.log('REMOVE', trace);
                 if (trace.elementAttributeName === 'hubs' ||
                     trace.elementAttributeName === 'nodes' ||
                     trace.elementAttributeName === 'groups' ||
+                    trace.elementAttributeName === 'hosts' ||
                     trace.elementAttributeName === 'components') {
-                    uiFactory.deleteInstance(trace.source, trace.previous_value);
+                    uiFactory.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
                 }
 
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.REMOVE_ALL) {
@@ -108,6 +111,7 @@ angular.module('editorApp')
                 }
 
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.ADD) {
+                console.log('ADD', trace);
                 trace.value.addModelElementListener({ elementChanged: modelReactor });
 
                 switch (trace.elementAttributeName) {
@@ -116,6 +120,7 @@ angular.module('editorApp')
                         break;
 
                     case 'nodes':
+                    case 'hosts':
                         uiFactory.createNode(trace.value);
                         break;
 

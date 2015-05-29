@@ -8,12 +8,13 @@
  * Controller of the editorApp TypeDefinition sidebar
  */
 angular.module('editorApp')
-    .controller('TypedefsCtrl', function ($scope, kEditor, kModelHelper) {
+    .controller('TypedefsCtrl', function ($scope, kEditor, uiFactory, kModelHelper) {
         $scope.packages = {};
 
         $scope.dragDraggable = {
             animate: true,
-            placeholder: 'keep'
+            placeholder: 'keep',
+            onDrag: 'onDrag'
         };
 
         $scope.dragOptions = {
@@ -32,6 +33,11 @@ angular.module('editorApp')
 
         $scope.hasPackages = function () {
             return Object.keys($scope.packages).length > 0;
+        };
+
+        $scope.onDrag = function (evt) {
+            uiFactory.mousePos = { x: evt.clientX, y: evt.clientY };
+            console.log('drag', uiFactory.mousePos);
         };
 
         /**

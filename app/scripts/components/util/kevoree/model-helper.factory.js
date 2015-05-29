@@ -115,6 +115,23 @@ angular.module('editorApp')
                 walk(comp.eContainer());
 
                 return depth;
+            },
+
+            /**
+             * Returns the highest node instance containing this component or node
+             * @param instance ContainerNode
+             */
+            getHighestNode: function (instance) {
+                switch (instance.getRefInParent()) {
+                    case 'components':
+                        return this.getHighestNode(instance.eContainer());
+
+                    case 'hosts':
+                        return this.getHighestNode(instance.host);
+
+                    case 'nodes':
+                        return instance;
+                }
             }
         };
     });

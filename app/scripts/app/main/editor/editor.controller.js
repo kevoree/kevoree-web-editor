@@ -14,13 +14,7 @@ angular.module('editorApp')
         };
         $scope.dropOptions = {
             accept: function (obj) {
-                var pkgPath = obj[0].dataset.pkgPath;
-                var tdefName = obj[0].innerHTML.trim();
-                var tdefs = kEditor.getModel().select(pkgPath+'/typeDefinitions[name='+tdefName+']');
-                var tdef = kModelHelper.findBestVersion(tdefs.array);
-                var type = kModelHelper.getTypeDefinitionType(tdef);
-                // TODO
-                //console.log('TODO accept for ', pkgPath, tdef, type);
+                console.log(uiFactory.mousePos);
                 return true;
             }
         };
