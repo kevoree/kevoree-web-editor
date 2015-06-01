@@ -112,6 +112,7 @@ angular.module('editorApp')
 
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.ADD) {
                 console.log('ADD', trace);
+                trace.value.removeAllModelElementListeners();
                 trace.value.addModelElementListener({ elementChanged: modelReactor });
 
                 switch (trace.elementAttributeName) {

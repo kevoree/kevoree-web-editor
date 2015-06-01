@@ -13,7 +13,7 @@ angular.module('editorApp')
             onDrop: 'onDrop'
         };
         $scope.dropOptions = {
-            accept: function (obj) {
+            accept: function () {
                 console.log(uiFactory.mousePos);
                 return true;
             }
@@ -99,6 +99,7 @@ angular.module('editorApp')
 
             model.nodes.array
                 .sort(function (a, b) {
+                    // TODO optimize this to loop only once to create node tree heights
                     return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
                 })
                 .forEach(function (instance) {

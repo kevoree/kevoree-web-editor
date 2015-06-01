@@ -168,8 +168,7 @@ angular.module('editorApp')
                         'clip-path': 'url(#node-clip-'+treeHeight+')'
                     });
 
-                var hasMoved = false,
-                    parentNode = instance.host;
+                var hasMoved = false;
 
                 var node = this.editor
                     .group()
@@ -182,38 +181,47 @@ angular.module('editorApp')
                     .draggable(instance)
                     .dragMove(function () {
                         if (!hasMoved) {
-                            if (parentNode) {
-                                instance.host = null;
-                                //parentNode.removeHosts(instance);
+                            if (instance.host) {
+                                instance.host.removeHosts(instance);
+                                //instance.host = null;
                             }
                         }
                         hasMoved = true;
                     })
                     .dragEnd(function (evt) {
                         if (hasMoved) {
-                            if (parentNode) {
-                                var intersectedNodes = factory.editor
-                                    .selectAll('.instance.node').items
-                                    .filter(function (node) {
-                                        // get rid of the chicken/egg problem && be sure the click is in a node
-                                        return (node.attr('data-path') !== instance.path()) &&
-                                            isPointInsideElem(node, evt.offsetX, evt.offsetY);
-                                    })
-                                    .sort(function (a, b) {
-                                        // sort by width, smallest first
-                                        return a.getBBox().width - b.getBBox().width;
-                                    });
-                                if (intersectedNodes.length === 0) {
-                                    // if dropped in "nothing" then it means put it at the root of the model
-                                    node.remove();
-                                    factory.model.addNodes(instance);
-                                } else {
-                                    // put it in the hovered node
-                                    node.remove();
-                                    factory.model.findByPath(intersectedNodes[0].attr('data-path')).addHosts(instance);
-                                }
+                            var intersectedNodes = factory.editor
+                                .selectAll('.instance.node').items
+                                .filter(function (node) {
+                                    // get rid of the chicken/egg problem && be sure the click is in a node
+                                    return (node.attr('data-path') !== instance.path()) &&
+                                        isPointInsideElem(node, evt.offsetX, evt.offsetY);
+                                })
+                                .sort(function (a, b) {
+                                    // sort by width, smallest first
+                                    return a.getBBox().width - b.getBBox().width;
+                                });
+                            if (intersectedNodes.length === 0) {
+                                // if dropped in "nothing" then it means put it at the root of the model
+                                node.remove();
+                                factory.model.addNodes(instance);
+                            } else {
+                                // put it in the hovered node
+                                node.remove();
+                                factory.model.findByPath(intersectedNodes[0].attr('data-path')).addHosts(instance);
                             }
-                            parentNode = null;
+
+                            // recursively recreate children UIs
+                            instance.components.array.forEach(function (comp) {
+                                factory.createComponent(comp);
+                            });
+                            instance.hosts.array.forEach(function updateChildNode(node) {
+                                factory.createNode(node);
+                                node.components.array.forEach(function (comp) {
+                                    factory.createComponent(comp);
+                                });
+                                node.hosts.array.forEach(updateChildNode);
+                            });
                             hasMoved = false;
                         }
                     });
@@ -404,7 +412,7 @@ angular.module('editorApp')
             },
 
             updateInstance: function (previousPath, instance) {
-                console.log('UPDATE INSTANCE', instance.path());
+                //console.log('UPDATE INSTANCE', instance.path());
                 var elem = this.editor.select('.instance[data-path="'+previousPath+'"]');
                 if (elem) {
                     // update data-path and name
@@ -591,7 +599,6 @@ angular.module('editorApp')
                     instance.addMetaData(meta);
                 }
                 this.transform('t'+pos.x+','+pos.y);
-                console.log('relocated', instance.path(), 't'+pos.x+','+pos.y);
                 return this;
             };
         });
@@ -763,7 +770,7 @@ angular.module('editorApp')
             return factory.editor
                 .selectAll('.node').items
                 .filter(function (node) {
-                    return isPointInsideElem(node, x, y)
+                    return isPointInsideElem(node, x, y);
                 })
                 .sort(function (a, b) {
                     return a.getBBox().width - b.getBBox().width;
