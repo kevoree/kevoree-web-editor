@@ -37,7 +37,6 @@ angular.module('editorApp')
 
         $scope.onDrag = function (evt) {
             uiFactory.mousePos = { x: evt.clientX, y: evt.clientY };
-            console.log('drag', uiFactory.mousePos);
         };
 
         /**

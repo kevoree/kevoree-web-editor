@@ -4,9 +4,9 @@ angular.module('editorApp')
     .factory('uiFactory', function (kFactory, kModelHelper, KWE_POSITION) {
         var GROUP_RADIUS = 55,
             GROUP_PLUG_RADIUS = 10,
-            NODE_WIDTH = 180,
+            NODE_WIDTH = 210,
             NODE_HEIGHT = 50,
-            CHILD_HEIGHT = 40,
+            COMP_HEIGHT = 40,
             CHANNEL_RADIUS = 45;
 
         var factory = {
@@ -26,6 +26,11 @@ angular.module('editorApp')
             draggedInstancePath: null,
 
             /**
+             * Mouse position holder
+             */
+            mousePos: { x: 0, y: 0 },
+
+            /**
              * Must be called before any other methods
              */
             init: function () {
@@ -43,27 +48,29 @@ angular.module('editorApp')
                 });
                 updateSVGDefs(this.model);
 
-                function updateCoords() {
-                    var matrix = zpdEditor.transform().localMatrix;
-                    editor
-                        .select('#coord-text')
-                        .removeClass('hide')
-                        .attr({
-                            text: '('+parseInt(matrix.e, 10)+', '+parseInt(matrix.f, 10)+') '+parseInt(matrix.a * 100, 10)+'%'
-                        });
-                }
+                // create an observer instance
+                var observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.attributeName === 'transform') {
+                            var matrix = zpdEditor.transform().localMatrix;
+                            editor
+                                .select('#coord-text')
+                                .attr({
+                                    text: '('+parseInt(matrix.e, 10)+', '+parseInt(matrix.f, 10)+') '+parseInt(matrix.a * 100, 10)+'%'
+                                });
+                        }
+                    });
+                });
 
-                editor.drag(updateCoords);
-                if (navigator.userAgent.toLowerCase().indexOf('webkit') >= 0 ||
-                    navigator.userAgent.toLowerCase().indexOf('trident') >= 0) {
-                    editor.node.addEventListener('mousewheel', updateCoords, false); // Chrome/Safari
-                }
-                else {
-                    editor.node.addEventListener('DOMMouseScroll', updateCoords, false); // Others
-                }
+                // pass in the target node, as well as the observer options
+                observer.observe(zpdEditor.node, {
+                    attributes: true,
+                    childList: false,
+                    characterData: false
+                });
 
                 editor.dblclick(function () {
-                    zpdEditor.animate({transform: 's1,t0,0'}, 400, mina.ease, updateCoords);
+                    zpdEditor.animate({transform: 's1,t0,0'}, 400, mina.ease);
                 });
 
                 editor
@@ -82,6 +89,9 @@ angular.module('editorApp')
              * @returns {*}
              */
             createGroup: function (instance) {
+                this.removeUIElem(instance.path());
+                updateSVGDefs(this.model);
+
                 var bg = this.editor
                     .circle(0, 0, GROUP_RADIUS)
                     .attr({
@@ -136,6 +146,9 @@ angular.module('editorApp')
             },
 
             createNode: function (instance) {
+                this.removeUIElem(instance.path());
+                updateSVGDefs(this.model);
+
                 var treeHeight = kModelHelper.getNodeTreeHeight(instance);
                 var computedWidth = NODE_WIDTH+(20*treeHeight);
                 if (instance.host) {
@@ -183,7 +196,6 @@ angular.module('editorApp')
                         if (!hasMoved) {
                             if (instance.host) {
                                 instance.host.removeHosts(instance);
-                                //instance.host = null;
                             }
                         }
                         hasMoved = true;
@@ -247,11 +259,15 @@ angular.module('editorApp')
             },
 
             createComponent: function (instance) {
+                this.removeUIElem(instance.path());
+                updateSVGDefs(this.model);
+
                 var host = this.editor.select('.instance[data-path="'+instance.eContainer().path()+'"]');
-                var computedWidth = host.select('.bg').asPX('width') - 20;
-                var compDepth = kModelHelper.getCompDepth(instance);
+                var computedWidth = host.select('.bg').asPX('width') - 20,
+                    computedHeight = getCompUIHeight(instance);
+                var hostHeight = kModelHelper.getNodeTreeHeight(instance.eContainer());
                 var bg = this.editor
-                    .rect(0, 0, computedWidth, CHILD_HEIGHT, 3)
+                    .rect(0, 0, computedWidth, computedHeight, 3)
                     .attr({
                         fill: 'black',
                         fillOpacity: isTruish(instance.started) ? 1 : 0.65,
@@ -261,20 +277,20 @@ angular.module('editorApp')
                     });
 
                 var nameText = this.editor
-                    .text(computedWidth/2, CHILD_HEIGHT/2, instance.name)
+                    .text(computedWidth/2, computedHeight/2, instance.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
                         'class': 'name',
-                        'clip-path': 'url(#comp-clip-'+compDepth+')'
+                        'clip-path': 'url(#comp-clip-'+hostHeight+')'
                     });
 
                 var tdefText = this.editor
-                    .text(computedWidth/2, (CHILD_HEIGHT/2)+12, instance.typeDefinition.name)
+                    .text(computedWidth/2, (computedHeight/2)+12, instance.typeDefinition.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
-                        'clip-path': 'url(#comp-clip-'+compDepth+')'
+                        'clip-path': 'url(#comp-clip-'+hostHeight+')'
                     });
 
                 var hasMoved = false,
@@ -285,8 +301,64 @@ angular.module('editorApp')
                     .attr({'class': 'instance comp', 'data-path': instance.path() })
                     .append(bg)
                     .append(nameText)
-                    .append(tdefText)
-                    .mousedown(mouseDownHandler)
+                    .append(tdefText);
+
+                var PORT_X_PADDING = 24,
+                    providedDy = 0,
+                    requiredDy = 0;
+                instance.typeDefinition.provided.array.forEach(function (portType) {
+                    comp.append(this.editor
+                        .group()
+                        .attr({
+                            'class': 'port provided',
+                            'data-name': portType.name
+                        })
+                        .transform('t'+PORT_X_PADDING+','+providedDy)
+                        .append(this.editor
+                            .circle(0, (COMP_HEIGHT/2) - 5, 11)
+                            .attr({
+                                fill: '#bc7645',
+                                stroke: '#ECCA40',
+                                strokeWidth: 2
+                            }))
+                        .append(this.editor
+                            .text(0, COMP_HEIGHT - 4, portType.name.substr(0, (portType.name.length > 5) ? 5:portType.name.length))
+                            .attr({
+                                fill: 'white',
+                                textAnchor: 'middle',
+                                title: portType.name
+                            })));
+
+                    providedDy += COMP_HEIGHT;
+                }.bind(this));
+
+                instance.typeDefinition.required.array.forEach(function (portType) {
+                    comp.append(this.editor
+                        .group()
+                        .attr({
+                            'class': 'port required',
+                            'data-name': portType.name
+                        })
+                        .transform('t'+(computedWidth - PORT_X_PADDING)+','+requiredDy)
+                        .append(this.editor
+                            .circle(0, (COMP_HEIGHT/2) - 5, 11)
+                            .attr({
+                                fill: '#bc7645',
+                                stroke: '#C60808',
+                                strokeWidth: 2
+                            }))
+                        .append(this.editor
+                            .text(0, COMP_HEIGHT - 4, portType.name.substr(0, (portType.name.length > 5) ? 5:portType.name.length))
+                            .attr({
+                                fill: 'white',
+                                textAnchor: 'middle',
+                                title: portType.name
+                            })));
+
+                    requiredDy += COMP_HEIGHT;
+                }.bind(this));
+
+                comp.mousedown(mouseDownHandler)
                     .touchable()
                     .draggable()
                     .dragMove(function () {
@@ -328,6 +400,9 @@ angular.module('editorApp')
             },
 
             createChannel: function (instance) {
+                this.removeUIElem(instance.path());
+                updateSVGDefs(this.model);
+
                 var bg = this.editor
                     .circle(0, 0, CHANNEL_RADIUS)
                     .attr({
@@ -391,6 +466,13 @@ angular.module('editorApp')
                 invokeListener();
             },
 
+            removeUIElem: function (path) {
+                var elem = this.editor.select('.instance[data-path="'+path+'"]');
+                if (elem) {
+                    elem.remove();
+                }
+            },
+
             deleteNodes: function () {
                 this.editor.selectAll('.node').remove();
                 invokeListener();
@@ -412,7 +494,6 @@ angular.module('editorApp')
             },
 
             updateInstance: function (previousPath, instance) {
-                //console.log('UPDATE INSTANCE', instance.path());
                 var elem = this.editor.select('.instance[data-path="'+previousPath+'"]');
                 if (elem) {
                     // update data-path and name
@@ -431,6 +512,7 @@ angular.module('editorApp')
                             var compElem = elem.select('.instance[data-path="'+previousPath+'/components['+comp.name+']"]');
                             if (compElem) {
                                 compElem.attr({ 'data-path': comp.path().replace(previousPath, instance.path()) });
+                                //refreshComp(comp.path().replace(previousPath, instance.path()));
                             }
                         });
                     }
@@ -447,6 +529,7 @@ angular.module('editorApp')
             },
 
             getSelected: function () {
+                console.log('YEAH');
                 var selected = this.editor
                     .selectAll('.selected').items
                     .map(function (elem) {
@@ -528,6 +611,7 @@ angular.module('editorApp')
 
                 this.transform(this.data('ot') + (this.data('ot') ? 'T':'t') + [ dx, dy ]);
 
+                // TODO this needs improvment because Firefox suck at it (Chrome is fine though)
                 //if (factory.draggedInstancePath) {
                 //    factory.editor.selectAll('.node .bg').attr({ stroke: 'white' });
                 //    var node = getHoveredNode(evt.offsetX, evt.offsetY);
@@ -549,7 +633,6 @@ angular.module('editorApp')
             Element.prototype.draggable = function (instance) {
                 this.drag(dragMove, dragStart, function () {
                     if (instance) {
-                        console.log('draggable.dragEnd', instance.path());
                         var pos = instance.findMetaDataByID(KWE_POSITION);
                         if (!pos) {
                             pos = kFactory.createValue();
@@ -650,13 +733,26 @@ angular.module('editorApp')
          */
         function getNodeUIHeight(node) {
             var height = NODE_HEIGHT; // minimum node height
-            height += node.components.size() * (CHILD_HEIGHT + 10); // add-up components height + margins
+
+            node.components.array.forEach(function (comp) {
+                height += getCompUIHeight(comp) + 10;
+            });
 
             node.hosts.array.forEach(function (child) {
                 height += getNodeUIHeight(child) + 10;
             });
 
             return height;
+        }
+
+        function getCompUIHeight(comp) {
+            if (comp.typeDefinition.provided.size() === 0 && comp.typeDefinition.required.size() === 0) {
+                return COMP_HEIGHT;
+            } else if (comp.typeDefinition.provided.size() > comp.typeDefinition.required.size()) {
+                return COMP_HEIGHT * comp.typeDefinition.provided.size();
+            } else {
+                return COMP_HEIGHT * comp.typeDefinition.required.size();
+            }
         }
 
         /**
@@ -677,7 +773,13 @@ angular.module('editorApp')
                     width: computedWidth,
                     height: getNodeUIHeight(instance)
                 });
-                node.selectAll('text').attr({ x: computedWidth / 2 });
+
+                factory.editor
+                    .selectAll('.node[data-path="'+path+'"] > text')
+                    .attr({
+                        x: computedWidth/2,
+                        'clip-path': 'url(#node-clip-'+treeHeight+')'
+                    });
 
                 instance.components.array.forEach(function (comp) {
                     refreshComp(comp.path());
@@ -706,11 +808,22 @@ angular.module('editorApp')
             if (instance) {
                 var comp = factory.editor.select('.comp[data-path="'+path+'"]');
                 var host = factory.editor.select('.node[data-path="'+instance.eContainer().path()+'"]');
+                var treeHeight = kModelHelper.getNodeTreeHeight(instance.eContainer());
                 var computedWidth = host.select('.bg').asPX('width') - 20;
 
                 comp.select('.bg').attr({ width: computedWidth });
-                comp.selectAll('text')
-                    .attr({ x: computedWidth / 2 });
+                factory.editor
+                    .selectAll('.comp[data-path="'+path+'"] > text')
+                    .attr({
+                        x: computedWidth/2,
+                        'clip-path': 'url(#comp-clip-'+treeHeight+')'
+                    });
+
+                var PORT_X_PADDING = 24;
+                instance.typeDefinition.required.array.forEach(function (portType) {
+                    var port = comp.select('.required[data-name="'+portType.name+'"]');
+                    port.transform('t'+(computedWidth - PORT_X_PADDING)+','+port.transform().localMatrix.f);
+                }.bind(this));
             }
         }
 
@@ -809,31 +922,26 @@ angular.module('editorApp')
                 }
 
                 var nodeTreeHeights = kModelHelper.getNodeTreeHeights(model.nodes.array);
-                var highest = 0;
                 nodeTreeHeights.forEach(function (height) {
-                    if (height > highest) {
-                        highest = height;
-                    }
                     if (!document.getElementById('node-clip-'+height)) {
                         var nodeClip = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
                         nodeClip.id = 'node-clip-'+height;
                         var nodeRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                        nodeRect.setAttribute('width', ((NODE_WIDTH+(20*height))-5)+'');
-                        nodeRect.setAttribute('height', NODE_HEIGHT+'');
+                        nodeRect.setAttribute('width', (NODE_WIDTH+(20*height)-5)+'');
+                        nodeRect.setAttribute('height', '100%');
                         nodeRect.setAttribute('x', 2+'');
                         nodeRect.setAttribute('y', 0+'');
                         nodeClip.appendChild(nodeRect);
                         defs.appendChild(nodeClip);
                     }
-                });
-                nodeTreeHeights.forEach(function (height) {
+
                     if (!document.getElementById('comp-clip-'+height)) {
                         var compClip = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
                         compClip.id = 'comp-clip-'+height;
                         var compRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                        compRect.setAttribute('width', ((NODE_WIDTH+(20*(highest - height)))-25)+'');
-                        compRect.setAttribute('height', NODE_HEIGHT+'');
-                        compRect.setAttribute('x', 2+'');
+                        compRect.setAttribute('width', (NODE_WIDTH + (20*height) - 112)+'');
+                        compRect.setAttribute('height', '100%');
+                        compRect.setAttribute('x', 46+'');
                         compRect.setAttribute('y', 0+'');
                         compClip.appendChild(compRect);
                         defs.appendChild(compClip);

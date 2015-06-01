@@ -6,6 +6,12 @@ svg#editor text {
     font-size: 13px;
 }
 
+svg#editor .port text {
+    font-size: 9px;
+    font-weight: bold;
+    font-family: "Helvetica", sans-serif;
+}
+
 svg#editor .instance .bg.selected {
     stroke: orange;
     cursor: move;
