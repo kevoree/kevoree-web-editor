@@ -337,7 +337,11 @@ angular.module('editorApp')
                                 }
 
                                 var localM = node.transform().localMatrix;
-                                var coords = computeWirePathMiddlePts(groupPos, {x: localM.e, y: localM.f}, computedWidth, getNodeUIHeight(instance));
+                                var coords = computeWirePathMiddlePts(
+                                    groupPos,
+                                    {x: localM.e, y: localM.f},
+                                    NODE_WIDTH+(20*kModelHelper.getNodeTreeHeight(instance)),
+                                    getNodeUIHeight(instance));
 
                                 wire.select('.bg')
                                     .attr({
@@ -620,17 +624,24 @@ angular.module('editorApp')
                         var highestNodePath = getHighestNodePath(elem);
                         if (factory.draggedInstancePath === path) {
                             var absBbox = getAbsoluteBBox(elem);
+                            elem.data('ot', 't'+absBbox.x+','+absBbox.y);
 
                             // append it to the editor
                             this.editor.append(elem);
-
-                            elem.data('ot', 't'+absBbox.x+','+absBbox.y);
                         } else {
                             this.editor.selectAll('.group-wire[data-to="'+path+'"]').remove();
                             elem.remove();
                         }
 
                         refreshNode(highestNodePath);
+
+                        // refresh all group-wire from this whole node
+                        factory.model.findByPath(highestNodePath).hosts.array.forEach(function redrawWire(child) {
+                            child.groups.array.forEach(function (group) {
+                                factory.createGroupWire(group, child);
+                            });
+                            child.hosts.array.forEach(redrawWire);
+                        });
                     } else {
                         elem.remove();
                     }
@@ -716,7 +727,6 @@ angular.module('editorApp')
                             var compElem = elem.select('.instance[data-path="'+previousPath+'/components['+comp.name+']"]');
                             if (compElem) {
                                 compElem.attr({ 'data-path': comp.path().replace(previousPath, instance.path()) });
-                                //refreshComp(comp.path().replace(previousPath, instance.path()));
                             }
                         });
                     }
@@ -728,6 +738,19 @@ angular.module('editorApp')
                     } else {
                         elem.select('text.name')
                             .attr({ fill: isTruish(instance.started) ? '#fff' : '#000' });
+                    }
+
+                    // update group-wire if it is a node
+                    if (elem.hasClass('node')) {
+                        this.editor
+                            .selectAll('.group-wire[data-to="'+previousPath+'"]')
+                            .attr({ 'data-to': instance.path() });
+                    }
+
+                    if (elem.hasClass('group')) {
+                        this.editor
+                            .selectAll('.group-wire[data-from="'+previousPath+'"]')
+                            .attr({ 'data-from': instance.path() });
                     }
                 }
             },
@@ -750,6 +773,7 @@ angular.module('editorApp')
 
             getNodePathAtPoint: function (x, y) {
                 var container = this.getEditorContainer();
+                console.log('getNodePathAtPoint', x-container.offsetLeft, y-container.offsetTop);
                 var node = getHoveredNode(x-container.offsetLeft, y-container.offsetTop);
                 if (node) {
                     return node.attr('data-path');
@@ -983,7 +1007,7 @@ angular.module('editorApp')
         }
 
         /**
-         *
+         * Refresh a node's UI (and it's children too)
          * @param path
          */
         function refreshNode(path) {
@@ -1007,10 +1031,6 @@ angular.module('editorApp')
                         x: computedWidth/2,
                         'clip-path': 'url(#node-clip-'+treeHeight+')'
                     });
-
-                //instance.groups.array.forEach(function (group) {
-                //    factory.createGroupWire(group, instance);
-                //});
 
                 instance.components.array.forEach(function (comp) {
                     refreshComp(comp.path());
@@ -1148,40 +1168,79 @@ angular.module('editorApp')
         function computeWirePathMiddlePts(from, to, width, height) {
             var middle = { x: 0, y: 0 };
 
-            if (from.x >= to.x + width/3 && from.x <= to.x + (width/3)*2) {
-                // connect at middle
-                to.x += width/2;
+            function getHorizontalAlignment() {
+                if (from.x >= to.x + width/3 && from.x <= to.x + (width/3)*2) {
+                    return 'middle';
 
-            } else if (from.x > to.x + (width/3)*2) {
-                // connect at right
-                to.x += width - 2;
 
-            } else {
-                // connect at left
-                to.x += 2;
+                } else if (from.x > to.x + (width/3)*2) {
+                    return 'right';
+
+                } else {
+                    return 'left';
+                }
             }
 
-            if (from.y >= to.y + height/3 && from.y <= to.y + (height/3)*2) {
-                // connect at middle
-                to.y += height/2;
-                to.x -= 2;
+            function getVerticalAlignment() {
+                if (from.y >= to.y + height/3 && from.y <= to.y + (height/3)*2) {
+                    return 'middle';
 
-            } else  if (from.y > to.y + (height/3)*2) {
-                // connect at bottom
-                to.y += height - 2;
+                } else  if (from.y > to.y + (height/3)*2) {
+                    return 'bottom';
 
-            } else {
-                // connect at top
-                to.y += 2;
+                } else {
+                    return 'top';
+                }
             }
 
-            if (from.x > to.x) {
-                middle.x = to.x + (from.x - to.x)/2;
-            } else {
-                middle.x = from.x + (to.x - from.x)/2;
+            var alignment = getVerticalAlignment() + '-' + getHorizontalAlignment();
+            switch (alignment) {
+                case 'top-left':
+                    to.x += 2;
+                    to.y += 2;
+                    break;
+
+                case 'top-middle':
+                    to.x += width/2;
+                    break;
+
+                case 'top-right':
+                    to.x += width - 2;
+                    to.y += 2;
+                    break;
+
+                case 'middle-left':
+                    to.y += height/2;
+                    break;
+
+                case 'middle-right':
+                    to.x += width;
+                    to.y += height/2;
+                    break;
+
+                case 'bottom-left':
+                    to.x += 2;
+                    to.y += height - 2;
+                    break;
+
+                case 'bottom-middle':
+                    to.x += width/2;
+                    to.y += height;
+                    break;
+
+                case 'bottom-right':
+                    to.x += width - 2;
+                    to.y += height - 2;
+                    break;
             }
 
-            middle.y = ((from.y >= to.y) ? from.y : to.y) + 20;
+            //if (from.x > to.x) {
+            //    middle.x = to.x + (from.x - to.x)/2;
+            //} else {
+            //    middle.x = from.x + (to.x - from.x)/2;
+            //}
+            //
+            //middle.y = ((from.y >= to.y) ? from.y : to.y) + 20;
 
             return {
                 from: from,
