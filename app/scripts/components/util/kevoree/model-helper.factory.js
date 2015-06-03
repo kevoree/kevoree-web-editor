@@ -132,6 +132,15 @@ angular.module('editorApp')
                     case 'nodes':
                         return instance;
                 }
+            },
+
+            /**
+             * Returns true if the given value is truish (means that it is close to say "true")
+             * @param val
+             * @returns {boolean}
+             */
+            isTruish: function (val) {
+                return (val === true || val === 'true' || val > 0);
             }
         };
     });

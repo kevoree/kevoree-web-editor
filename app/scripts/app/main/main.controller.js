@@ -11,10 +11,17 @@ angular.module('editorApp')
     .controller('MainCtrl', function ($scope, kEditor, hotkeys, saveFile, uiFactory, kModelHelper, kFactory, Notification) {
         Notification.config({ top: 90 });
 
+        var onDataListener = function () {};
+
+        $scope.onFileLoaded = function (data) {
+            $scope.fileData = data;
+            onDataListener(data);
+        };
+
         $scope.open = function (evt) {
             evt.preventDefault();
-            angular.element('input#file').click();
-            $scope.onFileLoaded = function (data) {
+
+            function openModel(data) {
                 var oldModel = kEditor.getModel();
                 try {
                     var loader = kFactory.createJSONLoader();
@@ -30,7 +37,14 @@ angular.module('editorApp')
                     });
                     kEditor.setModel(oldModel);
                 }
-            };
+            }
+
+            if ($scope.fileData) {
+                openModel($scope.fileData);
+            } else {
+                onDataListener = openModel;
+            }
+            angular.element('input#file').click();
         };
 
         $scope.dndLoad = function (data) {
@@ -53,8 +67,8 @@ angular.module('editorApp')
 
         $scope.merge = function (evt) {
             evt.preventDefault();
-            angular.element('input#file').click();
-            $scope.onFileLoaded = function (data) {
+
+            function mergeModel(data) {
                 try {
                     var loader = kFactory.createJSONLoader();
                     var compare = kFactory.createModelCompare();
@@ -70,7 +84,14 @@ angular.module('editorApp')
                         delay: 5000
                     });
                 }
-            };
+            }
+
+            if ($scope.fileData) {
+                mergeModel($scope.fileData);
+            } else {
+                onDataListener = mergeModel;
+            }
+            angular.element('input#file').click();
         };
 
         $scope.openFromNode = function (evt) {

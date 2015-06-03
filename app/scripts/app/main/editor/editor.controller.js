@@ -35,11 +35,11 @@ angular.module('editorApp')
         /**
          * Adds a new instance to the model based on the dropped TypeDefinition
          * @param evt
-         * @param obj
+         * @param ui
          */
-        $scope.onDrop = function (evt, obj) {
-            var pkgPath = obj.helper[0].dataset.pkgPath;
-            var tdefName = obj.helper[0].innerHTML.trim();
+        $scope.onDrop = function (evt, ui) {
+            var pkgPath = ui.draggable.scope().tdef.pkgPath;
+            var tdefName = ui.draggable.scope().tdef.name;
             var tdefs = kEditor.getModel().select(pkgPath+'/typeDefinitions[name='+tdefName+']');
             var tdef = kModelHelper.findBestVersion(tdefs.array);
             var type = kModelHelper.getTypeDefinitionType(tdef);
@@ -73,7 +73,7 @@ angular.module('editorApp')
 
                 case 'group':
                     instance = kFactory.createGroup();
-                    instance.name = 'grp'+parseInt(Math.random()*1000);
+                    instance.name = 'group'+parseInt(Math.random()*1000);
                     preProcess(instance);
                     model.addGroups(instance);
                     break;
@@ -99,6 +99,8 @@ angular.module('editorApp')
                     model.addHubs(instance);
                     break;
             }
+
+            return true;
         };
 
         // init the UI kFactory

@@ -16,3 +16,12 @@ svg#editor .selected {
     stroke: orange;
     cursor: move;
 }
+
+svg#editor .hovered {
+    stroke: green;
+}
+
+svg#editor .hovered.error {
+    stroke: red;
+    cursor: not-allowed;
+}

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('kEditor', function (kFactory, kModelHelper, uiFactory) {
+    .factory('kEditor', function (kFactory, kModelHelper, kInstance, uiFactory) {
 
         function KevoreeEditor() {
             this.model = kFactory.createContainerRoot();
@@ -93,6 +93,9 @@ angular.module('editorApp')
                     if (trace.elementAttributeName === 'hosts' ||
                         trace.elementAttributeName === 'components') {
                         uiFactory.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
+                        trace.source.groups.array.forEach(function (group) {
+                            uiFactory.createGroupWire(group, trace.source);
+                        });
 
                     } else if (trace.elementAttributeName === 'groups') {
                         // means detaching a node from a group
@@ -127,7 +130,6 @@ angular.module('editorApp')
                 } else {
                     if (trace.elementAttributeName === 'groups') {
                         trace.value.array.forEach(function (group) {
-                            console.log('must remove wire between', group.path(), trace.previousPath);
                             uiFactory.deleteGroupWire(group.path(), trace.previousPath);
                             var fragDic = group.findFragmentDictionaryByID(trace.source.name);
                             if (fragDic) {
@@ -142,23 +144,48 @@ angular.module('editorApp')
                 trace.value.removeAllModelElementListeners();
                 trace.value.addModelElementListener({ elementChanged: modelReactor });
 
-                switch (trace.elementAttributeName) {
-                    case 'hubs':
-                        uiFactory.createChannel(trace.value);
-                        break;
+                if (trace.previousPath === '/') {
+                    switch (trace.elementAttributeName) {
+                        case 'hubs':
+                            uiFactory.createChannel(trace.value);
+                            break;
 
-                    case 'nodes':
-                    case 'hosts':
-                        uiFactory.createNode(trace.value);
-                        break;
+                        case 'nodes':
+                        case 'hosts':
+                            uiFactory.createNode(trace.value);
+                            break;
 
-                    case 'groups':
-                        uiFactory.createGroup(trace.value);
-                        break;
+                        case 'groups':
+                            uiFactory.createGroup(trace.value);
+                            break;
 
-                    case 'components':
-                        uiFactory.createComponent(trace.value);
-                        break;
+                        case 'components':
+                            uiFactory.createComponent(trace.value);
+                            break;
+                    }
+                } else {
+                    switch (trace.elementAttributeName) {
+                        case 'groups':
+                            uiFactory.createGroupWire(trace.value, trace.source);
+                            break;
+
+                        case 'hosts':
+                            uiFactory.createNode(trace.value);
+                            trace.value.groups.array.forEach(function (group) {
+                                uiFactory.createGroupWire(group, trace.source);
+                            });
+                            break;
+
+                        case 'subNodes':
+                            kInstance.initFragmentDictionaries(trace.source);
+                            if (uiFactory.listener) {
+                                var selected = uiFactory.editor.select('.selected');
+                                if (selected) {
+                                    uiFactory.listener(selected.parent().attr('data-path'));
+                                }
+                            }
+                            break;
+                    }
                 }
 
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.SET) {
@@ -166,6 +193,8 @@ angular.module('editorApp')
                 uiFactory.updateInstance(trace.previousPath, trace.source);
             }
         }
+
+
 
         return editor;
     });

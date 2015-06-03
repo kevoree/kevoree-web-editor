@@ -107,13 +107,91 @@ angular.module('editorApp')
                     .attr({
                         fill: '#f1c30f',
                         'class': 'group-plug'
-                    });
-                plug.mouseover(function () {
-                    this.attr({r: GROUP_PLUG_RADIUS+1});
-                });
-                plug.mouseout(function () {
-                    this.attr({r: GROUP_PLUG_RADIUS});
-                });
+                    })
+                    .mouseover(function () {
+                        this.attr({r: GROUP_PLUG_RADIUS+1});
+                    })
+                    .mouseout(function () {
+                        this.attr({r: GROUP_PLUG_RADIUS});
+                    })
+                    .drag(
+                        function (dx, dy) {
+                            var plugPos = this.data('plugPos');
+                            this.data('wire').attr({
+                                d: 'M'+plugPos.x+','+plugPos.y+' '+(plugPos.x + dx)+','+(plugPos.y + dy)
+                            });
+
+                            clearTimeout(this.data('wireTimeout'));
+                            var nodeElem = this.data('hoveredNode');
+                            if (nodeElem) {
+                                nodeElem.select('.bg').removeClass('hovered error');
+                            }
+
+                            var timeout = setTimeout(function () {
+                                var nodeElem = getHoveredNode(plugPos.x + dx, plugPos.y + dy);
+                                if (nodeElem) {
+                                    this.data('hoveredNode', nodeElem);
+                                    var nodeBg = nodeElem.select('.bg');
+                                    nodeBg.addClass('hovered');
+
+                                    var node = factory.model.findByPath(nodeElem.attr('data-path'));
+                                    if (instance.findSubNodesByID(node.name)) {
+                                        nodeBg.addClass('error');
+                                    }
+                                } else {
+                                    this.data('hoveredNode', null);
+                                }
+                            }.bind(this), 100);
+                            this.data('wireTimeout', timeout);
+                        },
+                        function () {
+                            var grpM = group.transform().localMatrix;
+                            var plugPos = {
+                                x: grpM.e,
+                                y: grpM.f + (GROUP_RADIUS/2)+GROUP_PLUG_RADIUS
+                            };
+                            this.data('plugPos', plugPos);
+                            var wire = factory.editor
+                                .path('M'+plugPos.x+','+plugPos.y+' '+plugPos.x+','+plugPos.y)
+                                .attr({
+                                    fill: 'none',
+                                    stroke: '#5aa564',
+                                    strokeWidth: 5,
+                                    strokeLineCap: 'round',
+                                    strokeLineJoin: 'round',
+                                    opacity: 0.7
+                                });
+                            this.data('wire', wire);
+                        },
+                        function () {
+                            var nodeElem = this.data('hoveredNode');
+                            if (nodeElem) {
+                                // remove ui feedback
+                                nodeElem.select('.bg').removeClass('hovered error');
+
+                                // node elem found
+                                var nodeInstance = factory.model.findByPath(nodeElem.attr('data-path'));
+                                if (instance.findSubNodesByID(nodeInstance.name)) {
+                                    // this node is already connected to the group
+                                } else {
+                                    // this node is not connected to the group
+                                    nodeInstance.addGroups(instance);
+                                    instance.addSubNodes(nodeInstance);
+                                }
+                            } else {
+                                // no node at this coords
+                                console.log('no node found here');
+                            }
+
+                            this.data('wire').remove();
+                            clearTimeout(this.data('wireTimeout'));
+
+                            this.removeData('wire');
+                            this.removeData('hoveredNode');
+                            this.removeData('plugPos');
+                            this.removeData('wireTimeout');
+                        }
+                    );
 
                 var nameText = this.editor
                     .text(0, -5, instance.name)
@@ -299,22 +377,14 @@ angular.module('editorApp')
                     .mousedown(mouseDownHandler)
                     .touchable()
                     .draggable(instance)
-                    .dragMove(function () {
+                    .dragStart(function () {
+                        var container = document.getElementById('editor-container');
+                        this.data('offset', { left: container.offsetLeft, top: container.offsetTop });
+                    })
+                    .dragMove(function (dx, dy, clientX, clientY) {
                         if (!hasMoved) {
                             if (instance.host) {
-                                var hostName = instance.host.name;
                                 instance.host.removeHosts(instance);
-
-                                // redraw sibling nodes wire when dragging because host node will be redrawn
-                                var siblings = factory.model.nodes.array.filter(function (node) {
-                                    return node.host && node.host.name === hostName;
-                                });
-                                siblings.forEach(function redrawWire(sibling) {
-                                    sibling.groups.array.forEach(function (group) {
-                                        factory.createGroupWire(group, sibling);
-                                    });
-                                    sibling.hosts.array.forEach(redrawWire);
-                                });
                             }
 
                             // remove all child nodes wires when dragging
@@ -324,6 +394,25 @@ angular.module('editorApp')
                             });
                         }
                         hasMoved = true;
+
+                        // ui-error feedback
+                        clearTimeout(this.data('dragTimeout'));
+                        var nodeElem = this.data('hoveredNode');
+                        if (nodeElem) {
+                            nodeElem.select('.bg').removeClass('hovered error');
+                        }
+
+                        var timeout = setTimeout(function () {
+                            var offset = this.data('offset');
+                            var nodeElem = getHoveredNode(clientX - offset.left, clientY - offset.top, instance.path());
+                            if (nodeElem && nodeElem.attr('data-path') !== instance.path()) {
+                                this.data('hoveredNode', nodeElem);
+                                nodeElem.select('.bg').addClass('hovered');
+                            } else {
+                                this.data('hoveredNode', null);
+                            }
+                        }.bind(this), 100);
+                        this.data('dragTimeout', timeout);
                     })
                     .afterDragMove(function () {
                         instance.groups.array.forEach(function (group) {
@@ -356,23 +445,16 @@ angular.module('editorApp')
                             }
                         }.bind(this));
                     })
-                    .dragEnd(function (evt) {
+                    .dragEnd(function () {
                         if (hasMoved) {
-                            var intersectedNodes = factory.editor
-                                .selectAll('.node').items
-                                .filter(function (node) {
-                                    // get rid of the chicken/egg problem && be sure the click is in a node
-                                    return (node.attr('data-path') !== instance.path()) &&
-                                        isPointInsideElem(node, evt.offsetX, evt.offsetY);
-                                })
-                                .sort(function (a, b) {
-                                    // sort by width, smallest first
-                                    return a.getBBox().width - b.getBBox().width;
-                                });
-                            if (intersectedNodes.length > 0) {
+                            var hoveredNode = this.data('hoveredNode');
+                            if (hoveredNode) {
+                                // remove green ui-feedback
+                                hoveredNode.select('.bg').removeClass('hovered error');
+
                                 // put it in the hovered node
                                 node.remove();
-                                factory.model.findByPath(intersectedNodes[0].attr('data-path')).addHosts(instance);
+                                factory.model.findByPath(hoveredNode.attr('data-path')).addHosts(instance);
 
                                 // recursively recreate children UIs
                                 instance.components.array.forEach(function (comp) {
@@ -406,6 +488,11 @@ angular.module('editorApp')
                             });
                             childNode.hosts.array.forEach(addWire);
                         });
+
+                        clearTimeout(this.data('dragTimeout'));
+                        this.removeData('dragTimeout');
+                        this.removeData('hoveredNode');
+                        this.removeData('offset');
                     });
 
                 if (instance.host) {
@@ -636,12 +723,15 @@ angular.module('editorApp')
                         refreshNode(highestNodePath);
 
                         // refresh all group-wire from this whole node
-                        factory.model.findByPath(highestNodePath).hosts.array.forEach(function redrawWire(child) {
-                            child.groups.array.forEach(function (group) {
-                                factory.createGroupWire(group, child);
+                        var highestNode = factory.model.findByPath(highestNodePath);
+                        if (highestNode) {
+                            highestNode.hosts.array.forEach(function redrawWire(child) {
+                                child.groups.array.forEach(function (group) {
+                                    factory.createGroupWire(group, child);
+                                });
+                                child.hosts.array.forEach(redrawWire);
                             });
-                            child.hosts.array.forEach(redrawWire);
-                        });
+                        }
                     } else {
                         elem.remove();
                     }
@@ -690,11 +780,13 @@ angular.module('editorApp')
 
             deleteNodes: function () {
                 this.editor.selectAll('.node').remove();
+                this.editor.selectAll('.group-wire').remove();
                 invokeListener();
             },
 
             deleteGroups: function () {
                 this.editor.selectAll('.group').remove();
+                this.editor.selectAll('.group-wire').remove();
                 invokeListener();
             },
 
@@ -773,7 +865,6 @@ angular.module('editorApp')
 
             getNodePathAtPoint: function (x, y) {
                 var container = this.getEditorContainer();
-                console.log('getNodePathAtPoint', x-container.offsetLeft, y-container.offsetTop);
                 var node = getHoveredNode(x-container.offsetLeft, y-container.offsetTop);
                 if (node) {
                     return node.attr('data-path');
@@ -1128,17 +1219,32 @@ angular.module('editorApp')
          *
          * @param x
          * @param y
+         * @param bannedPath
          * @returns {*|T}
          */
-        function getHoveredNode(x, y) {
-            return factory.editor
+        function getHoveredNode(x, y, bannedPath) {
+            var nodes = factory.editor
                 .selectAll('.node').items
                 .filter(function (node) {
                     return isPointInsideElem(node, x, y);
                 })
                 .sort(function (a, b) {
                     return a.getBBox().width - b.getBBox().width;
-                })[0];
+                });
+
+            if (bannedPath) {
+                if (nodes.length === 0) {
+                    return null;
+                } else {
+                    if (nodes[0].attr('data-path') !== bannedPath) {
+                        return nodes[0];
+                    } else {
+                        return nodes[1];
+                    }
+                }
+            } else {
+                return nodes[0];
+            }
         }
 
         /**

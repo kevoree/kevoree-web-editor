@@ -8,7 +8,7 @@
  * Controller of the editorApp instance editor
  */
 angular.module('editorApp')
-    .controller('InstanceCtrl', function ($scope, $timeout, uiFactory, kEditor, kFactory, kModelHelper) {
+    .controller('InstanceCtrl', function ($scope, $timeout, uiFactory, kEditor, kFactory, kInstance, kModelHelper) {
         $scope.instance = null;
         $scope.type = null;
         $scope.mainCollapsed = false;
@@ -38,9 +38,7 @@ angular.module('editorApp')
             return $scope.instance && (typeof ($scope.instance.networkInformation) !== 'undefined');
         };
 
-        $scope.isTruish = function (val) {
-            return (val === 'true' || val > 0 || val === true);
-        };
+        $scope.isTruish = kModelHelper.isTruish;
 
         uiFactory.setSelectedListener(function (path) {
             $timeout(function () {
@@ -73,57 +71,7 @@ angular.module('editorApp')
                 .select('attributes[fragmentDependant=true]').array;
 
             // create dictionary values if none set
-            $scope.instance.dictionary = $scope.instance.dictionary || kFactory.createDictionary();
-            $scope.instance.typeDefinition.dictionaryType.attributes
-                .array.forEach(function (attr) {
-                    var val;
-                    if (!$scope.isTruish(attr.fragmentDependant)) {
-                        // attribute is not fragment dependant
-                        val = $scope.instance.dictionary.findValuesByID(attr.name);
-                        if (!val) {
-                            val = kFactory.createValue();
-                            val.name = attr.name;
-                            val.value = attr.defaultValue;
-                            $scope.instance.dictionary.addValues(val);
-                        }
-                    } else {
-                        // attribute is fragment dependant
-                        // create fragment dictionaries if needed
-                        switch (kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition)) {
-                            case 'channel':
-                                $scope.instance.bindings.array.forEach(function (binding) {
-                                    if (binding.port) {
-                                        if (!$scope.instance.findFragmentDictionaryByID(binding.port.eContainer().eContainer().name)) {
-                                            var fragDic = kFactory.createFragmentDictionary();
-                                            fragDic.name = binding.port.eContainer().eContainer().name;
-                                            $scope.instance.addFragmentDictionary(fragDic);
-                                        }
-                                    }
-                                });
-                                break;
-
-                            case 'group':
-                                $scope.instance.subNodes.array.forEach(function (node) {
-                                    if (!$scope.instance.findFragmentDictionaryByID(node.name)) {
-                                        var fragDic = kFactory.createFragmentDictionary();
-                                        fragDic.name = node.name;
-                                        $scope.instance.addFragmentDictionary(fragDic);
-                                    }
-                                });
-                                break;
-                        }
-                        // add default value to fragment dictionaries that does not already have them
-                        $scope.instance.fragmentDictionary.array.forEach(function (fragDic) {
-                            val = fragDic.findValuesByID(attr.name);
-                            if (!val) {
-                                val = kFactory.createValue();
-                                val.name = attr.name;
-                                val.value = attr.defaultValue;
-                                fragDic.addValues(val);
-                            }
-                        });
-                    }
-                });
+            kInstance.initDictionaries($scope.instance);
         }
 
         /**
