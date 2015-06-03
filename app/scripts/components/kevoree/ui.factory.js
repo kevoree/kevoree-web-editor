@@ -39,7 +39,7 @@ angular.module('editorApp')
                 var zpdEditor = this.editor = editor.select('#snapsvg-zpd-'+editor.id);
                 editor.mousedown(function () {
                     // remove all selected state
-                    editor.selectAll('.instance .bg').forEach(function (elem) {
+                    editor.selectAll('.selected').forEach(function (elem) {
                         elem.removeClass('selected');
                     });
                     if (factory.listener) {
@@ -109,10 +109,10 @@ angular.module('editorApp')
                         'class': 'group-plug'
                     });
                 plug.mouseover(function () {
-                    plug.attr({r: GROUP_PLUG_RADIUS+1});
+                    this.attr({r: GROUP_PLUG_RADIUS+1});
                 });
                 plug.mouseout(function () {
-                    plug.attr({r: GROUP_PLUG_RADIUS});
+                    this.attr({r: GROUP_PLUG_RADIUS});
                 });
 
                 var nameText = this.editor
@@ -132,7 +132,7 @@ angular.module('editorApp')
                         'clip-path': 'url(#group-clip)'
                     });
 
-                return this.editor
+                var group = this.editor
                     .group()
                     .attr({ 'class': 'instance group', 'data-path': instance.path() })
                     .append(bg)
@@ -142,7 +142,112 @@ angular.module('editorApp')
                     .mousedown(mouseDownHandler)
                     .touchable()
                     .draggable(instance)
+                    .afterDragMove(function () {
+                        instance.subNodes.array.forEach(function (subNode) {
+                            var wire = factory.editor.select('.group-wire[data-from="'+instance.path()+'"][data-to="'+subNode.path()+'"]');
+                            if (wire) {
+                                var subNodeData = this.data(subNode.path());
+                                if (!subNodeData) {
+                                    var nodeElem = factory.editor.select('.node[data-path="'+subNode.path()+'"]');
+                                    subNodeData = getAbsoluteBBox(nodeElem);
+                                    this.data(subNode.path(), {
+                                        x: subNodeData.x,
+                                        y: subNodeData.y,
+                                        width: nodeElem.select('.bg').asPX('width'),
+                                        height: nodeElem.select('.bg').asPX('height')
+                                    });
+                                }
+
+                                var localM = group.transform().localMatrix;
+                                var coords = computeWirePathMiddlePts(
+                                    { x: localM.e, y: localM.f + (GROUP_RADIUS/2) + GROUP_PLUG_RADIUS },
+                                    { x: subNodeData.x, y: subNodeData.y },
+                                    subNodeData.width,
+                                    subNodeData.height);
+
+                                wire.select('.bg')
+                                    .attr({
+                                        d: 'M'+coords.from.x+','+coords.from.y+' '+coords.to.x+','+coords.to.y
+                                    });
+
+                                wire.select('circle')
+                                    .attr({
+                                        cx: coords.to.x,
+                                        cy: coords.to.y
+                                    });
+                            }
+                        }.bind(this));
+                    })
+                    .dragEnd(function () {
+                        instance.subNodes.array.forEach(function (subNode) {
+                            this.removeData(subNode.path());
+                        }.bind(this));
+                    })
                     .relocate(instance);
+
+                plug.mousedown(function (evt) {
+                    evt.preventDefault();
+                    evt.cancelBubble = true;
+
+
+                }.bind(this));
+
+                return group;
+            },
+
+            createGroupWire: function (group, node) {
+                var grpElem = factory.editor.select('.group[data-path="'+group.path()+'"]'),
+                    nodeElem = this.editor.select('.node[data-path="'+node.path()+'"]'),
+                    wireElem = this.editor.select('.group-wire[data-from="'+group.path()+'"][data-to="'+node.path()+'"]'),
+                    coords = computeWirePathMiddle(grpElem, nodeElem);
+
+                if (wireElem) {
+                    wireElem
+                        .select('.bg')
+                        .attr({
+                            d: 'M'+coords.from.x+','+coords.from.y+' '+coords.to.x+','+coords.to.y
+                        });
+
+                    wireElem
+                        .select('circle')
+                        .attr({
+                            cx: coords.to.x,
+                            cy: coords.to.y
+                        });
+                } else {
+                    var wireBg = this.editor
+                        .path('M'+coords.from.x+','+coords.from.y+' '+coords.to.x+','+coords.to.y)
+                        .attr({
+                            fill: 'none',
+                            stroke: '#5aa564',
+                            strokeWidth: 5,
+                            strokeLineCap: 'round',
+                            strokeLineJoin: 'round',
+                            opacity: 0.7,
+                            'class': 'bg'
+                        })
+                        .mouseover(function () {
+                            this.attr({ opacity: 0.85, strokeWidth: 6 });
+                        })
+                        .mouseout(function () {
+                            this.attr({ opacity: 0.7, strokeWidth: 5 });
+                        });
+
+                    var nodePlug = this.editor
+                        .circle(coords.to.x, coords.to.y, 4)
+                        .attr({ fill: 'white' });
+
+                    this.editor
+                        .group()
+                        .attr({
+                            'class': 'group-wire',
+                            'data-from': group.path(),
+                            'data-to': node.path()
+                        })
+                        .append(wireBg)
+                        .append(nodePlug)
+                        .mousedown(mouseDownHandler);
+                }
             },
 
             createNode: function (instance) {
@@ -154,8 +259,10 @@ angular.module('editorApp')
                 if (instance.host) {
                     computedWidth = NODE_WIDTH+(20*(kModelHelper.getNodeTreeHeight(instance.host)-1));
                 }
+                var computedHeight = getNodeUIHeight(instance);
+
                 var bg = this.editor
-                    .rect(0, 0, computedWidth, getNodeUIHeight(instance), 8)
+                    .rect(0, 0, computedWidth, computedHeight, 8)
                     .attr({
                         fill: 'white',
                         fillOpacity: 0.1,
@@ -165,7 +272,7 @@ angular.module('editorApp')
                     });
 
                 var nameText = this.editor
-                    .text(computedWidth/2, NODE_HEIGHT/2, instance.name)
+                    .text(computedWidth/2, NODE_HEIGHT/2 - 2, instance.name)
                     .attr({
                         fill: isTruish(instance.started) ? '#fff' : '#000',
                         textAnchor: 'middle',
@@ -174,7 +281,7 @@ angular.module('editorApp')
                     });
 
                 var tdefText = this.editor
-                    .text(computedWidth/2, (NODE_HEIGHT/2)+12, instance.typeDefinition.name)
+                    .text(computedWidth/2, (NODE_HEIGHT/2) + 12, instance.typeDefinition.name)
                     .attr({
                         fill: 'white',
                         textAnchor: 'middle',
@@ -195,15 +302,60 @@ angular.module('editorApp')
                     .dragMove(function () {
                         if (!hasMoved) {
                             if (instance.host) {
+                                var hostName = instance.host.name;
                                 instance.host.removeHosts(instance);
+
+                                // redraw sibling nodes wire when dragging because host node will be redrawn
+                                var siblings = factory.model.nodes.array.filter(function (node) {
+                                    return node.host && node.host.name === hostName;
+                                });
+                                siblings.forEach(function redrawWire(sibling) {
+                                    sibling.groups.array.forEach(function (group) {
+                                        factory.createGroupWire(group, sibling);
+                                    });
+                                    sibling.hosts.array.forEach(redrawWire);
+                                });
                             }
+
+                            // remove all child nodes wires when dragging
+                            instance.hosts.array.forEach(function removeWire(childNode) {
+                                factory.editor.selectAll('.group-wire[data-to="'+childNode.path()+'"]').remove();
+                                childNode.hosts.array.forEach(removeWire);
+                            });
                         }
                         hasMoved = true;
+                    })
+                    .afterDragMove(function () {
+                        instance.groups.array.forEach(function (group) {
+                            var wire = factory.editor.select('.group-wire[data-from="'+group.path()+'"][data-to="'+instance.path()+'"]');
+                            if (wire) {
+                                var groupPos = this.data(group.path());
+                                if (!groupPos) {
+                                    var groupMatrix = factory.editor.select('.group[data-path="'+group.path()+'"]').transform().localMatrix;
+                                    groupPos = { x: groupMatrix.e, y: groupMatrix.f + (GROUP_RADIUS/2) + GROUP_PLUG_RADIUS };
+                                    this.data(group.path(), groupPos);
+                                }
+
+                                var localM = node.transform().localMatrix;
+                                var coords = computeWirePathMiddlePts(groupPos, {x: localM.e, y: localM.f}, computedWidth, getNodeUIHeight(instance));
+
+                                wire.select('.bg')
+                                    .attr({
+                                        d: 'M'+coords.from.x+','+coords.from.y+' '+coords.to.x+','+coords.to.y
+                                    });
+
+                                wire.select('circle')
+                                    .attr({
+                                        cx: coords.to.x,
+                                        cy: coords.to.y
+                                    });
+                            }
+                        }.bind(this));
                     })
                     .dragEnd(function (evt) {
                         if (hasMoved) {
                             var intersectedNodes = factory.editor
-                                .selectAll('.instance.node').items
+                                .selectAll('.node').items
                                 .filter(function (node) {
                                     // get rid of the chicken/egg problem && be sure the click is in a node
                                     return (node.attr('data-path') !== instance.path()) &&
@@ -213,29 +365,43 @@ angular.module('editorApp')
                                     // sort by width, smallest first
                                     return a.getBBox().width - b.getBBox().width;
                                 });
-                            if (intersectedNodes.length === 0) {
-                                // if dropped in "nothing" then it means put it at the root of the model
-                                node.remove();
-                                factory.model.addNodes(instance);
-                            } else {
+                            if (intersectedNodes.length > 0) {
                                 // put it in the hovered node
                                 node.remove();
                                 factory.model.findByPath(intersectedNodes[0].attr('data-path')).addHosts(instance);
-                            }
 
-                            // recursively recreate children UIs
-                            instance.components.array.forEach(function (comp) {
-                                factory.createComponent(comp);
-                            });
-                            instance.hosts.array.forEach(function updateChildNode(node) {
-                                factory.createNode(node);
-                                node.components.array.forEach(function (comp) {
+                                // recursively recreate children UIs
+                                instance.components.array.forEach(function (comp) {
                                     factory.createComponent(comp);
                                 });
-                                node.hosts.array.forEach(updateChildNode);
-                            });
+                                instance.hosts.array
+                                    .sort(function (a, b) {
+                                        // TODO optimize this to loop only once to create node tree heights
+                                        return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
+                                    })
+                                    .forEach(function updateChildNode(childNode) {
+                                        factory.createNode(childNode);
+                                        childNode.components.array.forEach(function (instance) {
+                                            factory.createComponent(instance);
+                                        });
+                                        childNode.hosts.array.forEach(updateChildNode);
+                                    });
+                            }
+
                             hasMoved = false;
                         }
+
+                        instance.groups.array.forEach(function (group) {
+                            this.removeData(group.path());
+                            factory.createGroupWire(group, instance);
+                        }.bind(this));
+
+                        instance.hosts.array.forEach(function addWire(childNode) {
+                            childNode.groups.array.forEach(function (group) {
+                                factory.createGroupWire(group, childNode);
+                            });
+                            childNode.hosts.array.forEach(addWire);
+                        });
                     });
 
                 if (instance.host) {
@@ -255,6 +421,11 @@ angular.module('editorApp')
                 try {
                     refreshNode(getHighestNodePath(node));
                 } catch (err) {}
+
+                instance.groups.array.forEach(function (group) {
+                    factory.createGroupWire(group, instance);
+                });
+
                 return node;
             },
 
@@ -455,6 +626,7 @@ angular.module('editorApp')
 
                             elem.data('ot', 't'+absBbox.x+','+absBbox.y);
                         } else {
+                            this.editor.selectAll('.group-wire[data-to="'+path+'"]').remove();
                             elem.remove();
                         }
 
@@ -464,6 +636,38 @@ angular.module('editorApp')
                     }
                 }
                 invokeListener();
+            },
+
+            deleteGroupWire: function (groupPath, nodePath) {
+                var elem = this.editor.select('.group-wire[data-from="'+groupPath+'"][data-to="'+nodePath+'"]');
+                if (elem) {
+                    elem.remove();
+                }
+            },
+
+            deleteSelected: function () {
+                var selected = this.getSelected();
+                selected.forEach(function (elem) {
+                    var path = elem.attr('data-path');
+                    if (path) {
+                        var instance = factory.model.findByPath(path);
+                        if (instance) {
+                            instance.delete();
+                        }
+                    } else {
+                        if (elem.hasClass('group-wire')) {
+                            var grp = factory.model.findByPath(elem.attr('data-from')),
+                                node = factory.model.findByPath(elem.attr('data-to'));
+                            if (node && grp) {
+                                node.removeGroups(grp);
+                                grp.removeSubNodes(node);
+                            }
+                        } else {
+                            // TODO for component ports wire
+                        }
+                    }
+                });
+                return selected.length;
             },
 
             removeUIElem: function (path) {
@@ -529,11 +733,10 @@ angular.module('editorApp')
             },
 
             getSelected: function () {
-                console.log('YEAH');
                 var selected = this.editor
                     .selectAll('.selected').items
                     .map(function (elem) {
-                        // .selected class is given to .bg so we need to retrieve the parent
+                        // all selected element are in groups so we need to return the parent
                         return elem.parent();
                     });
 
@@ -542,11 +745,7 @@ angular.module('editorApp')
                     children = children.concat(elem.selectAll('.instance').items);
                 });
 
-                return selected
-                    .concat(children)
-                    .map(function (elem) {
-                        return elem.attr('data-path');
-                    });
+                return selected.concat(children);
             },
 
             getNodePathAtPoint: function (x, y) {
@@ -572,7 +771,7 @@ angular.module('editorApp')
                 if (this.editor) {
                     updateSVGDefs(model);
 
-                    this.editor.selectAll('.instance').remove();
+                    this.editor.clear();
                     invokeListener();
                 }
             }
@@ -583,12 +782,16 @@ angular.module('editorApp')
          */
         Snap.plugin(function (Snap, Element) {
             var dragStart = function (dx) {
+                var args = arguments;
                 factory.draggedInstancePath = this.attr('data-path');
 
-                var fn = this.data('dragStart');
-                if (fn) {
-                    fn.apply(this, arguments);
+                var handlers = this.data('dragStart');
+                if (handlers) {
+                    handlers.forEach(function (handler) {
+                        handler.apply(this, args);
+                    }.bind(this));
                 }
+
                 if((typeof dx === 'object') && ( dx.type === 'touchstart')) {
                     mouseDownHandler.call(this, dx); // select instance on touch event
                     dx.preventDefault();
@@ -598,10 +801,13 @@ angular.module('editorApp')
                 this.data('ot', this.transform().local );
             };
 
-            var dragMove = function (dx, dy, x, y, evt) {
-                var fn = this.data('dragMove');
-                if (fn) {
-                    fn.apply(this, arguments);
+            var dragMove = function (dx, dy /*, x, y, evt*/) {
+                var args = arguments;
+                var handlers = this.data('dragMove');
+                if (handlers) {
+                    handlers.forEach(function (handler) {
+                        handler.apply(this, args);
+                    }.bind(this));
                 }
 
                 if((typeof dx === 'object') && ( dx.type === 'touchmove')) {
@@ -619,15 +825,24 @@ angular.module('editorApp')
                 //        node.select('.bg').attr({ stroke: 'yellow' });
                 //    }
                 //}
+                handlers = this.data('afterDragMove');
+                if (handlers) {
+                    handlers.forEach(function (handler) {
+                        handler.apply(this, args);
+                    }.bind(this));
+                }
             };
 
             var dragEnd = function () {
-                var fn = this.data('dragEnd');
-                if (fn) {
-                    fn.apply(this, arguments);
+                var args = arguments;
+                var handlers = this.data('dragEnd');
+                if (handlers) {
+                    handlers.forEach(function (handler) {
+                        handler.apply(this, args);
+                    }.bind(this));
                 }
+
                 factory.draggedInstancePath = null;
-                factory.editor.selectAll('.node .bg').attr({ stroke: 'white' });
             };
 
             Element.prototype.draggable = function (instance) {
@@ -648,15 +863,27 @@ angular.module('editorApp')
             };
 
             Element.prototype.dragStart = function (handler) {
-                return this.data('dragStart', handler);
+                var handlers = this.data('dragStart') || [];
+                handlers.push(handler);
+                return this.data('dragStart', handlers);
             };
 
             Element.prototype.dragEnd = function (handler) {
-                return this.data('dragEnd', handler);
+                var handlers = this.data('dragEnd') || [];
+                handlers.push(handler);
+                return this.data('dragEnd', handlers);
             };
 
             Element.prototype.dragMove = function (handler) {
-                return this.data('dragMove', handler);
+                var handlers = this.data('dragMove') || [];
+                handlers.push(handler);
+                return this.data('dragMove', handlers);
+            };
+
+            Element.prototype.afterDragMove = function (handler) {
+                var handlers = this.data('afterDragMove') || [];
+                handlers.push(handler);
+                return this.data('afterDragMove', handlers);
             };
 
             Element.prototype.touchable = function () {
@@ -692,7 +919,7 @@ angular.module('editorApp')
          */
         var mouseDownHandler = function (evt) {
             if (!evt.ctrlKey && !evt.shiftKey) {
-                factory.editor.selectAll('.bg').forEach(function (elem) {
+                factory.editor.selectAll('.selected').forEach(function (elem) {
                     elem.removeClass('selected');
                 });
             }
@@ -781,6 +1008,10 @@ angular.module('editorApp')
                         'clip-path': 'url(#node-clip-'+treeHeight+')'
                     });
 
+                //instance.groups.array.forEach(function (group) {
+                //    factory.createGroupWire(group, instance);
+                //});
+
                 instance.components.array.forEach(function (comp) {
                     refreshComp(comp.path());
                 });
@@ -823,7 +1054,7 @@ angular.module('editorApp')
                 instance.typeDefinition.required.array.forEach(function (portType) {
                     var port = comp.select('.required[data-name="'+portType.name+'"]');
                     port.transform('t'+(computedWidth - PORT_X_PADDING)+','+port.transform().localMatrix.f);
-                }.bind(this));
+                });
             }
         }
 
@@ -848,7 +1079,7 @@ angular.module('editorApp')
             var bbox = elem.getBBox();
 
             function walkUp(elem) {
-                if (elem.parent().hasClass('node')) {
+                if (elem.parent().hasClass('instance')) {
                     var parentBox = elem.parent().getBBox();
                     bbox.x += parentBox.x;
                     bbox.y += parentBox.y;
@@ -888,6 +1119,75 @@ angular.module('editorApp')
                 .sort(function (a, b) {
                     return a.getBBox().width - b.getBBox().width;
                 })[0];
+        }
+
+        /**
+         *
+         * @param fromElem
+         * @param toElem
+         * @returns {{from: {x: number, y: number}, middle: {x: number, y: number}, to: {x: number, y: number}}}
+         */
+        function computeWirePathMiddle(fromElem, toElem) {
+            var fromM = fromElem.transform().localMatrix,
+                toM = getAbsoluteBBox(toElem),
+                from = { x: fromM.e, y: fromM.f + (GROUP_RADIUS/2) + GROUP_PLUG_RADIUS },
+                width = toElem.select('.bg').asPX('width'),
+                height = toElem.select('.bg').asPX('height');
+
+            return computeWirePathMiddlePts(from, toM, width, height);
+        }
+
+        /**
+         *
+         * @param from
+         * @param to
+         * @param width
+         * @param height
+         * @returns {{from: {x: number, y: number}, middle: {x: number, y: number}, to: {x: number, y: number}}}
+         */
+        function computeWirePathMiddlePts(from, to, width, height) {
+            var middle = { x: 0, y: 0 };
+
+            if (from.x >= to.x + width/3 && from.x <= to.x + (width/3)*2) {
+                // connect at middle
+                to.x += width/2;
+
+            } else if (from.x > to.x + (width/3)*2) {
+                // connect at right
+                to.x += width - 2;
+
+            } else {
+                // connect at left
+                to.x += 2;
+            }
+
+            if (from.y >= to.y + height/3 && from.y <= to.y + (height/3)*2) {
+                // connect at middle
+                to.y += height/2;
+                to.x -= 2;
+
+            } else  if (from.y > to.y + (height/3)*2) {
+                // connect at bottom
+                to.y += height - 2;
+
+            } else {
+                // connect at top
+                to.y += 2;
+            }
+
+            if (from.x > to.x) {
+                middle.x = to.x + (from.x - to.x)/2;
+            } else {
+                middle.x = from.x + (to.x - from.x)/2;
+            }
+
+            middle.y = ((from.y >= to.y) ? from.y : to.y) + 20;
+
+            return {
+                from: from,
+                middle: middle,
+                to: to
+            };
         }
 
         /**

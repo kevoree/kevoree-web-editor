@@ -128,6 +128,12 @@ angular.module('editorApp')
                         uiFactory.createComponent(instance);
                     });
                 });
+
+            //model.groups.array.forEach(function (grp) {
+            //    grp.subNodes.array.forEach(function (node) {
+            //        uiFactory.createGroupWire(grp, node);
+            //    });
+            //});
         }
 
         // listen to model changes on the editor

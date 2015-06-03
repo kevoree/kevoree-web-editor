@@ -130,16 +130,8 @@ angular.module('editorApp')
 
         $scope.deleteSelected = function (evt) {
             evt.preventDefault();
-            var model = kEditor.getModel();
-            var selected = uiFactory.getSelected();
-            if (selected.length > 0) {
-                selected.forEach(function (path) {
-                    var elem = model.findByPath(path);
-                    if (elem) {
-                        elem.delete();
-                    }
-                });
-            } else {
+            var deletions = uiFactory.deleteSelected();
+            if (deletions === 0) {
                 Notification.warning({
                     title: 'Delete selected',
                     message: 'Nothing selected',

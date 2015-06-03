@@ -12,7 +12,7 @@ svg#editor .port text {
     font-family: "Helvetica", sans-serif;
 }
 
-svg#editor .instance .bg.selected {
+svg#editor .selected {
     stroke: orange;
     cursor: move;
 }

@@ -83,35 +83,62 @@ angular.module('editorApp')
 
             if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.REMOVE) {
                 console.log('REMOVE', trace);
-                if (trace.elementAttributeName === 'hubs' ||
-                    trace.elementAttributeName === 'nodes' ||
-                    trace.elementAttributeName === 'groups' ||
-                    trace.elementAttributeName === 'hosts' ||
-                    trace.elementAttributeName === 'components') {
-                    uiFactory.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
+                if (trace.previousPath === '/') {
+                    if (trace.elementAttributeName === 'hubs' ||
+                        trace.elementAttributeName === 'nodes' ||
+                        trace.elementAttributeName === 'groups') {
+                        uiFactory.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
+                    }
+                } else {
+                    if (trace.elementAttributeName === 'hosts' ||
+                        trace.elementAttributeName === 'components') {
+                        uiFactory.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
+
+                    } else if (trace.elementAttributeName === 'groups') {
+                        // means detaching a node from a group
+                        uiFactory.deleteGroupWire(trace.previous_value, trace.previousPath); // jshint ignore:line
+                        var fragDic = trace.value.findFragmentDictionaryByID(trace.source.name);
+                        if (fragDic) {
+                            fragDic.delete();
+                        }
+                    }
                 }
 
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.REMOVE_ALL) {
-                switch (trace.elementAttributeName) {
-                    case 'hubs':
-                        uiFactory.deleteChannels();
-                        break;
+                console.log('REMOVE_ALL', trace);
+                if (trace.previousPath === '/') {
+                    switch (trace.elementAttributeName) {
+                        case 'hubs':
+                            uiFactory.deleteChannels();
+                            break;
 
-                    case 'nodes':
-                        uiFactory.deleteNodes();
-                        break;
+                        case 'nodes':
+                            uiFactory.deleteNodes();
+                            break;
 
-                    case 'groups':
-                        uiFactory.deleteGroups();
-                        break;
+                        case 'groups':
+                            uiFactory.deleteGroups();
+                            break;
 
-                    case 'mBindings':
-                        uiFactory.deleteBindings();
-                        break;
+                        case 'mBindings':
+                            uiFactory.deleteBindings();
+                            break;
+                    }
+                } else {
+                    if (trace.elementAttributeName === 'groups') {
+                        trace.value.array.forEach(function (group) {
+                            console.log('must remove wire between', group.path(), trace.previousPath);
+                            uiFactory.deleteGroupWire(group.path(), trace.previousPath);
+                            var fragDic = group.findFragmentDictionaryByID(trace.source.name);
+                            if (fragDic) {
+                                fragDic.delete();
+                            }
+                        });
+                    }
                 }
 
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.ADD) {
-                //console.log('ADD', trace);
+                console.log('ADD', trace);
                 trace.value.removeAllModelElementListeners();
                 trace.value.addModelElementListener({ elementChanged: modelReactor });
 

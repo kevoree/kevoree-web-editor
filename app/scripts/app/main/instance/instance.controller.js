@@ -93,18 +93,22 @@ angular.module('editorApp')
                             case 'channel':
                                 $scope.instance.bindings.array.forEach(function (binding) {
                                     if (binding.port) {
-                                        var fragDic = kFactory.createFragmentDictionary();
-                                        fragDic.name = binding.port.eContainer().eContainer().name;
-                                        $scope.instance.addFragmentDictionary(fragDic);
+                                        if (!$scope.instance.findFragmentDictionaryByID(binding.port.eContainer().eContainer().name)) {
+                                            var fragDic = kFactory.createFragmentDictionary();
+                                            fragDic.name = binding.port.eContainer().eContainer().name;
+                                            $scope.instance.addFragmentDictionary(fragDic);
+                                        }
                                     }
                                 });
                                 break;
 
                             case 'group':
                                 $scope.instance.subNodes.array.forEach(function (node) {
-                                    var fragDic = kFactory.createFragmentDictionary();
-                                    fragDic.name = node.name;
-                                    $scope.instance.addFragmentDictionary(fragDic);
+                                    if (!$scope.instance.findFragmentDictionaryByID(node.name)) {
+                                        var fragDic = kFactory.createFragmentDictionary();
+                                        fragDic.name = node.name;
+                                        $scope.instance.addFragmentDictionary(fragDic);
+                                    }
                                 });
                                 break;
                         }
