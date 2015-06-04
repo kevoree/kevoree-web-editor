@@ -8,20 +8,16 @@
  * Controller of the editorApp main content div
  */
 angular.module('editorApp')
-    .controller('MainCtrl', function ($scope, kEditor, hotkeys, saveFile, uiFactory, kModelHelper, kFactory, Notification) {
+    .controller('MainCtrl', function ($scope, $timeout, kEditor, hotkeys, saveFile, uiFactory, kModelHelper, kFactory, Notification) {
         Notification.config({ top: 90 });
 
-        var onDataListener = function () {};
-
-        $scope.onFileLoaded = function (data) {
-            $scope.fileData = data;
-            onDataListener(data);
-        };
+        $scope.onFileLoaded = function () {};
 
         $scope.open = function (evt) {
             evt.preventDefault();
 
-            function openModel(data) {
+            $scope.onFileLoaded = function (data) {
+                $scope.loading = true;
                 var oldModel = kEditor.getModel();
                 try {
                     var loader = kFactory.createJSONLoader();
@@ -36,20 +32,17 @@ angular.module('editorApp')
                         delay: 5000
                     });
                     kEditor.setModel(oldModel);
+                } finally {
+                    $scope.loading = false;
                 }
-            }
-
-            if ($scope.fileData) {
-                openModel($scope.fileData);
-            } else {
-                onDataListener = openModel;
-            }
+            };
             angular.element('input#file').click();
         };
 
         $scope.dndLoad = function (data) {
             var oldModel = kEditor.getModel();
             try {
+                $scope.loading = true;
                 var loader = kFactory.createJSONLoader();
                 var model = loader.loadModelFromString(data).get(0);
                 kEditor.setModel(model);
@@ -62,14 +55,16 @@ angular.module('editorApp')
                     delay: 5000
                 });
                 kEditor.setModel(oldModel);
+            } finally {
+                $scope.loading = false;
             }
         };
 
         $scope.merge = function (evt) {
             evt.preventDefault();
-
-            function mergeModel(data) {
+            $scope.onFileLoaded = function mergeModel(data) {
                 try {
+                    $scope.loading = true;
                     var loader = kFactory.createJSONLoader();
                     var compare = kFactory.createModelCompare();
                     var model = loader.loadModelFromString(data).get(0);
@@ -83,14 +78,10 @@ angular.module('editorApp')
                         message: 'Unable to merge your model',
                         delay: 5000
                     });
+                } finally {
+                    $scope.loading = false;
                 }
-            }
-
-            if ($scope.fileData) {
-                mergeModel($scope.fileData);
-            } else {
-                onDataListener = mergeModel;
-            }
+            };
             angular.element('input#file').click();
         };
 

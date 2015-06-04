@@ -8,7 +8,8 @@ angular.module('editorApp')
             link: function(scope, element, attrs) {
                 var fn = $parse(attrs.onData);
 
-                element.on('change', function (onChangeEvent) {
+                element.on('change', function (evt) {
+                    console.log('change');
                     var reader = new FileReader();
 
                     reader.onload = function (evt) {
@@ -18,8 +19,12 @@ angular.module('editorApp')
                     };
 
                     try {
-                        reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
+                        reader.readAsText(evt.target.files[0]);
                     } catch (err) {}
+                });
+
+                element.on('click', function () {
+                    this.value = null;
                 });
             }
         };

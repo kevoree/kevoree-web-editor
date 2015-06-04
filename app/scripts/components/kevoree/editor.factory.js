@@ -25,22 +25,9 @@ angular.module('editorApp')
             setModel: function (model) {
                 this.model = model;
 
-                this.model.addModelElementListener({
+                this.model.addModelTreeListener({
                     elementChanged: modelReactor
                 });
-
-                var visitor = new KevoreeLibrary.modeling.api.util.ModelVisitor();
-                visitor.visit = function (elem, ref) {
-                    if (ref === 'nodes' ||
-                        ref === 'groups' ||
-                        ref === 'components' ||
-                        ref === 'hubs' ||
-                        ref === 'packages' ||
-                        ref === 'typeDefinitions') {
-                        elem.addModelElementListener({ elementChanged: modelReactor });
-                    }
-                };
-                this.model.visit(visitor, true, true, false);
 
                 uiFactory.setModel(model);
 
@@ -97,6 +84,23 @@ angular.module('editorApp')
                             uiFactory.createGroupWire(group, trace.source);
                         });
 
+                        // redraw sibling bindings
+                        trace.source.hosts.array.forEach(function redrawBindings(child) {
+                            child.components.array.forEach(function (comp) {
+                                comp.provided.array.forEach(function (port) {
+                                    port.bindings.array.forEach(function (binding) {
+                                        uiFactory.createBinding(binding);
+                                    });
+                                });
+                                comp.required.array.forEach(function (port) {
+                                    port.bindings.array.forEach(function (binding) {
+                                        uiFactory.createBinding(binding);
+                                    });
+                                })
+                            });
+                            child.hosts.array.forEach(redrawBindings);
+                        });
+
                     } else if (trace.elementAttributeName === 'groups') {
                         // means detaching a node from a group
                         uiFactory.deleteGroupWire(trace.previous_value, trace.previousPath); // jshint ignore:line
@@ -123,26 +127,38 @@ angular.module('editorApp')
                             uiFactory.deleteGroups();
                             break;
 
-                        case 'mBindings':
+                        case 'bindings':
                             uiFactory.deleteBindings();
                             break;
                     }
                 } else {
-                    if (trace.elementAttributeName === 'groups') {
-                        trace.value.array.forEach(function (group) {
-                            uiFactory.deleteGroupWire(group.path(), trace.previousPath);
-                            var fragDic = group.findFragmentDictionaryByID(trace.source.name);
-                            if (fragDic) {
-                                fragDic.delete();
-                            }
-                        });
+                    switch (trace.elementAttributeName) {
+                        case 'groups':
+                            trace.value.array.forEach(function (group) {
+                                uiFactory.deleteGroupWire(group.path(), trace.previousPath);
+                                var fragDic = group.findFragmentDictionaryByID(trace.source.name);
+                                if (fragDic) {
+                                    fragDic.delete();
+                                }
+                            });
+                            break;
+
+                        case 'bindings':
+                            trace.value.array.forEach(function (binding) {
+                                uiFactory.deleteBinding(binding.path());
+                                if (!binding.hub || !binding.port) {
+                                    binding.delete();
+                                }
+                            });
+                            //uiFactory.deleteBindings(trace.previousPath);
+                            // TODO check if there is at least one binding to this node, otherwise
+                            // we can remove all fragmentDictionaries between those bindings' channels and nodes
+                            break;
                     }
                 }
 
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.ADD) {
                 console.log('ADD', trace);
-                trace.value.removeAllModelElementListeners();
-                trace.value.addModelElementListener({ elementChanged: modelReactor });
 
                 if (trace.previousPath === '/') {
                     switch (trace.elementAttributeName) {
@@ -158,15 +174,16 @@ angular.module('editorApp')
                         case 'groups':
                             uiFactory.createGroup(trace.value);
                             break;
-
-                        case 'components':
-                            uiFactory.createComponent(trace.value);
-                            break;
                     }
                 } else {
                     switch (trace.elementAttributeName) {
                         case 'groups':
                             uiFactory.createGroupWire(trace.value, trace.source);
+                            break;
+
+                        case 'components':
+                            uiFactory.createComponent(trace.value);
+                            // TODO update bindings
                             break;
 
                         case 'hosts':
@@ -189,8 +206,23 @@ angular.module('editorApp')
                 }
 
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.SET) {
-                console.log('SET', trace);
-                uiFactory.updateInstance(trace.previousPath, trace.source);
+                switch (trace.elementAttributeName) {
+                    case 'name':
+                    case 'value':
+                    case 'started':
+                        console.log('SET handled', trace);
+                        uiFactory.updateInstance(trace.previousPath, trace.source);
+                        break;
+
+                    case 'typeDefinition':
+                        console.log('SET typeDef', trace);
+                        uiFactory.updateCompTypeDefinition(trace.source, trace.previous_value); // jshint ignore:line
+                        break;
+
+                    default:
+                        console.log('SET ignored', trace);
+                        break;
+                }
             }
         }
 

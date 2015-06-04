@@ -14,7 +14,9 @@ angular.module('editorApp')
         $scope.dragDraggable = {
             animate: true,
             placeholder: 'keep',
-            onDrag: 'onDrag'
+            onStart: 'onStart',
+            onDrag: 'onDrag',
+            onStop: 'onStop'
         };
 
         $scope.dragOptions = {
@@ -35,8 +37,40 @@ angular.module('editorApp')
             return Object.keys($scope.packages).length > 0;
         };
 
+        $scope.onStart = function () {
+            var container = document.getElementById('editor-container');
+            this.offset = { left: container.offsetLeft, top: container.offsetTop };
+        };
+
         $scope.onDrag = function (evt) {
             uiFactory.mousePos = { x: evt.clientX, y: evt.clientY };
+
+            clearTimeout(this.timeout);
+            if (this.hoveredNode) {
+                this.hoveredNode.select('.bg').removeClass('hovered error');
+            }
+
+            this.timeout = setTimeout(function () {
+                this.hoveredNode = uiFactory.getHoveredNode(
+                    uiFactory.mousePos.x - this.offset.left,
+                    uiFactory.mousePos.y - this.offset.top);
+                if (this.hoveredNode) {
+                    var nodeBg = this.hoveredNode.select('.bg');
+                    nodeBg.addClass('hovered');
+
+                    // TODO check if compatible
+                }
+            }.bind(this), 100);
+        };
+
+        $scope.onStop = function () {
+            clearTimeout(this.timeout);
+            if (this.hoveredNode) {
+                this.hoveredNode.select('.bg').removeClass('hovered error');
+            }
+            delete this.timeout;
+            delete this.offset;
+            delete this.hoveredNode;
         };
 
         /**

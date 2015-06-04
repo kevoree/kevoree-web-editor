@@ -38,6 +38,16 @@ angular.module('editorApp')
             return $scope.instance && (typeof ($scope.instance.networkInformation) !== 'undefined');
         };
 
+        $scope.addNetwork = function () {
+            var net = kFactory.createNetworkInfo();
+            net.name = 'ip';
+            var val = kFactory.createValue();
+            val.name = 'lo';
+            val.value = '127.0.0.1';
+            net.addValues(val);
+            $scope.instance.addNetworkInformation(net);
+        };
+
         $scope.isTruish = kModelHelper.isTruish;
 
         uiFactory.setSelectedListener(function (path) {
@@ -65,10 +75,15 @@ angular.module('editorApp')
                     return tdef.version;
                 });
             $scope.selectedVersion = $scope.versions.indexOf($scope.instance.typeDefinition.version)+'';
-            $scope.dicAttrs = $scope.instance.typeDefinition.dictionaryType
-                .select('attributes[fragmentDependant=false]').array;
-            $scope.fragDicAttrs = $scope.instance.typeDefinition.dictionaryType
-                .select('attributes[fragmentDependant=true]').array;
+            if ($scope.instance.typeDefinition.dictionaryType) {
+                $scope.dicAttrs = $scope.instance.typeDefinition.dictionaryType
+                    .select('attributes[fragmentDependant=false]').array;
+                $scope.fragDicAttrs = $scope.instance.typeDefinition.dictionaryType
+                    .select('attributes[fragmentDependant=true]').array;
+            } else {
+                $scope.dicAttrs = [];
+                $scope.fragDicAttrs = [];
+            }
 
             // create dictionary values if none set
             kInstance.initDictionaries($scope.instance);
@@ -82,21 +97,23 @@ angular.module('editorApp')
          * @param isFragment
          */
         function processDictionary(dic, dicType, isFragment) {
-            dic.values.array.forEach(function (val) {
-                var attr = dicType.select('attributes[name='+val.name+']').array[0];
-                if (attr) {
-                    if ($scope.isTruish(attr.fragmentDependant)) {
-                        if (!isFragment) {
-                            val.delete();
+            if (dicType) {
+                dic.values.array.forEach(function (val) {
+                    var attr = dicType.select('attributes[name='+val.name+']').array[0];
+                    if (attr) {
+                        if ($scope.isTruish(attr.fragmentDependant)) {
+                            if (!isFragment) {
+                                val.delete();
+                            }
+                        } else {
+                            if (isFragment) {
+                                val.delete();
+                            }
                         }
                     } else {
-                        if (isFragment) {
-                            val.delete();
-                        }
+                        val.delete();
                     }
-                } else {
-                    val.delete();
-                }
-            });
+                });
+            }
         }
     });

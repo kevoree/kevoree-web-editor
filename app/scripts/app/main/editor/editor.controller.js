@@ -131,11 +131,9 @@ angular.module('editorApp')
                     });
                 });
 
-            //model.groups.array.forEach(function (grp) {
-            //    grp.subNodes.array.forEach(function (node) {
-            //        uiFactory.createGroupWire(grp, node);
-            //    });
-            //});
+            model.mBindings.array.forEach(function (binding) {
+                uiFactory.createBinding(binding);
+            });
         }
 
         // listen to model changes on the editor

@@ -66,6 +66,8 @@ angular.module('editorApp')
                 var modelStr = kScript.parseModel(kEditor.getModel());
                 editor.setValue(modelStr);
             } catch (err) {
+                console.warn('[kevscript.controller.editorLoaded()] Error creating Kevscript from model');
+                console.error(err.stack);
                 Notification.error({
                     title: 'KevScript parser',
                     message: 'Unable to convert current model to KevScript',
