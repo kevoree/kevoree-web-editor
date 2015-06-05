@@ -62,6 +62,7 @@ angular.module('editorApp')
          * @param trace
          */
         function modelReactor(trace) {
+            var fragDic;
             if (trace.elementAttributeName === 'typeDefinitions' || trace.elementAttributeName === 'packages') {
                 editor.listeners.forEach(function (listener) {
                     listener();
@@ -80,31 +81,11 @@ angular.module('editorApp')
                     if (trace.elementAttributeName === 'hosts' ||
                         trace.elementAttributeName === 'components') {
                         uiFactory.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
-                        trace.source.groups.array.forEach(function (group) {
-                            uiFactory.createGroupWire(group, trace.source);
-                        });
-
-                        // redraw sibling bindings
-                        trace.source.hosts.array.forEach(function redrawBindings(child) {
-                            child.components.array.forEach(function (comp) {
-                                comp.provided.array.forEach(function (port) {
-                                    port.bindings.array.forEach(function (binding) {
-                                        uiFactory.createBinding(binding);
-                                    });
-                                });
-                                comp.required.array.forEach(function (port) {
-                                    port.bindings.array.forEach(function (binding) {
-                                        uiFactory.createBinding(binding);
-                                    });
-                                })
-                            });
-                            child.hosts.array.forEach(redrawBindings);
-                        });
 
                     } else if (trace.elementAttributeName === 'groups') {
                         // means detaching a node from a group
                         uiFactory.deleteGroupWire(trace.previous_value, trace.previousPath); // jshint ignore:line
-                        var fragDic = trace.value.findFragmentDictionaryByID(trace.source.name);
+                        fragDic = trace.value.findFragmentDictionaryByID(trace.source.name);
                         if (fragDic) {
                             fragDic.delete();
                         }
@@ -127,7 +108,7 @@ angular.module('editorApp')
                             uiFactory.deleteGroups();
                             break;
 
-                        case 'bindings':
+                        case 'mBindings':
                             uiFactory.deleteBindings();
                             break;
                     }
@@ -183,11 +164,25 @@ angular.module('editorApp')
 
                         case 'components':
                             uiFactory.createComponent(trace.value);
-                            // TODO update bindings
+                            trace.source.groups.array.forEach(function (group) {
+                                uiFactory.createGroupWire(group, trace.source);
+                            });
+
+                            trace.value.provided.array.forEach(function (port) {
+                                port.bindings.array.forEach(function (binding) {
+                                    uiFactory.createBinding(binding);
+                                });
+                            });
+                            trace.value.required.array.forEach(function (port) {
+                                port.bindings.array.forEach(function (binding) {
+                                    uiFactory.createBinding(binding);
+                                });
+                            });
                             break;
 
                         case 'hosts':
                             uiFactory.createNode(trace.value);
+                            // update wires
                             trace.value.groups.array.forEach(function (group) {
                                 uiFactory.createGroupWire(group, trace.source);
                             });
@@ -208,6 +203,35 @@ angular.module('editorApp')
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.SET) {
                 switch (trace.elementAttributeName) {
                     case 'name':
+                        if (trace.source.getRefInParent() === 'nodes') {
+                            // update groups fragmentDictionaries
+                            trace.source.groups.array.forEach(function (group) {
+                                fragDic = group.findFragmentDictionaryByID(trace.previous_value); // jshint ignore:line
+                                if (fragDic) {
+                                    fragDic.name = trace.source.name;
+                                }
+                            });
+                            // update bindings fragmentDictionaries
+                            trace.source.components.array.forEach(function (comp) {
+                                function processPort(port) {
+                                    port.bindings.array.forEach(function (binding) {
+                                        if (binding.hub) {
+                                            fragDic = binding.hub.findFragmentDictionaryByID(trace.previous_value); // jshint ignore:line
+                                            if (fragDic) {
+                                                fragDic.name = trace.source.name;
+                                            }
+                                        }
+                                    });
+                                }
+
+                                comp.provided.array.forEach(processPort);
+                                comp.required.array.forEach(processPort);
+                            });
+                        }
+                        console.log('SET handled', trace);
+                        uiFactory.updateInstance(trace.previousPath, trace.source);
+                        break;
+
                     case 'value':
                     case 'started':
                         console.log('SET handled', trace);
@@ -215,8 +239,10 @@ angular.module('editorApp')
                         break;
 
                     case 'typeDefinition':
-                        console.log('SET typeDef', trace);
-                        uiFactory.updateCompTypeDefinition(trace.source, trace.previous_value); // jshint ignore:line
+                        if (trace.value !== null) {
+                            console.log('SET typeDef', trace);
+                            uiFactory.updateCompTypeDefinition(trace.source, trace.previous_value); // jshint ignore:line
+                        }
                         break;
 
                     default:

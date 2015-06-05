@@ -8,7 +8,7 @@
  * Controller of the editorApp main content div
  */
 angular.module('editorApp')
-    .controller('MainCtrl', function ($scope, $timeout, kEditor, hotkeys, saveFile, uiFactory, kModelHelper, kFactory, Notification) {
+    .controller('MainCtrl', function ($scope, $timeout, $modal, kEditor, hotkeys, saveFile, uiFactory, kModelHelper, kFactory, Notification) {
         Notification.config({ top: 90 });
 
         $scope.onFileLoaded = function () {};
@@ -105,7 +105,7 @@ angular.module('editorApp')
             });
         };
 
-        $scope.save = function (evt) {
+        $scope.save = function (evt, filename) {
             evt.preventDefault();
             var serializer = kFactory.createJSONSerializer();
 
@@ -115,7 +115,7 @@ angular.module('editorApp')
                 // prettify model
                 modelStr = JSON.stringify(JSON.parse(modelStr), null, 4);
                 // download model on client
-                saveFile.save(modelStr, null, '.json', 'application/json');
+                saveFile.save(modelStr, filename, '.json', 'application/json');
             } catch (err) {
                 Notification.error({
                     title: 'Save',
@@ -198,7 +198,37 @@ angular.module('editorApp')
         hotkeys.add({
             combo: 'ctrl+s',
             description: 'Save the current model into a JSON file',
-            callback: $scope.save
+            callback: function (evt) {
+                evt.preventDefault();
+                var saveFile = $scope.save;
+                $modal
+                    .open({
+                        templateUrl: 'scripts/components/util/filename.modal.html',
+                        size: 'sm',
+                        controller: function ($scope, $modalInstance) {
+                            $scope.title = 'Save model';
+                            $scope.body = 'Would you like to save your current model to a file?';
+                            $scope.filename = 'model'+(Math.floor(Math.random() * (1000 - 100)) + 100);
+                            $modalInstance.opened.then(function () {
+                                $timeout(function () {
+                                    angular.element('#filename').focus();
+                                }, 100);
+                            });
+
+                            $scope.save = function () {
+                                function endsWith(str, suffix) {
+                                    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+                                }
+                                var suffix = '.json';
+                                if (endsWith($scope.filename, suffix)) {
+                                    $scope.filename = $scope.filename.substr(0, $scope.filename.length - suffix.length);
+                                }
+                                saveFile(evt, $scope.filename);
+                                $modalInstance.close();
+                            };
+                        }
+                    });
+            }
         });
 
         hotkeys.add({

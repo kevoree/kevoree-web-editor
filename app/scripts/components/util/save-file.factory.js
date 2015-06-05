@@ -11,7 +11,7 @@ angular.module('editorApp')
              * @param type file mimetype (if none given: "text/plain")
              */
             save: function (data, filename, ext, type) {
-                filename = filename || new Date().getTime();
+                filename = filename || 'model'+(Math.floor(Math.random() * (1000 - 100)) + 100);
                 ext = ext || '.txt';
                 type = type || 'text/plain';
 

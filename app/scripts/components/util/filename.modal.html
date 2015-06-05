@@ -1,8 +1,8 @@
 <div class="modal-header">
-  <h3 class="modal-title">Save KevScript</h3>
+  <h3 class="modal-title">{{ title }}</h3>
 </div>
 <div class="modal-body">
-  <p>Would you like to save your current KevScript to a file?</p>
+  <p>{{ body }}</p>
   <label for="filename">Filename</label>
   <input type="text" id="filename" class="form-control" data-ng-model="filename" data-ui-keypress="{13:'save()'}">
 </div>

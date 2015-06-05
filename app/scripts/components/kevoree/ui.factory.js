@@ -221,44 +221,23 @@ angular.module('editorApp')
                     .touchable()
                     .draggable(instance)
                     .dragMove(function () {
+                        var args = arguments;
                         instance.subNodes.array.forEach(function (subNode) {
                             var wire = factory.editor.select('.group-wire[data-from="'+instance.path()+'"][data-to="'+subNode.path()+'"]');
                             if (wire) {
-                                var subNodeData = this.data(subNode.path());
-                                if (!subNodeData) {
-                                    var nodeElem = factory.editor.select('.node[data-path="'+subNode.path()+'"]');
-                                    subNodeData = getAbsoluteBBox(nodeElem);
-                                    this.data(subNode.path(), {
-                                        x: subNodeData.x,
-                                        y: subNodeData.y,
-                                        width: nodeElem.select('.bg').asPX('width'),
-                                        height: nodeElem.select('.bg').asPX('height')
-                                    });
-                                }
-
-                                var localM = group.transform().localMatrix;
-                                var coords = computeWireCoordsFromPts(
-                                    { x: localM.e, y: localM.f + (GROUP_RADIUS/2) + GROUP_PLUG_RADIUS },
-                                    { x: subNodeData.x, y: subNodeData.y },
-                                    subNodeData.width,
-                                    subNodeData.height);
-
-                                wire.selectAll('path')
-                                    .attr({
-                                        d: 'M'+coords.from.x+','+coords.from.y+' '+coords.to.x+','+coords.to.y
-                                    });
-
-                                wire.select('circle')
-                                    .attr({
-                                        cx: coords.to.x,
-                                        cy: coords.to.y
-                                    });
+                                wire.data('startPtDrag').apply(wire, args);
                             }
                         }.bind(this));
                     })
                     .dragEnd(function () {
+                        var args = arguments;
                         instance.subNodes.array.forEach(function (subNode) {
-                            this.removeData(subNode.path());
+                            var wire = factory.editor.select('.group-wire[data-from="'+instance.path()+'"][data-to="'+subNode.path()+'"]');
+                            if (wire) {
+                                wire.data('dragEnd').forEach(function (handler) {
+                                    handler.apply(wire, args);
+                                });
+                            }
                         }.bind(this));
                     })
                     .relocate(instance);
@@ -274,27 +253,47 @@ angular.module('editorApp')
             },
 
             createGroupWire: function (group, node) {
-                var grpElem = factory.editor.select('.group[data-path="'+group.path()+'"]'),
-                    nodeElem = this.editor.select('.node[data-path="'+node.path()+'"]'),
-                    wireElem = this.editor.select('.group-wire[data-from="'+group.path()+'"][data-to="'+node.path()+'"]'),
-                    coords = computeWireCoords(grpElem, nodeElem);
+                var grpElem, nodeElem, wireElem, data = {}, toAnchor = {};
+
+                function computeData() {
+                    grpElem = factory.editor.select('.group[data-path="'+group.path()+'"]');
+                    nodeElem = factory.editor.select('.node[data-path="'+node.path()+'"]');
+                    wireElem = factory.editor.select('.group-wire[data-from="'+group.path()+'"][data-to="'+node.path()+'"]');
+
+                    var grpMatrix = grpElem.transform().localMatrix,
+                        toBox = getAbsoluteBBox(nodeElem);
+
+                    data = {
+                        from: { x: grpMatrix.e, y: grpMatrix.f + (GROUP_RADIUS/2) + GROUP_PLUG_RADIUS },
+                        to:   { x: toBox.x, y: toBox.y },
+                        width: nodeElem.select('.bg').asPX('width'),
+                        height: nodeElem.select('.bg').asPX('height')
+                    };
+
+                    toAnchor = computeWireNodeAnchor(data.from, data.to, data.width, data.height);
+                }
+                computeData();
 
                 if (wireElem) {
+                    // update data
+                    wireElem
+                        .data('data', data);
+                    // update bg location
                     wireElem
                         .selectAll('path')
                         .attr({
-                            d: 'M'+coords.from.x+','+coords.from.y+' '+coords.to.x+','+coords.to.y
+                            d: 'M'+data.from.x+','+data.from.y+' '+toAnchor.x+','+toAnchor.y
                         });
-
+                    // update node plug location
                     wireElem
                         .select('circle')
                         .attr({
-                            cx: coords.to.x,
-                            cy: coords.to.y
+                            cx: toAnchor.x,
+                            cy: toAnchor.y
                         });
                 } else {
                     var wireBg = this.editor
-                        .path('M'+coords.from.x+','+coords.from.y+' '+coords.to.x+','+coords.to.y)
+                        .path('M'+data.from.x+','+data.from.y+' '+toAnchor.x+','+toAnchor.y)
                         .attr({
                             fill: 'none',
                             stroke: '#5aa564',
@@ -311,7 +310,7 @@ angular.module('editorApp')
                         });
 
                     var nodePlug = this.editor
-                        .circle(coords.to.x, coords.to.y, 4)
+                        .circle(toAnchor.x, toAnchor.y, 4)
                         .attr({ fill: 'white' });
 
                     this.editor
@@ -321,9 +320,44 @@ angular.module('editorApp')
                             'data-from': group.path(),
                             'data-to': node.path()
                         })
+                        .data('data', data)
                         .append(wireBg)
                         .append(nodePlug)
-                        .mousedown(mouseDownHandler);
+                        .mousedown(mouseDownHandler)
+                        .startPtDrag(function (dx, dy) {
+                            var data = this.data('data');
+                            var nFrom = {
+                                x: data.from.x + dx,
+                                y: data.from.y + dy
+                            };
+                            var anchor = computeWireNodeAnchor(nFrom, data.to, data.width, data.height);
+                            wireBg.attr({
+                                d: 'M' + nFrom.x + ',' + nFrom.y + ' ' + anchor.x + ',' + anchor.y
+                            });
+                            nodePlug.attr({
+                                cx: anchor.x,
+                                cy: anchor.y
+                            });
+                        })
+                        .endPtDrag(function (dx, dy) {
+                            var data = this.data('data');
+                            var nTo = {
+                                x: data.to.x + dx,
+                                y: data.to.y + dy
+                            };
+                            var anchor = computeWireNodeAnchor(data.from, nTo, data.width, data.height);
+                            wireBg.attr({
+                                d: 'M'+data.from.x+','+data.from.y+' '+anchor.x+','+anchor.y
+                            });
+                            nodePlug.attr({
+                                cx: anchor.x,
+                                cy: anchor.y
+                            });
+                        })
+                        .dragEnd(function () {
+                            computeData();
+                            this.data('data', data);
+                        });
                 }
             },
 
@@ -379,18 +413,42 @@ angular.module('editorApp')
                         this.data('offset', { left: container.offsetLeft, top: container.offsetTop });
                     })
                     .firstDragMove(function () {
+                        var args = arguments;
                         if (instance.host) {
                             // remove instance from host
                             instance.host.removeHosts(instance);
                         }
 
-                        // remove all child nodes wires when dragging
-                        instance.hosts.array.forEach(function removeWire(childNode) {
-                            factory.editor.selectAll('.group-wire[data-to="'+childNode.path()+'"]').remove();
-                            childNode.hosts.array.forEach(removeWire);
+                        // trigger bindings firstDragMove while dragging start
+                        var redrawBindings = function (comp) {
+                            var redrawBinding = function (binding) {
+                                var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                                if (elem) {
+                                    elem.data('firstDragMove').forEach(function (handler) {
+                                        handler.apply(elem, args);
+                                    });
+                                }
+                            }.bind(this);
+
+                            comp.provided.array.forEach(function (port) {
+                                port.bindings.array.forEach(redrawBinding);
+                            });
+
+                            comp.required.array.forEach(function (port) {
+                                port.bindings.array.forEach(redrawBinding);
+                            });
+                        }.bind(this);
+                        instance.components.array.forEach(redrawBindings);
+
+                        // recursive redraw
+                        instance.hosts.array.forEach(function redrawChild(child) {
+                            child.components.array.forEach(redrawBindings);
+                            child.hosts.array.forEach(redrawChild);
                         });
                     })
                     .dragMove(function (dx, dy, clientX, clientY) {
+                        var args = arguments;
+
                         // ui-error feedback
                         clearTimeout(this.data('dragTimeout'));
                         var nodeElem = this.data('hoveredNode');
@@ -411,13 +469,23 @@ angular.module('editorApp')
                         this.data('dragTimeout', timeout);
 
                         // redraw group-wire while dragging
+                        var redrawWire = function (group, node) {
+                            var wire = factory.editor.select('.group-wire[data-from="'+group.path()+'"][data-to="'+node.path()+'"]');
+                            if (wire) {
+                                wire.data('endPtDrag').apply(wire, args);
+                            }
+                        };
                         instance.groups.array.forEach(function (group) {
-                            factory.createGroupWire(group, instance);
-                        }.bind(this));
+                            redrawWire(group, instance);
+                        });
 
+                        // redraw bindings while dragging
                         var redrawBindings = function (comp) {
                             var redrawBinding = function (binding) {
-                                factory.createBinding(binding);
+                                var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                                if (elem) {
+                                    elem.data('startPtDrag').apply(elem, args);
+                                }
                             }.bind(this);
 
                             comp.provided.array.forEach(function (port) {
@@ -428,17 +496,20 @@ angular.module('editorApp')
                                 port.bindings.array.forEach(redrawBinding);
                             });
                         }.bind(this);
-
-                        // redraw bindings while dragging
                         instance.components.array.forEach(redrawBindings);
 
-                        // redraw children bindings
+                        // recursive redraw
                         instance.hosts.array.forEach(function redrawChild(child) {
                             child.components.array.forEach(redrawBindings);
+                            child.groups.array.forEach(function (group) {
+                                redrawWire(group, child);
+                            });
                             child.hosts.array.forEach(redrawChild);
                         });
                     })
                     .dragEnd(function () {
+                        var args = arguments;
+
                         var hoveredNode = this.data('hoveredNode');
                         if (hoveredNode) {
                             // remove green ui-feedback
@@ -466,19 +537,49 @@ angular.module('editorApp')
                                 });
                         }
 
+                        function updateWire(group, node) {
+                            var wire = factory.editor.select('.group-wire[data-from="'+group.path()+'"][data-to="'+node.path()+'"]');
+                            if (wire) {
+                                wire.data('dragEnd').forEach(function (handler) {
+                                    handler.apply(wire, args);
+                                });
+                            }
+                        }
                         instance.groups.array.forEach(function (group) {
                             this.removeData(group.path());
-                            factory.createGroupWire(group, instance);
+                            updateWire(group, instance);
                         }.bind(this));
 
-                        instance.hosts.array.forEach(function addWire(childNode) {
-                            childNode.groups.array.forEach(function (group) {
-                                factory.createGroupWire(group, childNode);
+                        clearTimeout(this.data('dragTimeout'));
+
+                        // update bindings coords when dragging done
+                        function updateBindings(comp) {
+                            function updateBindingCoords(binding) {
+                                var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                                if (elem) {
+                                    elem.data('dragEnd').forEach(function (handler) {
+                                        handler.apply(elem, args);
+                                    });
+                                }
+                            }
+
+                            comp.provided.array.forEach(function (port) {
+                                port.bindings.array.forEach(updateBindingCoords);
                             });
-                            childNode.hosts.array.forEach(addWire);
+
+                            comp.required.array.forEach(function (port) {
+                                port.bindings.array.forEach(updateBindingCoords);
+                            });
+                        }
+                        instance.components.array.forEach(updateBindings);
+                        instance.hosts.array.forEach(function redrawChild(child) {
+                            child.components.array.forEach(updateBindings);
+                            child.groups.array.forEach(function (group) {
+                                updateWire(group, child);
+                            });
+                            child.hosts.array.forEach(redrawChild);
                         });
 
-                        clearTimeout(this.data('dragTimeout'));
                         this.removeData('dragTimeout');
                         this.removeData('hoveredNode');
                         this.removeData('offset');
@@ -616,10 +717,28 @@ angular.module('editorApp')
                         this.data('offset', { left: container.offsetLeft, top: container.offsetTop });
                     })
                     .firstDragMove(function () {
+                        var args = arguments;
+
                         this.data('parentNode', instance.eContainer());
                         instance.eContainer().removeComponents(instance);
+
+                        // redraw bindings after component when dragging start
+                        var redrawBindings = function (port) {
+                            port.bindings.array.forEach(function (binding) {
+                                var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                                if (elem) {
+                                    elem.data('firstDragMove').forEach(function (handler) {
+                                        handler.apply(elem, args);
+                                    });
+                                }
+                            });
+                        }.bind(this);
+                        instance.provided.array.forEach(redrawBindings);
+                        instance.required.array.forEach(redrawBindings);
                     })
                     .dragMove(function (dx, dy, clientX, clientY) {
+                        var args = arguments;
+
                         // ui-error feedback
                         clearTimeout(this.data('dragTimeout'));
                         var nodeElem = this.data('hoveredNode');
@@ -638,6 +757,18 @@ angular.module('editorApp')
                             }
                         }.bind(this), 100);
                         this.data('dragTimeout', timeout);
+
+                        // redraw bindings when dragging
+                        var redrawBindings = function (port) {
+                            port.bindings.array.forEach(function (binding) {
+                                var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                                if (elem) {
+                                    elem.data('startPtDrag').apply(elem, args);
+                                }
+                            });
+                        }.bind(this);
+                        instance.provided.array.forEach(redrawBindings);
+                        instance.required.array.forEach(redrawBindings);
                     })
                     .dragEnd(function () {
                         var hoveredNode = this.data('hoveredNode');
@@ -654,6 +785,7 @@ angular.module('editorApp')
                         }
 
                         clearTimeout(this.data('dragTimeout'));
+
                         this.removeData('parentNode');
                         this.removeData('offset');
                         this.removeData('hoveredNode');
@@ -681,46 +813,93 @@ angular.module('editorApp')
                     var portElem = this.editor.select(
                             '.comp[data-path="'+binding.port.eContainer().path()+'"] ' +
                             '.port[data-name="'+binding.port.name+'"]'),
-                        chanElem = factory.editor.select('.chan[data-path="'+binding.hub.path()+'"]'),
-                        bindingElem = this.editor.select('.binding[data-path="'+binding.path()+'"]'),
-                        coords = computeBindingCoords(portElem, chanElem);
+                        chanElem = this.editor.select('.chan[data-path="'+binding.hub.path()+'"]'),
+                        bindingElem = this.editor.select('.binding[data-path="'+binding.path()+'"]');
 
-                    if (bindingElem) {
-                        bindingElem
-                            .select('.bg')
-                            .attr({
-                                d: 'M'+coords.port.x+','+coords.port.y+' Q'+coords.middle.x+','+coords.middle.y+' '+coords.chan.x+','+coords.chan.y
-                            });
-                    } else {
-                        var bindingBg = this.editor
-                            .path('M'+coords.port.x+','+coords.port.y+' Q'+coords.middle.x+','+coords.middle.y+' '+coords.chan.x+','+coords.chan.y)
-                            .attr({
-                                fill: 'none',
-                                stroke: (binding.port.getRefInParent() === 'provided') ? '#ECCA40' : '#C60808',
-                                strokeWidth: 5,
-                                strokeLineCap: 'round',
-                                strokeLineJoin: 'round',
-                                opacity: 0.7,
-                                'class': 'bg'
-                            })
-                            .mouseover(function () {
-                                this.attr({opacity: 0.85, strokeWidth: 6});
-                            })
-                            .mouseout(function () {
-                                this.attr({opacity: 0.7, strokeWidth: 5});
-                            });
+                    if (portElem && chanElem) {
+                        var coords = computeBindingCoords(portElem, chanElem);
+                        if (bindingElem) {
+                            bindingElem.data('coords', coords);
+                            bindingElem
+                                .select('.bg')
+                                .attr({
+                                    d: 'M'+coords.port.x+','+coords.port.y+' Q'+coords.middle.x+','+coords.middle.y+' '+coords.chan.x+','+coords.chan.y
+                                });
+                        } else {
+                            var bindingBg = this.editor
+                                .path('M'+coords.port.x+','+coords.port.y+' Q'+coords.middle.x+','+coords.middle.y+' '+coords.chan.x+','+coords.chan.y)
+                                .attr({
+                                    fill: 'none',
+                                    stroke: (binding.port.getRefInParent() === 'provided') ? '#ECCA40' : '#C60808',
+                                    strokeWidth: 5,
+                                    strokeLineCap: 'round',
+                                    strokeLineJoin: 'round',
+                                    opacity: 0.7,
+                                    'class': 'bg'
+                                })
+                                .mouseover(function () {
+                                    this.attr({opacity: 0.85, strokeWidth: 6});
+                                })
+                                .mouseout(function () {
+                                    this.attr({opacity: 0.7, strokeWidth: 5});
+                                });
 
-                        bindingElem = this.editor
-                            .group()
-                            .attr({
-                                'class': 'binding',
-                                'data-path': binding.path()
-                            })
-                            .append(bindingBg)
-                            .mousedown(mouseDownHandler);
+                            this.editor
+                                .group()
+                                .attr({
+                                    'class': 'binding',
+                                    'data-path': binding.path()
+                                })
+                                .data('coords', coords)
+                                .append(bindingBg)
+                                .mousedown(mouseDownHandler)
+                                .firstDragMove(function () {
+                                    this.appendTo(factory.editor);
+                                })
+                                .startPtDrag(function (dx, dy) {
+                                    var coords = this.data('coords');
+                                    var portDx = coords.port.x + dx,
+                                        portDy = coords.port.y + dy;
+
+                                    if (portDx > coords.chan.x) {
+                                        coords.middle.x = coords.chan.x + (portDx - coords.chan.x)/2;
+                                    } else {
+                                        coords.middle.x = portDx + (coords.chan.x - portDx)/2;
+                                    }
+
+                                    coords.middle.y = ((portDy >= coords.chan.y) ? portDy : coords.chan.y) + 20;
+
+                                    bindingBg.attr({
+                                        d: 'M'+portDx+','+portDy+' Q'+coords.middle.x+','+coords.middle.y+' '+coords.chan.x+','+coords.chan.y
+                                    });
+                                })
+                                .endPtDrag(function (dx, dy) {
+                                    var coords = this.data('coords');
+                                    var chanDx = coords.chan.x + dx,
+                                        chanDy = coords.chan.y + dy;
+
+                                    if (coords.port.x > chanDx) {
+                                        coords.middle.x = chanDx + (coords.port.x - chanDx)/2;
+                                    } else {
+                                        coords.middle.x = coords.port.x + (chanDx - coords.port.x)/2;
+                                    }
+
+                                    coords.middle.y = ((coords.port.y >= chanDy) ? coords.port.y : chanDy) + 20;
+
+                                    bindingBg.attr({
+                                        d: 'M'+coords.port.x+','+coords.port.y+' Q'+coords.middle.x+','+coords.middle.y+' '+chanDx+','+chanDy
+                                    });
+                                })
+                                .dragEnd(function () {
+                                    var portElem = factory.editor.select(
+                                            '.comp[data-path="'+binding.port.eContainer().path()+'"] ' +
+                                            '.port[data-name="'+binding.port.name+'"]'),
+                                        chanElem = factory.editor.select('.chan[data-path="'+binding.hub.path()+'"]');
+                                    this.data('coords', computeBindingCoords(portElem, chanElem));
+                                });
+                        }
                     }
 
-                    bindingElem.appendTo(this.editor);
                 }
             },
 
@@ -764,9 +943,25 @@ angular.module('editorApp')
                     .mousedown(mouseDownHandler)
                     .touchable()
                     .draggable(instance)
-                    .dragMove(function () {
+                    .dragMove(function (dx, dy) {
+                        var args = arguments;
                         instance.bindings.array.forEach(function (binding) {
-                            factory.createBinding(binding);
+                            //factory.createBinding(binding);
+                            var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                            elem.data('endPtDrag').apply(elem, args);
+                        });
+                    })
+                    .dragEnd(function () {
+                        var args = arguments;
+
+                        // update bindings coords when done
+                        instance.bindings.array.forEach(function (binding) {
+                            var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                            if (elem) {
+                                elem.data('dragEnd').forEach(function (handler) {
+                                    handler.apply(elem, args);
+                                });
+                            }
                         });
                     })
                     .relocate(instance);
@@ -790,11 +985,45 @@ angular.module('editorApp')
                         // refresh all group-wire from this whole node
                         var highestNode = factory.model.findByPath(highestNodePath);
                         if (highestNode) {
+                            highestNode.groups.array.forEach(function (group) {
+                                factory.createGroupWire(group, highestNode);
+                            });
                             highestNode.hosts.array.forEach(function redrawWire(child) {
                                 child.groups.array.forEach(function (group) {
                                     factory.createGroupWire(group, child);
                                 });
                                 child.hosts.array.forEach(redrawWire);
+                            });
+
+                            // redraw parent bindings
+                            highestNode.components.array.forEach(function (comp) {
+                                comp.provided.array.forEach(function (port) {
+                                    port.bindings.array.forEach(function (binding) {
+                                        factory.createBinding(binding);
+                                    });
+                                });
+                                comp.required.array.forEach(function (port) {
+                                    port.bindings.array.forEach(function (binding) {
+                                        factory.createBinding(binding);
+                                    });
+                                })
+                            });
+
+                            // redraw sibling bindings
+                            highestNode.hosts.array.forEach(function redrawBindings(child) {
+                                child.components.array.forEach(function (comp) {
+                                    comp.provided.array.forEach(function (port) {
+                                        port.bindings.array.forEach(function (binding) {
+                                            factory.createBinding(binding);
+                                        });
+                                    });
+                                    comp.required.array.forEach(function (port) {
+                                        port.bindings.array.forEach(function (binding) {
+                                            factory.createBinding(binding);
+                                        });
+                                    })
+                                });
+                                child.hosts.array.forEach(redrawBindings);
                             });
                         }
                     } else {
@@ -931,7 +1160,6 @@ angular.module('editorApp')
                             case 'provided':
                                 // remove of a provided port
                                 portType = factory.model.findByPath(trace.objPath);
-                                console.log('> REMOVE provided', portType.name);
                                 port = comp.findProvidedByID(portType.name);
                                 if (port) {
                                     port.delete();
@@ -941,7 +1169,6 @@ angular.module('editorApp')
                             case 'required':
                                 // remove of a required port
                                 portType = factory.model.findByPath(trace.objPath);
-                                console.log('> REMOVE required', portType.name);
                                 port = comp.findRequiredByID(portType.name);
                                 if (port) {
                                     port.delete();
@@ -1079,15 +1306,6 @@ angular.module('editorApp')
 
                 this.transform(this.data('ot') + (this.data('ot') ? 'T':'t') + [ dx, dy ]);
 
-                // TODO this needs improvment because Firefox suck at it (Chrome is fine though)
-                //if (factory.draggedInstancePath) {
-                //    factory.editor.selectAll('.node .bg').attr({ stroke: 'white' });
-                //    var node = factory.getHoveredNode(evt.offsetX, evt.offsetY);
-                //    if (node) {
-                //        node.select('.bg').attr({ stroke: 'yellow' });
-                //    }
-                //}
-
                 if (this.data('hasMoved')) {
                     var handlers = this.data('dragMove');
                     if (handlers) {
@@ -1155,6 +1373,14 @@ angular.module('editorApp')
                 var handlers = this.data('dragMove') || [];
                 handlers.push(handler);
                 return this.data('dragMove', handlers);
+            };
+
+            Element.prototype.startPtDrag = function (handler) {
+                return this.data('startPtDrag', handler);
+            };
+
+            Element.prototype.endPtDrag = function (handler) {
+                return this.data('endPtDrag', handler);
             };
 
             Element.prototype.firstDragMove = function (handler) {
@@ -1352,7 +1578,7 @@ angular.module('editorApp')
             var bbox = elem.getBBox();
 
             function walkUp(elem) {
-                if (elem.parent().hasClass('instance')) {
+                if (elem.parent() && elem.parent().hasClass('instance')) {
                     var parentBox = elem.parent().getBBox();
                     bbox.x += parentBox.x;
                     bbox.y += parentBox.y;
@@ -1377,33 +1603,7 @@ angular.module('editorApp')
                 y <= bbox.y + bbox.height;
         }
 
-        /**
-         *
-         * @param fromElem
-         * @param toElem
-         * @returns {{from: {x: number, y: number}, middle: {x: number, y: number}, to: {x: number, y: number}}}
-         */
-        function computeWireCoords(fromElem, toElem) {
-            var fromM = fromElem.transform().localMatrix,
-                toM = getAbsoluteBBox(toElem),
-                from = { x: fromM.e, y: fromM.f + (GROUP_RADIUS/2) + GROUP_PLUG_RADIUS },
-                width = toElem.select('.bg').asPX('width'),
-                height = toElem.select('.bg').asPX('height');
-
-            return computeWireCoordsFromPts(from, toM, width, height);
-        }
-
-        /**
-         *
-         * @param from
-         * @param to
-         * @param width
-         * @param height
-         * @returns {{from: {x: number, y: number}, middle: {x: number, y: number}, to: {x: number, y: number}}}
-         */
-        function computeWireCoordsFromPts(from, to, width, height) {
-            var middle = { x: 0, y: 0 };
-
+        function computeWireNodeAnchor(from, to, width, height) {
             function getHorizontalAlignment() {
                 if (from.x >= to.x + width/3 && from.x <= to.x + (width/3)*2) {
                     return 'middle';
@@ -1431,58 +1631,31 @@ angular.module('editorApp')
 
             var alignment = getVerticalAlignment() + '-' + getHorizontalAlignment();
             switch (alignment) {
+                default:
                 case 'top-left':
-                    to.x += 2;
-                    to.y += 2;
-                    break;
+                    return { x: to.x + 2, y: to.y + 2 };
 
                 case 'top-middle':
-                    to.x += width/2;
-                    break;
+                    return { x: to.x + width/2, y: to.y };
 
                 case 'top-right':
-                    to.x += width - 2;
-                    to.y += 2;
-                    break;
+                    return { x: to.x + width - 2, y: to.y + 2 };
 
                 case 'middle-left':
-                    to.y += height/2;
-                    break;
+                    return { x: to.x, y: to.y + height/2 };
 
                 case 'middle-right':
-                    to.x += width;
-                    to.y += height/2;
-                    break;
+                    return { x: to.x + width, y: to.y + height/2 };
 
                 case 'bottom-left':
-                    to.x += 2;
-                    to.y += height - 2;
-                    break;
+                    return { x: to.x + 2, y: to.y + height - 2 };
 
                 case 'bottom-middle':
-                    to.x += width/2;
-                    to.y += height;
-                    break;
+                    return { x: to.x + width/2, y: to.y + height };
 
                 case 'bottom-right':
-                    to.x += width - 2;
-                    to.y += height - 2;
-                    break;
+                    return { x: to.x + width - 2, y: to.y + height - 2 };
             }
-
-            //if (from.x > to.x) {
-            //    middle.x = to.x + (from.x - to.x)/2;
-            //} else {
-            //    middle.x = from.x + (to.x - from.x)/2;
-            //}
-            //
-            //middle.y = ((from.y >= to.y) ? from.y : to.y) + 20;
-
-            return {
-                from: from,
-                middle: middle,
-                to: to
-            };
         }
 
         function computeBindingCoords(portElem, chanElem) {
@@ -1501,11 +1674,7 @@ angular.module('editorApp')
 
             middle.y = ((port.y >= chan.y) ? port.y : chan.y) + 20;
 
-            return {
-                chan: chan,
-                port: port,
-                middle: middle
-            };
+            return { chan: chan, port: port, middle: middle };
         }
 
         /**

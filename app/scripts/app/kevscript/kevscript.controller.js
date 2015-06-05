@@ -25,11 +25,13 @@ angular.module('editorApp')
                 'Ctrl-S': function () {
                     $modal
                         .open({
-                            templateUrl: 'scripts/app/kevscript/kevscript.modal.html',
+                            templateUrl: 'scripts/components/util/filename.modal.html',
                             size: 'sm',
                             scope: $scope,
                             controller: function ($scope, $modalInstance) {
-                                $scope.filename = new Date().getTime()+'';
+                                $scope.title = 'Save Kevscript';
+                                $scope.body = 'Would you like to save your current KevScript to a file?';
+                                $scope.filename = 'model'+(Math.floor(Math.random() * (1000 - 100)) + 100);
                                 $modalInstance.opened.then(function () {
                                     $timeout(function () {
                                         angular.element('#filename').focus();

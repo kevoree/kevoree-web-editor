@@ -54,9 +54,11 @@ angular.module('editorApp')
             $timeout(function () {
                 if (path) {
                     $scope.instance = kEditor.getModel().findByPath(path);
-                    if ($scope.instance) {
+                    if ($scope.instance && $scope.instance.getRefInParent() !== 'mBindings') {
                         $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
                         processTypeDefinition();
+                    } else {
+                        $scope.instance = null;
                     }
 
                 } else {
