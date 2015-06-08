@@ -13,16 +13,16 @@ angular.module('editorApp')
             onDrop: 'onDrop'
         };
         $scope.dropOptions = {
-            accept: function (obj) {
+            accept: function (ui) {
                 var accept = false;
-                var pkgPath = obj[0].dataset.pkgPath;
-                var tdefName = obj[0].innerHTML.trim();
+                var pkgPath = ui[0].dataset.pkgPath;
+                var tdefName = ui[0].innerHTML.trim();
                 var tdefs = kEditor.getModel().select(pkgPath+'/typeDefinitions[name='+tdefName+']');
                 var tdef = kModelHelper.findBestVersion(tdefs.array);
                 var type = kModelHelper.getTypeDefinitionType(tdef);
 
                 if (type === 'component') {
-                    accept = uiFactory.getNodePathAtPoint(uiFactory.mousePos.x, uiFactory.mousePos.y);
+                    accept = uiFactory.getDropTarget();
                 } else {
                     accept = true;
                 }
@@ -50,21 +50,24 @@ angular.module('editorApp')
                 instance.started = true;
                 var pos = kFactory.createValue();
                 pos.name = KWE_POSITION;
-                pos.value = JSON.stringify({ x: evt.clientX - editor.offsetLeft, y: evt.clientY - editor.offsetTop });
+                pos.value = JSON.stringify({
+                    x: uiFactory.mousePos.x - editor.offsetLeft,
+                    y: uiFactory.mousePos.y - editor.offsetTop
+                });
                 instance.addMetaData(pos);
             }
 
             var model = kEditor.getModel();
-            var instance, path, node;
+            var dropTarget = uiFactory.getDropTarget();
+            var instance, node;
             switch (type) {
                 case 'node':
                     instance = kFactory.createContainerNode();
                     instance.name = 'node'+parseInt(Math.random()*1000);
                     preProcess(instance);
-                    path = uiFactory.getNodePathAtPoint(evt.clientX, evt.clientY);
                     model.addNodes(instance);
-                    if (path) {
-                        node = model.findByPath(path);
+                    if (dropTarget) {
+                        node = model.findByPath(dropTarget.attr('data-path'));
                         if (node) {
                             node.addHosts(instance);
                         }
@@ -83,9 +86,8 @@ angular.module('editorApp')
                     instance.name = 'comp'+parseInt(Math.random()*1000);
                     instance.typeDefinition = tdef;
                     instance.started = true;
-                    path = uiFactory.getNodePathAtPoint(evt.clientX, evt.clientY);
-                    if (path) {
-                        node = model.findByPath(path);
+                    if (dropTarget) {
+                        node = model.findByPath(dropTarget.attr('data-path'));
                         if (node) {
                             node.addComponents(instance);
                         }
@@ -100,6 +102,7 @@ angular.module('editorApp')
                     break;
             }
 
+            uiFactory.setDropTarget(null);
             return true;
         };
 

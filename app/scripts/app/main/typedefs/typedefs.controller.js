@@ -8,11 +8,11 @@
  * Controller of the editorApp TypeDefinition sidebar
  */
 angular.module('editorApp')
-    .controller('TypedefsCtrl', function ($scope, kEditor, uiFactory, kModelHelper) {
+    .controller('TypedefsCtrl', function ($scope, kEditor, uiFactory, kModelHelper, kFactory, Notification, KWE_POSITION) {
         $scope.packages = {};
 
         $scope.dragDraggable = {
-            animate: true,
+            animate: false,
             placeholder: 'keep',
             onStart: 'onStart',
             onDrag: 'onDrag',
@@ -37,40 +37,124 @@ angular.module('editorApp')
             return Object.keys($scope.packages).length > 0;
         };
 
-        $scope.onStart = function () {
-            var container = document.getElementById('editor-container');
-            this.offset = { left: container.offsetLeft, top: container.offsetTop };
+        $scope.onStart = function (evt, obj) {
+            uiFactory.setDropTarget(null);
+            if (obj.helper.hasClass('tdef-item-component') || obj.helper.hasClass('tdef-item-node')) {
+                var container = document.getElementById('editor-container');
+                this.offset = { left: container.offsetLeft, top: container.offsetTop };
+            }
         };
 
-        $scope.onDrag = function (evt) {
+        $scope.onDrag = function (evt, obj) {
             uiFactory.mousePos = { x: evt.clientX, y: evt.clientY };
 
-            clearTimeout(this.timeout);
-            if (this.hoveredNode) {
-                this.hoveredNode.select('.bg').removeClass('hovered error');
-            }
-
-            this.timeout = setTimeout(function () {
-                this.hoveredNode = uiFactory.getHoveredNode(
-                    uiFactory.mousePos.x - this.offset.left,
-                    uiFactory.mousePos.y - this.offset.top);
+            if (obj.helper.hasClass('tdef-item-component') || obj.helper.hasClass('tdef-item-node')) {
+                clearTimeout(this.timeout);
                 if (this.hoveredNode) {
-                    var nodeBg = this.hoveredNode.select('.bg');
-                    nodeBg.addClass('hovered');
-
-                    // TODO check if compatible
+                    this.hoveredNode.select('.bg').removeClass('hovered error');
                 }
-            }.bind(this), 100);
+
+                this.timeout = setTimeout(function () {
+                    this.hoveredNode = uiFactory.getHoveredNode(
+                        uiFactory.mousePos.x - this.offset.left,
+                        uiFactory.mousePos.y - this.offset.top);
+                    if (this.hoveredNode) {
+                        var nodeBg = this.hoveredNode.select('.bg');
+                        nodeBg.addClass('hovered');
+
+                        // TODO check if compatible
+                    }
+
+                    uiFactory.setDropTarget(this.hoveredNode);
+                }.bind(this), 100);
+            }
         };
 
-        $scope.onStop = function () {
-            clearTimeout(this.timeout);
-            if (this.hoveredNode) {
-                this.hoveredNode.select('.bg').removeClass('hovered error');
+        $scope.onStop = function (evt, obj) {
+            if (obj.helper.hasClass('tdef-item-component') || obj.helper.hasClass('tdef-item-node')) {
+                clearTimeout(this.timeout);
+                if (this.hoveredNode) {
+                    this.hoveredNode.select('.bg').removeClass('hovered error');
+                }
+                delete this.timeout;
+                delete this.offset;
+                delete this.hoveredNode;
             }
-            delete this.timeout;
-            delete this.offset;
-            delete this.hoveredNode;
+        };
+
+        $scope.addInstance = function (tdef) {
+            var tdefs = kEditor.getModel().select(tdef.pkgPath+'/typeDefinitions[name='+tdef.name+']');
+            tdef = kModelHelper.findBestVersion(tdefs.array);
+            var type = kModelHelper.getTypeDefinitionType(tdef);
+
+            function preProcess(instance) {
+                instance.typeDefinition = tdef;
+                instance.started = true;
+                var pos = kFactory.createValue();
+                pos.name = KWE_POSITION;
+                pos.value = JSON.stringify({ x: 100, y: 100 });
+                instance.addMetaData(pos);
+            }
+
+            var model = kEditor.getModel();
+            var selectedNodes = uiFactory.getSelectedNodes();
+            var instance, node;
+            switch (type) {
+                case 'node':
+                    if (selectedNodes.length > 0) {
+                        selectedNodes.forEach(function (nodeElem) {
+                            var node = model.findByPath(nodeElem.attr('data-path'));
+                            if (node) {
+                                instance = kFactory.createContainerNode();
+                                instance.name = 'node'+parseInt(Math.random()*1000);
+                                preProcess(instance);
+                                model.addNodes(instance);
+                                node.addHosts(instance);
+                            }
+                        });
+                    } else {
+                        instance = kFactory.createContainerNode();
+                        instance.name = 'node'+parseInt(Math.random()*1000);
+                        preProcess(instance);
+                        model.addNodes(instance);
+                    }
+                    break;
+
+                case 'group':
+                    instance = kFactory.createGroup();
+                    instance.name = 'group'+parseInt(Math.random()*1000);
+                    preProcess(instance);
+                    model.addGroups(instance);
+                    break;
+
+                case 'component':
+                    if (selectedNodes.length > 0) {
+                        selectedNodes.forEach(function (nodeElem) {
+                            var node = model.findByPath(nodeElem.attr('data-path'));
+                            if (node) {
+                                instance = kFactory.createComponentInstance();
+                                instance.name = 'comp'+parseInt(Math.random()*1000);
+                                instance.typeDefinition = tdef;
+                                instance.started = true;
+                                node.addComponents(instance);
+                            }
+                        });
+                    } else {
+                        Notification.warning({
+                            title: 'Add component',
+                            message: 'You have to select at least one node',
+                            delay: 5000
+                        });
+                    }
+                    break;
+
+                case 'channel':
+                    instance = kFactory.createChannel();
+                    instance.name = 'chan'+parseInt(Math.random()*1000);
+                    preProcess(instance);
+                    model.addHubs(instance);
+                    break;
+            }
         };
 
         /**

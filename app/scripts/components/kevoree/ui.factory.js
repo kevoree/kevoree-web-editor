@@ -1261,6 +1261,14 @@ angular.module('editorApp')
                 return selected.concat(children);
             },
 
+            getSelectedNodes: function () {
+                return this.editor
+                    .selectAll('.node > .selected').items
+                    .map(function (bg) {
+                        return bg.parent();
+                    });
+            },
+
             getNodePathAtPoint: function (x, y) {
                 var container = this.getEditorContainer();
                 var node = factory.getHoveredNode(x-container.offsetLeft, y-container.offsetTop);
@@ -1277,6 +1285,20 @@ angular.module('editorApp')
 
             setSelectedListener: function (listener) {
                 this.listener = listener;
+            },
+
+            selectAll: function () {
+                this.editor.selectAll('.bg').items.forEach(function (elem) {
+                    elem.addClass('selected');
+                });
+            },
+
+            setDropTarget: function (elem) {
+                this.dropTarget = elem;
+            },
+
+            getDropTarget: function () {
+                return this.dropTarget;
             },
 
             setModel: function (model) {

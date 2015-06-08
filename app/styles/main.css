@@ -262,10 +262,6 @@ body {
   background-color: #333;
 }
 
-.tdef-item.ui-draggable-dragging:hover {
-  cursor: pointer;
-}
-
 .tdef-item-node {
   background: url('../images/node.png') top left repeat-y;
 }

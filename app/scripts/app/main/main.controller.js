@@ -249,6 +249,15 @@ angular.module('editorApp')
             callback: $scope.deleteSelected
         });
 
+        hotkeys.add({
+            combo: 'ctrl+a',
+            description: 'Select every instances',
+            callback: function (evt) {
+                evt.preventDefault();
+                uiFactory.selectAll();
+            }
+        });
+
         //hotkeys.add({
         //    combo: 'ctrl+z',
         //    description: 'Undo the last modification',

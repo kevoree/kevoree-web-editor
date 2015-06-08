@@ -29,6 +29,7 @@
                         class="tdef-item"
                         data-ng-repeat="tdef in pkg.tdefs | orderBy:'tdef.name'"
                         data-ng-class="'tdef-item-'+tdef.type"
+                        data-ng-dblclick="addInstance(tdef)"
                         data-drag="true"
                         data-jqyoui-draggable="dragDraggable"
                         data-jqyoui-options="dragOptions"
