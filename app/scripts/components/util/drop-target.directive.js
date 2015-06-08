@@ -26,7 +26,8 @@ angular.module('editorApp')
                                 scope.$apply(function () {
                                     fn(scope, {
                                         $event: event,
-                                        $data: event.target.result
+                                        $data: event.target.result,
+                                        $name: file.name
                                     });
                                 });
                             };

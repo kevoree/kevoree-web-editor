@@ -9,11 +9,15 @@ angular.module('editorApp')
                 var fn = $parse(attrs.onData);
 
                 element.on('change', function (evt) {
+                    console.log(evt);
                     var reader = new FileReader();
 
-                    reader.onload = function (evt) {
+                    reader.onload = function (onLoadEvt) {
                         scope.$apply(function () {
-                            fn(scope, { $data: evt.target.result });
+                            fn(scope, {
+                                $data: onLoadEvt.target.result,
+                                $name: evt.target.files[0].name
+                            });
                         });
                     };
 

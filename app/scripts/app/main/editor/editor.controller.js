@@ -121,9 +121,6 @@ angular.module('editorApp')
         function processModel() {
             var model = kEditor.getModel();
 
-            model.groups.array.forEach(function (instance) {
-                uiFactory.createGroup(instance);
-            });
             model.hubs.array.forEach(function (instance) {
                 uiFactory.createChannel(instance);
             });
@@ -139,6 +136,14 @@ angular.module('editorApp')
                         uiFactory.createComponent(instance);
                     });
                 });
+
+            model.groups.array.forEach(function (instance) {
+                uiFactory.createGroup(instance);
+
+                instance.subNodes.array.forEach(function (node) {
+                    uiFactory.createGroupWire(instance, node);
+                });
+            });
 
             model.mBindings.array.forEach(function (binding) {
                 uiFactory.createBinding(binding);

@@ -16,19 +16,24 @@ angular.module('editorApp')
         $scope.open = function (evt) {
             evt.preventDefault();
 
-            $scope.onFileLoaded = function (data) {
+            $scope.onFileLoaded = function (filename, data) {
                 $scope.loading = true;
                 var oldModel = kEditor.getModel();
                 try {
                     var loader = kFactory.createJSONLoader();
                     var model = loader.loadModelFromString(data).get(0);
                     kEditor.setModel(model);
+                    Notification.success({
+                        title: 'Open from file',
+                        message: 'Model loaded from <strong>'+filename+'</strong>',
+                        delay: 5000
+                    });
                 } catch (err) {
                     console.warn('[main.controller.open()] Error loading model file');
                     console.error(err.stack);
                     Notification.error({
                         title: 'Open from file',
-                        message: 'Unable to load your model',
+                        message: 'Unable to load a model from <strong>'+filename+'</strong>',
                         delay: 5000
                     });
                     kEditor.setModel(oldModel);
@@ -39,19 +44,24 @@ angular.module('editorApp')
             angular.element('input#file').click();
         };
 
-        $scope.dndLoad = function (data) {
+        $scope.dndLoad = function (filename, data) {
             var oldModel = kEditor.getModel();
             try {
                 $scope.loading = true;
                 var loader = kFactory.createJSONLoader();
                 var model = loader.loadModelFromString(data).get(0);
                 kEditor.setModel(model);
+                Notification.success({
+                    title: 'Open from file (dnd)',
+                    message: 'Model loaded from <strong>'+filename+'</strong>',
+                    delay: 5000
+                });
             } catch (err) {
                 console.warn('[main.controller.dndLoad()] Error loading model file');
                 console.error(err.stack);
                 Notification.error({
                     title: 'Open from file (dnd)',
-                    message: 'Unable to load your model',
+                    message: 'Unable to load a model from <strong>'+filename+'</strong>',
                     delay: 5000
                 });
                 kEditor.setModel(oldModel);
@@ -62,7 +72,7 @@ angular.module('editorApp')
 
         $scope.merge = function (evt) {
             evt.preventDefault();
-            $scope.onFileLoaded = function mergeModel(data) {
+            $scope.onFileLoaded = function mergeModel(filename, data) {
                 try {
                     $scope.loading = true;
                     var loader = kFactory.createJSONLoader();
@@ -70,12 +80,17 @@ angular.module('editorApp')
                     var model = loader.loadModelFromString(data).get(0);
                     compare.merge(model, kEditor.getModel()).applyOn(model);
                     kEditor.setModel(model);
+                    Notification.success({
+                        title: 'Merge from file',
+                        message: 'Model merged with <strong>'+filename+'</strong>',
+                        delay: 5000
+                    });
                 } catch (err) {
                     console.warn('[main.controller.merge()] Error loading model file');
                     console.error(err.stack);
                     Notification.error({
                         title: 'Merge from file',
-                        message: 'Unable to merge your model',
+                        message: 'Unable to merge the model with <strong>'+filename+'</strong>',
                         delay: 5000
                     });
                 } finally {
@@ -87,21 +102,93 @@ angular.module('editorApp')
 
         $scope.openFromNode = function (evt) {
             evt.preventDefault();
-            console.log('openFromNode');
-            Notification.warning({
-                title: 'Open from node',
-                message: 'Not implemented yet',
-                delay: 3000
+
+            $modal.open({
+                templateUrl: 'scripts/components/util/from-node.modal.html',
+                size: 'md',
+                controller: function ($scope, $modalInstance, kWs) {
+                    $scope.action = 'Open';
+                    $scope.host = '127.0.0.1';
+                    $scope.port = 9000;
+                    $scope.path = '/';
+
+                    $modalInstance.opened.then(function () {
+                        $timeout(function () {
+                            angular.element('#host').focus();
+                        }, 100);
+                    });
+
+                    $scope.confirm = function () {
+                        $scope.closeError();
+
+                        kWs.getModel($scope.host, $scope.port, $scope.path, function (err, model, url) {
+                            if (err) {
+                                $timeout(function () {
+                                    $scope.error = err.message;
+                                });
+                            } else {
+                                kEditor.setModel(model);
+                                Notification.success({
+                                    title: 'Open from node',
+                                    message: 'Model loaded from <strong>'+url+'</strong>',
+                                    delay: 5000
+                                });
+                                $modalInstance.close();
+                            }
+                        });
+                    };
+
+                    $scope.closeError = function () {
+                        $scope.error = null;
+                    };
+                }
             });
         };
 
         $scope.mergeFromNode = function (evt) {
             evt.preventDefault();
-            console.log('mergeFromNode');
-            Notification.warning({
-                title: 'Merge from node',
-                message: 'Not implemented yet',
-                delay: 3000
+
+            $modal.open({
+                templateUrl: 'scripts/components/util/from-node.modal.html',
+                size: 'md',
+                controller: function ($scope, $modalInstance, kWs) {
+                    $scope.action = 'Merge';
+                    $scope.host = '127.0.0.1';
+                    $scope.port = 9000;
+                    $scope.path = '/';
+
+                    $modalInstance.opened.then(function () {
+                        $timeout(function () {
+                            angular.element('#host').focus();
+                        }, 100);
+                    });
+
+                    $scope.confirm = function () {
+                        $scope.closeError();
+
+                        kWs.getModel($scope.host, $scope.port, $scope.path, function (err, model, url) {
+                            if (err) {
+                                $timeout(function () {
+                                    $scope.error = err.message;
+                                });
+                            } else {
+                                var compare = kFactory.createModelCompare();
+                                compare.merge(model, kEditor.getModel()).applyOn(model);
+                                kEditor.setModel(model);
+                                Notification.success({
+                                    title: 'Merge from node',
+                                    message: 'Model merged with <strong>'+url+'</strong>',
+                                    delay: 5000
+                                });
+                                $modalInstance.close();
+                            }
+                        });
+                    };
+
+                    $scope.closeError = function () {
+                        $scope.error = null;
+                    };
+                }
             });
         };
 
