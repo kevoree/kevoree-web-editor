@@ -518,23 +518,6 @@ angular.module('editorApp')
                             // put it in the hovered node
                             node.remove();
                             factory.model.findByPath(hoveredNode.attr('data-path')).addHosts(instance);
-
-                            // recursively recreate children UIs
-                            instance.components.array.forEach(function (comp) {
-                                factory.createComponent(comp);
-                            });
-                            instance.hosts.array
-                                .sort(function (a, b) {
-                                    // TODO optimize this to loop only once to create node tree heights
-                                    return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
-                                })
-                                .forEach(function updateChildNode(childNode) {
-                                    factory.createNode(childNode);
-                                    childNode.components.array.forEach(function (instance) {
-                                        factory.createComponent(instance);
-                                    });
-                                    childNode.hosts.array.forEach(updateChildNode);
-                                });
                         }
 
                         function updateWire(group, node) {
@@ -598,14 +581,6 @@ angular.module('editorApp')
                 } else {
                     node.relocate(instance);
                 }
-
-                try {
-                    refreshNode(getHighestNodePath(node));
-                } catch (err) {}
-
-                instance.groups.array.forEach(function (group) {
-                    factory.createGroupWire(group, instance);
-                });
 
                 return node;
             },
@@ -802,17 +777,12 @@ angular.module('editorApp')
                 comp.transform('t'+dx+','+dy);
                 host.append(comp);
 
-                try {
-                    refreshNode(getHighestNodePath(comp));
-                } catch (err) {}
                 return comp;
             },
 
             createBinding: function (binding) {
                 if (binding.hub && binding.port) {
-                    var portElem = this.editor.select(
-                            '.comp[data-path="'+binding.port.eContainer().path()+'"] ' +
-                            '.port[data-name="'+binding.port.name+'"]'),
+                    var portElem = this.editor.select('.comp[data-path="'+binding.port.eContainer().path()+'"] .port[data-name="'+binding.port.name+'"]'),
                         chanElem = this.editor.select('.chan[data-path="'+binding.hub.path()+'"]'),
                         bindingElem = this.editor.select('.binding[data-path="'+binding.path()+'"]');
 
@@ -899,7 +869,6 @@ angular.module('editorApp')
                                 });
                         }
                     }
-
                 }
             },
 
@@ -980,7 +949,7 @@ angular.module('editorApp')
                             elem.remove();
                         }
 
-                        refreshNode(highestNodePath);
+                        factory.refreshNode(highestNodePath);
 
                         // refresh all group-wire from this whole node
                         var highestNode = factory.model.findByPath(highestNodePath);
@@ -1006,7 +975,7 @@ angular.module('editorApp')
                                     port.bindings.array.forEach(function (binding) {
                                         factory.createBinding(binding);
                                     });
-                                })
+                                });
                             });
 
                             // redraw sibling bindings
@@ -1021,7 +990,7 @@ angular.module('editorApp')
                                         port.bindings.array.forEach(function (binding) {
                                             factory.createBinding(binding);
                                         });
-                                    })
+                                    });
                                 });
                                 child.hosts.array.forEach(redrawBindings);
                             });
@@ -1102,7 +1071,6 @@ angular.module('editorApp')
             },
 
             updateInstance: function (previousPath, instance) {
-                console.log('updating', instance.path());
                 var elem = this.editor.select('.instance[data-path="'+previousPath+'"]');
                 if (elem) {
                     // update data-path and name
@@ -1201,6 +1169,80 @@ angular.module('editorApp')
 
                 // recreate the new component
                 factory.createComponent(comp);
+            },
+
+            /**
+             * Refresh a node's UI (and it's children too)
+             * @param path
+             */
+            refreshNode: function (path) {
+                var instance = factory.model.findByPath(path);
+                if (instance) {
+                    var node = factory.editor.select('.node[data-path="'+path+'"]');
+                    var treeHeight = kModelHelper.getNodeTreeHeight(instance);
+                    var computedWidth = NODE_WIDTH+(20*treeHeight);
+                    if (instance.host) {
+                        computedWidth = NODE_WIDTH+(20*(kModelHelper.getNodeTreeHeight(instance.host)-1));
+                    }
+
+                    node.select('.bg').attr({
+                        width: computedWidth,
+                        height: getNodeUIHeight(instance)
+                    });
+
+                    factory.editor
+                        .selectAll('.node[data-path="'+path+'"] > text')
+                        .attr({
+                            x: computedWidth/2,
+                            'clip-path': 'url(#node-clip-'+treeHeight+')'
+                        });
+
+                    instance.components.array.forEach(function (comp) {
+                        factory.refreshComp(comp.path());
+                    });
+
+                    instance.hosts.array.forEach(function (host) {
+                        factory.refreshNode(host.path());
+                    });
+
+                    // apply dx,dy transformation of level-1 children
+                    var children = factory.editor.selectAll('.node[data-path="'+instance.path()+'"] > .instance').items;
+                    var dy = NODE_HEIGHT;
+                    children.forEach(function (child) {
+                        child.transform('t'+((computedWidth - child.select('.bg').asPX('width'))/2)+','+dy);
+                        dy += child.select('.bg').asPX('height') + 10;
+                    });
+                }
+            },
+
+            /**
+             *
+             * @param path
+             */
+            refreshComp: function (path) {
+                var instance = factory.model.findByPath(path);
+                if (instance) {
+                    var comp = factory.editor.select('.comp[data-path="'+path+'"]');
+                    var host = factory.editor.select('.node[data-path="'+instance.eContainer().path()+'"]');
+                    var treeHeight = kModelHelper.getNodeTreeHeight(instance.eContainer());
+                    var computedWidth = host.select('.bg').asPX('width') - 20;
+
+                    if (comp && host) {
+                        comp.select('.bg').attr({ width: computedWidth });
+                        factory.editor
+                            .selectAll('.comp[data-path="'+path+'"] > text')
+                            .attr({
+                                x: computedWidth/2,
+                                'clip-path': 'url(#comp-clip-'+treeHeight+')'
+                            });
+
+                        var PORT_X_PADDING = 24;
+                        instance.typeDefinition.required.array.forEach(function (portType) {
+                            var port = comp.select('.required[data-name="'+portType.name+'"]');
+                            port.transform('t'+(computedWidth - PORT_X_PADDING)+','+port.transform().localMatrix.f);
+                        });
+                    }
+                }
             },
 
             getSelected: function () {
@@ -1482,78 +1524,6 @@ angular.module('editorApp')
                 return COMP_HEIGHT * comp.typeDefinition.provided.size();
             } else {
                 return COMP_HEIGHT * comp.typeDefinition.required.size();
-            }
-        }
-
-        /**
-         * Refresh a node's UI (and it's children too)
-         * @param path
-         */
-        function refreshNode(path) {
-            var instance = factory.model.findByPath(path);
-            if (instance) {
-                var node = factory.editor.select('.node[data-path="'+path+'"]');
-                var treeHeight = kModelHelper.getNodeTreeHeight(instance);
-                var computedWidth = NODE_WIDTH+(20*treeHeight);
-                if (instance.host) {
-                    computedWidth = NODE_WIDTH+(20*(kModelHelper.getNodeTreeHeight(instance.host)-1));
-                }
-
-                node.select('.bg').attr({
-                    width: computedWidth,
-                    height: getNodeUIHeight(instance)
-                });
-
-                factory.editor
-                    .selectAll('.node[data-path="'+path+'"] > text')
-                    .attr({
-                        x: computedWidth/2,
-                        'clip-path': 'url(#node-clip-'+treeHeight+')'
-                    });
-
-                instance.components.array.forEach(function (comp) {
-                    refreshComp(comp.path());
-                });
-
-                instance.hosts.array.forEach(function (host) {
-                    refreshNode(host.path());
-                });
-
-                // apply dx,dy transformation of level-1 children
-                var children = factory.editor.selectAll('.node[data-path="'+instance.path()+'"] > .instance').items;
-                var dy = NODE_HEIGHT;
-                children.forEach(function (child) {
-                    child.transform('t'+((computedWidth - child.select('.bg').asPX('width'))/2)+','+dy);
-                    dy += child.select('.bg').asPX('height') + 10;
-                });
-            }
-        }
-
-        /**
-         *
-         * @param path
-         */
-        function refreshComp(path) {
-            var instance = factory.model.findByPath(path);
-            if (instance) {
-                var comp = factory.editor.select('.comp[data-path="'+path+'"]');
-                var host = factory.editor.select('.node[data-path="'+instance.eContainer().path()+'"]');
-                var treeHeight = kModelHelper.getNodeTreeHeight(instance.eContainer());
-                var computedWidth = host.select('.bg').asPX('width') - 20;
-
-                comp.select('.bg').attr({ width: computedWidth });
-                factory.editor
-                    .selectAll('.comp[data-path="'+path+'"] > text')
-                    .attr({
-                        x: computedWidth/2,
-                        'clip-path': 'url(#comp-clip-'+treeHeight+')'
-                    });
-
-                var PORT_X_PADDING = 24;
-                instance.typeDefinition.required.array.forEach(function (portType) {
-                    var port = comp.select('.required[data-name="'+portType.name+'"]');
-                    port.transform('t'+(computedWidth - PORT_X_PADDING)+','+port.transform().localMatrix.f);
-                });
             }
         }
 

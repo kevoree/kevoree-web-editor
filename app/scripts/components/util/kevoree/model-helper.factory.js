@@ -130,7 +130,11 @@ angular.module('editorApp')
                         return this.getHighestNode(instance.host);
 
                     case 'nodes':
-                        return instance;
+                        if (instance.host) {
+                            return this.getHighestNode(instance.host);
+                        } else {
+                            return instance;
+                        }
                 }
             },
 

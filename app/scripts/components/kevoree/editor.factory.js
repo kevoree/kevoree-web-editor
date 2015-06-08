@@ -139,30 +139,34 @@ angular.module('editorApp')
                 }
 
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.ADD) {
-                console.log('ADD', trace);
-
                 if (trace.previousPath === '/') {
                     switch (trace.elementAttributeName) {
                         case 'hubs':
+                            console.log('ADD hubs', trace);
                             uiFactory.createChannel(trace.value);
                             break;
 
                         case 'nodes':
                         case 'hosts':
+                            console.log('ADD nodes|hosts', trace);
                             uiFactory.createNode(trace.value);
+                            uiFactory.refreshNode(kModelHelper.getHighestNode(trace.value).path());
                             break;
 
                         case 'groups':
+                            console.log('ADD groups', trace);
                             uiFactory.createGroup(trace.value);
                             break;
                     }
                 } else {
                     switch (trace.elementAttributeName) {
                         case 'groups':
+                            console.log('ADD .groups', trace);
                             uiFactory.createGroupWire(trace.value, trace.source);
                             break;
 
                         case 'components':
+                            console.log('ADD .components', trace);
                             uiFactory.createComponent(trace.value);
                             trace.source.groups.array.forEach(function (group) {
                                 uiFactory.createGroupWire(group, trace.source);
@@ -178,17 +182,58 @@ angular.module('editorApp')
                                     uiFactory.createBinding(binding);
                                 });
                             });
+                            uiFactory.refreshNode(kModelHelper.getHighestNode(trace.value).path());
                             break;
 
                         case 'hosts':
+                            console.log('ADD .hosts', trace.source.path(), trace.value.path());
                             uiFactory.createNode(trace.value);
-                            // update wires
-                            trace.value.groups.array.forEach(function (group) {
-                                uiFactory.createGroupWire(group, trace.source);
+
+                            // recursively recreate children UIs
+                            trace.value.components.array.forEach(function (comp) {
+                                uiFactory.createComponent(comp);
                             });
+                            trace.value.hosts.array
+                                .sort(function (a, b) {
+                                    // TODO optimize this to loop only once to create node tree heights
+                                    return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
+                                })
+                                .forEach(function updateChildNode(childNode) {
+                                    uiFactory.createNode(childNode);
+                                    childNode.components.array.forEach(function (comp) {
+                                        uiFactory.createComponent(comp);
+                                    });
+                                    childNode.hosts.array.forEach(updateChildNode);
+                                });
+
+                            uiFactory.refreshNode(kModelHelper.getHighestNode(trace.source).path());
+
+                            var processNode = function (node) {
+                                node.components.array.forEach(function (comp) {
+                                    comp.provided.array.forEach(function (port) {
+                                        port.bindings.array.forEach(function (binding) {
+                                            console.log('must update binding', binding.hub.path(), binding.port.path());
+                                            uiFactory.createBinding(binding);
+                                        });
+                                    });
+                                    comp.required.array.forEach(function (port) {
+                                        port.bindings.array.forEach(function (binding) {
+                                            console.log('must update binding', binding.hub.path(), binding.port.path());
+                                            uiFactory.createBinding(binding);
+                                        });
+                                    });
+                                });
+                                node.groups.array.forEach(function (group) {
+                                    uiFactory.createGroupWire(group, node);
+                                });
+                                node.hosts.array.forEach(processNode);
+                            };
+
+                            processNode(kModelHelper.getHighestNode(trace.source));
                             break;
 
                         case 'subNodes':
+                            console.log('ADD .subNodes', trace);
                             kInstance.initFragmentDictionaries(trace.source);
                             if (uiFactory.listener) {
                                 var selected = uiFactory.editor.select('.selected');
@@ -203,6 +248,7 @@ angular.module('editorApp')
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.SET) {
                 switch (trace.elementAttributeName) {
                     case 'name':
+                        console.log('SET name', trace);
                         if (trace.source.getRefInParent() === 'nodes') {
                             // update groups fragmentDictionaries
                             trace.source.groups.array.forEach(function (group) {
@@ -228,13 +274,12 @@ angular.module('editorApp')
                                 comp.required.array.forEach(processPort);
                             });
                         }
-                        console.log('SET handled', trace);
                         uiFactory.updateInstance(trace.previousPath, trace.source);
                         break;
 
                     case 'value':
                     case 'started':
-                        console.log('SET handled', trace);
+                        console.log('SET value|started', trace);
                         uiFactory.updateInstance(trace.previousPath, trace.source);
                         break;
 
