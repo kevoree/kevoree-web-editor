@@ -139,6 +139,31 @@ angular.module('editorApp')
             },
 
             /**
+             * Checks if tdefSrc is compatible with this node instance
+             * @param tdef
+             * @param node
+             */
+            isCompatible: function (tdef, node) {
+                var nodePlatforms = [];
+                node.typeDefinition.deployUnits.array
+                    .forEach(function (du) {
+                        var filter = du.findFiltersByID('platform');
+                        if (filter) {
+                            nodePlatforms.push(filter.value);
+                        }
+                    });
+
+
+                for (var i=0; i < nodePlatforms.length; i++) {
+                    if (tdef.select('deployUnits[name=*]/filters[name=platform,value='+nodePlatforms[i]+']').array.length > 0) {
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+
+            /**
              * Returns true if the given value is truish (means that it is close to say "true")
              * @param val
              * @returns {boolean}

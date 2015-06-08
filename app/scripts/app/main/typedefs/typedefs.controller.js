@@ -12,7 +12,7 @@ angular.module('editorApp')
         $scope.packages = {};
 
         $scope.dragDraggable = {
-            animate: false,
+            animate: true,
             placeholder: 'keep',
             onStart: 'onStart',
             onDrag: 'onDrag',
@@ -39,9 +39,15 @@ angular.module('editorApp')
 
         $scope.onStart = function (evt, obj) {
             uiFactory.setDropTarget(null);
+
             if (obj.helper.hasClass('tdef-item-component') || obj.helper.hasClass('tdef-item-node')) {
                 var container = document.getElementById('editor-container');
                 this.offset = { left: container.offsetLeft, top: container.offsetTop };
+
+                var pkgPath = obj.helper[0].dataset.pkgPath;
+                var tdefName = obj.helper[0].innerHTML.trim();
+                var tdefs = kEditor.getModel().select(pkgPath+'/typeDefinitions[name='+tdefName+']');
+                this.typeDef = kModelHelper.findBestVersion(tdefs.array);
             }
         };
 
@@ -62,10 +68,15 @@ angular.module('editorApp')
                         var nodeBg = this.hoveredNode.select('.bg');
                         nodeBg.addClass('hovered');
 
-                        // TODO check if compatible
+                        if (!kModelHelper.isCompatible(this.typeDef, kEditor.getModel().findByPath(this.hoveredNode.attr('data-path')))) {
+                            nodeBg.addClass('error');
+                            uiFactory.setDropTarget(null);
+                        } else {
+                            uiFactory.setDropTarget(this.hoveredNode);
+                        }
+                    } else {
+                        uiFactory.setDropTarget(null);
                     }
-
-                    uiFactory.setDropTarget(this.hoveredNode);
                 }.bind(this), 100);
             }
         };
@@ -74,8 +85,25 @@ angular.module('editorApp')
             if (obj.helper.hasClass('tdef-item-component') || obj.helper.hasClass('tdef-item-node')) {
                 clearTimeout(this.timeout);
                 if (this.hoveredNode) {
+                    if (this.hoveredNode.select('.bg').hasClass('error')) {
+                        Notification.warning({
+                            title: 'Add component',
+                            message: 'Targeted node platform cannot run this TypeDefinition',
+                            delay: 5000
+                        });
+                    }
                     this.hoveredNode.select('.bg').removeClass('hovered error');
+                } else {
+                    if (obj.helper.hasClass('tdef-item-component')) {
+                        Notification.warning({
+                            title: 'Add component',
+                            message: 'You have to drop components in nodes',
+                            delay: 5000
+                        });
+                    }
                 }
+
+                delete this.typeDef;
                 delete this.timeout;
                 delete this.offset;
                 delete this.hoveredNode;

@@ -285,8 +285,16 @@ angular.module('editorApp')
 
                     case 'typeDefinition':
                         if (trace.value !== null) {
-                            console.log('SET typeDef', trace);
-                            uiFactory.updateCompTypeDefinition(trace.source, trace.previous_value); // jshint ignore:line
+                            switch (trace.source.getRefInParent()) {
+                                case 'components':
+                                    console.log('SET typeDef', trace);
+                                    uiFactory.updateCompTypeDefinition(trace.source, trace.previous_value); // jshint ignore:line
+                                    break;
+
+                                default:
+                                    console.log('SET typeDef unhandled', trace);
+                                    break;
+                            }
                         }
                         break;
 

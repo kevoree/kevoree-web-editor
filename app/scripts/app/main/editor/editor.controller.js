@@ -8,7 +8,7 @@
  * Controller of the editorApp editor
  */
 angular.module('editorApp')
-    .controller('EditorCtrl', function ($scope, kEditor, uiFactory, kModelHelper, kFactory, KWE_POSITION) {
+    .controller('EditorCtrl', function ($scope, kEditor, uiFactory, kModelHelper, kFactory, Notification, KWE_POSITION) {
         $scope.dropDroppable = {
             onDrop: 'onDrop'
         };
@@ -91,6 +91,12 @@ angular.module('editorApp')
                         if (node) {
                             node.addComponents(instance);
                         }
+                    } else {
+                        Notification.warning({
+                            title: 'Add component',
+                            message: 'You have to drop components in nodes',
+                            delay: 5000
+                        });
                     }
                     break;
 
