@@ -8,7 +8,7 @@
  * Controller of the editorApp instance editor
  */
 angular.module('editorApp')
-    .controller('InstanceCtrl', function ($scope, $timeout, uiFactory, kEditor, kFactory, kInstance, kModelHelper) {
+    .controller('InstanceCtrl', function ($scope, $timeout, $modal, uiFactory, kEditor, kFactory, kInstance, kModelHelper) {
         $scope.instance = null;
         $scope.type = null;
         $scope.mainCollapsed = false;
@@ -38,14 +38,40 @@ angular.module('editorApp')
             return $scope.instance && (typeof ($scope.instance.networkInformation) !== 'undefined');
         };
 
+        $scope.manageNetwork = function (evt, net) {
+            evt.stopPropagation();
+            $modal.open({
+                templateUrl: 'scripts/app/main/instance/network.modal.html',
+                size: 'md',
+                resolve: {
+                    node: function () {
+                        return $scope.instance;
+                    },
+                    net: function () {
+                        return net;
+                    }
+                },
+                controller: 'InstanceNetworkModalCtrl'
+            });
+        };
+
         $scope.addNetwork = function () {
             var net = kFactory.createNetworkInfo();
-            net.name = 'ip';
-            var val = kFactory.createValue();
-            val.name = 'lo';
-            val.value = '127.0.0.1';
-            net.addValues(val);
-            $scope.instance.addNetworkInformation(net);
+            net.name = 'net'+$scope.instance.networkInformation.size();
+
+            $modal.open({
+                templateUrl: 'scripts/app/main/instance/network.modal.html',
+                size: 'md',
+                resolve: {
+                    node: function () {
+                        return $scope.instance;
+                    },
+                    net: function () {
+                        return net;
+                    }
+                },
+                controller: 'InstanceNetworkModalCtrl'
+            });
         };
 
         $scope.isTruish = kModelHelper.isTruish;

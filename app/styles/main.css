@@ -96,6 +96,7 @@ body {
   margin-right: 5px;
   border-bottom: none;
   border-right: 1px solid #333;
+  word-break: break-all;
 }
 
 .sidebar-helper {
@@ -348,6 +349,10 @@ body {
 
 .modal-dialog {
   margin-top: 85px;
+}
+
+.modal-title {
+  word-break: break-all;
 }
 
 pre {

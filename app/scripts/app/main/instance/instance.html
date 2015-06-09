@@ -6,37 +6,39 @@
             &nbsp;{{ instance.typeDefinition.name }}
         </h5>
     </div>
-    <form name="form" class="instance-form" data-collapse="mainCollapsed">
-        <div class="form-group">
-            <label for="version">Version</label>
-            <select
-                    id="version"
-                    class="form-control input-sm"
-                    data-ng-model="selectedVersion"
-                    data-ng-change="changeVersion(selectedVersion)"
-                    data-ng-options="index as value for (index, value) in versions">
-            </select>
-        </div>
-        <div class="form-group" data-ng-class="form.name.$valid ? '':'has-error has-feedback'">
-            <label for="name">Name</label>
-            <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    class="form-control input-sm"
-                    placeholder="Instance name"
-                    data-ng-model="instance.name"
-                    required>
-            <span class="glyphicon glyphicon-remove form-control-feedback" data-ng-hide="form.name.$valid"></span>
-        </div>
-        <div class="form-group clearfix">
-            <label>State</label>
-            <div class="btn-group btn-group-block">
-                <label class="btn btn-sm btn-default" data-ng-model="instance.started" data-btn-radio="true">Started</label>
-                <label class="btn btn-sm btn-default" data-ng-model="instance.started" data-btn-radio="false">Stopped</label>
+    <div class="instance-form" data-collapse="mainCollapsed">
+        <form name="form">
+            <div class="form-group">
+                <label for="version">Version</label>
+                <select
+                        id="version"
+                        class="form-control input-sm"
+                        data-ng-model="selectedVersion"
+                        data-ng-change="changeVersion(selectedVersion)"
+                        data-ng-options="index as value for (index, value) in versions">
+                </select>
             </div>
-        </div>
-    </form>
+            <div class="form-group" data-ng-class="form.name.$valid ? '':'has-error has-feedback'">
+                <label for="name">Name</label>
+                <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        class="form-control input-sm"
+                        placeholder="Instance name"
+                        data-ng-model="instance.name"
+                        required>
+                <span class="glyphicon glyphicon-remove form-control-feedback" data-ng-hide="form.name.$valid"></span>
+            </div>
+            <div class="form-group clearfix">
+                <label>State</label>
+                <div class="btn-group btn-group-block">
+                    <label class="btn btn-sm btn-default" data-ng-model="instance.started" data-btn-radio="true">Started</label>
+                    <label class="btn btn-sm btn-default" data-ng-model="instance.started" data-btn-radio="false">Stopped</label>
+                </div>
+            </div>
+        </form>
+    </div>
 
     <!-- Dictionary panel -->
     <div data-ng-show="instance.dictionary.values.size() > 0">
@@ -68,14 +70,15 @@
     <div data-ng-show="hasNetworkInformation()">
         <div data-ng-repeat="net in instance.networkInformation.array">
             <div data-ng-class="type+'-right-bg'">
-                <h5 class="sidebar-header sidebar-header-right point-cursor" data-ng-click="netCollapsed = !netCollapsed">
+                <h5 class="sidebar-header sidebar-header-right point-cursor clearfix" data-ng-click="netCollapsed = !netCollapsed">
                     <i class="fa" data-ng-class="netCollapsed ? 'fa-plus':'fa-minus'"></i>
                     &nbsp;Network Informations - <strong>{{ net.name }}</strong>
+                    <a href="#" class="pull-right" data-ng-click="manageNetwork($event, net)"><i class="fa fa-cog"></i></a>
                 </h5>
             </div>
             <div data-collapse="netCollapsed">
                 <div class="instance-form">
-                    <div class="form-group" data-ng-repeat="val in net.values.array">
+                    <div class="form-group" data-ng-repeat="val in net.values.array | orderBy:'name'">
                         <label for="net-{{ net.name + '-' + val.name }}">{{ val.name }}</label>
                         <input
                                 id="net-{{ net.name + '-' + val.name }}"
@@ -86,6 +89,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="instance-form">
+            <a href="#" data-ng-click="addNetwork()">Add new network</a>
         </div>
     </div>
 </div>
