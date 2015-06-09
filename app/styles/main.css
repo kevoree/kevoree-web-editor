@@ -104,8 +104,12 @@ body {
 }
 
 .instance-form {
-  padding: 5px 8px 0 8px;
+  padding: 5px 8px 5px 8px;
   color: #999;
+}
+
+.form-group {
+  margin-bottom: 10px;
 }
 
 .menubar {
