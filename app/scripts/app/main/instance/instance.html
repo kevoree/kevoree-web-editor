@@ -1,4 +1,4 @@
-<div class="sidebar sidebar-right" data-ng-show="instance">
+<div class="sidebar sidebar-right sidebar-right-{{type}}" data-ng-show="instance">
     <!-- Main information panel -->
     <div data-ng-class="type+'-right-bg'">
         <h5 class="sidebar-header sidebar-header-right text-capitalize point-cursor" data-ng-click="mainCollapsed = !mainCollapsed">
@@ -93,5 +93,11 @@
         <div class="instance-form">
             <a href="#" data-ng-click="addNetwork()">Add new network</a>
         </div>
+    </div>
+</div>
+<div class="sidebar sidebar-right sidebar-right-footer" data-ng-show="instance && (type === 'group')">
+    <div class="push-pull-container">
+        <button class="btn btn-default btn-push" data-ng-click="push()">Push</button>
+        <button class="btn btn-default btn-pull" data-ng-click="push()">Pull</button>
     </div>
 </div>

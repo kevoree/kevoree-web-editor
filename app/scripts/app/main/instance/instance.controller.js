@@ -74,6 +74,45 @@ angular.module('editorApp')
             });
         };
 
+        $scope.push = function () {
+            $modal.open({
+                templateUrl: 'scripts/app/main/instance/push.modal.html',
+                size: 'md',
+                resolve: {
+                    group: function () {
+                        return $scope.instance;
+                    }
+                },
+                controller: function ($scope, $modalInstance, group) {
+                    $scope.group = group;
+                    $scope.selectedNode = null;
+                    $scope.selectedNet = null;
+                    $scope.selectedVal = null;
+
+                    $scope.changeNode = function () {
+                        $scope.net = null;
+                        $scope.selectedNet = null;
+                        $scope.val = null;
+                        $scope.selectedVal = null;
+                    };
+
+                    $scope.changeNet = function () {
+                        $scope.val = null;
+                        $scope.selectedVal = null;
+                    };
+
+                    $scope.push = function () {
+                        console.log('TODO push', $scope.selectedNode);
+                        $modalInstance.close();
+                    };
+                }
+            });
+        };
+
+        $scope.pull = function () {
+
+        };
+
         $scope.isTruish = kModelHelper.isTruish;
 
         uiFactory.setSelectedListener(function (path) {

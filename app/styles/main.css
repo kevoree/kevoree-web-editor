@@ -49,6 +49,29 @@ body {
   height: 500px;
 }
 
+.push-pull-container {
+  height: 100%;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.btn-push {
+  width: 100px;
+  margin-left: 15px;
+  color: #f6f6f6;
+  background-color: #111;
+  border-color: #666;
+}
+
+.btn-pull {
+  width: 100px;
+  float: right;
+  margin-right: 15px;
+  color: #f6f6f6;
+  background-color: #111;
+  border-color: #666;
+}
+
 .default-cursor {
   cursor: default;
 }
@@ -326,6 +349,18 @@ body {
   .sidebar-right {
     left: auto;
     right: 0;
+  }
+
+  .sidebar-right-group {
+    bottom: 50px;
+  }
+
+  .sidebar-right-footer {
+    display: table;
+    top: auto;
+    bottom: 0;
+    height: 50px;
+    background-color: #111;
   }
 
   .editor {
