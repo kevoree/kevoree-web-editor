@@ -164,6 +164,24 @@ angular.module('editorApp')
             },
 
             /**
+             * Tells whether or not a binding is already made between this port and chan
+             * @param port
+             * @param chan
+             * @returns {boolean}
+             */
+            isAlreadyBound: function (port, chan) {
+                var bound = false;
+                if (port) {
+                    for (var i=0; i < port.bindings.array.length; i++) {
+                        if (port.bindings.array[i].hub && (port.bindings.array[i].hub.path() === chan.path())) {
+                            return true;
+                        }
+                    }
+                }
+                return bound;
+            },
+
+            /**
              * Returns true if the given value is truish (means that it is close to say "true")
              * @param val
              * @returns {boolean}

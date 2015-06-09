@@ -157,6 +157,11 @@ angular.module('editorApp')
                             console.log('ADD groups', trace);
                             uiFactory.createGroup(trace.value);
                             break;
+
+                        case 'mBindings':
+                            console.log('ADD mBinding', trace);
+                            uiFactory.createBinding(trace.value);
+                            break;
                     }
                 } else {
                     switch (trace.elementAttributeName) {

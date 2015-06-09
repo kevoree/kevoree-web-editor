@@ -166,18 +166,20 @@ angular.module('editorApp')
                     function () {
                         var nodeElem = this.data('hoveredNode');
                         if (nodeElem) {
+                            if (!nodeElem.select('.bg').hasClass('error')) {
+                                // node elem found
+                                var nodeInstance = factory.model.findByPath(nodeElem.attr('data-path'));
+                                if (instance.findSubNodesByID(nodeInstance.name)) {
+                                    // this node is already connected to the group
+                                } else {
+                                    // this node is not connected to the group
+                                    nodeInstance.addGroups(instance);
+                                    instance.addSubNodes(nodeInstance);
+                                }
+                            }
+
                             // remove ui feedback
                             nodeElem.select('.bg').removeClass('hovered error');
-
-                            // node elem found
-                            var nodeInstance = factory.model.findByPath(nodeElem.attr('data-path'));
-                            if (instance.findSubNodesByID(nodeInstance.name)) {
-                                // this node is already connected to the group
-                            } else {
-                                // this node is not connected to the group
-                                nodeInstance.addGroups(instance);
-                                instance.addSubNodes(nodeInstance);
-                            }
                         } else {
                             // no node at this coords
                             console.log('no node found here');
@@ -631,55 +633,271 @@ angular.module('editorApp')
                     providedDy = 0,
                     requiredDy = 0;
                 instance.typeDefinition.provided.array.forEach(function (portType) {
-                    comp.append(this.editor
+                    var portPlug = this.editor
+                        .circle(0, (COMP_HEIGHT/2) - 5, 11)
+                        .attr({
+                            fill: '#bc7645',
+                            stroke: '#ECCA40',
+                            strokeWidth: 2
+                        })
+                        .mouseover(function () {
+                            this.attr({ strokeWidth: 3 });
+                        })
+                        .mouseout(function () {
+                            this.attr({ strokeWidth: 2 });
+                        })
+                        .mousedown(function (evt) {
+                            evt.cancelBubble = true;
+                        })
+                        .drag(
+                        function (dx, dy) {
+                            var portPos = this.data('portPos');
+                            var middle = { x: 0, y: 0 };
+                            if (portPos.x > (portPos.x + dx)) {
+                                middle.x = (portPos.x + dx) + (portPos.x - (portPos.x + dx))/2;
+                            } else {
+                                middle.x = portPos.x + ((portPos.x + dx) - portPos.x)/2;
+                            }
+
+                            middle.y = ((portPos.y >= (portPos.y + dy)) ? portPos.y : (portPos.y + dy)) + 20;
+                            this.data('binding').attr({
+                                d: 'M'+portPos.x+','+portPos.y+' Q'+middle.x+','+middle.y+' '+(portPos.x + dx)+','+(portPos.y + dy)
+                            });
+
+                            clearTimeout(this.data('bindingTimeout'));
+                            var chanElem = this.data('hoveredChan');
+                            if (chanElem) {
+                                chanElem.select('.bg').removeClass('hovered error');
+                            }
+
+                            var timeout = setTimeout(function () {
+                                var chanElem = factory.getHoveredChan(portPos.x + dx, portPos.y + dy);
+                                if (chanElem) {
+                                    this.data('hoveredChan', chanElem);
+                                    var chanBg = chanElem.select('.bg');
+                                    chanBg.addClass('hovered');
+
+                                    var chan = factory.model.findByPath(chanElem.attr('data-path'));
+                                    if (kModelHelper.isAlreadyBound(instance.findProvidedByID(portType.name), chan)) {
+                                        chanBg.addClass('error');
+                                    }
+                                } else {
+                                    this.data('hoveredChan', null);
+                                }
+                            }.bind(this), 100);
+                            this.data('bindingTimeout', timeout);
+                        },
+                        function () {
+                            var portM = port.transform().localMatrix,
+                                compM = comp.transform().localMatrix,
+                                highestNodeM = factory.editor.select('.node[data-path="'+getHighestNodePath(comp)+'"]').transform().localMatrix;
+                            var portPos = {
+                                x: portM.e + compM.e + highestNodeM.e,
+                                y: portM.f + compM.f + highestNodeM.f + (COMP_HEIGHT/2) - 5
+                            };
+                            this.data('portPos', portPos);
+                            var binding = factory.editor
+                                .path('M'+portPos.x+','+portPos.y+' '+portPos.x+','+portPos.y)
+                                .attr({
+                                    fill: 'none',
+                                    stroke: '#ECCA40',
+                                    strokeWidth: 5,
+                                    strokeLineCap: 'round',
+                                    strokeLineJoin: 'round',
+                                    opacity: 0.7
+                                });
+                            this.data('binding', binding);
+                        },
+                        function () {
+                            clearTimeout(this.data('bindingTimeout'));
+
+                            var hoveredChan = this.data('hoveredChan');
+                            if (hoveredChan) {
+                                if (!hoveredChan.select('.bg').hasClass('error')) {
+                                    var chan = factory.model.findByPath(hoveredChan.attr('data-path'));
+                                    if (chan) {
+                                        var port = instance.findProvidedByID(portType.name);
+                                        if (!port) {
+                                            port = kFactory.createPort();
+                                            port.name = portType.name;
+                                            port.portTypeRef = portType;
+                                            instance.addProvided(port);
+                                        }
+
+                                        var binding = kFactory.createMBinding();
+                                        binding.hub = chan;
+                                        binding.port = port;
+                                        factory.model.addMBindings(binding);
+                                    }
+                                }
+
+                                // remove ui feedback
+                                hoveredChan.select('.bg').removeClass('hovered error');
+                            }
+
+                            this.data('binding').remove();
+
+                            this.removeData('binding');
+                            this.removeData('bindingTimeout');
+                            this.removeData('hoveredChan');
+                            this.removeData('portPos');
+                        });
+
+                    var text = this.editor
+                        .text(0, COMP_HEIGHT - 4, portType.name.substr(0, (portType.name.length > 5) ? 5:portType.name.length))
+                        .attr({
+                            fill: 'white',
+                            textAnchor: 'middle',
+                            title: portType.name
+                        })
+                        .append(Snap.parse('<title>'+portType.name+'</title>'));
+
+                    var port = this.editor
                         .group()
                         .attr({
                             'class': 'port provided',
                             'data-name': portType.name
                         })
-                        .transform('t'+PORT_X_PADDING+','+providedDy)
-                        .append(this.editor
-                            .circle(0, (COMP_HEIGHT/2) - 5, 11)
-                            .attr({
-                                fill: '#bc7645',
-                                stroke: '#ECCA40',
-                                strokeWidth: 2
-                            }))
-                        .append(this.editor
-                            .text(0, COMP_HEIGHT - 4, portType.name.substr(0, (portType.name.length > 5) ? 5:portType.name.length))
-                            .attr({
-                                fill: 'white',
-                                textAnchor: 'middle',
-                                title: portType.name
-                            })
-                            .append(Snap.parse('<title>'+portType.name+'</title>'))));
+                        .append(portPlug)
+                        .append(text)
+                        .transform('t'+PORT_X_PADDING+','+providedDy);
+
+                    comp.append(port);
 
                     providedDy += COMP_HEIGHT;
                 }.bind(this));
 
                 instance.typeDefinition.required.array.forEach(function (portType) {
-                    comp.append(this.editor
+                    var portPlug = this.editor
+                        .circle(0, (COMP_HEIGHT/2) - 5, 11)
+                        .attr({
+                            fill: '#bc7645',
+                            stroke: '#C60808',
+                            strokeWidth: 2
+                        })
+                        .mouseover(function () {
+                            this.attr({ strokeWidth: 3 });
+                        })
+                        .mouseout(function () {
+                            this.attr({ strokeWidth: 2 });
+                        })
+                        .mousedown(function (evt) {
+                            evt.cancelBubble = true;
+                        })
+                        .drag(
+                        function (dx, dy) {
+                            var portPos = this.data('portPos');
+                            var middle = { x: 0, y: 0 };
+                            if (portPos.x > (portPos.x + dx)) {
+                                middle.x = (portPos.x + dx) + (portPos.x - (portPos.x + dx))/2;
+                            } else {
+                                middle.x = portPos.x + ((portPos.x + dx) - portPos.x)/2;
+                            }
+
+                            middle.y = ((portPos.y >= (portPos.y + dy)) ? portPos.y : (portPos.y + dy)) + 20;
+                            this.data('binding').attr({
+                                d: 'M'+portPos.x+','+portPos.y+' Q'+middle.x+','+middle.y+' '+(portPos.x + dx)+','+(portPos.y + dy)
+                            });
+
+                            clearTimeout(this.data('bindingTimeout'));
+                            var chanElem = this.data('hoveredChan');
+                            if (chanElem) {
+                                chanElem.select('.bg').removeClass('hovered error');
+                            }
+
+                            var timeout = setTimeout(function () {
+                                var chanElem = factory.getHoveredChan(portPos.x + dx, portPos.y + dy);
+                                if (chanElem) {
+                                    this.data('hoveredChan', chanElem);
+                                    var chanBg = chanElem.select('.bg');
+                                    chanBg.addClass('hovered');
+
+                                    var chan = factory.model.findByPath(chanElem.attr('data-path'));
+                                    if (kModelHelper.isAlreadyBound(instance.findRequiredByID(portType.name), chan)) {
+                                        chanBg.addClass('error');
+                                    }
+                                } else {
+                                    this.data('hoveredChan', null);
+                                }
+                            }.bind(this), 100);
+                            this.data('bindingTimeout', timeout);
+                        },
+                        function () {
+                            var portM = port.transform().localMatrix,
+                                compM = comp.transform().localMatrix,
+                                highestNodeM = factory.editor.select('.node[data-path="'+getHighestNodePath(comp)+'"]').transform().localMatrix;
+                            var portPos = {
+                                x: portM.e + compM.e + highestNodeM.e,
+                                y: portM.f + compM.f + highestNodeM.f + (COMP_HEIGHT/2) - 5
+                            };
+                            this.data('portPos', portPos);
+                            var binding = factory.editor
+                                .path('M'+portPos.x+','+portPos.y+' '+portPos.x+','+portPos.y)
+                                .attr({
+                                    fill: 'none',
+                                    stroke: '#C60808',
+                                    strokeWidth: 5,
+                                    strokeLineCap: 'round',
+                                    strokeLineJoin: 'round',
+                                    opacity: 0.7
+                                });
+                            this.data('binding', binding);
+                        },
+                        function () {
+                            clearTimeout(this.data('bindingTimeout'));
+
+                            var hoveredChan = this.data('hoveredChan');
+                            if (hoveredChan) {
+                                if (!hoveredChan.select('.bg').hasClass('error')) {
+                                    var chan = factory.model.findByPath(hoveredChan.attr('data-path'));
+                                    if (chan) {
+                                        var port = instance.findRequiredByID(portType.name);
+                                        if (!port) {
+                                            port = kFactory.createPort();
+                                            port.name = portType.name;
+                                            port.portTypeRef = portType;
+                                            instance.addRequired(port);
+                                        }
+
+                                        var binding = kFactory.createMBinding();
+                                        binding.hub = chan;
+                                        binding.port = port;
+                                        factory.model.addMBindings(binding);
+                                    }
+                                }
+
+                                // remove ui feedback
+                                hoveredChan.select('.bg').removeClass('hovered error');
+                            }
+
+                            this.data('binding').remove();
+
+                            this.removeData('binding');
+                            this.removeData('bindingTimeout');
+                            this.removeData('hoveredChan');
+                            this.removeData('portPos');
+                        });
+
+                    var text = this.editor
+                        .text(0, COMP_HEIGHT - 4, portType.name.substr(0, (portType.name.length > 5) ? 5:portType.name.length))
+                        .attr({
+                            fill: 'white',
+                            textAnchor: 'middle',
+                            title: portType.name
+                        })
+                        .append(Snap.parse('<title>'+portType.name+'</title>'));
+
+                    var port = this.editor
                         .group()
                         .attr({
                             'class': 'port required',
                             'data-name': portType.name
                         })
-                        .transform('t'+(computedWidth - PORT_X_PADDING)+','+requiredDy)
-                        .append(this.editor
-                            .circle(0, (COMP_HEIGHT/2) - 5, 11)
-                            .attr({
-                                fill: '#bc7645',
-                                stroke: '#C60808',
-                                strokeWidth: 2
-                            }))
-                        .append(this.editor
-                            .text(0, COMP_HEIGHT - 4, portType.name.substr(0, (portType.name.length > 5) ? 5:portType.name.length))
-                            .attr({
-                                fill: 'white',
-                                textAnchor: 'middle',
-                                title: portType.name
-                            })
-                            .append(Snap.parse('<title>'+portType.name+'</title>'))));
+                        .append(portPlug)
+                        .append(text)
+                        .transform('t'+(computedWidth - PORT_X_PADDING)+','+requiredDy);
+
+                    comp.append(port);
 
                     requiredDy += COMP_HEIGHT;
                 }.bind(this));
@@ -1325,6 +1543,17 @@ angular.module('editorApp')
                     .sort(function (a, b) {
                         return a.getBBox().width - b.getBBox().width;
                     })[0];
+            },
+
+            getHoveredChan: function (x, y) {
+                var chans = this.editor
+                    .selectAll('.chan').items;
+                for (var i=0; i < chans.length; i++) {
+                    if (Snap.path.isPointInsideBBox(chans[i].getBBox(), x, y)) {
+                        return chans[i];
+                    }
+                }
+                return null;
             }
         };
 

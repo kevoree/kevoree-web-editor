@@ -66,17 +66,17 @@
 
     <!-- Network panel -->
     <div data-ng-show="hasNetworkInformation()">
-        <div data-ng-class="type+'-right-bg'">
-            <h5 class="sidebar-header sidebar-header-right point-cursor" data-ng-click="netCollapsed = !netCollapsed">
-                <i class="fa" data-ng-class="netCollapsed ? 'fa-plus':'fa-minus'"></i>
-                &nbsp;Network Informations
-            </h5>
-        </div>
-        <div data-collapse="netCollapsed">
-            <div class="instance-form">
-                <div data-ng-repeat="net in instance.networkInformation.array">
+        <div data-ng-repeat="net in instance.networkInformation.array">
+            <div data-ng-class="type+'-right-bg'">
+                <h5 class="sidebar-header sidebar-header-right point-cursor" data-ng-click="netCollapsed = !netCollapsed">
+                    <i class="fa" data-ng-class="netCollapsed ? 'fa-plus':'fa-minus'"></i>
+                    &nbsp;Network Informations - <strong>{{ net.name }}</strong>
+                </h5>
+            </div>
+            <div data-collapse="netCollapsed">
+                <div class="instance-form">
                     <div class="form-group" data-ng-repeat="val in net.values.array">
-                        <label for="net-{{ net.name + '-' + val.name }}">{{ net.name + '.' + val.name }}</label>
+                        <label for="net-{{ net.name + '-' + val.name }}">{{ val.name }}</label>
                         <input
                                 id="net-{{ net.name + '-' + val.name }}"
                                 name="net-{{ net.name + '-' + val.name }}"
@@ -85,7 +85,6 @@
                                 data-ng-model="val.value">
                     </div>
                 </div>
-                <a href="#" data-ng-click="addNetwork()">Add network info</a>
             </div>
         </div>
     </div>
