@@ -76,6 +76,8 @@ angular.module('editorApp')
                         trace.elementAttributeName === 'nodes' ||
                         trace.elementAttributeName === 'groups') {
                         uiFactory.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
+                    } else if (trace.elementAttributeName === 'mBindings') {
+                        uiFactory.deleteBinding(trace.previous_value); // jshint ignore:line
                     }
                 } else {
                     if (trace.elementAttributeName === 'hosts' ||
