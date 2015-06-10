@@ -11,91 +11,105 @@ angular.module('editorApp')
     .controller('MainCtrl', function ($scope, $timeout, $modal, kEditor, hotkeys, saveFile, uiFactory, kModelHelper, kFactory, Notification) {
         Notification.config({ top: 90 });
 
+        $scope.loading = false;
+
         $scope.onFileLoaded = function () {};
 
         $scope.open = function (evt) {
             evt.preventDefault();
 
             $scope.onFileLoaded = function (filename, data) {
-                $scope.loading = true;
-                var oldModel = kEditor.getModel();
-                try {
-                    var loader = kFactory.createJSONLoader();
-                    var model = loader.loadModelFromString(data).get(0);
-                    kEditor.setModel(model);
-                    Notification.success({
-                        title: 'Open from file',
-                        message: 'Model loaded from <strong>'+filename+'</strong>',
-                        delay: 5000
+                $timeout(function () {
+                    $scope.loading = true;
+                    $timeout(function () {
+                        var oldModel = kEditor.getModel();
+                        try {
+                            var loader = kFactory.createJSONLoader();
+                            var model = loader.loadModelFromString(data).get(0);
+                            kEditor.setModel(model);
+                            Notification.success({
+                                title: 'Open from file',
+                                message: 'Model loaded from <strong>'+filename+'</strong>',
+                                delay: 5000
+                            });
+                        } catch (err) {
+                            console.warn('[main.controller.open()] Error loading model file');
+                            console.error(err.stack);
+                            Notification.error({
+                                title: 'Open from file',
+                                message: 'Unable to load a model from <strong>'+filename+'</strong>',
+                                delay: 5000
+                            });
+                            kEditor.setModel(oldModel);
+                        } finally {
+                            $scope.loading = false;
+                        }
                     });
-                } catch (err) {
-                    console.warn('[main.controller.open()] Error loading model file');
-                    console.error(err.stack);
-                    Notification.error({
-                        title: 'Open from file',
-                        message: 'Unable to load a model from <strong>'+filename+'</strong>',
-                        delay: 5000
-                    });
-                    kEditor.setModel(oldModel);
-                } finally {
-                    $scope.loading = false;
-                }
+                });
             };
             angular.element('input#file').click();
         };
 
         $scope.dndLoad = function (filename, data) {
-            var oldModel = kEditor.getModel();
-            try {
+            $timeout(function () {
                 $scope.loading = true;
-                var loader = kFactory.createJSONLoader();
-                var model = loader.loadModelFromString(data).get(0);
-                kEditor.setModel(model);
-                Notification.success({
-                    title: 'Open from file (dnd)',
-                    message: 'Model loaded from <strong>'+filename+'</strong>',
-                    delay: 5000
+                $timeout(function () {
+                    var oldModel = kEditor.getModel();
+                    try {
+                        var loader = kFactory.createJSONLoader();
+                        var model = loader.loadModelFromString(data).get(0);
+                        kEditor.setModel(model);
+                        Notification.success({
+                            title: 'Open from file (dnd)',
+                            message: 'Model loaded from <strong>'+filename+'</strong>',
+                            delay: 5000
+                        });
+                    } catch (err) {
+                        console.warn('[main.controller.dndLoad()] Error loading model file');
+                        console.error(err.stack);
+                        Notification.error({
+                            title: 'Open from file (dnd)',
+                            message: 'Unable to load a model from <strong>'+filename+'</strong>',
+                            delay: 5000
+                        });
+                        kEditor.setModel(oldModel);
+                    } finally {
+                        $scope.loading = false;
+                    }
                 });
-            } catch (err) {
-                console.warn('[main.controller.dndLoad()] Error loading model file');
-                console.error(err.stack);
-                Notification.error({
-                    title: 'Open from file (dnd)',
-                    message: 'Unable to load a model from <strong>'+filename+'</strong>',
-                    delay: 5000
-                });
-                kEditor.setModel(oldModel);
-            } finally {
-                $scope.loading = false;
-            }
+            });
         };
 
         $scope.merge = function (evt) {
             evt.preventDefault();
             $scope.onFileLoaded = function mergeModel(filename, data) {
-                try {
+                $timeout(function () {
                     $scope.loading = true;
-                    var loader = kFactory.createJSONLoader();
-                    var compare = kFactory.createModelCompare();
-                    var model = loader.loadModelFromString(data).get(0);
-                    compare.merge(model, kEditor.getModel()).applyOn(model);
-                    kEditor.setModel(model);
-                    Notification.success({
-                        title: 'Merge from file',
-                        message: 'Model merged with <strong>'+filename+'</strong>',
-                        delay: 5000
+                    $timeout(function () {
+                        try {
+                            var loader = kFactory.createJSONLoader();
+                            var compare = kFactory.createModelCompare();
+                            var model = loader.loadModelFromString(data).get(0);
+                            compare.merge(model, kEditor.getModel()).applyOn(model);
+                            kEditor.setModel(model);
+                            Notification.success({
+                                title: 'Merge from file',
+                                message: 'Model merged with <strong>'+filename+'</strong>',
+                                delay: 5000
+                            });
+                        } catch (err) {
+                            console.warn('[main.controller.merge()] Error loading model file');
+                            console.error(err.stack);
+                            Notification.error({
+                                title: 'Merge from file',
+                                message: 'Unable to merge the model with <strong>'+filename+'</strong>',
+                                delay: 5000
+                            });
+                        } finally {
+                            $scope.loading = false;
+                        }
                     });
-                } catch (err) {
-                    console.warn('[main.controller.merge()] Error loading model file');
-                    console.error(err.stack);
-                    Notification.error({
-                        title: 'Merge from file',
-                        message: 'Unable to merge the model with <strong>'+filename+'</strong>',
-                        delay: 5000
-                    });
-                } finally {
-                    $scope.loading = false;
-                }
+                });
             };
             angular.element('input#file').click();
         };

@@ -1,6 +1,14 @@
 <div data-ng-cloak>
-    <div id="loading" data-ng-show="loading">
-        <h2 class="loading-content">Loading &nbsp;<i class="fa fa-spinner fa-spin"></i></h2>
+    <div id="loading" data-ng-if="loading">
+        <div class="loading-content">
+            <h2>Loading</h2>
+            <div class="spinner inverse">
+                <div class="rect1"></div>
+                <div class="rect2"></div>
+                <div class="rect3"></div>
+                <div class="rect4"></div>
+            </div>
+        </div>
     </div>
     <div class="menubar">
         <div class="menu-btn">
@@ -46,19 +54,6 @@
                 Edit&nbsp;<span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
-                <!--<li>-->
-                    <!--<a data-ng-click="undo($event)">-->
-                        <!--<span class="name">Undo</span>-->
-                        <!--<span class="shortcut">Ctrl+Z</span>-->
-                    <!--</a>-->
-                <!--</li>-->
-                <!--<li>-->
-                    <!--<a data-ng-click="redo($event)">-->
-                        <!--<span class="name">Redo</span>-->
-                        <!--<span class="shortcut">Ctrl+Y</span>-->
-                    <!--</a>-->
-                <!--</li>-->
-                <!--<li class="divider"></li>-->
                 <li>
                     <a data-ng-click="deleteAll($event)">
                         <span class="name">Delete all</span>

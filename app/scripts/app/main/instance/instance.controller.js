@@ -76,44 +76,100 @@ angular.module('editorApp')
 
         $scope.push = function () {
             $modal.open({
-                templateUrl: 'scripts/app/main/instance/push.modal.html',
+                templateUrl: 'scripts/app/main/instance/group.modal.html',
                 size: 'md',
                 resolve: {
                     group: function () {
                         return $scope.instance;
                     }
                 },
-                controller: function ($scope, $modalInstance, group) {
+                controller: function ($scope, $modalInstance, group, kWs) {
+                    $scope.type = 'Push';
                     $scope.group = group;
                     $scope.selectedNode = null;
-                    $scope.selectedNet = null;
-                    $scope.selectedVal = null;
 
-                    $scope.changeNode = function () {
-                        $scope.net = null;
-                        $scope.selectedNet = null;
-                        $scope.val = null;
-                        $scope.selectedVal = null;
+                    $scope.selectNode = function (node) {
+                        if (node.networkInformation.size() > 0) {
+                            $scope.selectedNode = node;
+                        }
                     };
 
-                    $scope.changeNet = function () {
-                        $scope.val = null;
-                        $scope.selectedVal = null;
+                    $scope.computeClasses = function (node) {
+                        var classes = [];
+                        if ($scope.selectedNode && ($scope.selectedNode.name === node.name)) {
+                            classes.push('active');
+                        }
+                        if (node.networkInformation.size() === 0) {
+                            classes.push('disabled');
+                        }
+                        return classes;
                     };
 
-                    $scope.push = function () {
-                        console.log('TODO push', $scope.selectedNode);
-                        $modalInstance.close();
+                    $scope.confirm = function () {
+                        $scope.processing = true;
+                        console.log('TODO push', $scope.selectedNode.path());
+                        //$modalInstance.close();
                     };
                 }
             });
         };
 
         $scope.pull = function () {
+            $modal.open({
+                templateUrl: 'scripts/app/main/instance/group.modal.html',
+                size: 'md',
+                resolve: {
+                    group: function () {
+                        return $scope.instance;
+                    }
+                },
+                controller: function ($scope, $modalInstance, group, kWs) {
+                    $scope.type = 'Pull';
+                    $scope.group = group;
+                    $scope.selectedNode = null;
 
+                    $scope.selectNode = function (node) {
+                        if (node.networkInformation.size() > 0) {
+                            $scope.selectedNode = node;
+                        }
+                    };
+
+                    $scope.computeClasses = function (node) {
+                        var classes = [];
+                        if ($scope.selectedNode && ($scope.selectedNode.name === node.name)) {
+                            classes.push('active');
+                        }
+                        if (node.networkInformation.size() === 0) {
+                            classes.push('disabled');
+                        }
+                        return classes;
+                    };
+
+                    $scope.confirm = function () {
+                        console.log('TODO Pull', $scope.selectedNode.path());
+                        $modalInstance.close();
+                    };
+                }
+            });
         };
 
         $scope.isTruish = kModelHelper.isTruish;
+
+        $scope.isPushableOrPullable = function () {
+            if ($scope.instance) {
+                for (var i=0; i < $scope.instance.subNodes.array.length; i++) {
+                    var node = $scope.instance.subNodes.array[i];
+                    for (var j=0; j < node.networkInformation.array.length; j++) {
+                        var net = node.networkInformation.array[j];
+                        if (net.values.size() > 0) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        };
 
         uiFactory.setSelectedListener(function (path) {
             $timeout(function () {

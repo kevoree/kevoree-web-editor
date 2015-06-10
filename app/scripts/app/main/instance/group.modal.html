@@ -1,0 +1,30 @@
+<div class="modal-header">
+    <h3 class="modal-title">{{ type }} <strong>{{ group.name }}</strong></h3>
+</div>
+<div class="modal-body">
+    <h5>Select a node</h5>
+    <div class="clearfix">
+        <div class="col-xs-3 node-box" data-ng-repeat="node in group.subNodes.array | orderBy:'name'">
+            <div
+                    class="clickable-box"
+                    data-ng-click="selectNode(node)"
+                    data-ng-class="computeClasses(node)"
+                    title="{{ node.name }}">
+                {{ node.name }}
+            </div>
+        </div>
+    </div>
+
+    <div class="alert" data-ng-if="processing">
+        <div class="spinner">
+            <div class="rect1"></div>
+            <div class="rect2"></div>
+            <div class="rect3"></div>
+            <div class="rect4"></div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" data-ng-click="confirm()" data-ng-disabled="!selectedNode">{{ type }}</button>
+    <button class="btn btn-default" data-ng-click="$close()">Close</button>
+</div>
