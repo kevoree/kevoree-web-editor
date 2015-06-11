@@ -62,7 +62,9 @@ angular.module('editorApp')
          * @param trace
          */
         function modelReactor(trace) {
-            var fragDic;
+            var fragDic,
+                selected;
+
             if (trace.elementAttributeName === 'typeDefinitions' || trace.elementAttributeName === 'packages') {
                 editor.listeners.forEach(function (listener) {
                     listener();
@@ -90,6 +92,28 @@ angular.module('editorApp')
                         fragDic = trace.value.findFragmentDictionaryByID(trace.source.name);
                         if (fragDic) {
                             fragDic.delete();
+                        }
+                    } else if (trace.elementAttributeName === 'bindings') {
+                        if (trace.source.getRefInParent() === 'hubs') {
+                            trace.source.fragmentDictionary.array.forEach(function (dic) {
+                                var hasBinding = false;
+
+                                // check if there is a binding for this dictionnary
+                                for (var i=0; i < trace.source.bindings.size(); i++) {
+                                    var binding = trace.source.bindings.get(i);
+                                    if (binding.port) {
+                                        if (binding.port.eContainer().eContainer().name === dic.name) {
+                                            hasBinding = true;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (!hasBinding) {
+                                    // no binding found for this dictionary => delete it
+                                    dic.delete();
+                                }
+                            });
                         }
                     }
                 }
@@ -242,10 +266,17 @@ angular.module('editorApp')
                         case 'subNodes':
                             //console.log('ADD .subNodes', trace);
                             kInstance.initFragmentDictionaries(trace.source);
-                            if (uiFactory.listener) {
-                                var selected = uiFactory.editor.select('.selected');
-                                if (selected) {
-                                    uiFactory.listener(selected.parent().attr('data-path'));
+                            selected = uiFactory.getSelected();
+                            if (selected.length === 1 && (selected[0].attr('data-path') === trace.source.path())) {
+                                uiFactory.invokeListener(trace.source.path());
+                            }
+                            break;
+
+                        case 'bindings':
+                            if (trace.source.getRefInParent() === 'hubs') {
+                                selected = uiFactory.getSelected();
+                                if (selected.length === 1 && (selected[0].attr('data-path') === trace.source.path())) {
+                                    uiFactory.invokeListener(trace.source.path());
                                 }
                             }
                             break;

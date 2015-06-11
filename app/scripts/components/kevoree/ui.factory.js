@@ -173,7 +173,6 @@ angular.module('editorApp')
                                     // this node is already connected to the group
                                 } else {
                                     // this node is not connected to the group
-                                    nodeInstance.addGroups(instance);
                                     instance.addSubNodes(nodeInstance);
                                 }
                             }
@@ -1217,7 +1216,7 @@ angular.module('editorApp')
                         elem.remove();
                     }
                 }
-                invokeListener();
+                factory.invokeListener();
             },
 
             deleteGroupWire: function (groupPath, nodePath) {
@@ -1241,6 +1240,13 @@ angular.module('editorApp')
                     if (path) {
                         var instance = factory.model.findByPath(path);
                         if (instance) {
+                            if (instance.hosts) {
+                                // also remove child nodes recursively
+                                instance.hosts.array.forEach(function deleteChild(node) {
+                                    node.hosts.array.forEach(deleteChild);
+                                    node.delete();
+                                });
+                            }
                             instance.delete();
                         }
                     } else {
@@ -1269,23 +1275,23 @@ angular.module('editorApp')
             deleteNodes: function () {
                 this.editor.selectAll('.node').remove();
                 this.editor.selectAll('.group-wire').remove();
-                invokeListener();
+                factory.invokeListener();
             },
 
             deleteGroups: function () {
                 this.editor.selectAll('.group').remove();
                 this.editor.selectAll('.group-wire').remove();
-                invokeListener();
+                factory.invokeListener();
             },
 
             deleteChannels: function () {
                 this.editor.selectAll('.chan').remove();
-                invokeListener();
+                factory.invokeListener();
             },
 
             deleteBindings: function () {
                 this.editor.selectAll('.binding').remove();
-                invokeListener();
+                factory.invokeListener();
             },
 
             updateInstance: function (previousPath, instance) {
@@ -1464,19 +1470,12 @@ angular.module('editorApp')
             },
 
             getSelected: function () {
-                var selected = this.editor
+                return this.editor
                     .selectAll('.selected').items
                     .map(function (elem) {
                         // all selected element are in groups so we need to return the parent
                         return elem.parent();
                     });
-
-                var children = [];
-                selected.forEach(function (elem) {
-                    children = children.concat(elem.selectAll('.instance').items);
-                });
-
-                return selected.concat(children);
             },
 
             getSelectedNodes: function () {
@@ -1511,6 +1510,17 @@ angular.module('editorApp')
                 });
             },
 
+            isSelected: function (path) {
+                var elem = this.editor.select('.instance[data-path="'+path+'"]');
+                if (elem) {
+                    if (elem.select('.bg').hasClass('selected')) {
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+
             setDropTarget: function (elem) {
                 this.dropTarget = elem;
             },
@@ -1525,7 +1535,7 @@ angular.module('editorApp')
                     updateSVGDefs(model);
 
                     this.editor.clear();
-                    invokeListener();
+                    factory.invokeListener();
                 }
             },
 
@@ -1554,6 +1564,21 @@ angular.module('editorApp')
                     }
                 }
                 return null;
+            },
+            
+            invokeListener: function (selected) {
+                if (this.listener) {
+                    if (selected) {
+                        this.listener(selected);
+                    } else {
+                        selected = this.editor.select('.selected');
+                        if (selected) {
+                            this.listener(selected.parent().attr('data-path'));
+                        } else {
+                            this.listener(null);
+                        }
+                    }
+                }
             }
         };
 
@@ -1714,6 +1739,9 @@ angular.module('editorApp')
          * @param evt
          */
         var mouseDownHandler = function (evt) {
+            evt.preventDefault();
+            evt.cancelBubble = true;
+
             if (!evt.ctrlKey && !evt.shiftKey) {
                 factory.editor.selectAll('.selected').forEach(function (elem) {
                     elem.removeClass('selected');
@@ -1725,31 +1753,12 @@ angular.module('editorApp')
             } else {
                 this.select('.bg').addClass('selected');
             }
-            evt.cancelBubble = true;
             if (factory.listener) {
-                if (this.select('.bg').hasClass('selected')) {
-                    factory.listener(this.attr('data-path'));
+                var selected = factory.editor.selectAll('.selected').items;
+                if (selected.length === 1) {
+                    factory.listener(selected[0].parent().attr('data-path'));
                 } else {
                     factory.listener();
-                }
-            }
-        };
-
-        /**
-         *
-         * @param selected
-         */
-        var invokeListener = function (selected) {
-            if (factory.listener) {
-                if (selected) {
-                    factory.listener(selected);
-                } else {
-                    selected = factory.editor.select('.selected');
-                    if (selected) {
-                        factory.listener(selected.parent().attr('data-path'));
-                    } else {
-                        factory.listener(null);
-                    }
                 }
             }
         };
