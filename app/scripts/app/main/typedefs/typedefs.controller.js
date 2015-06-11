@@ -126,7 +126,7 @@ angular.module('editorApp')
 
             var model = kEditor.getModel();
             var selectedNodes = uiFactory.getSelectedNodes();
-            var instance, node;
+            var instance;
             switch (type) {
                 case 'node':
                     if (selectedNodes.length > 0) {

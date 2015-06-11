@@ -84,31 +84,88 @@ angular.module('editorApp')
                     }
                 },
                 controller: function ($scope, $modalInstance, group, kWs) {
-                    $scope.type = 'Push';
+                    $scope.type = 'push to';
+                    $scope.action = 'push';
                     $scope.group = group;
-                    $scope.selectedNode = null;
+                    $scope.selectedHost = '127.0.0.1';
+                    $scope.selectedPort = '9000';
+                    $scope.selectedPath = '/';
+                    $scope.processing = false;
 
-                    $scope.selectNode = function (node) {
-                        if (node.networkInformation.size() > 0) {
-                            $scope.selectedNode = node;
-                        }
+                    $scope.hosts = {
+                        '127.0.0.1': 'default'
                     };
 
-                    $scope.computeClasses = function (node) {
-                        var classes = [];
-                        if ($scope.selectedNode && ($scope.selectedNode.name === node.name)) {
-                            classes.push('active');
-                        }
-                        if (node.networkInformation.size() === 0) {
-                            classes.push('disabled');
-                        }
-                        return classes;
+                    $scope.ports = {
+                        '9000': 'default'
                     };
 
+                    $scope.paths = {
+                        '/': 'default'
+                    };
+
+                    group.subNodes.array.forEach(function (node) {
+                        var fragDic = group.findFragmentDictionaryByID(node.name);
+
+                        if (fragDic) {
+                            var port = fragDic.findValuesByID('port'),
+                                path = fragDic.findValuesByID('path');
+
+                            if (port && !$scope.ports[port.value]) {
+                                $scope.ports[port.value] = node.name;
+                            }
+
+                            if (path && !$scope.paths[path.value]) {
+                                $scope.paths[path.value] = node.name;
+                            }
+                        }
+
+                        node.networkInformation.array.forEach(function (net) {
+                            net.values.array.forEach(function (val) {
+                                if (!$scope.hosts[val.value]) {
+                                    $scope.hosts[val.value] = node.name;
+                                }
+                            });
+                        });
+                    });
+
+                    $scope.closeError = function () {
+                        $scope.error = null;
+                    };
+
+                    $scope.closeSuccess = function () {
+                        $scope.success = null;
+                    };
+
+                    var ws;
                     $scope.confirm = function () {
+                        $scope.error = null;
                         $scope.processing = true;
-                        console.log('TODO push', $scope.selectedNode.path());
-                        //$modalInstance.close();
+                        $timeout(function () {
+                            ws = kWs.pushModel(
+                                kEditor.getModel(),
+                                $scope.selectedHost,
+                                $scope.selectedPort,
+                                $scope.selectedPath,
+                                function (err) {
+                                    $timeout(function () {
+                                        if (err) {
+                                            $scope.processing = false;
+                                            $scope.error = err.message;
+                                        } else {
+                                            $scope.processing = false;
+                                            $scope.success = true;
+                                        }
+                                    });
+                                });
+                        });
+                    };
+
+                    $scope.close = function () {
+                        if (ws) {
+                            ws.close();
+                        }
+                        $modalInstance.close();
                     };
                 }
             });
@@ -124,29 +181,84 @@ angular.module('editorApp')
                     }
                 },
                 controller: function ($scope, $modalInstance, group, kWs) {
-                    $scope.type = 'Pull';
+                    $scope.type = 'pull from';
+                    $scope.action = 'pull';
                     $scope.group = group;
-                    $scope.selectedNode = null;
+                    $scope.selectedHost = '127.0.0.1';
+                    $scope.selectedPort = '9000';
+                    $scope.selectedPath = '/';
+                    $scope.processing = false;
 
-                    $scope.selectNode = function (node) {
-                        if (node.networkInformation.size() > 0) {
-                            $scope.selectedNode = node;
-                        }
+                    $scope.hosts = {
+                        '127.0.0.1': 'default'
                     };
 
-                    $scope.computeClasses = function (node) {
-                        var classes = [];
-                        if ($scope.selectedNode && ($scope.selectedNode.name === node.name)) {
-                            classes.push('active');
-                        }
-                        if (node.networkInformation.size() === 0) {
-                            classes.push('disabled');
-                        }
-                        return classes;
+                    $scope.ports = {
+                        '9000': 'default'
                     };
 
+                    $scope.paths = {
+                        '/': 'default'
+                    };
+
+                    group.subNodes.array.forEach(function (node) {
+                        var fragDic = group.findFragmentDictionaryByID(node.name);
+
+                        if (fragDic) {
+                            var port = fragDic.findValuesByID('port'),
+                                path = fragDic.findValuesByID('path');
+
+                            if (port && !$scope.ports[port.value]) {
+                                $scope.ports[port.value] = node.name;
+                            }
+
+                            if (path && !$scope.paths[path.value]) {
+                                $scope.paths[path.value] = node.name;
+                            }
+                        }
+
+                        node.networkInformation.array.forEach(function (net) {
+                            net.values.array.forEach(function (val) {
+                                if (!$scope.hosts[val.value]) {
+                                    $scope.hosts[val.value] = node.name;
+                                }
+                            });
+                        });
+                    });
+
+                    $scope.closeError = function () {
+                        $scope.error = null;
+                    };
+
+                    $scope.closeSuccess = function () {
+                        $scope.success = null;
+                    };
+
+                    var ws;
                     $scope.confirm = function () {
-                        console.log('TODO Pull', $scope.selectedNode.path());
+                        $scope.error = null;
+                        $scope.processing = true;
+                        ws = kWs.getModel(
+                            $scope.selectedHost,
+                            $scope.selectedPort,
+                            $scope.selectedPath,
+                            function (err) {
+                                $timeout(function () {
+                                    if (err) {
+                                        $scope.processing = false;
+                                        $scope.error = err.message;
+                                    } else {
+                                        $scope.processing = false;
+                                        $scope.success = true;
+                                    }
+                                });
+                            });
+                    };
+
+                    $scope.close = function () {
+                        if (ws) {
+                            ws.close();
+                        }
                         $modalInstance.close();
                     };
                 }
@@ -155,25 +267,9 @@ angular.module('editorApp')
 
         $scope.isTruish = kModelHelper.isTruish;
 
-        $scope.isPushableOrPullable = function () {
-            if ($scope.instance && $scope.instance.getRefInParent() === 'groups') {
-                for (var i=0; i < $scope.instance.subNodes.array.length; i++) {
-                    var node = $scope.instance.subNodes.array[i];
-                    for (var j=0; j < node.networkInformation.array.length; j++) {
-                        var net = node.networkInformation.array[j];
-                        if (net.values.size() > 0) {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        };
-
         uiFactory.setSelectedListener(function (path) {
-            if (!$scope.instance || (path !== $scope.instance.path())) {
-                $timeout(function () {
+            $timeout(function () {
+                if ($scope.instance && ($scope.instance.path() !== path)) {
                     // reset values
                     $scope.instance = null;
                     $scope.type = null;
@@ -182,22 +278,22 @@ angular.module('editorApp')
                     $scope.dicAttrs = [];
                     $scope.fragDicAttrs = [];
                     $scope.processing = true;
-                }).then(function () {
-                    if (path) {
-                        $scope.instance = kEditor.getModel().findByPath(path);
-                        if ($scope.instance && $scope.instance.getRefInParent() !== 'mBindings') {
-                            $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
-                            $timeout(function () {
-                                processTypeDefinition();
-                                $scope.processing = false;
-                            });
-                        } else {
-                            // do not display mBindings
-                            $scope.instance = null;
-                        }
+                }
+            }).then(function () {
+                if (path) {
+                    $scope.instance = kEditor.getModel().findByPath(path);
+                    if ($scope.instance && $scope.instance.getRefInParent() !== 'mBindings') {
+                        $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
+                        $timeout(function () {
+                            processTypeDefinition();
+                            $scope.processing = false;
+                        });
+                    } else {
+                        // do not display mBindings
+                        $scope.instance = null;
                     }
-                });
-            }
+                }
+            });
         });
 
         /**

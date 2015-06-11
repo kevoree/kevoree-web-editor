@@ -70,7 +70,7 @@ angular.module('editorApp')
             }
 
             if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.REMOVE) {
-                console.log('REMOVE', trace);
+                //console.log('REMOVE', trace);
                 if (trace.previousPath === '/') {
                     if (trace.elementAttributeName === 'hubs' ||
                         trace.elementAttributeName === 'nodes' ||
@@ -95,7 +95,7 @@ angular.module('editorApp')
                 }
 
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.REMOVE_ALL) {
-                console.log('REMOVE_ALL', trace);
+                //console.log('REMOVE_ALL', trace);
                 if (trace.previousPath === '/') {
                     switch (trace.elementAttributeName) {
                         case 'hubs':
@@ -144,36 +144,36 @@ angular.module('editorApp')
                 if (trace.previousPath === '/') {
                     switch (trace.elementAttributeName) {
                         case 'hubs':
-                            console.log('ADD hubs', trace);
+                            //console.log('ADD hubs', trace);
                             uiFactory.createChannel(trace.value);
                             break;
 
                         case 'nodes':
                         case 'hosts':
-                            console.log('ADD nodes|hosts', trace);
+                            //console.log('ADD nodes|hosts', trace);
                             uiFactory.createNode(trace.value);
                             uiFactory.refreshNode(kModelHelper.getHighestNode(trace.value).path());
                             break;
 
                         case 'groups':
-                            console.log('ADD groups', trace);
+                            //console.log('ADD groups', trace);
                             uiFactory.createGroup(trace.value);
                             break;
 
                         case 'mBindings':
-                            console.log('ADD mBinding', trace);
+                            //console.log('ADD mBinding', trace);
                             uiFactory.createBinding(trace.value);
                             break;
                     }
                 } else {
                     switch (trace.elementAttributeName) {
                         case 'groups':
-                            console.log('ADD .groups', trace);
+                            //console.log('ADD .groups', trace);
                             uiFactory.createGroupWire(trace.value, trace.source);
                             break;
 
                         case 'components':
-                            console.log('ADD .components', trace);
+                            //console.log('ADD .components', trace);
                             uiFactory.createComponent(trace.value);
                             trace.source.groups.array.forEach(function (group) {
                                 uiFactory.createGroupWire(group, trace.source);
@@ -193,7 +193,7 @@ angular.module('editorApp')
                             break;
 
                         case 'hosts':
-                            console.log('ADD .hosts', trace.source.path(), trace.value.path());
+                            //console.log('ADD .hosts', trace.source.path(), trace.value.path());
                             uiFactory.createNode(trace.value);
 
                             // recursively recreate children UIs
@@ -219,13 +219,13 @@ angular.module('editorApp')
                                 node.components.array.forEach(function (comp) {
                                     comp.provided.array.forEach(function (port) {
                                         port.bindings.array.forEach(function (binding) {
-                                            console.log('must update binding', binding.hub.path(), binding.port.path());
+                                            //console.log('must update binding', binding.hub.path(), binding.port.path());
                                             uiFactory.createBinding(binding);
                                         });
                                     });
                                     comp.required.array.forEach(function (port) {
                                         port.bindings.array.forEach(function (binding) {
-                                            console.log('must update binding', binding.hub.path(), binding.port.path());
+                                            //console.log('must update binding', binding.hub.path(), binding.port.path());
                                             uiFactory.createBinding(binding);
                                         });
                                     });
@@ -240,7 +240,7 @@ angular.module('editorApp')
                             break;
 
                         case 'subNodes':
-                            console.log('ADD .subNodes', trace);
+                            //console.log('ADD .subNodes', trace);
                             kInstance.initFragmentDictionaries(trace.source);
                             if (uiFactory.listener) {
                                 var selected = uiFactory.editor.select('.selected');
@@ -255,7 +255,7 @@ angular.module('editorApp')
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.SET) {
                 switch (trace.elementAttributeName) {
                     case 'name':
-                        console.log('SET name', trace);
+                        //console.log('SET name', trace);
                         if (trace.source.getRefInParent() === 'nodes') {
                             // update groups fragmentDictionaries
                             trace.source.groups.array.forEach(function (group) {
@@ -286,7 +286,7 @@ angular.module('editorApp')
 
                     case 'value':
                     case 'started':
-                        console.log('SET value|started', trace);
+                        //console.log('SET value|started', trace);
                         uiFactory.updateInstance(trace.previousPath, trace.source);
                         break;
 
@@ -294,19 +294,19 @@ angular.module('editorApp')
                         if (trace.value !== null) {
                             switch (trace.source.getRefInParent()) {
                                 case 'components':
-                                    console.log('SET typeDef', trace);
+                                    //console.log('SET typeDef', trace);
                                     uiFactory.updateCompTypeDefinition(trace.source, trace.previous_value); // jshint ignore:line
                                     break;
 
                                 default:
-                                    console.log('SET typeDef unhandled', trace);
+                                    //console.log('SET typeDef unhandled', trace);
                                     break;
                             }
                         }
                         break;
 
                     default:
-                        console.log('SET ignored', trace);
+                        //console.log('SET ignored', trace);
                         break;
                 }
             }

@@ -36,7 +36,7 @@ module.exports = function(config) {
       'bower_components/jquery-ui/jquery-ui.js',
       'bower_components/angular-dragdrop/src/angular-dragdrop.js',
       'bower_components/semver/semver.browser.js',
-      'bower_components/angular-ui-utils/keypress.js',
+      'bower_components/angular-ui-utils/ui-utils.js',
       'bower_components/snap.svg.zpd/snap.svg.zpd.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower

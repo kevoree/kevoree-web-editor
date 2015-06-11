@@ -85,7 +85,7 @@ body {
   border-radius: 8px;
   border: 1px solid #ccc;
   cursor: pointer;
-  padding: 15px 10px;
+  padding: 6px 3px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -440,6 +440,10 @@ pre {
   background-color: inherit;
   border: none;
   border-radius: inherit;
+}
+
+.text-bold {
+  font-weight: bold;
 }
 
 .spinner {

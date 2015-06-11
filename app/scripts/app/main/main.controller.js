@@ -239,6 +239,7 @@ angular.module('editorApp')
             model.removeAllGroups();
             model.removeAllHubs();
             model.removeAllMBindings();
+            model.removeAllRepositories();
         };
 
         $scope.deleteSelected = function (evt) {

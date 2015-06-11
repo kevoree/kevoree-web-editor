@@ -1,21 +1,42 @@
 <div class="modal-header">
-    <h3 class="modal-title">{{ type }} <strong>{{ group.name }}</strong></h3>
+    <h3 class="modal-title"><span class="text-capitalize">{{ type }}</span> <strong>{{ group.name }}</strong></h3>
 </div>
 <div class="modal-body">
-    <h5>Select a node</h5>
-    <div class="clearfix">
-        <div class="col-xs-3 node-box" data-ng-repeat="node in group.subNodes.array | orderBy:'name'">
-            <div
-                    class="clickable-box"
-                    data-ng-click="selectNode(node)"
-                    data-ng-class="computeClasses(node)"
-                    title="{{ node.name }}">
-                {{ node.name }}
-            </div>
-        </div>
+    <h5>Choose the URI to {{ type }}:</h5>
+    <p class="text-muted">
+        The following data are retrieved from <strong>{{ group.name }}</strong>
+        group fragment dictionaries related to its attached nodes and their respective Network Informations</p>
+    <div class="form-group input-group input-group-sm col-xs-12">
+        <span class="input-group-addon" style="width: 60px">Host</span>
+        <select class="form-control" data-ng-model="selectedHost">
+            <option value="{{ value }}" data-ng-repeat="(value, node) in hosts" data-ng-selected="value === selectedHost">
+                {{ value + ' (' + node + ')' }}
+            </option>
+        </select>
+        <span class="input-group-addon" style="width: 100px">{{ hosts[selectedHost] }}</span>
+    </div>
+    <div class="form-group input-group input-group-sm col-xs-12">
+        <span class="input-group-addon" style="width: 60px">Port</span>
+        <select class="form-control" data-ng-model="selectedPort">
+            <option value="{{ value }}" data-ng-repeat="(value, node) in ports" data-ng-selected="value === selectedPort">
+                {{ value + ' (' + node + ')' }}
+            </option>
+        </select>
+        <span class="input-group-addon" style="width: 100px">{{ ports[selectedPort] }}</span>
+    </div>
+    <div class="form-group input-group input-group-sm col-xs-12">
+        <span class="input-group-addon" style="width: 60px">Path</span>
+        <select class="form-control" data-ng-model="selectedPath">
+            <option value="{{ value }}" data-ng-repeat="(value, node) in paths" data-ng-selected="value === selectedPath">
+                {{ value + ' (' + node + ')' }}
+            </option>
+        </select>
+        <span class="input-group-addon" style="width: 100px">{{ paths[selectedPath] }}</span>
     </div>
 
-    <div class="alert" data-ng-if="processing">
+    <div data-ng-if="processing">
+        <hr/>
+        <h5 class="text-center">Trying to {{ type }} <strong>{{ 'ws://' + selectedHost + ':' + selectedPort + selectedPath }}</strong></h5>
         <div class="spinner">
             <div class="rect1"></div>
             <div class="rect2"></div>
@@ -23,8 +44,24 @@
             <div class="rect4"></div>
         </div>
     </div>
+    <div data-ng-if="error">
+        <hr/>
+        <div class="alert alert-danger">
+            <button type="button" class="close" data-ng-click="closeError()"><span>&times;</span></button>
+            <p><strong>Error</strong></p>
+            <p>{{ error }}</p>
+        </div>
+    </div>
+    <div data-ng-if="success">
+        <hr/>
+        <div class="alert alert-success">
+            <button type="button" class="close" data-ng-click="closeSuccess()"><span>&times;</span></button>
+            <p><strong>Success</strong></p>
+            <p>Model pushed to <strong>{{ 'ws://' + selectedHost + ':' + selectedPort + selectedPath }}</strong></p>
+        </div>
+    </div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" data-ng-click="confirm()" data-ng-disabled="!selectedNode">{{ type }}</button>
-    <button class="btn btn-default" data-ng-click="$close()">Close</button>
+    <button class="btn btn-primary text-capitalize" data-ng-click="confirm()" data-ng-disabled="processing">{{ action }}</button>
+    <button class="btn btn-default" data-ng-click="close()">Close</button>
 </div>

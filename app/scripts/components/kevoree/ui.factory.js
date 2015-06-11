@@ -1130,7 +1130,7 @@ angular.module('editorApp')
                     .mousedown(mouseDownHandler)
                     .touchable()
                     .draggable(instance)
-                    .dragMove(function (dx, dy) {
+                    .dragMove(function () {
                         var args = arguments;
                         instance.bindings.array.forEach(function (binding) {
                             //factory.createBinding(binding);
@@ -1721,12 +1721,17 @@ angular.module('editorApp')
             }
             if (evt.ctrlKey || evt.shiftKey) {
                 this.select('.bg').toggleClass('selected');
+
             } else {
                 this.select('.bg').addClass('selected');
             }
             evt.cancelBubble = true;
             if (factory.listener) {
-                factory.listener(this.attr('data-path'));
+                if (this.select('.bg').hasClass('selected')) {
+                    factory.listener(this.attr('data-path'));
+                } else {
+                    factory.listener();
+                }
             }
         };
 

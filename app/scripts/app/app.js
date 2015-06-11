@@ -13,9 +13,9 @@ angular
         'ngAnimate',
         'ngTouch',
         'ui.router',
-        'ui.keypress',
         'ui.bootstrap',
         'ui.codemirror',
+        'ui.utils',
         'ui-notification',
         'cfp.hotkeys',
         'ngDragDrop'

@@ -17,7 +17,7 @@
     "angular-hotkeys": "chieffancypants/angular-hotkeys#~1.4.5",
     "angular-dragdrop": "~1.0.11",
     "semver": "~4.3.4",
-    "angular-ui-utils": "bower-keypress",
+    "angular-ui-utils": "~0.2.3",
     "snap.svg.zpd": "~0.0.10"
   },
   "devDependencies": {
