@@ -443,7 +443,7 @@ pre {
 }
 
 .spinner {
-  margin: 50px auto;
+  margin: 0 auto;
   width: 50px;
   height: 30px;
   text-align: center;
@@ -458,6 +458,10 @@ pre {
 
   -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
   animation: stretchdelay 1.2s infinite ease-in-out;
+}
+
+.spinner-white > div {
+  background-color: #999;
 }
 
 .spinner.inverse > div {

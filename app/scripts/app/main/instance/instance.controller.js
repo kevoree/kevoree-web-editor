@@ -156,7 +156,7 @@ angular.module('editorApp')
         $scope.isTruish = kModelHelper.isTruish;
 
         $scope.isPushableOrPullable = function () {
-            if ($scope.instance) {
+            if ($scope.instance && $scope.instance.getRefInParent() === 'groups') {
                 for (var i=0; i < $scope.instance.subNodes.array.length; i++) {
                     var node = $scope.instance.subNodes.array[i];
                     for (var j=0; j < node.networkInformation.array.length; j++) {
@@ -172,20 +172,32 @@ angular.module('editorApp')
         };
 
         uiFactory.setSelectedListener(function (path) {
-            $timeout(function () {
-                if (path) {
-                    $scope.instance = kEditor.getModel().findByPath(path);
-                    if ($scope.instance && $scope.instance.getRefInParent() !== 'mBindings') {
-                        $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
-                        processTypeDefinition();
-                    } else {
-                        $scope.instance = null;
-                    }
-
-                } else {
+            if (!$scope.instance || (path !== $scope.instance.path())) {
+                $timeout(function () {
+                    // reset values
                     $scope.instance = null;
-                }
-            });
+                    $scope.type = null;
+                    $scope.selectedVersion = null;
+                    $scope.versions = [];
+                    $scope.dicAttrs = [];
+                    $scope.fragDicAttrs = [];
+                    $scope.processing = true;
+                }).then(function () {
+                    if (path) {
+                        $scope.instance = kEditor.getModel().findByPath(path);
+                        if ($scope.instance && $scope.instance.getRefInParent() !== 'mBindings') {
+                            $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
+                            $timeout(function () {
+                                processTypeDefinition();
+                                $scope.processing = false;
+                            });
+                        } else {
+                            // do not display mBindings
+                            $scope.instance = null;
+                        }
+                    }
+                });
+            }
         });
 
         /**
