@@ -1,7 +1,7 @@
 # kevoree-web-editor
 
-This project is generated with [yo angular generator](https://github.com/yeoman/generator-angular)
-version 0.11.1.
+New version using AngularJS.  
+You can try it here http://kwe.braindead.fr
 
 ## Build & development
 
