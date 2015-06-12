@@ -62,8 +62,26 @@ angular.module('editorApp')
          * @param trace
          */
         function modelReactor(trace) {
-            var fragDic,
-                selected;
+            var fragDic, selected, highestNode;
+
+            function processRefreshRecursively(node) {
+                node.components.array.forEach(processComponent);
+                node.groups.array.forEach(function (group) {
+                    uiFactory.createGroupWire(group, node);
+                });
+                node.hosts.array.forEach(processRefreshRecursively);
+            }
+
+            function processComponent(comp) {
+                comp.provided.array.forEach(processPort);
+                comp.required.array.forEach(processPort);
+            }
+
+            function processPort(port) {
+                port.bindings.array.forEach(function (binding) {
+                    uiFactory.createBinding(binding);
+                });
+            }
 
             if (trace.elementAttributeName === 'typeDefinitions' || trace.elementAttributeName === 'packages') {
                 editor.listeners.forEach(function (listener) {
@@ -199,21 +217,10 @@ angular.module('editorApp')
                         case 'components':
                             //console.log('ADD .components', trace);
                             uiFactory.createComponent(trace.value);
-                            trace.source.groups.array.forEach(function (group) {
-                                uiFactory.createGroupWire(group, trace.source);
-                            });
 
-                            trace.value.provided.array.forEach(function (port) {
-                                port.bindings.array.forEach(function (binding) {
-                                    uiFactory.createBinding(binding);
-                                });
-                            });
-                            trace.value.required.array.forEach(function (port) {
-                                port.bindings.array.forEach(function (binding) {
-                                    uiFactory.createBinding(binding);
-                                });
-                            });
-                            uiFactory.refreshNode(kModelHelper.getHighestNode(trace.value).path());
+                            highestNode = kModelHelper.getHighestNode(trace.value);
+                            uiFactory.refreshNode(highestNode.path());
+                            processRefreshRecursively(highestNode);
                             break;
 
                         case 'hosts':
@@ -237,30 +244,9 @@ angular.module('editorApp')
                                     childNode.hosts.array.forEach(updateChildNode);
                                 });
 
-                            uiFactory.refreshNode(kModelHelper.getHighestNode(trace.source).path());
-
-                            var processNode = function (node) {
-                                node.components.array.forEach(function (comp) {
-                                    comp.provided.array.forEach(function (port) {
-                                        port.bindings.array.forEach(function (binding) {
-                                            //console.log('must update binding', binding.hub.path(), binding.port.path());
-                                            uiFactory.createBinding(binding);
-                                        });
-                                    });
-                                    comp.required.array.forEach(function (port) {
-                                        port.bindings.array.forEach(function (binding) {
-                                            //console.log('must update binding', binding.hub.path(), binding.port.path());
-                                            uiFactory.createBinding(binding);
-                                        });
-                                    });
-                                });
-                                node.groups.array.forEach(function (group) {
-                                    uiFactory.createGroupWire(group, node);
-                                });
-                                node.hosts.array.forEach(processNode);
-                            };
-
-                            processNode(kModelHelper.getHighestNode(trace.source));
+                            highestNode = kModelHelper.getHighestNode(trace.source);
+                            uiFactory.refreshNode(highestNode.path());
+                            processRefreshRecursively(highestNode);
                             break;
 
                         case 'subNodes':

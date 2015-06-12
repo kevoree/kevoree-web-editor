@@ -267,6 +267,7 @@ angular.module('editorApp')
 
         $scope.isTruish = kModelHelper.isTruish;
 
+        var timeout;
         uiFactory.setSelectedListener(function (path) {
             $timeout(function () {
                 if ($scope.instance && ($scope.instance.path() !== path)) {
@@ -280,11 +281,12 @@ angular.module('editorApp')
                     $scope.processing = true;
                 }
             }).then(function () {
+                $timeout.cancel(timeout);
                 if (path) {
                     $scope.instance = kEditor.getModel().findByPath(path);
                     if ($scope.instance && $scope.instance.getRefInParent() !== 'mBindings') {
                         $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
-                        $timeout(function () {
+                        timeout = $timeout(function () {
                             processTypeDefinition();
                             $scope.processing = false;
                         });

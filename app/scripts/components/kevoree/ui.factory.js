@@ -181,7 +181,7 @@ angular.module('editorApp')
                             nodeElem.select('.bg').removeClass('hovered error');
                         } else {
                             // no node at this coords
-                            console.log('no node found here');
+                            g('no node found here');
                         }
 
                         this.data('wire').remove();
@@ -218,9 +218,8 @@ angular.module('editorApp')
                     .append(nameText)
                     .append(tdefText)
                     .append(plug)
-                    .mousedown(mouseDownHandler)
-                    .touchable()
-                    .draggable(instance)
+                    .selectable()
+                    .draggable()
                     .dragMove(function () {
                         var args = arguments;
                         instance.subNodes.array.forEach(function (subNode) {
@@ -243,8 +242,10 @@ angular.module('editorApp')
                     })
                     .relocate(instance);
 
+                plug.touchstart(function (evt) {
+                    evt.cancelBubble = true;
+                });
                 plug.mousedown(function (evt) {
-                    evt.preventDefault();
                     evt.cancelBubble = true;
 
 
@@ -254,7 +255,7 @@ angular.module('editorApp')
             },
 
             createGroupWire: function (group, node) {
-                var grpElem, nodeElem, wireElem, data = {}, toAnchor = {};
+                var grpElem, nodeElem, wireElem, data = {};
 
                 function computeData() {
                     grpElem = factory.editor.select('.group[data-path="'+group.path()+'"]');
@@ -270,10 +271,9 @@ angular.module('editorApp')
                         width: nodeElem.select('.bg').asPX('width'),
                         height: nodeElem.select('.bg').asPX('height')
                     };
-
-                    toAnchor = computeWireNodeAnchor(data.from, data.to, data.width, data.height);
                 }
                 computeData();
+                var toAnchor = computeWireNodeAnchor(data.from, data.to, data.width, data.height);
 
                 if (wireElem) {
                     // update data
@@ -324,7 +324,7 @@ angular.module('editorApp')
                         .data('data', data)
                         .append(wireBg)
                         .append(nodePlug)
-                        .mousedown(mouseDownHandler)
+                        .selectable()
                         .startPtDrag(function (dx, dy) {
                             var data = this.data('data');
                             var nFrom = {
@@ -406,9 +406,8 @@ angular.module('editorApp')
                     .append(bg)
                     .append(nameText)
                     .append(tdefText)
-                    .mousedown(mouseDownHandler)
-                    .touchable()
-                    .draggable(instance)
+                    .selectable()
+                    .draggable()
                     .dragStart(function () {
                         var container = document.getElementById('editor-container');
                         this.data('offset', { left: container.offsetLeft, top: container.offsetTop });
@@ -458,7 +457,7 @@ angular.module('editorApp')
                         }
 
                         var timeout = setTimeout(function () {
-                            var offset = this.data('offset');
+                            var offset = this.data('offset') || { left: 0, right: 0 };
                             var nodeElem = factory.getHoveredNode(clientX - offset.left, clientY - offset.top, instance.path());
                             if (nodeElem) {
                                 this.data('hoveredNode', nodeElem);
@@ -648,6 +647,9 @@ angular.module('editorApp')
                         .mousedown(function (evt) {
                             evt.cancelBubble = true;
                         })
+                        .touchstart(function (evt) {
+                            evt.cancelBubble = true;
+                        })
                         .drag(
                         function (dx, dy) {
                             var portPos = this.data('portPos');
@@ -688,11 +690,10 @@ angular.module('editorApp')
                         },
                         function () {
                             var portM = port.transform().localMatrix,
-                                compM = comp.transform().localMatrix,
-                                highestNodeM = factory.editor.select('.node[data-path="'+getHighestNodePath(comp)+'"]').transform().localMatrix;
+                                compBox = getAbsoluteBBox(comp);
                             var portPos = {
-                                x: portM.e + compM.e + highestNodeM.e,
-                                y: portM.f + compM.f + highestNodeM.f + (COMP_HEIGHT/2) - 5
+                                x: portM.e + compBox.x,
+                                y: portM.f + compBox.y + (COMP_HEIGHT/2) - 5
                             };
                             this.data('portPos', portPos);
                             var binding = factory.editor
@@ -783,6 +784,9 @@ angular.module('editorApp')
                         .mousedown(function (evt) {
                             evt.cancelBubble = true;
                         })
+                        .touchstart(function (evt) {
+                            evt.cancelBubble = true;
+                        })
                         .drag(
                         function (dx, dy) {
                             var portPos = this.data('portPos');
@@ -823,11 +827,10 @@ angular.module('editorApp')
                         },
                         function () {
                             var portM = port.transform().localMatrix,
-                                compM = comp.transform().localMatrix,
-                                highestNodeM = factory.editor.select('.node[data-path="'+getHighestNodePath(comp)+'"]').transform().localMatrix;
+                                compBox = getAbsoluteBBox(comp);
                             var portPos = {
-                                x: portM.e + compM.e + highestNodeM.e,
-                                y: portM.f + compM.f + highestNodeM.f + (COMP_HEIGHT/2) - 5
+                                x: portM.e + compBox.x,
+                                y: portM.f + compBox.y + (COMP_HEIGHT/2) - 5
                             };
                             this.data('portPos', portPos);
                             var binding = factory.editor
@@ -901,8 +904,7 @@ angular.module('editorApp')
                     requiredDy += COMP_HEIGHT;
                 }.bind(this));
 
-                comp.mousedown(mouseDownHandler)
-                    .touchable()
+                comp.selectable()
                     .draggable()
                     .dragStart(function () {
                         var container = document.getElementById('editor-container');
@@ -1039,7 +1041,7 @@ angular.module('editorApp')
                                 })
                                 .data('coords', coords)
                                 .append(bindingBg)
-                                .mousedown(mouseDownHandler)
+                                .selectable()
                                 .firstDragMove(function () {
                                     this.appendTo(factory.editor);
                                 })
@@ -1126,9 +1128,8 @@ angular.module('editorApp')
                     .append(bg)
                     .append(nameText)
                     .append(tdefText)
-                    .mousedown(mouseDownHandler)
-                    .touchable()
-                    .draggable(instance)
+                    .selectable()
+                    .draggable()
                     .dragMove(function () {
                         var args = arguments;
                         instance.bindings.array.forEach(function (binding) {
@@ -1409,6 +1410,8 @@ angular.module('editorApp')
                         computedWidth = NODE_WIDTH+(20*(kModelHelper.getNodeTreeHeight(instance.host)-1));
                     }
 
+                    node.relocate(instance);
+
                     node.select('.bg').attr({
                         width: computedWidth,
                         height: getNodeUIHeight(instance)
@@ -1586,22 +1589,17 @@ angular.module('editorApp')
          *
          */
         Snap.plugin(function (Snap, Element) {
-            var dragStart = function (dx) {
-                var args = arguments;
+            var dragStart = function (x, y, evt) {
+                this.data('dragStartX', x);
+                this.data('dragStartY', y);
+
                 factory.draggedInstancePath = this.attr('data-path');
 
                 var handlers = this.data('dragStart');
                 if (handlers) {
                     handlers.forEach(function (handler) {
-                        handler.apply(this, args);
+                        handler.apply(this, [x, y, evt]);
                     }.bind(this));
-                }
-
-                if((typeof dx === 'object') && ( dx.type === 'touchstart')) {
-                    mouseDownHandler.call(this, dx); // select instance on touch event
-                    dx.preventDefault();
-                    this.data('ox', dx.changedTouches[0].clientX);
-                    this.data('oy', dx.changedTouches[0].clientY);
                 }
 
                 if (this.hasClass('comp') || this.hasClass('node')) {
@@ -1614,12 +1612,13 @@ angular.module('editorApp')
                 this.data('hasMoved', false);
             };
 
-            var dragMove = function (dx, dy /*, x, y, evt*/) {
-                var args = arguments;
-
+            var dragMove = function (dx, dy, x, y, evt) {
                 if((typeof dx === 'object') && ( dx.type === 'touchmove')) {
-                    dy = dx.changedTouches[0].clientY - this.data('oy');
-                    dx = dx.changedTouches[0].clientX - this.data('ox');
+                    evt = dx;
+                    x = evt.changedTouches[0].clientX;
+                    y = evt.changedTouches[0].clientY;
+                    dx = x - this.data('dragStartX');
+                    dy = y - this.data('dragStartY');
                 }
 
                 this.transform(this.data('ot') + (this.data('ot') ? 'T':'t') + [ dx, dy ]);
@@ -1628,7 +1627,7 @@ angular.module('editorApp')
                     var handlers = this.data('dragMove');
                     if (handlers) {
                         handlers.forEach(function (handler) {
-                            handler.apply(this, args);
+                            handler.apply(this, [dx, dy, x, y, evt]);
                         }.bind(this));
                     }
                 } else {
@@ -1636,7 +1635,7 @@ angular.module('editorApp')
                     var firstDragMoveHandlers = this.data('firstDragMove');
                     if (firstDragMoveHandlers) {
                         firstDragMoveHandlers.forEach(function (handler) {
-                            handler.apply(this, args);
+                            handler.apply(this, [dx, dy, x, y, evt]);
                         }.bind(this));
                     }
                 }
@@ -1645,20 +1644,8 @@ angular.module('editorApp')
             var dragEnd = function () {
                 var args = arguments;
                 if (this.data('hasMoved')) {
-                    var handlers = this.data('dragEnd');
-                    if (handlers) {
-                        handlers.forEach(function (handler) {
-                            handler.apply(this, args);
-                        }.bind(this));
-                    }
-
-                    this.data('hasMoved', false);
-                }
-                factory.draggedInstancePath = null;
-            };
-
-            Element.prototype.draggable = function (instance) {
-                this.drag(dragMove, dragStart, function () {
+                    // update position
+                    var instance = factory.model.findByPath(this.attr('data-path'));
                     if (instance) {
                         // update model with new position on drag end
                         var pos = instance.findMetaDataByID(KWE_POSITION);
@@ -1670,9 +1657,25 @@ angular.module('editorApp')
                         var matrix = this.transform().localMatrix;
                         pos.value = JSON.stringify({ x: matrix.e, y: matrix.f });
                     }
-                    dragEnd.apply(this, arguments);
-                });
-                return this;
+
+                    // trigger handlers
+                    var handlers = this.data('dragEnd');
+                    if (handlers) {
+                        handlers.forEach(function (handler) {
+                            handler.apply(this, args);
+                        }.bind(this));
+                    }
+
+                    this.data('hasMoved', false);
+                }
+                this.removeData('dragStartX');
+                this.removeData('dragStartY');
+                this.removeData('ot');
+                factory.draggedInstancePath = null;
+            };
+
+            Element.prototype.draggable = function () {
+                return this.drag(dragMove, dragStart, dragEnd);
             };
 
             Element.prototype.dragStart = function (handler) {
@@ -1714,6 +1717,36 @@ angular.module('editorApp')
                     .touchmove(dragMove);
             };
 
+            Element.prototype.selectable = function () {
+                var selectable = function (evt) {
+                    evt.cancelBubble = true;
+
+                    if (!evt.ctrlKey && !evt.shiftKey) {
+                        factory.editor.selectAll('.selected').forEach(function (elem) {
+                            elem.removeClass('selected');
+                        });
+                    }
+                    if (evt.ctrlKey || evt.shiftKey) {
+                        this.select('.bg').toggleClass('selected');
+
+                    } else {
+                        this.select('.bg').addClass('selected');
+                    }
+                    if (factory.listener) {
+                        var selected = factory.editor.selectAll('.selected').items;
+                        if (selected.length === 1) {
+                            factory.listener(selected[0].parent().attr('data-path'));
+                        } else {
+                            factory.listener();
+                        }
+                    }
+                };
+
+                return this
+                    .mousedown(selectable)
+                    .touchstart(selectable);
+            };
+
             Element.prototype.relocate = function (instance) {
                 var meta = instance.findMetaDataByID(KWE_POSITION);
                 var pos = { x: 100, y: 100 };
@@ -1729,39 +1762,9 @@ angular.module('editorApp')
                     meta.value = JSON.stringify(pos);
                     instance.addMetaData(meta);
                 }
-                this.transform('t'+pos.x+','+pos.y);
-                return this;
+                return this.transform('t'+pos.x+','+pos.y);
             };
         });
-
-        /**
-         *
-         * @param evt
-         */
-        var mouseDownHandler = function (evt) {
-            evt.preventDefault();
-            evt.cancelBubble = true;
-
-            if (!evt.ctrlKey && !evt.shiftKey) {
-                factory.editor.selectAll('.selected').forEach(function (elem) {
-                    elem.removeClass('selected');
-                });
-            }
-            if (evt.ctrlKey || evt.shiftKey) {
-                this.select('.bg').toggleClass('selected');
-
-            } else {
-                this.select('.bg').addClass('selected');
-            }
-            if (factory.listener) {
-                var selected = factory.editor.selectAll('.selected').items;
-                if (selected.length === 1) {
-                    factory.listener(selected[0].parent().attr('data-path'));
-                } else {
-                    factory.listener();
-                }
-            }
-        };
 
         /**
          *
