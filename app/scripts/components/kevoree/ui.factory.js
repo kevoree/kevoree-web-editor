@@ -1707,13 +1707,6 @@ angular.module('editorApp')
                 return this.data('firstDragMove', handlers);
             };
 
-            Element.prototype.touchable = function () {
-                return this
-                    .touchstart(dragStart)
-                    .touchend(dragEnd)
-                    .touchmove(dragMove);
-            };
-
             Element.prototype.selectable = function () {
                 var selectable = function (evt) {
                     evt.cancelBubble = true;

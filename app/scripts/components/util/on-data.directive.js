@@ -9,7 +9,6 @@ angular.module('editorApp')
                 var fn = $parse(attrs.onData);
 
                 element.on('change', function (evt) {
-                    console.log(evt);
                     var reader = new FileReader();
 
                     reader.onload = function (onLoadEvt) {
