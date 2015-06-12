@@ -179,9 +179,6 @@ angular.module('editorApp')
 
                             // remove ui feedback
                             nodeElem.select('.bg').removeClass('hovered error');
-                        } else {
-                            // no node at this coords
-                            g('no node found here');
                         }
 
                         this.data('wire').remove();
