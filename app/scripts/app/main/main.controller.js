@@ -8,7 +8,7 @@
  * Controller of the editorApp main content div
  */
 angular.module('editorApp')
-    .controller('MainCtrl', function ($scope, $timeout, $modal, kEditor, hotkeys, saveFile, uiFactory, kModelHelper, kFactory, Notification) {
+    .controller('MainCtrl', function ($scope, $timeout, $modal, kEditor, hotkeys, saveFile, ui, kModelHelper, kFactory, Notification) {
         Notification.config({ top: 90 });
 
         $scope.loading = false;
@@ -226,6 +226,11 @@ angular.module('editorApp')
             }
         };
 
+        $scope.fixOverlapping = function (evt) {
+            evt.preventDefault();
+            kEditor.fixOverlapping();
+        };
+
         $scope.deleteAll = function (evt) {
             evt.preventDefault();
             $scope.deleteInstances(evt);
@@ -244,7 +249,7 @@ angular.module('editorApp')
 
         $scope.deleteSelected = function (evt) {
             evt.preventDefault();
-            var deletions = uiFactory.deleteSelected();
+            var deletions = ui.deleteSelected();
             if (deletions === 0) {
                 Notification.warning({
                     title: 'Delete selected',
@@ -334,6 +339,12 @@ angular.module('editorApp')
         });
 
         hotkeys.add({
+            combo: 'alt+o',
+            description: 'Fix overlapping',
+            callback: $scope.fixOverlapping
+        });
+
+        hotkeys.add({
             combo: 'alt+shift+d',
             description: 'Delete everything in the current model',
             callback: $scope.deleteAll
@@ -356,7 +367,7 @@ angular.module('editorApp')
             description: 'Select every instances',
             callback: function (evt) {
                 evt.preventDefault();
-                uiFactory.selectAll();
+                ui.selectAll();
             }
         });
 

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('uiFactory', function (kFactory, kModelHelper, KWE_POSITION) {
+    .factory('ui', function (kFactory, kModelHelper, KWE_POSITION) {
         var GROUP_RADIUS = 55,
             GROUP_PLUG_RADIUS = 10,
             NODE_WIDTH = 210,
@@ -9,7 +9,7 @@ angular.module('editorApp')
             COMP_HEIGHT = 40,
             CHANNEL_RADIUS = 45;
 
-        var factory = {
+        var ui = {
             /**
              * Current editor model
              */
@@ -37,13 +37,14 @@ angular.module('editorApp')
                 var editor = new Snap('svg#editor');
                 editor.zpd({ zoomThreshold: [ 0.2, 1 ], zoomScale: 0.05 });
                 var zpdEditor = this.editor = editor.select('#snapsvg-zpd-'+editor.id);
+                zpdEditor.addClass('zpd');
                 editor.mousedown(function () {
                     // remove all selected state
                     editor.selectAll('.selected').forEach(function (elem) {
                         elem.removeClass('selected');
                     });
-                    if (factory.listener) {
-                        factory.listener();
+                    if (ui.listener) {
+                        ui.listener();
                     }
                 });
                 updateSVGDefs(this.model);
@@ -128,13 +129,13 @@ angular.module('editorApp')
                         }
 
                         var timeout = setTimeout(function () {
-                            var nodeElem = factory.getHoveredNode(plugPos.x + dx, plugPos.y + dy);
+                            var nodeElem = ui.getHoveredNode(plugPos.x + dx, plugPos.y + dy);
                             if (nodeElem) {
                                 this.data('hoveredNode', nodeElem);
                                 var nodeBg = nodeElem.select('.bg');
                                 nodeBg.addClass('hovered');
 
-                                var node = factory.model.findByPath(nodeElem.attr('data-path'));
+                                var node = ui.model.findByPath(nodeElem.attr('data-path'));
                                 if (instance.findSubNodesByID(node.name)) {
                                     nodeBg.addClass('error');
                                 }
@@ -151,7 +152,7 @@ angular.module('editorApp')
                             y: grpM.f + (GROUP_RADIUS/2)+GROUP_PLUG_RADIUS
                         };
                         this.data('plugPos', plugPos);
-                        var wire = factory.editor
+                        var wire = ui.editor
                             .path('M'+plugPos.x+','+plugPos.y+' '+plugPos.x+','+plugPos.y)
                             .attr({
                                 fill: 'none',
@@ -168,7 +169,7 @@ angular.module('editorApp')
                         if (nodeElem) {
                             if (!nodeElem.select('.bg').hasClass('error')) {
                                 // node elem found
-                                var nodeInstance = factory.model.findByPath(nodeElem.attr('data-path'));
+                                var nodeInstance = ui.model.findByPath(nodeElem.attr('data-path'));
                                 if (instance.findSubNodesByID(nodeInstance.name)) {
                                     // this node is already connected to the group
                                 } else {
@@ -220,7 +221,7 @@ angular.module('editorApp')
                     .dragMove(function () {
                         var args = arguments;
                         instance.subNodes.array.forEach(function (subNode) {
-                            var wire = factory.editor.select('.group-wire[data-from="'+instance.path()+'"][data-to="'+subNode.path()+'"]');
+                            var wire = ui.editor.select('.group-wire[data-from="'+instance.path()+'"][data-to="'+subNode.path()+'"]');
                             if (wire) {
                                 wire.data('startPtDrag').apply(wire, args);
                             }
@@ -229,7 +230,7 @@ angular.module('editorApp')
                     .dragEnd(function () {
                         var args = arguments;
                         instance.subNodes.array.forEach(function (subNode) {
-                            var wire = factory.editor.select('.group-wire[data-from="'+instance.path()+'"][data-to="'+subNode.path()+'"]');
+                            var wire = ui.editor.select('.group-wire[data-from="'+instance.path()+'"][data-to="'+subNode.path()+'"]');
                             if (wire) {
                                 wire.data('dragEnd').forEach(function (handler) {
                                     handler.apply(wire, args);
@@ -255,12 +256,12 @@ angular.module('editorApp')
                 var grpElem, nodeElem, wireElem, data = {};
 
                 function computeData() {
-                    grpElem = factory.editor.select('.group[data-path="'+group.path()+'"]');
-                    nodeElem = factory.editor.select('.node[data-path="'+node.path()+'"]');
-                    wireElem = factory.editor.select('.group-wire[data-from="'+group.path()+'"][data-to="'+node.path()+'"]');
+                    grpElem = ui.editor.select('.group[data-path="'+group.path()+'"]');
+                    nodeElem = ui.editor.select('.node[data-path="'+node.path()+'"]');
+                    wireElem = ui.editor.select('.group-wire[data-from="'+group.path()+'"][data-to="'+node.path()+'"]');
 
                     var grpMatrix = grpElem.transform().localMatrix,
-                        toBox = getAbsoluteBBox(nodeElem);
+                        toBox = ui.getAbsoluteBBox(nodeElem);
 
                     data = {
                         from: { x: grpMatrix.e, y: grpMatrix.f + (GROUP_RADIUS/2) + GROUP_PLUG_RADIUS },
@@ -419,7 +420,7 @@ angular.module('editorApp')
                         // trigger bindings firstDragMove while dragging start
                         var redrawBindings = function (comp) {
                             var redrawBinding = function (binding) {
-                                var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                                var elem = ui.editor.select('.binding[data-path="'+binding.path()+'"]');
                                 if (elem) {
                                     elem.data('firstDragMove').forEach(function (handler) {
                                         handler.apply(elem, args);
@@ -455,7 +456,7 @@ angular.module('editorApp')
 
                         var timeout = setTimeout(function () {
                             var offset = this.data('offset') || { left: 0, right: 0 };
-                            var nodeElem = factory.getHoveredNode(clientX - offset.left, clientY - offset.top, instance.path());
+                            var nodeElem = ui.getHoveredNode(clientX - offset.left, clientY - offset.top, instance.path());
                             if (nodeElem) {
                                 this.data('hoveredNode', nodeElem);
                                 nodeElem.select('.bg').addClass('hovered');
@@ -467,7 +468,7 @@ angular.module('editorApp')
 
                         // redraw group-wire while dragging
                         var redrawWire = function (group, node) {
-                            var wire = factory.editor.select('.group-wire[data-from="'+group.path()+'"][data-to="'+node.path()+'"]');
+                            var wire = ui.editor.select('.group-wire[data-from="'+group.path()+'"][data-to="'+node.path()+'"]');
                             if (wire) {
                                 wire.data('endPtDrag').apply(wire, args);
                             }
@@ -479,7 +480,7 @@ angular.module('editorApp')
                         // redraw bindings while dragging
                         var redrawBindings = function (comp) {
                             var redrawBinding = function (binding) {
-                                var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                                var elem = ui.editor.select('.binding[data-path="'+binding.path()+'"]');
                                 if (elem) {
                                     elem.data('startPtDrag').apply(elem, args);
                                 }
@@ -514,11 +515,11 @@ angular.module('editorApp')
 
                             // put it in the hovered node
                             node.remove();
-                            factory.model.findByPath(hoveredNode.attr('data-path')).addHosts(instance);
+                            ui.model.findByPath(hoveredNode.attr('data-path')).addHosts(instance);
                         }
 
                         function updateWire(group, node) {
-                            var wire = factory.editor.select('.group-wire[data-from="'+group.path()+'"][data-to="'+node.path()+'"]');
+                            var wire = ui.editor.select('.group-wire[data-from="'+group.path()+'"][data-to="'+node.path()+'"]');
                             if (wire) {
                                 wire.data('dragEnd').forEach(function (handler) {
                                     handler.apply(wire, args);
@@ -535,7 +536,7 @@ angular.module('editorApp')
                         // update bindings coords when dragging done
                         function updateBindings(comp) {
                             function updateBindingCoords(binding) {
-                                var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                                var elem = ui.editor.select('.binding[data-path="'+binding.path()+'"]');
                                 if (elem) {
                                     elem.data('dragEnd').forEach(function (handler) {
                                         handler.apply(elem, args);
@@ -669,13 +670,13 @@ angular.module('editorApp')
                             }
 
                             var timeout = setTimeout(function () {
-                                var chanElem = factory.getHoveredChan(portPos.x + dx, portPos.y + dy);
+                                var chanElem = ui.getHoveredChan(portPos.x + dx, portPos.y + dy);
                                 if (chanElem) {
                                     this.data('hoveredChan', chanElem);
                                     var chanBg = chanElem.select('.bg');
                                     chanBg.addClass('hovered');
 
-                                    var chan = factory.model.findByPath(chanElem.attr('data-path'));
+                                    var chan = ui.model.findByPath(chanElem.attr('data-path'));
                                     if (kModelHelper.isAlreadyBound(instance.findProvidedByID(portType.name), chan)) {
                                         chanBg.addClass('error');
                                     }
@@ -687,13 +688,13 @@ angular.module('editorApp')
                         },
                         function () {
                             var portM = port.transform().localMatrix,
-                                compBox = getAbsoluteBBox(comp);
+                                compBox = ui.getAbsoluteBBox(comp);
                             var portPos = {
                                 x: portM.e + compBox.x,
                                 y: portM.f + compBox.y + (COMP_HEIGHT/2) - 5
                             };
                             this.data('portPos', portPos);
-                            var binding = factory.editor
+                            var binding = ui.editor
                                 .path('M'+portPos.x+','+portPos.y+' '+portPos.x+','+portPos.y)
                                 .attr({
                                     fill: 'none',
@@ -711,7 +712,7 @@ angular.module('editorApp')
                             var hoveredChan = this.data('hoveredChan');
                             if (hoveredChan) {
                                 if (!hoveredChan.select('.bg').hasClass('error')) {
-                                    var chan = factory.model.findByPath(hoveredChan.attr('data-path'));
+                                    var chan = ui.model.findByPath(hoveredChan.attr('data-path'));
                                     if (chan) {
                                         var port = instance.findProvidedByID(portType.name);
                                         if (!port) {
@@ -724,7 +725,7 @@ angular.module('editorApp')
                                         var binding = kFactory.createMBinding();
                                         binding.hub = chan;
                                         binding.port = port;
-                                        factory.model.addMBindings(binding);
+                                        ui.model.addMBindings(binding);
                                     }
                                 }
 
@@ -806,13 +807,13 @@ angular.module('editorApp')
                             }
 
                             var timeout = setTimeout(function () {
-                                var chanElem = factory.getHoveredChan(portPos.x + dx, portPos.y + dy);
+                                var chanElem = ui.getHoveredChan(portPos.x + dx, portPos.y + dy);
                                 if (chanElem) {
                                     this.data('hoveredChan', chanElem);
                                     var chanBg = chanElem.select('.bg');
                                     chanBg.addClass('hovered');
 
-                                    var chan = factory.model.findByPath(chanElem.attr('data-path'));
+                                    var chan = ui.model.findByPath(chanElem.attr('data-path'));
                                     if (kModelHelper.isAlreadyBound(instance.findRequiredByID(portType.name), chan)) {
                                         chanBg.addClass('error');
                                     }
@@ -824,13 +825,13 @@ angular.module('editorApp')
                         },
                         function () {
                             var portM = port.transform().localMatrix,
-                                compBox = getAbsoluteBBox(comp);
+                                compBox = ui.getAbsoluteBBox(comp);
                             var portPos = {
                                 x: portM.e + compBox.x,
                                 y: portM.f + compBox.y + (COMP_HEIGHT/2) - 5
                             };
                             this.data('portPos', portPos);
-                            var binding = factory.editor
+                            var binding = ui.editor
                                 .path('M'+portPos.x+','+portPos.y+' '+portPos.x+','+portPos.y)
                                 .attr({
                                     fill: 'none',
@@ -848,7 +849,7 @@ angular.module('editorApp')
                             var hoveredChan = this.data('hoveredChan');
                             if (hoveredChan) {
                                 if (!hoveredChan.select('.bg').hasClass('error')) {
-                                    var chan = factory.model.findByPath(hoveredChan.attr('data-path'));
+                                    var chan = ui.model.findByPath(hoveredChan.attr('data-path'));
                                     if (chan) {
                                         var port = instance.findRequiredByID(portType.name);
                                         if (!port) {
@@ -861,7 +862,7 @@ angular.module('editorApp')
                                         var binding = kFactory.createMBinding();
                                         binding.hub = chan;
                                         binding.port = port;
-                                        factory.model.addMBindings(binding);
+                                        ui.model.addMBindings(binding);
                                     }
                                 }
 
@@ -916,7 +917,7 @@ angular.module('editorApp')
                         // redraw bindings after component when dragging start
                         var redrawBindings = function (port) {
                             port.bindings.array.forEach(function (binding) {
-                                var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                                var elem = ui.editor.select('.binding[data-path="'+binding.path()+'"]');
                                 if (elem) {
                                     elem.data('firstDragMove').forEach(function (handler) {
                                         handler.apply(elem, args);
@@ -939,7 +940,7 @@ angular.module('editorApp')
 
                         var timeout = setTimeout(function () {
                             var offset = this.data('offset');
-                            var nodeElem = factory.getHoveredNode(clientX - offset.left, clientY - offset.top, instance.path());
+                            var nodeElem = ui.getHoveredNode(clientX - offset.left, clientY - offset.top, instance.path());
                             if (nodeElem) {
                                 this.data('hoveredNode', nodeElem);
                                 nodeElem.select('.bg').addClass('hovered');
@@ -952,7 +953,7 @@ angular.module('editorApp')
                         // redraw bindings when dragging
                         var redrawBindings = function (port) {
                             port.bindings.array.forEach(function (binding) {
-                                var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                                var elem = ui.editor.select('.binding[data-path="'+binding.path()+'"]');
                                 if (elem) {
                                     elem.data('startPtDrag').apply(elem, args);
                                 }
@@ -968,7 +969,7 @@ angular.module('editorApp')
                             hoveredNode.select('.bg').removeClass('hovered error');
 
                             comp.remove();
-                            factory.model.findByPath(hoveredNode.attr('data-path')).addComponents(instance);
+                            ui.model.findByPath(hoveredNode.attr('data-path')).addComponents(instance);
                         } else {
                             // if dropped in "nothing" then put it back into its old host node
                             comp.remove();
@@ -1040,7 +1041,7 @@ angular.module('editorApp')
                                 .append(bindingBg)
                                 .selectable()
                                 .firstDragMove(function () {
-                                    this.appendTo(factory.editor);
+                                    this.appendTo(ui.editor);
                                 })
                                 .startPtDrag(function (dx, dy) {
                                     var coords = this.data('coords');
@@ -1077,10 +1078,10 @@ angular.module('editorApp')
                                     });
                                 })
                                 .dragEnd(function () {
-                                    var portElem = factory.editor.select(
+                                    var portElem = ui.editor.select(
                                             '.comp[data-path="'+binding.port.eContainer().path()+'"] ' +
                                             '.port[data-name="'+binding.port.name+'"]'),
-                                        chanElem = factory.editor.select('.chan[data-path="'+binding.hub.path()+'"]');
+                                        chanElem = ui.editor.select('.chan[data-path="'+binding.hub.path()+'"]');
                                     this.data('coords', computeBindingCoords(portElem, chanElem));
                                 });
                         }
@@ -1131,7 +1132,7 @@ angular.module('editorApp')
                         var args = arguments;
                         instance.bindings.array.forEach(function (binding) {
                             //factory.createBinding(binding);
-                            var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                            var elem = ui.editor.select('.binding[data-path="'+binding.path()+'"]');
                             elem.data('endPtDrag').apply(elem, args);
                         });
                     })
@@ -1140,7 +1141,7 @@ angular.module('editorApp')
 
                         // update bindings coords when done
                         instance.bindings.array.forEach(function (binding) {
-                            var elem = factory.editor.select('.binding[data-path="'+binding.path()+'"]');
+                            var elem = ui.editor.select('.binding[data-path="'+binding.path()+'"]');
                             if (elem) {
                                 elem.data('dragEnd').forEach(function (handler) {
                                     handler.apply(elem, args);
@@ -1156,7 +1157,7 @@ angular.module('editorApp')
                 if (elem) {
                     if (elem.hasClass('comp') || elem.hasClass('node')) {
                         var highestNodePath = getHighestNodePath(elem);
-                        if (factory.draggedInstancePath === path) {
+                        if (ui.draggedInstancePath === path) {
                             // append it to the editor
                             this.editor.append(elem);
                         } else {
@@ -1164,17 +1165,17 @@ angular.module('editorApp')
                             elem.remove();
                         }
 
-                        factory.refreshNode(highestNodePath);
+                        ui.refreshNode(highestNodePath);
 
                         // refresh all group-wire from this whole node
-                        var highestNode = factory.model.findByPath(highestNodePath);
+                        var highestNode = ui.model.findByPath(highestNodePath);
                         if (highestNode) {
                             highestNode.groups.array.forEach(function (group) {
-                                factory.createGroupWire(group, highestNode);
+                                ui.createGroupWire(group, highestNode);
                             });
                             highestNode.hosts.array.forEach(function redrawWire(child) {
                                 child.groups.array.forEach(function (group) {
-                                    factory.createGroupWire(group, child);
+                                    ui.createGroupWire(group, child);
                                 });
                                 child.hosts.array.forEach(redrawWire);
                             });
@@ -1183,12 +1184,12 @@ angular.module('editorApp')
                             highestNode.components.array.forEach(function (comp) {
                                 comp.provided.array.forEach(function (port) {
                                     port.bindings.array.forEach(function (binding) {
-                                        factory.createBinding(binding);
+                                        ui.createBinding(binding);
                                     });
                                 });
                                 comp.required.array.forEach(function (port) {
                                     port.bindings.array.forEach(function (binding) {
-                                        factory.createBinding(binding);
+                                        ui.createBinding(binding);
                                     });
                                 });
                             });
@@ -1198,12 +1199,12 @@ angular.module('editorApp')
                                 child.components.array.forEach(function (comp) {
                                     comp.provided.array.forEach(function (port) {
                                         port.bindings.array.forEach(function (binding) {
-                                            factory.createBinding(binding);
+                                            ui.createBinding(binding);
                                         });
                                     });
                                     comp.required.array.forEach(function (port) {
                                         port.bindings.array.forEach(function (binding) {
-                                            factory.createBinding(binding);
+                                            ui.createBinding(binding);
                                         });
                                     });
                                 });
@@ -1214,7 +1215,7 @@ angular.module('editorApp')
                         elem.remove();
                     }
                 }
-                factory.invokeListener();
+                ui.invokeListener();
             },
 
             deleteGroupWire: function (groupPath, nodePath) {
@@ -1236,7 +1237,7 @@ angular.module('editorApp')
                 selected.forEach(function (elem) {
                     var path = elem.attr('data-path');
                     if (path) {
-                        var instance = factory.model.findByPath(path);
+                        var instance = ui.model.findByPath(path);
                         if (instance) {
                             if (instance.hosts) {
                                 // also remove child nodes recursively
@@ -1249,8 +1250,8 @@ angular.module('editorApp')
                         }
                     } else {
                         if (elem.hasClass('group-wire')) {
-                            var grp = factory.model.findByPath(elem.attr('data-from')),
-                                node = factory.model.findByPath(elem.attr('data-to'));
+                            var grp = ui.model.findByPath(elem.attr('data-from')),
+                                node = ui.model.findByPath(elem.attr('data-to'));
                             if (node && grp) {
                                 node.removeGroups(grp);
                                 grp.removeSubNodes(node);
@@ -1273,23 +1274,23 @@ angular.module('editorApp')
             deleteNodes: function () {
                 this.editor.selectAll('.node').remove();
                 this.editor.selectAll('.group-wire').remove();
-                factory.invokeListener();
+                ui.invokeListener();
             },
 
             deleteGroups: function () {
                 this.editor.selectAll('.group').remove();
                 this.editor.selectAll('.group-wire').remove();
-                factory.invokeListener();
+                ui.invokeListener();
             },
 
             deleteChannels: function () {
                 this.editor.selectAll('.chan').remove();
-                factory.invokeListener();
+                ui.invokeListener();
             },
 
             deleteBindings: function () {
                 this.editor.selectAll('.binding').remove();
-                factory.invokeListener();
+                ui.invokeListener();
             },
 
             updateInstance: function (previousPath, instance) {
@@ -1339,6 +1340,15 @@ angular.module('editorApp')
                 }
             },
 
+            updatePosition: function (instance) {
+                var elem = this.editor.select('.instance[data-path="'+instance.path()+'"]');
+                if (elem) {
+                    if (!elem.parent().hasClass('node')) {
+                        elem.relocate(instance);
+                    }
+                }
+            },
+
             updateCompTypeDefinition: function (comp, oldTypeDef) {
                 // get rid of the old bindings (if any) related to old type def
                 var compare = kFactory.createModelCompare();
@@ -1349,7 +1359,7 @@ angular.module('editorApp')
                         switch (trace.refName) {
                             case 'provided':
                                 // remove of a provided port
-                                portType = factory.model.findByPath(trace.objPath);
+                                portType = ui.model.findByPath(trace.objPath);
                                 port = comp.findProvidedByID(portType.name);
                                 if (port) {
                                     port.delete();
@@ -1358,7 +1368,7 @@ angular.module('editorApp')
 
                             case 'required':
                                 // remove of a required port
-                                portType = factory.model.findByPath(trace.objPath);
+                                portType = ui.model.findByPath(trace.objPath);
                                 port = comp.findRequiredByID(portType.name);
                                 if (port) {
                                     port.delete();
@@ -1369,7 +1379,7 @@ angular.module('editorApp')
                         switch (trace.refName) {
                             case 'provided':
                                 // add a provided port
-                                portType = factory.model.findByPath(trace.previousPath);
+                                portType = ui.model.findByPath(trace.previousPath);
                                 port = kFactory.createPort();
                                 port.name = portType.name;
                                 port.portTypeRef = portType;
@@ -1378,7 +1388,7 @@ angular.module('editorApp')
 
                             case 'required':
                                 // add a required port
-                                portType = factory.model.findByPath(trace.previousPath);
+                                portType = ui.model.findByPath(trace.previousPath);
                                 port = kFactory.createPort();
                                 port.name = portType.name;
                                 port.portTypeRef = portType;
@@ -1390,7 +1400,7 @@ angular.module('editorApp')
                 });
 
                 // recreate the new component
-                factory.createComponent(comp);
+                ui.createComponent(comp);
             },
 
             /**
@@ -1398,9 +1408,9 @@ angular.module('editorApp')
              * @param path
              */
             refreshNode: function (path) {
-                var instance = factory.model.findByPath(path);
+                var instance = ui.model.findByPath(path);
                 if (instance) {
-                    var node = factory.editor.select('.node[data-path="'+path+'"]');
+                    var node = ui.editor.select('.node[data-path="'+path+'"]');
                     var treeHeight = kModelHelper.getNodeTreeHeight(instance);
                     var computedWidth = NODE_WIDTH+(20*treeHeight);
                     if (instance.host) {
@@ -1414,7 +1424,7 @@ angular.module('editorApp')
                         height: getNodeUIHeight(instance)
                     });
 
-                    factory.editor
+                    ui.editor
                         .selectAll('.node[data-path="'+path+'"] > text')
                         .attr({
                             x: computedWidth/2,
@@ -1422,15 +1432,15 @@ angular.module('editorApp')
                         });
 
                     instance.components.array.forEach(function (comp) {
-                        factory.refreshComp(comp.path());
+                        ui.refreshComp(comp.path());
                     });
 
                     instance.hosts.array.forEach(function (host) {
-                        factory.refreshNode(host.path());
+                        ui.refreshNode(host.path());
                     });
 
                     // apply dx,dy transformation of level-1 children
-                    var children = factory.editor.selectAll('.node[data-path="'+instance.path()+'"] > .instance').items;
+                    var children = ui.editor.selectAll('.node[data-path="'+instance.path()+'"] > .instance').items;
                     var dy = NODE_HEIGHT;
                     children.forEach(function (child) {
                         child.transform('t'+((computedWidth - child.select('.bg').asPX('width'))/2)+','+dy);
@@ -1444,16 +1454,16 @@ angular.module('editorApp')
              * @param path
              */
             refreshComp: function (path) {
-                var instance = factory.model.findByPath(path);
+                var instance = ui.model.findByPath(path);
                 if (instance) {
-                    var comp = factory.editor.select('.comp[data-path="'+path+'"]');
-                    var host = factory.editor.select('.node[data-path="'+instance.eContainer().path()+'"]');
+                    var comp = ui.editor.select('.comp[data-path="'+path+'"]');
+                    var host = ui.editor.select('.node[data-path="'+instance.eContainer().path()+'"]');
                     var treeHeight = kModelHelper.getNodeTreeHeight(instance.eContainer());
                     var computedWidth = host.select('.bg').asPX('width') - 20;
 
                     if (comp && host) {
                         comp.select('.bg').attr({ width: computedWidth });
-                        factory.editor
+                        ui.editor
                             .selectAll('.comp[data-path="'+path+'"] > text')
                             .attr({
                                 x: computedWidth/2,
@@ -1488,7 +1498,7 @@ angular.module('editorApp')
 
             getNodePathAtPoint: function (x, y) {
                 var container = this.getEditorContainer();
-                var node = factory.getHoveredNode(x-container.offsetLeft, y-container.offsetTop);
+                var node = ui.getHoveredNode(x-container.offsetLeft, y-container.offsetTop);
                 if (node) {
                     return node.attr('data-path');
                 } else {
@@ -1535,7 +1545,7 @@ angular.module('editorApp')
                     updateSVGDefs(model);
 
                     this.editor.clear();
-                    factory.invokeListener();
+                    ui.invokeListener();
                 }
             },
 
@@ -1565,7 +1575,7 @@ angular.module('editorApp')
                 }
                 return null;
             },
-            
+
             invokeListener: function (selected) {
                 if (this.listener) {
                     if (selected) {
@@ -1579,6 +1589,26 @@ angular.module('editorApp')
                         }
                     }
                 }
+            },
+
+            /**
+             *
+             * @param elem
+             * @returns {{x, y, x2, y2, width, height, cx, cy}|*}
+             */
+            getAbsoluteBBox: function (elem) {
+                var bbox = elem.getBBox();
+
+                function walkUp(elem) {
+                    if (elem.parent() && elem.parent().hasClass('instance')) {
+                        var parentBox = elem.parent().getBBox();
+                        bbox.x += parentBox.x;
+                        bbox.y += parentBox.y;
+                        walkUp(elem.parent());
+                    }
+                }
+                walkUp(elem);
+                return bbox;
             }
         };
 
@@ -1590,7 +1620,7 @@ angular.module('editorApp')
                 this.data('dragStartX', x);
                 this.data('dragStartY', y);
 
-                factory.draggedInstancePath = this.attr('data-path');
+                ui.draggedInstancePath = this.attr('data-path');
 
                 var handlers = this.data('dragStart');
                 if (handlers) {
@@ -1600,7 +1630,7 @@ angular.module('editorApp')
                 }
 
                 if (this.hasClass('comp') || this.hasClass('node')) {
-                    var bbox = getAbsoluteBBox(this);
+                    var bbox = ui.getAbsoluteBBox(this);
                     this.data('ot', 't'+bbox.x+','+bbox.y);
                 } else {
                     this.data('ot', this.transform().local);
@@ -1642,7 +1672,7 @@ angular.module('editorApp')
                 var args = arguments;
                 if (this.data('hasMoved')) {
                     // update position
-                    var instance = factory.model.findByPath(this.attr('data-path'));
+                    var instance = ui.model.findByPath(this.attr('data-path'));
                     if (instance) {
                         // update model with new position on drag end
                         var pos = instance.findMetaDataByID(KWE_POSITION);
@@ -1668,7 +1698,7 @@ angular.module('editorApp')
                 this.removeData('dragStartX');
                 this.removeData('dragStartY');
                 this.removeData('ot');
-                factory.draggedInstancePath = null;
+                ui.draggedInstancePath = null;
             };
 
             Element.prototype.draggable = function () {
@@ -1712,7 +1742,7 @@ angular.module('editorApp')
                     evt.cancelBubble = true;
 
                     if (!evt.ctrlKey && !evt.shiftKey) {
-                        factory.editor.selectAll('.selected').forEach(function (elem) {
+                        ui.editor.selectAll('.selected').forEach(function (elem) {
                             elem.removeClass('selected');
                         });
                     }
@@ -1722,12 +1752,12 @@ angular.module('editorApp')
                     } else {
                         this.select('.bg').addClass('selected');
                     }
-                    if (factory.listener) {
-                        var selected = factory.editor.selectAll('.selected').items;
+                    if (ui.listener) {
+                        var selected = ui.editor.selectAll('.selected').items;
                         if (selected.length === 1) {
-                            factory.listener(selected[0].parent().attr('data-path'));
+                            ui.listener(selected[0].parent().attr('data-path'));
                         } else {
-                            factory.listener();
+                            ui.listener();
                         }
                     }
                 };
@@ -1800,31 +1830,11 @@ angular.module('editorApp')
         /**
          *
          * @param elem
-         * @returns {{x, y, x2, y2, width, height, cx, cy}|*}
-         */
-        function getAbsoluteBBox(elem) {
-            var bbox = elem.getBBox();
-
-            function walkUp(elem) {
-                if (elem.parent() && elem.parent().hasClass('instance')) {
-                    var parentBox = elem.parent().getBBox();
-                    bbox.x += parentBox.x;
-                    bbox.y += parentBox.y;
-                    walkUp(elem.parent());
-                }
-            }
-            walkUp(elem);
-            return bbox;
-        }
-
-        /**
-         *
-         * @param elem
          * @param x
          * @param y
          */
         function isPointInsideElem(elem, x, y) {
-            var bbox = getAbsoluteBBox(elem);
+            var bbox = ui.getAbsoluteBBox(elem);
             return  x >= bbox.x &&
                 x <= bbox.x + bbox.width &&
                 y >= bbox.y &&
@@ -1889,7 +1899,7 @@ angular.module('editorApp')
         function computeBindingCoords(portElem, chanElem) {
             var chanM = chanElem.transform().localMatrix,
                 chan = { x: chanM.e, y: chanM.f + (CHANNEL_RADIUS/2)},
-                compBox = getAbsoluteBBox(portElem.parent()),
+                compBox = ui.getAbsoluteBBox(portElem.parent()),
                 portM = portElem.transform().localMatrix,
                 port = { x: compBox.x + portM.e, y: compBox.y + portM.f + 15 },
                 middle = { x: 0, y: 0 };
@@ -1974,5 +1984,5 @@ angular.module('editorApp')
             return (val === 'true' || val > 0 || val === true);
         }
 
-        return factory;
+        return ui;
     });

@@ -1,13 +1,13 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('kEditor', function (kFactory, kModelHelper, kInstance, uiFactory) {
+    .factory('kEditor', function (kFactory, kModelHelper, kInstance, ui, KWE_POSITION) {
 
         function KevoreeEditor() {
             this.model = kFactory.createContainerRoot();
             this.listeners = [];
 
-            uiFactory.setModel(this.model);
+            ui.setModel(this.model);
         }
 
         KevoreeEditor.prototype = {
@@ -29,7 +29,7 @@ angular.module('editorApp')
                     elementChanged: modelReactor
                 });
 
-                uiFactory.setModel(model);
+                ui.setModel(model);
 
                 this.listeners.forEach(function (listener) {
                     listener();
@@ -52,6 +52,46 @@ angular.module('editorApp')
              */
             removeListener: function (listener) {
                 this.listeners.splice(this.listeners.indexOf(listener), 1);
+            },
+
+            /**
+             * Try to find a better position for each instances in order to prevent
+             * UI overlapping in editor
+             */
+            fixOverlapping: function () {
+                function relocate(instance, pos) {
+                    var meta = instance.findMetaDataByID(KWE_POSITION);
+                    if (!meta) {
+                        meta = kFactory.createValue();
+                        meta.name = KWE_POSITION;
+                        meta.value = JSON.stringify(pos);
+                        instance.addMetaData(meta);
+                    } else {
+                        meta.value = JSON.stringify(pos);
+                    }
+                }
+
+                var groupX = 75;
+                this.model.groups.array.forEach(function (group) {
+                    relocate(group, { x: groupX, y: 75 });
+                    groupX += 140;
+                });
+
+                var nodeX = 25;
+                this.model.nodes.array.forEach(function (node) {
+                    if (!node.host) {
+                        // root node (= no parent)
+                        var height = kModelHelper.getNodeTreeHeight(node);
+                        relocate(node, { x: nodeX, y: 150 });
+                        nodeX += 230 + (height * 20);
+                    }
+                });
+
+                var chanX = 75;
+                this.model.hubs.array.forEach(function (hub) {
+                    relocate(hub, { x: chanX, y: 550 });
+                    chanX += 120;
+                });
             }
         };
 
@@ -67,7 +107,7 @@ angular.module('editorApp')
             function processRefreshRecursively(node) {
                 node.components.array.forEach(processComponent);
                 node.groups.array.forEach(function (group) {
-                    uiFactory.createGroupWire(group, node);
+                    ui.createGroupWire(group, node);
                 });
                 node.hosts.array.forEach(processRefreshRecursively);
             }
@@ -79,7 +119,7 @@ angular.module('editorApp')
 
             function processPort(port) {
                 port.bindings.array.forEach(function (binding) {
-                    uiFactory.createBinding(binding);
+                    ui.createBinding(binding);
                 });
             }
 
@@ -95,18 +135,18 @@ angular.module('editorApp')
                     if (trace.elementAttributeName === 'hubs' ||
                         trace.elementAttributeName === 'nodes' ||
                         trace.elementAttributeName === 'groups') {
-                        uiFactory.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
+                        ui.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
                     } else if (trace.elementAttributeName === 'mBindings') {
-                        uiFactory.deleteBinding(trace.previous_value); // jshint ignore:line
+                        ui.deleteBinding(trace.previous_value); // jshint ignore:line
                     }
                 } else {
                     if (trace.elementAttributeName === 'hosts' ||
                         trace.elementAttributeName === 'components') {
-                        uiFactory.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
+                        ui.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
 
                     } else if (trace.elementAttributeName === 'groups') {
                         // means detaching a node from a group
-                        uiFactory.deleteGroupWire(trace.previous_value, trace.previousPath); // jshint ignore:line
+                        ui.deleteGroupWire(trace.previous_value, trace.previousPath); // jshint ignore:line
                         fragDic = trace.value.findFragmentDictionaryByID(trace.source.name);
                         if (fragDic) {
                             fragDic.delete();
@@ -141,26 +181,26 @@ angular.module('editorApp')
                 if (trace.previousPath === '/') {
                     switch (trace.elementAttributeName) {
                         case 'hubs':
-                            uiFactory.deleteChannels();
+                            ui.deleteChannels();
                             break;
 
                         case 'nodes':
-                            uiFactory.deleteNodes();
+                            ui.deleteNodes();
                             break;
 
                         case 'groups':
-                            uiFactory.deleteGroups();
+                            ui.deleteGroups();
                             break;
 
                         case 'mBindings':
-                            uiFactory.deleteBindings();
+                            ui.deleteBindings();
                             break;
                     }
                 } else {
                     switch (trace.elementAttributeName) {
                         case 'groups':
                             trace.value.array.forEach(function (group) {
-                                uiFactory.deleteGroupWire(group.path(), trace.previousPath);
+                                ui.deleteGroupWire(group.path(), trace.previousPath);
                                 var fragDic = group.findFragmentDictionaryByID(trace.source.name);
                                 if (fragDic) {
                                     fragDic.delete();
@@ -170,7 +210,7 @@ angular.module('editorApp')
 
                         case 'bindings':
                             trace.value.array.forEach(function (binding) {
-                                uiFactory.deleteBinding(binding.path());
+                                ui.deleteBinding(binding.path());
                                 if (!binding.hub || !binding.port) {
                                     binding.delete();
                                 }
@@ -183,53 +223,54 @@ angular.module('editorApp')
                 }
 
             } else if (trace.etype === KevoreeLibrary.modeling.api.util.ActionType.object.ADD) {
+                //console.log('ADD', trace);
                 if (trace.previousPath === '/') {
                     switch (trace.elementAttributeName) {
                         case 'hubs':
                             //console.log('ADD hubs', trace);
-                            uiFactory.createChannel(trace.value);
+                            ui.createChannel(trace.value);
                             break;
 
                         case 'nodes':
                         case 'hosts':
                             //console.log('ADD nodes|hosts', trace);
-                            uiFactory.createNode(trace.value);
-                            uiFactory.refreshNode(kModelHelper.getHighestNode(trace.value).path());
+                            ui.createNode(trace.value);
+                            ui.refreshNode(kModelHelper.getHighestNode(trace.value).path());
                             break;
 
                         case 'groups':
                             //console.log('ADD groups', trace);
-                            uiFactory.createGroup(trace.value);
+                            ui.createGroup(trace.value);
                             break;
 
                         case 'mBindings':
                             //console.log('ADD mBinding', trace);
-                            uiFactory.createBinding(trace.value);
+                            ui.createBinding(trace.value);
                             break;
                     }
                 } else {
                     switch (trace.elementAttributeName) {
                         case 'groups':
                             //console.log('ADD .groups', trace);
-                            uiFactory.createGroupWire(trace.value, trace.source);
+                            ui.createGroupWire(trace.value, trace.source);
                             break;
 
                         case 'components':
                             //console.log('ADD .components', trace);
-                            uiFactory.createComponent(trace.value);
+                            ui.createComponent(trace.value);
 
                             highestNode = kModelHelper.getHighestNode(trace.value);
-                            uiFactory.refreshNode(highestNode.path());
+                            ui.refreshNode(highestNode.path());
                             processRefreshRecursively(highestNode);
                             break;
 
                         case 'hosts':
                             //console.log('ADD .hosts', trace.source.path(), trace.value.path());
-                            uiFactory.createNode(trace.value);
+                            ui.createNode(trace.value);
 
                             // recursively recreate children UIs
                             trace.value.components.array.forEach(function (comp) {
-                                uiFactory.createComponent(comp);
+                                ui.createComponent(comp);
                             });
                             trace.value.hosts.array
                                 .sort(function (a, b) {
@@ -237,32 +278,32 @@ angular.module('editorApp')
                                     return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
                                 })
                                 .forEach(function updateChildNode(childNode) {
-                                    uiFactory.createNode(childNode);
+                                    ui.createNode(childNode);
                                     childNode.components.array.forEach(function (comp) {
-                                        uiFactory.createComponent(comp);
+                                        ui.createComponent(comp);
                                     });
                                     childNode.hosts.array.forEach(updateChildNode);
                                 });
 
                             highestNode = kModelHelper.getHighestNode(trace.source);
-                            uiFactory.refreshNode(highestNode.path());
+                            ui.refreshNode(highestNode.path());
                             processRefreshRecursively(highestNode);
                             break;
 
                         case 'subNodes':
                             //console.log('ADD .subNodes', trace);
                             kInstance.initFragmentDictionaries(trace.source);
-                            selected = uiFactory.getSelected();
+                            selected = ui.getSelected();
                             if (selected.length === 1 && (selected[0].attr('data-path') === trace.source.path())) {
-                                uiFactory.invokeListener(trace.source.path());
+                                ui.invokeListener(trace.source.path());
                             }
                             break;
 
                         case 'bindings':
                             if (trace.source.getRefInParent() === 'hubs') {
-                                selected = uiFactory.getSelected();
+                                selected = ui.getSelected();
                                 if (selected.length === 1 && (selected[0].attr('data-path') === trace.source.path())) {
-                                    uiFactory.invokeListener(trace.source.path());
+                                    ui.invokeListener(trace.source.path());
                                 }
                             }
                             break;
@@ -298,13 +339,30 @@ angular.module('editorApp')
                                 comp.required.array.forEach(processPort);
                             });
                         }
-                        uiFactory.updateInstance(trace.previousPath, trace.source);
+                        ui.updateInstance(trace.previousPath, trace.source);
                         break;
 
                     case 'value':
+                        //console.log('SET value', trace);
+                        if (trace.source.getRefInParent() === 'metaData' && trace.source.name === KWE_POSITION) {
+                            ui.updatePosition(trace.source.eContainer());
+                            if (trace.source.eContainer().getRefInParent() === 'nodes') {
+                                processRefreshRecursively(trace.source.eContainer());
+                            } else if (trace.source.eContainer().getRefInParent() === 'groups') {
+                                trace.source.eContainer().subNodes.array.forEach(function (node) {
+                                    ui.createGroupWire(trace.source.eContainer(), node);
+                                });
+                            } else if (trace.source.eContainer().getRefInParent() === 'hubs') {
+                                trace.source.eContainer().bindings.array.forEach(function (binding) {
+                                    ui.createBinding(binding);
+                                });
+                            }
+                        }
+                        break;
+
                     case 'started':
-                        //console.log('SET value|started', trace);
-                        uiFactory.updateInstance(trace.previousPath, trace.source);
+                        //console.log('SET started', trace);
+                        ui.updateInstance(trace.previousPath, trace.source);
                         break;
 
                     case 'typeDefinition':
@@ -312,7 +370,7 @@ angular.module('editorApp')
                             switch (trace.source.getRefInParent()) {
                                 case 'components':
                                     //console.log('SET typeDef', trace);
-                                    uiFactory.updateCompTypeDefinition(trace.source, trace.previous_value); // jshint ignore:line
+                                    ui.updateCompTypeDefinition(trace.source, trace.previous_value); // jshint ignore:line
                                     break;
 
                                 default:

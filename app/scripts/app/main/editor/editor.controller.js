@@ -8,21 +8,21 @@
  * Controller of the editorApp editor
  */
 angular.module('editorApp')
-    .controller('EditorCtrl', function ($scope, kEditor, uiFactory, kModelHelper, kFactory, Notification, KWE_POSITION) {
+    .controller('EditorCtrl', function ($scope, kEditor, ui, kModelHelper, kFactory, Notification, KWE_POSITION) {
         $scope.dropDroppable = {
             onDrop: 'onDrop'
         };
         $scope.dropOptions = {
-            accept: function (ui) {
+            accept: function (obj) {
                 var accept = false;
-                var pkgPath = ui[0].dataset.pkgPath;
-                var tdefName = ui[0].innerHTML.trim();
+                var pkgPath = obj[0].dataset.pkgPath;
+                var tdefName = obj[0].innerHTML.trim();
                 var tdefs = kEditor.getModel().select(pkgPath+'/typeDefinitions[name='+tdefName+']');
                 var tdef = kModelHelper.findBestVersion(tdefs.array);
                 var type = kModelHelper.getTypeDefinitionType(tdef);
 
                 if (type === 'component') {
-                    accept = uiFactory.getDropTarget();
+                    accept = ui.getDropTarget();
                 } else {
                     accept = true;
                 }
@@ -35,15 +35,15 @@ angular.module('editorApp')
         /**
          * Adds a new instance to the model based on the dropped TypeDefinition
          * @param evt
-         * @param ui
+         * @param obj
          */
-        $scope.onDrop = function (evt, ui) {
-            var pkgPath = ui.draggable.scope().tdef.pkgPath;
-            var tdefName = ui.draggable.scope().tdef.name;
+        $scope.onDrop = function (evt, obj) {
+            var pkgPath = obj.draggable.scope().tdef.pkgPath;
+            var tdefName = obj.draggable.scope().tdef.name;
             var tdefs = kEditor.getModel().select(pkgPath+'/typeDefinitions[name='+tdefName+']');
             var tdef = kModelHelper.findBestVersion(tdefs.array);
             var type = kModelHelper.getTypeDefinitionType(tdef);
-            var editor = uiFactory.getEditorContainer();
+            var editor = ui.getEditorContainer();
 
             function preProcess(instance) {
                 instance.typeDefinition = tdef;
@@ -51,14 +51,14 @@ angular.module('editorApp')
                 var pos = kFactory.createValue();
                 pos.name = KWE_POSITION;
                 pos.value = JSON.stringify({
-                    x: uiFactory.mousePos.x - editor.offsetLeft,
-                    y: uiFactory.mousePos.y - editor.offsetTop
+                    x: ui.mousePos.x - editor.offsetLeft,
+                    y: ui.mousePos.y - editor.offsetTop
                 });
                 instance.addMetaData(pos);
             }
 
             var model = kEditor.getModel();
-            var dropTarget = uiFactory.getDropTarget();
+            var dropTarget = ui.getDropTarget();
             var instance, node;
             switch (type) {
                 case 'node':
@@ -108,12 +108,12 @@ angular.module('editorApp')
                     break;
             }
 
-            uiFactory.setDropTarget(null);
+            ui.setDropTarget(null);
             return true;
         };
 
         // init the UI kFactory
-        uiFactory.init();
+        ui.init();
 
         /**
          * Create svg UIs based on current kEditor.getModel()
@@ -122,7 +122,7 @@ angular.module('editorApp')
             var model = kEditor.getModel();
 
             model.hubs.array.forEach(function (instance) {
-                uiFactory.createChannel(instance);
+                ui.createChannel(instance);
             });
 
             model.nodes.array
@@ -131,22 +131,22 @@ angular.module('editorApp')
                     return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
                 })
                 .forEach(function (instance) {
-                    uiFactory.createNode(instance);
+                    ui.createNode(instance);
                     instance.components.array.forEach(function (instance) {
-                        uiFactory.createComponent(instance);
+                        ui.createComponent(instance);
                     });
                 });
 
             model.groups.array.forEach(function (instance) {
-                uiFactory.createGroup(instance);
+                ui.createGroup(instance);
 
                 instance.subNodes.array.forEach(function (node) {
-                    uiFactory.createGroupWire(instance, node);
+                    ui.createGroupWire(instance, node);
                 });
             });
 
             model.mBindings.array.forEach(function (binding) {
-                uiFactory.createBinding(binding);
+                ui.createBinding(binding);
             });
         }
 

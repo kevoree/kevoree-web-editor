@@ -8,7 +8,7 @@
  * Controller of the editorApp instance editor
  */
 angular.module('editorApp')
-    .controller('InstanceCtrl', function ($scope, $timeout, $modal, uiFactory, kEditor, kFactory, kInstance, kModelHelper) {
+    .controller('InstanceCtrl', function ($scope, $timeout, $modal, ui, kEditor, kFactory, kInstance, kModelHelper) {
         $scope.instance = null;
         $scope.type = null;
         $scope.mainCollapsed = false;
@@ -268,7 +268,7 @@ angular.module('editorApp')
         $scope.isTruish = kModelHelper.isTruish;
 
         var timeout;
-        uiFactory.setSelectedListener(function (path) {
+        ui.setSelectedListener(function (path) {
             $timeout(function () {
                 if ($scope.instance && ($scope.instance.path() !== path)) {
                     // reset values

@@ -8,7 +8,7 @@
  * Controller of the editorApp TypeDefinition sidebar
  */
 angular.module('editorApp')
-    .controller('TypedefsCtrl', function ($scope, kEditor, uiFactory, kModelHelper, kFactory, Notification, KWE_POSITION) {
+    .controller('TypedefsCtrl', function ($scope, kEditor, ui, kModelHelper, kFactory, Notification, KWE_POSITION) {
         $scope.packages = {};
 
         $scope.dragDraggable = {
@@ -38,7 +38,7 @@ angular.module('editorApp')
         };
 
         $scope.onStart = function (evt, obj) {
-            uiFactory.setDropTarget(null);
+            ui.setDropTarget(null);
 
             if (obj.helper.hasClass('tdef-item-component') || obj.helper.hasClass('tdef-item-node')) {
                 var container = document.getElementById('editor-container');
@@ -52,7 +52,7 @@ angular.module('editorApp')
         };
 
         $scope.onDrag = function (evt, obj) {
-            uiFactory.mousePos = { x: evt.clientX, y: evt.clientY };
+            ui.mousePos = { x: evt.clientX, y: evt.clientY };
 
             if (obj.helper.hasClass('tdef-item-component') || obj.helper.hasClass('tdef-item-node')) {
                 clearTimeout(this.timeout);
@@ -61,21 +61,21 @@ angular.module('editorApp')
                 }
 
                 this.timeout = setTimeout(function () {
-                    this.hoveredNode = uiFactory.getHoveredNode(
-                        uiFactory.mousePos.x - this.offset.left,
-                        uiFactory.mousePos.y - this.offset.top);
+                    this.hoveredNode = ui.getHoveredNode(
+                        ui.mousePos.x - this.offset.left,
+                        ui.mousePos.y - this.offset.top);
                     if (this.hoveredNode) {
                         var nodeBg = this.hoveredNode.select('.bg');
                         nodeBg.addClass('hovered');
 
                         if (!kModelHelper.isCompatible(this.typeDef, kEditor.getModel().findByPath(this.hoveredNode.attr('data-path')))) {
                             nodeBg.addClass('error');
-                            uiFactory.setDropTarget(null);
+                            ui.setDropTarget(null);
                         } else {
-                            uiFactory.setDropTarget(this.hoveredNode);
+                            ui.setDropTarget(this.hoveredNode);
                         }
                     } else {
-                        uiFactory.setDropTarget(null);
+                        ui.setDropTarget(null);
                     }
                 }.bind(this), 100);
             }
@@ -125,7 +125,7 @@ angular.module('editorApp')
             }
 
             var model = kEditor.getModel();
-            var selectedNodes = uiFactory.getSelectedNodes();
+            var selectedNodes = ui.getSelectedNodes();
             var instance;
             switch (type) {
                 case 'node':
