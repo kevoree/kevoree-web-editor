@@ -2,6 +2,30 @@
 
 angular.module('editorApp')
     .factory('kModelHelper', function () {
+        function getOnlyReleases(tdefs) {
+            return tdefs.filter(function (tdef) {
+                var v = semver.parse(tdef.version);
+                return (v && v.prerelease.length === 0);
+            });
+        }
+
+        function getOnlySnapshots(tdefs) {
+            return tdefs.filter(function (tdef) {
+                var v = semver.parse(tdef.version);
+                return (v && v.prerelease.length !== 0);
+            });
+        }
+
+        function getGreater(tdefs) {
+            var tdef = tdefs[0];
+            for (var i=0; i < tdefs.length; i++) {
+                if (semver.gt(tdefs[i].version, tdef.version)) {
+                    tdef = tdefs[i];
+                }
+            }
+            return tdef;
+        }
+
         return {
             /**
              *
@@ -39,27 +63,48 @@ angular.module('editorApp')
 
             /**
              *
-             * @param {Array} tdefs
+             * @param tdefs
+             * @returns {*}
              */
             findBestVersion: function (tdefs) {
-                var onlyReleases = tdefs.filter(function (tdef) {
-                    var v = semver.parse(tdef.version);
-                    if (v.prerelease.length === 0) {
-                        return tdef;
+                var onlyReleases = getOnlyReleases(tdefs);
+                return getGreater((onlyReleases.length === 0) ? tdefs : onlyReleases);
+            },
+
+            /**
+             *
+             * @param tdefs
+             * @returns {*}
+             */
+            getLatestRelease: function (tdefs) {
+                return getGreater(getOnlyReleases(tdefs));
+            },
+
+            /**
+             *
+             * @param tdefs
+             * @returns {*}
+             */
+            getLatestSnapshot: function (tdefs) {
+                return getGreater(getOnlySnapshots(tdefs));
+            },
+
+            /**
+             *
+             * @param tdef
+             * @returns {Array}
+             */
+            getPlatforms : function (tdef) {
+                var platforms = [];
+
+                tdef.deployUnits.array.forEach(function (du) {
+                    var platform = du.findFiltersByID('platform');
+                    if (platform && platforms.indexOf(platform.value) === -1) {
+                        platforms.push(platform.value);
                     }
                 });
 
-                function getGreater(tdefs) {
-                    var tdef = tdefs[0];
-                    for (var i=0; i < tdefs.length; i++) {
-                        if (semver.gt(tdefs[i].version, tdef.version)) {
-                            tdef = tdefs[i];
-                        }
-                    }
-                    return tdef;
-                }
-
-                return getGreater((onlyReleases.length === 0) ? tdefs : onlyReleases);
+                return platforms;
             },
 
             /**
@@ -188,6 +233,32 @@ angular.module('editorApp')
              */
             isTruish: function (val) {
                 return (val === true || val === 'true' || val > 0);
+            },
+
+            /**
+             *
+             * @param fqn
+             * @returns {string}
+             */
+            fqnToPath: function (fqn) {
+                // check for version
+                fqn = fqn.split('/');
+                var vers;
+                if (fqn.length === 2) {
+                    vers = fqn.pop();
+                }
+
+                fqn = fqn[0].split('.');
+                var last = fqn.pop();
+                fqn = 'packages[' + fqn.join(']/packages[') + ']/*[name=' + last;
+
+                if (vers) {
+                    fqn += ',version=' + vers;
+                }
+
+                fqn += ']';
+
+                return fqn;
             }
         };
     });

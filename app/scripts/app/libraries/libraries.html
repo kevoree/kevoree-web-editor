@@ -1,0 +1,164 @@
+<div id="libraries-container">
+  <div id="libraries-inner-container">
+    <div class="alert alert-danger" data-ng-if="error">
+      <button type="button" class="close" data-ng-click="closeError()"><span>&times;</span></button>
+      {{error}}
+    </div>
+    <div data-ng-if="loading">
+      <div class="loading-content">
+        <h4 class="text-center">Loading libraries from <a href="{{KEVOREE_REGISTRY_URL}}" target="_blank">Kevoree Registry</a></h4>
+        <div class="spinner">
+          <div class="rect1"></div>
+          <div class="rect2"></div>
+          <div class="rect3"></div>
+          <div class="rect4"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8 fit-y" data-ng-if="!loading">
+      <div class="fit-y">
+        <div class="libraries-search-input">
+          <div class="col-md-6">
+            <div class="form-group input-group col-xs-12">
+              <span class="input-group-addon" style="width: 100px;">Package</span>
+              <input type="text" class="form-control" placeholder="Search by Package name" data-ng-model="tdefSearch.package">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group input-group col-xs-12">
+              <span class="input-group-addon" style="width: 100px;">TypeDefinition</span>
+              <input type="text" class="form-control" placeholder="Search by TypeDefinition name" data-ng-model="tdefSearch.name">
+            </div>
+          </div>
+        </div>
+
+        <div class="libraries-tdefs-container">
+          <div class="col-md-3 fit-y">
+            <div class="tdef-count">
+              <h4 class="text-center">{{ groups.length }}</h4>
+              <p class="text-muted text-center item-group">total <strong>groups</strong></p>
+            </div>
+            <div>
+              <div class="libraries-tdef-list">
+                <div class="libraries-tdef-list-inner">
+                  <div class="list-group">
+                    <a data-ui-sref="libraries"
+                       class="list-group-item"
+                       data-ng-class="(selectedTdef.package === tdef.package && selectedTdef.name === tdef.name) ? 'active':''"
+                       data-ng-repeat="tdef in filteredGroups = (groups | filter:tdefSearch | orderBy:'name')"
+                       data-ng-click="select(tdef)">
+                      <h4 class="list-group-item-heading">{{ tdef.name }}</h4>
+                      <p class="list-group-item-text text-muted">{{ tdef.package }}</p>
+                    </a>
+                  </div>
+                </div>
+                <p class="text-center" data-ng-if="filteredGroups.length === 0"><em>no match</em></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 fit-y">
+            <div class="tdef-count">
+              <h4 class="text-center">{{ nodes.length }}</h4>
+              <p class="text-muted text-center item-node">total <strong>nodes</strong></p>
+            </div>
+            <div class="libraries-tdef-list">
+              <div class="libraries-tdef-list-inner">
+                <div class="list-group">
+                  <a data-ui-sref="libraries"
+                     class="list-group-item"
+                     data-ng-class="(selectedTdef.package === tdef.package && selectedTdef.name === tdef.name) ? 'active':''"
+                     data-ng-repeat="tdef in filteredNodes = (nodes | filter:tdefSearch | orderBy:'name')"
+                     data-ng-click="select(tdef)">
+                    <h4 class="list-group-item-heading">{{ tdef.name }}</h4>
+                    <p class="list-group-item-text text-muted">{{ tdef.package }}</p>
+                  </a>
+                </div>
+              </div>
+              <p class="text-center" data-ng-if="filteredNodes.length === 0"><em>no match</em></p>
+            </div>
+          </div>
+
+          <div class="col-md-3 fit-y">
+            <div class="tdef-count">
+              <h4 class="text-center">{{ chans.length }}</h4>
+              <p class="text-muted text-center item-channel">total <strong>channels</strong></p>
+            </div>
+            <div class="libraries-tdef-list">
+              <div class="libraries-tdef-list-inner">
+                <div class="list-group">
+                  <a data-ui-sref="libraries"
+                     class="list-group-item"
+                     data-ng-class="(selectedTdef.package === tdef.package && selectedTdef.name === tdef.name) ? 'active':''"
+                     data-ng-repeat="tdef in filteredChans = (chans | filter:tdefSearch | orderBy:'name')"
+                     data-ng-click="select(tdef)">
+                    <h4 class="list-group-item-heading">{{ tdef.name }}</h4>
+                    <p class="list-group-item-text text-muted">{{ tdef.package }}</p>
+                  </a>
+                </div>
+              </div>
+              <p class="text-center" data-ng-if="filteredChans.length === 0"><em>no match</em></p>
+            </div>
+          </div>
+
+          <div class="col-md-3 fit-y">
+            <div class="tdef-count">
+              <h4 class="text-center">{{ comps.length }}</h4>
+              <p class="text-muted text-center item-component">total <strong>components</strong></p>
+            </div>
+            <div class="libraries-tdef-list">
+              <div class="libraries-tdef-list-inner">
+                <div class="list-group">
+                  <a data-ui-sref="libraries"
+                     class="list-group-item"
+                     data-ng-class="(selectedTdef.package === tdef.package && selectedTdef.name === tdef.name) ? 'active':''"
+                     data-ng-repeat="tdef in filteredComps = (comps | filter:tdefSearch | orderBy:'name')"
+                     data-ng-click="select(tdef)">
+                    <h4 class="list-group-item-heading">{{ tdef.name }}</h4>
+                    <p class="list-group-item-text text-muted">{{ tdef.package }}</p>
+                  </a>
+                </div>
+              </div>
+              <p class="text-center" data-ng-if="filteredComps.length === 0"><em>no match</em></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 libraries-selected-tdef" data-ng-if="!loading">
+      <div data-ng-if="selectedTdef" data-ng-cloak>
+        <h3>{{ selectedTdef.name }}</h3>
+        <p class="text-muted">{{ selectedTdef.package }}</p>
+        <ul class="list-unstyled tdef-detail">
+          <li>
+            <span class="name">Latest release</span>
+            <span class="value">{{ selectedTdef.release }}</span>
+          </li>
+          <li>
+            <span class="name">Latest snapshot</span>
+            <span class="value">{{ selectedTdef.snapshot }}</span>
+          </li>
+          <li>
+            <span class="name">Platforms</span>
+            <ul class="value">
+              <li data-ng-repeat="platform in selectedTdef.platforms">{{ platform }}</li>
+            </ul>
+          </li>
+          <li>
+            <label for="versions" class="name">Versions</label>
+            <select id="versions" class="form-control value" data-ng-model="selectedVersion">
+              <option value="{{ version }}"
+                      data-ng-repeat="version in selectedTdef.versions | orderBy:semverOrder"
+                      data-ng-selected="version === selectedTdef.release">
+                {{ version }}
+              </option>
+            </select>
+          </li>
+        </ul>
+        <button class="btn btn-default pull-right" data-ng-click="merge()">Merge</button>
+      </div>
+    </div>
+  </div>
+</div>

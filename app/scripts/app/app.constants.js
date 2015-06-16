@@ -9,4 +9,6 @@ angular.module('editorApp')
 
 .constant('KWE_POSITION', 'kwe_position')
 
+.constant('KEVOREE_REGISTRY_URL', 'http://registry.kevoree.org')
+
 ;
