@@ -39,6 +39,7 @@ angular.module('editorApp')
                 ws = new WebSocket('ws://'+host+':'+port+path);
 
                 ws.onopen = function () {
+                    clearTimeout(timeout);
                     ws.send('pull');
                 };
 
@@ -114,6 +115,7 @@ angular.module('editorApp')
                     ws = new WebSocket('ws://'+host+':'+port+path);
 
                     ws.onopen = function () {
+                        clearTimeout(timeout);
                         ws.send('push/'+modelStr);
                         sent = true;
                         ws.close();
