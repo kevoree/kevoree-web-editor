@@ -18,7 +18,8 @@ angular
         'ui.utils',
         'ui-notification',
         'cfp.hotkeys',
-        'ngDragDrop'
+        'ngDragDrop',
+        'semverSort'
     ])
     .run(function ($rootScope, VERSION) {
         $rootScope.VERSION = VERSION;
@@ -29,7 +30,7 @@ angular
             bootstrapContainer.remove();
         });
     })
-    .config(function ($stateProvider, $urlRouterProvider) {
+    .config(function ($stateProvider, $urlRouterProvider, NotificationProvider) {
         $urlRouterProvider.otherwise('/');
 
         $stateProvider
@@ -42,4 +43,9 @@ angular
                     }
                 }
             });
+
+        NotificationProvider.setOptions({
+            startTop: 65,
+            replaceMessage: true
+        });
     });

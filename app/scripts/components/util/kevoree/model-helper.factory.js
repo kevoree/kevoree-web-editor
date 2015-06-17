@@ -50,14 +50,18 @@ angular.module('editorApp')
              * @returns {*}
              */
             getTypeDefinitionType: function (tdef) {
-                if (Kotlin.isType(tdef, KevoreeLibrary.NodeType)) {
-                    return 'node';
-                } else if (Kotlin.isType(tdef, KevoreeLibrary.ComponentType)) {
-                    return 'component';
-                } else if (Kotlin.isType(tdef, KevoreeLibrary.GroupType)) {
-                    return 'group';
-                } else if (Kotlin.isType(tdef, KevoreeLibrary.ChannelType)) {
-                    return 'channel';
+                switch (tdef.metaClassName()) {
+                    case 'org.kevoree.NodeType':
+                        return 'node';
+
+                    case 'org.kevoree.GroupType':
+                        return 'group';
+
+                    case 'org.kevoree.ComponentType':
+                        return 'component';
+
+                    case 'org.kevoree.ChannelType':
+                        return 'channel';
                 }
             },
 

@@ -14,8 +14,8 @@
                         id="version"
                         class="form-control input-sm"
                         data-ng-model="selectedVersion"
-                        data-ng-change="changeVersion(selectedVersion)"
-                        data-ng-options="index as value for (index, value) in versions">
+                        data-ng-change="changeVersion(selectedVersion)">
+                    <option value="{{ version }}" data-ng-repeat="(index, version) in versions | semverReverseSort" data-ng-selected="version === selectedVersion">{{ version }}</option>
                 </select>
             </div>
             <div class="form-group" data-ng-class="form.name.$valid ? '':'has-error has-feedback'">

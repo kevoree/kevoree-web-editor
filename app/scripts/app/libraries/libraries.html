@@ -148,16 +148,16 @@
           </li>
           <li>
             <label for="versions" class="name">Versions</label>
-            <select id="versions" class="form-control value" data-ng-model="selectedVersion">
+            <select id="versions" class="form-control input-sm value" data-ng-model="selectedTdef.version" data-ng-change="changeVersion()" style="width: auto;">
               <option value="{{ version }}"
-                      data-ng-repeat="version in selectedTdef.versions | orderBy:semverOrder"
-                      data-ng-selected="version === selectedTdef.release">
+                      data-ng-repeat="version in selectedTdef.versions | semverReverseSort"
+                      data-ng-selected="version === selectedTdef.version">
                 {{ version }}
               </option>
             </select>
           </li>
         </ul>
-        <button class="btn btn-default pull-right" data-ng-click="merge()">Merge</button>
+        <button class="btn btn-default pull-right" data-ng-click="merge()" data-ng-disabled="!isMergeable()">Merge&nbsp;<i class="fa fa-check-circle" data-ng-if="success"></i></button>
       </div>
     </div>
   </div>

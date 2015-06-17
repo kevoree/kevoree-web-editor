@@ -5,7 +5,11 @@ angular.module('editorApp')
 
         function KevoreeEditor() {
             this.model = kFactory.createContainerRoot();
+            kFactory.root(this.model);
             this.listeners = [];
+            this.modelListener = {
+                elementChanged: modelReactor
+            };
 
             ui.setModel(this.model);
         }
@@ -18,22 +22,35 @@ angular.module('editorApp')
             getModel: function () {
                 return this.model;
             },
+
             /**
              *
              * @param model
              */
             setModel: function (model) {
                 this.model = model;
+                kFactory.root(this.model);
 
-                this.model.addModelTreeListener({
-                    elementChanged: modelReactor
-                });
+                this.model.addModelTreeListener(this.modelListener);
 
                 ui.setModel(model);
 
                 this.listeners.forEach(function (listener) {
                     listener();
                 });
+            },
+
+            /**
+             *
+             * @param model
+             */
+            merge: function (model) {
+                this.model.removeModelTreeListener(this.modelListener);
+                var compare = kFactory.createModelCompare();
+                compare.merge(this.model, model).applyOn(this.model);
+                kFactory.root(this.model);
+                this.model.addModelTreeListener(this.modelListener);
+                ui.setModel(this.model);
             },
 
             /**
@@ -103,6 +120,8 @@ angular.module('editorApp')
          */
         function modelReactor(trace) {
             var fragDic, selected, highestNode;
+
+            console.log('trace', trace);
 
             function processRefreshRecursively(node) {
                 node.components.array.forEach(processComponent);

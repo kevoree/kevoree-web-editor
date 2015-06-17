@@ -38,6 +38,7 @@ module.exports = function(config) {
       'bower_components/semver/semver.browser.js',
       'bower_components/angular-ui-utils/ui-utils.js',
       'bower_components/snap.svg.zpd/snap.svg.zpd.js',
+      'bower_components/angular-semver-sort/angular-semver-sort.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',

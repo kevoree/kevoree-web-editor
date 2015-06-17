@@ -44,29 +44,36 @@ angular.module('editorApp')
                 });
             },
 
-            ///**
-            // *
-            // * @param path
-            // * @returns {*}
-            // */
-            //'get': function (path) {
-            //    if (this.model) {
-            //        console.log('model');
-            //        return $q(function (resolve) {
-            //            resolve(this.model);
-            //        }.bind(this));
-            //    } else {
-            //        console.log('no model');
-            //        return $http({
-            //            method: 'POST',
-            //            url: KEVOREE_REGISTRY_URL,
-            //            headers: {
-            //                'Content-Type': 'text/plain'
-            //            },
-            //            data: [ path ]
-            //        });
-            //    }
-            //},
+            /**
+             * Returns a Promise with the requested model if any
+             * @param path a Kevoree Modeling Framework path (eg. /foo[*]/bar[*])
+             * @returns {*}
+             */
+            'get': function (path) {
+                return $q(function (resolve, reject) {
+                    $http({
+                        method: 'POST',
+                        url: KEVOREE_REGISTRY_URL,
+                        headers: {
+                            'Content-Type': 'text/plain'
+                        },
+                        data: [ path ]
+                    })
+                        .then(function (res) {
+                            try {
+                                var modelStr = JSON.stringify(res.data);
+                                var loader = kFactory.createJSONLoader();
+                                resolve(loader.loadModelFromString(modelStr).get(0));
+                            } catch (err) {
+                                console.log('error', err.message);
+                                reject(new Error('Unable to load Kevoree Registry model for "'+path+'"'));
+                            }
+                        })
+                        .catch(function () {
+                            reject(new Error('Unable to retrieve content from Kevoree Registry'));
+                        });
+                });
+            },
 
             clearCache: function () {
                 this.model = null;

@@ -647,5 +647,14 @@ pre {
      }
 }
 
+.cfp-hotkeys-container {
+  z-index: 999999999;
+  top: 51px;
+}
+
+.cfp-hotkeys-close {
+  position: absolute;
+}
+
 /* Angular-ui ui-bootstrap CSS trick http://angular-ui.github.io/bootstrap/#/getting_started  */
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }

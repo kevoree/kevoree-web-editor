@@ -8,9 +8,7 @@
  * Controller of the editorApp registry libraries page
  */
 angular.module('editorApp')
-    .controller('LibrariesCtrl', function ($scope, $timeout, $stateParams, kRegistry, kModelHelper, kFactory, Notification, KEVOREE_REGISTRY_URL) {
-        Notification.config({ top: 65 });
-
+    .controller('LibrariesCtrl', function ($scope, $timeout, $stateParams, kRegistry, kModelHelper, kFactory, kEditor, KEVOREE_REGISTRY_URL) {
         $scope.KEVOREE_REGISTRY_URL = KEVOREE_REGISTRY_URL;
         $scope.loading = true;
         $scope.selectedTdef = null;
@@ -70,6 +68,7 @@ angular.module('editorApp')
             });
 
         $scope.select = function (tdef) {
+            $scope.success = false;
             $scope.selectedTdef = tdef;
 
             if (!$scope.selectedTdef.release) {
@@ -80,17 +79,29 @@ angular.module('editorApp')
                         pkgPath += '/packages[';
                     }
                 });
+                $scope.selectedTdef.pkgPath = pkgPath;
                 var tdefs = $scope.model.select(pkgPath+'/typeDefinitions[name='+$scope.selectedTdef.name+']');
                 var release = kModelHelper.getLatestRelease(tdefs.array);
                 var snapshot = kModelHelper.getLatestSnapshot(tdefs.array);
 
-                $scope.selectedTdef.release = release ? release.version : '-';
-                $scope.selectedTdef.snapshot = snapshot ? snapshot.version : '-';
+                $scope.selectedTdef.release = release ? release.version : null;
+                $scope.selectedTdef.snapshot = snapshot ? snapshot.version : null;
+
+                if ($scope.selectedTdef.release) {
+                    $scope.selectedTdef.version = release.version;
+                } else if ($scope.selectedTdef.snapshot) {
+                    $scope.selectedTdef.version = snapshot.version;
+                } else {
+                    $scope.selectedTdef.version = null;
+                }
 
                 if (release) {
                     $scope.selectedTdef.platforms = kModelHelper.getPlatforms(release);
-                } else {
+
+                } else if (snapshot) {
                     $scope.selectedTdef.platforms = kModelHelper.getPlatforms(snapshot);
+                } else {
+                    $scope.selectedTdef.platforms = [];
                 }
 
                 $scope.selectedTdef.versions = [];
@@ -102,12 +113,34 @@ angular.module('editorApp')
             }
         };
 
-        $scope.semverOrder = function () {
-            console.log('orderBy', arguments);
+        $scope.changeVersion = function () {
+            $scope.success = false;
+            $scope.closeError();
         };
 
         $scope.merge = function () {
-            console.log('TODO');
+            kRegistry.get($scope.selectedTdef.pkgPath+'/typeDefinitions[name='+$scope.selectedTdef.name+',version='+$scope.selectedTdef.version+']')
+                .then(function (tdefModel) {
+                    try {
+                        kEditor.merge(tdefModel);
+                        $scope.success = true;
+                    } catch (err) {
+                        $scope.error = err.message;
+                    }
+                })
+                .catch(function (err) {
+                    $scope.error = err.message;
+                });
+        };
+
+        $scope.isMergeable = function () {
+            var mergeable = false;
+
+            if ($scope.selectedTdef.version) {
+                mergeable = !kEditor.getModel().findByPath($scope.selectedTdef.pkgPath+'/typeDefinitions[name='+$scope.selectedTdef.name+',version='+$scope.selectedTdef.version+']');
+            }
+
+            return mergeable;
         };
 
         $scope.closeError = function () {

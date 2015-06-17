@@ -9,8 +9,6 @@
  */
 angular.module('editorApp')
     .controller('KevScriptCtrl', function ($scope, $modal, $timeout, $state, kEditor, kScript, saveFile, Notification) {
-        Notification.config({ top: 65 });
-
         function saveToFile() {
             $modal
                 .open({
@@ -73,6 +71,7 @@ angular.module('editorApp')
                 console.warn('[kevscript.controller.editorLoaded()] Error creating Kevscript from model');
                 console.error(err.stack);
                 Notification.error({
+                    startTop: 65,
                     title: 'KevScript parser',
                     message: 'Unable to convert current model to KevScript',
                     delay: 5000

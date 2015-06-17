@@ -16,9 +16,9 @@ angular.module('editorApp')
         $scope.netCollapsed = false;
         $scope.fragCollapsed = {};
 
-        $scope.changeVersion = function (index) {
+        $scope.changeVersion = function (version) {
             $scope.instance.typeDefinition = $scope.instance.typeDefinition.eContainer()
-                .select('**/typeDefinitions[name='+$scope.instance.typeDefinition.name+',version='+$scope.versions[index]+']').array[0];
+                .select('**/typeDefinitions[name='+$scope.instance.typeDefinition.name+',version='+version+']').array[0];
             processDictionary($scope.instance.dictionary, $scope.instance.typeDefinition.dictionaryType, false);
             $scope.instance.fragmentDictionary.array.forEach(function (fragDic) {
                 processDictionary(fragDic, $scope.instance.typeDefinition.dictionaryType, true);
@@ -303,11 +303,11 @@ angular.module('editorApp')
          **/
         function processTypeDefinition() {
             $scope.versions = $scope.instance.typeDefinition.eContainer()
-                .select('**/typeDefinitions[name='+$scope.instance.typeDefinition.name+']').array
+                .select('typeDefinitions[name='+$scope.instance.typeDefinition.name+']').array
                 .map(function (tdef) {
                     return tdef.version;
                 });
-            $scope.selectedVersion = $scope.versions.indexOf($scope.instance.typeDefinition.version)+'';
+            $scope.selectedVersion = $scope.instance.typeDefinition.version;
             if ($scope.instance.typeDefinition.dictionaryType) {
                 $scope.dicAttrs = $scope.instance.typeDefinition.dictionaryType
                     .select('attributes[fragmentDependant=false]').array;

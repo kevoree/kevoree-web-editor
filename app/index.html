@@ -8,12 +8,12 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="bower_components/codemirror/lib/codemirror.css" />
     <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.css" />
     <link rel="stylesheet" href="bower_components/angular-ui-notification/dist/angular-ui-notification.min.css" />
     <link rel="stylesheet" href="bower_components/angular-hotkeys/build/hotkeys.min.css" />
     <!-- endbower -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="bower_components/codemirror/addon/hint/show-hint.css" />
     <link rel="stylesheet" href="bower_components/codemirror/addon/dialog/dialog.css" />
     <!-- endbuild -->
@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="styles/cm-kevscript.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="editorApp">
+  <body data-ng-app="editorApp">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -126,6 +126,7 @@
     <script src="bower_components/semver/semver.browser.js"></script>
     <script src="bower_components/angular-ui-utils/ui-utils.js"></script>
     <script src="bower_components/snap.svg.zpd/snap.svg.zpd.js"></script>
+    <script src="bower_components/angular-semver-sort/angular-semver-sort.js"></script>
     <!-- endbower -->
     <script src="bower_components/codemirror/addon/hint/show-hint.js"></script>
     <script src="bower_components/codemirror/addon/selection/active-line.js"></script>

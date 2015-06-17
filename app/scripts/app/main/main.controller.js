@@ -9,8 +9,6 @@
  */
 angular.module('editorApp')
     .controller('MainCtrl', function ($scope, $timeout, $modal, kEditor, hotkeys, saveFile, ui, kModelHelper, kFactory, Notification) {
-        Notification.config({ top: 90 });
-
         $scope.loading = false;
 
         $scope.onFileLoaded = function () {};
@@ -28,6 +26,7 @@ angular.module('editorApp')
                             var model = loader.loadModelFromString(data).get(0);
                             kEditor.setModel(model);
                             Notification.success({
+                                startTop: 90,
                                 title: 'Open from file',
                                 message: 'Model loaded from <strong>'+filename+'</strong>',
                                 delay: 5000
@@ -36,6 +35,7 @@ angular.module('editorApp')
                             console.warn('[main.controller.open()] Error loading model file');
                             console.error(err.stack);
                             Notification.error({
+                                startTop: 90,
                                 title: 'Open from file',
                                 message: 'Unable to load a model from <strong>'+filename+'</strong>',
                                 delay: 5000
@@ -60,6 +60,7 @@ angular.module('editorApp')
                         var model = loader.loadModelFromString(data).get(0);
                         kEditor.setModel(model);
                         Notification.success({
+                            startTop: 90,
                             title: 'Open from file (dnd)',
                             message: 'Model loaded from <strong>'+filename+'</strong>',
                             delay: 5000
@@ -68,6 +69,7 @@ angular.module('editorApp')
                         console.warn('[main.controller.dndLoad()] Error loading model file');
                         console.error(err.stack);
                         Notification.error({
+                            startTop: 90,
                             title: 'Open from file (dnd)',
                             message: 'Unable to load a model from <strong>'+filename+'</strong>',
                             delay: 5000
@@ -93,6 +95,7 @@ angular.module('editorApp')
                             compare.merge(model, kEditor.getModel()).applyOn(model);
                             kEditor.setModel(model);
                             Notification.success({
+                                startTop: 90,
                                 title: 'Merge from file',
                                 message: 'Model merged with <strong>'+filename+'</strong>',
                                 delay: 5000
@@ -101,6 +104,7 @@ angular.module('editorApp')
                             console.warn('[main.controller.merge()] Error loading model file');
                             console.error(err.stack);
                             Notification.error({
+                                startTop: 90,
                                 title: 'Merge from file',
                                 message: 'Unable to merge the model with <strong>'+filename+'</strong>',
                                 delay: 5000
@@ -143,6 +147,7 @@ angular.module('editorApp')
                             } else {
                                 kEditor.setModel(model);
                                 Notification.success({
+                                    startTop: 90,
                                     title: 'Open from node',
                                     message: 'Model loaded from <strong>'+url+'</strong>',
                                     delay: 5000
@@ -190,6 +195,7 @@ angular.module('editorApp')
                                 compare.merge(model, kEditor.getModel()).applyOn(model);
                                 kEditor.setModel(model);
                                 Notification.success({
+                                    startTop: 90,
                                     title: 'Merge from node',
                                     message: 'Model merged with <strong>'+url+'</strong>',
                                     delay: 5000
@@ -219,6 +225,7 @@ angular.module('editorApp')
                 saveFile.save(modelStr, filename, '.json', 'application/json');
             } catch (err) {
                 Notification.error({
+                    startTop: 90,
                     title: 'Save',
                     message: 'Unable to serialize model to JSON',
                     delay: 5000
@@ -259,6 +266,11 @@ angular.module('editorApp')
             }
         };
 
+        $scope.toggleShortcutHelp = function () {
+            console.log(hotkeys);
+            hotkeys.toggleCheatSheet();
+        };
+
         //$scope.undo = function (evt) {
         //    evt.preventDefault();
         //    console.log('undo');
@@ -278,31 +290,31 @@ angular.module('editorApp')
         //    });
         //};
 
-        hotkeys.add({
+        hotkeys.bindTo($scope).add({
             combo: 'ctrl+o',
             description: 'Open a model from a file',
             callback: $scope.open
         });
 
-        hotkeys.add({
+        hotkeys.bindTo($scope).add({
             combo: 'ctrl+m',
             description: 'Merge a model from a file with current model in editor',
             callback: $scope.merge
         });
 
-        hotkeys.add({
+        hotkeys.bindTo($scope).add({
             combo: 'ctrl+shift+o',
             description: 'Open a model from a node',
             callback: $scope.openFromNode
         });
 
-        hotkeys.add({
+        hotkeys.bindTo($scope).add({
             combo: 'ctrl+shift+m',
             description: 'Merge a model from a node with current model in editor',
             callback: $scope.mergeFromNode
         });
 
-        hotkeys.add({
+        hotkeys.bindTo($scope).add({
             combo: 'ctrl+s',
             description: 'Save the current model into a JSON file',
             callback: function (evt) {
@@ -338,46 +350,46 @@ angular.module('editorApp')
             }
         });
 
-        hotkeys.add({
+        hotkeys.bindTo($scope).add({
             combo: 'alt+o',
             description: 'Fix overlapping',
             callback: $scope.fixOverlapping
         });
 
-        hotkeys.add({
+        hotkeys.bindTo($scope).add({
             combo: 'alt+shift+d',
             description: 'Delete everything in the current model',
             callback: $scope.deleteAll
         });
 
-        hotkeys.add({
+        hotkeys.bindTo($scope).add({
             combo: 'alt+shift+i',
             description: 'Delete instances in the current model',
             callback: $scope.deleteInstances
         });
 
-        hotkeys.add({
+        hotkeys.bindTo($scope).add({
             combo: 'del',
             description: 'Delete selected instances in the current model',
             callback: $scope.deleteSelected
         });
 
-        hotkeys.add({
+        hotkeys.bindTo($scope).add({
             combo: 'ctrl+a',
-            description: 'Select every instances',
+            description: 'Select all instances',
             callback: function (evt) {
                 evt.preventDefault();
                 ui.selectAll();
             }
         });
 
-        //hotkeys.add({
+        //hotkeys.bindTo($scope).add({
         //    combo: 'ctrl+z',
         //    description: 'Undo the last modification',
         //    callback: $scope.undo
         //});
         //
-        //hotkeys.add({
+        //hotkeys.bindTo($scope).add({
         //    combo: 'ctrl+y',
         //    description: 'Redo the last modification',
         //    callback: $scope.redo
