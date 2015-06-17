@@ -55,7 +55,7 @@ angular.module('editorApp')
                                     if (!val) {
                                         val = kFactory.createValue();
                                         val.name = attr.name;
-                                        val.value = attr.defauldictionarytValue;
+                                        val.value = attr.defaultValue;
                                         fragDic.addValues(val);
                                     }
                                 });

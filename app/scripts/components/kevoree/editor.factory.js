@@ -121,8 +121,6 @@ angular.module('editorApp')
         function modelReactor(trace) {
             var fragDic, selected, highestNode;
 
-            console.log('trace', trace);
-
             function processRefreshRecursively(node) {
                 node.components.array.forEach(processComponent);
                 node.groups.array.forEach(function (group) {
