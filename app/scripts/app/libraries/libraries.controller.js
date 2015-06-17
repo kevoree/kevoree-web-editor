@@ -8,7 +8,7 @@
  * Controller of the editorApp registry libraries page
  */
 angular.module('editorApp')
-    .controller('LibrariesCtrl', function ($scope, $timeout, $stateParams, kRegistry, kModelHelper, kFactory, kEditor, KEVOREE_REGISTRY_URL) {
+    .controller('LibrariesCtrl', function ($scope, $timeout, kRegistry, kModelHelper, kFactory, kEditor, KEVOREE_REGISTRY_URL) {
         $scope.KEVOREE_REGISTRY_URL = KEVOREE_REGISTRY_URL;
         $scope.loading = true;
         $scope.selectedTdef = null;
