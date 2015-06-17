@@ -123,7 +123,7 @@ body {
 }
 
 .ui-notification {
-  width: 150px;
+  width: 180px;
 }
 
 #tdef-drag-panel {
@@ -656,6 +656,10 @@ pre {
 
 .cfp-hotkeys-close {
   position: absolute;
+}
+
+.ui-notification .message {
+  word-wrap: break-word;
 }
 
 /* Angular-ui ui-bootstrap CSS trick http://angular-ui.github.io/bootstrap/#/getting_started  */

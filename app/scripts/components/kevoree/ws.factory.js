@@ -30,50 +30,55 @@ angular.module('editorApp')
                     timeout = setTimeout(function () {
                         answer = true;
                         failed = true;
-                        ws.close();
+                        try { ws.close(); } catch (err) { /* ignore */ }
                         var err = new Error('Connection with ws://'+host+':'+port+path+' timed out');
                         callback(err, null, 'ws://'+host+':'+port+path);
                     }, 5000);
                 path = cleanPath(path);
 
-                ws = new WebSocket('ws://'+host+':'+port+path);
+                try {
+                    ws = new WebSocket('ws://'+host+':'+port+path);
 
-                ws.onopen = function () {
-                    clearTimeout(timeout);
-                    ws.send('pull');
-                };
-
-                ws.onmessage = function (msg) {
-                    try {
-                        var loader = kFactory.createJSONLoader();
-                        var model = loader.loadModelFromString(msg.data).get(0);
-                        answer = true;
-                        ws.close();
-                        callback(null, model, 'ws://'+host+':'+port+path);
-                    } catch (err) {
+                    ws.onopen = function () {
                         clearTimeout(timeout);
-                        console.warn('[ws.factory.getModel()] Error parsing model from message:');
-                        console.warn('[ws.factory.getModel()] msg.data='+msg.data);
-                        answer = true;
-                        ws.close();
-                        callback(new Error('Unable to load received model from ws://'+host+':'+port+path), null, 'ws://'+host+':'+port+path);
-                    }
-                };
+                        ws.send('pull');
+                    };
 
-                ws.onerror = function (err) {
-                    failed = true;
-                    err = new Error('Unable to connect to ws://'+host+':'+port+path);
-                    clearTimeout(timeout);
-                    callback(err, null, 'ws://'+host+':'+port+path);
-                };
+                    ws.onmessage = function (msg) {
+                        try {
+                            var loader = kFactory.createJSONLoader();
+                            var model = loader.loadModelFromString(msg.data).get(0);
+                            answer = true;
+                            ws.close();
+                            callback(null, model, 'ws://'+host+':'+port+path);
+                        } catch (err) {
+                            clearTimeout(timeout);
+                            console.warn('[ws.factory.getModel()] Error parsing model from message:');
+                            console.warn('[ws.factory.getModel()] msg.data='+msg.data);
+                            answer = true;
+                            ws.close();
+                            callback(new Error('Unable to load received model from ws://'+host+':'+port+path), null, 'ws://'+host+':'+port+path);
+                        }
+                    };
 
-                ws.onclose = function () {
-                    if (!answer && !failed) {
+                    ws.onerror = function (err) {
+                        failed = true;
+                        err = new Error('Unable to connect to ws://'+host+':'+port+path);
                         clearTimeout(timeout);
-                        var err = new Error('Connection with ws://'+host+':'+port+path+' closed');
                         callback(err, null, 'ws://'+host+':'+port+path);
-                    }
-                };
+                    };
+
+                    ws.onclose = function () {
+                        if (!answer && !failed) {
+                            clearTimeout(timeout);
+                            var err = new Error('Connection with ws://'+host+':'+port+path+' closed');
+                            callback(err, null, 'ws://'+host+':'+port+path);
+                        }
+                    };
+                } catch (err) {
+                    clearTimeout(timeout);
+                    callback(new Error('Unable to load received model from ws://'+host+':'+port+path), null, 'ws://'+host+':'+port+path);
+                }
 
                 return ws;
             },
@@ -95,7 +100,7 @@ angular.module('editorApp')
                     timeout = setTimeout(function () {
                         sent = true;
                         failed = true;
-                        ws.close();
+                        try { ws.close(); } catch (err) { /* ignore */ }
                         var err = new Error('Connection with ws://'+host+':'+port+path+' timed out');
                         callback(err, null, 'ws://'+host+':'+port+path);
                     }, 5000);

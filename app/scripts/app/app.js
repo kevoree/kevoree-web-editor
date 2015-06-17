@@ -46,6 +46,7 @@ angular
 
         NotificationProvider.setOptions({
             startTop: 65,
-            replaceMessage: true
+            replaceMessage: true,
+            delay: 5000
         });
     });

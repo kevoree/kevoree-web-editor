@@ -8,7 +8,25 @@
  * Controller of the editorApp main content div
  */
 angular.module('editorApp')
-    .controller('MainCtrl', function ($scope, $timeout, $modal, kEditor, hotkeys, saveFile, ui, kModelHelper, kFactory, Notification) {
+    .controller('MainCtrl', function ($scope, $timeout, $stateParams, $modal, kEditor, hotkeys, saveFile, ui, kModelHelper, kFactory, kWs, Notification) {
+        if ($stateParams.host) {
+            kWs.getModel($stateParams.host, $stateParams.port || 9000, $stateParams.path || '', function (err, model, url) {
+                if (err) {
+                    Notification.error({
+                        title: 'Open from node',
+                        message: 'Unable to load model from <strong>'+url+'</strong>'
+                    });
+                } else {
+                    kEditor.setModel(model);
+                    Notification.success({
+                        title: 'Open from node',
+                        message: 'Model loaded from <strong>'+url+'</strong>'
+                    });
+                }
+            });
+        }
+        console.log($stateParams);
+
         $scope.loading = false;
 
         $scope.onFileLoaded = function () {};
@@ -26,19 +44,15 @@ angular.module('editorApp')
                             var model = loader.loadModelFromString(data).get(0);
                             kEditor.setModel(model);
                             Notification.success({
-                                startTop: 90,
                                 title: 'Open from file',
-                                message: 'Model loaded from <strong>'+filename+'</strong>',
-                                delay: 5000
+                                message: 'Model loaded from <strong>'+filename+'</strong>'
                             });
                         } catch (err) {
                             console.warn('[main.controller.open()] Error loading model file');
                             console.error(err.stack);
                             Notification.error({
-                                startTop: 90,
                                 title: 'Open from file',
-                                message: 'Unable to load a model from <strong>'+filename+'</strong>',
-                                delay: 5000
+                                message: 'Unable to load a model from <strong>'+filename+'</strong>'
                             });
                             kEditor.setModel(oldModel);
                         } finally {
@@ -60,19 +74,15 @@ angular.module('editorApp')
                         var model = loader.loadModelFromString(data).get(0);
                         kEditor.setModel(model);
                         Notification.success({
-                            startTop: 90,
                             title: 'Open from file (dnd)',
-                            message: 'Model loaded from <strong>'+filename+'</strong>',
-                            delay: 5000
+                            message: 'Model loaded from <strong>'+filename+'</strong>'
                         });
                     } catch (err) {
                         console.warn('[main.controller.dndLoad()] Error loading model file');
                         console.error(err.stack);
                         Notification.error({
-                            startTop: 90,
                             title: 'Open from file (dnd)',
-                            message: 'Unable to load a model from <strong>'+filename+'</strong>',
-                            delay: 5000
+                            message: 'Unable to load a model from <strong>'+filename+'</strong>'
                         });
                         kEditor.setModel(oldModel);
                     } finally {
@@ -95,19 +105,15 @@ angular.module('editorApp')
                             compare.merge(model, kEditor.getModel()).applyOn(model);
                             kEditor.setModel(model);
                             Notification.success({
-                                startTop: 90,
                                 title: 'Merge from file',
-                                message: 'Model merged with <strong>'+filename+'</strong>',
-                                delay: 5000
+                                message: 'Model merged with <strong>'+filename+'</strong>'
                             });
                         } catch (err) {
                             console.warn('[main.controller.merge()] Error loading model file');
                             console.error(err.stack);
                             Notification.error({
-                                startTop: 90,
                                 title: 'Merge from file',
-                                message: 'Unable to merge the model with <strong>'+filename+'</strong>',
-                                delay: 5000
+                                message: 'Unable to merge the model with <strong>'+filename+'</strong>'
                             });
                         } finally {
                             $scope.loading = false;
@@ -124,7 +130,7 @@ angular.module('editorApp')
             $modal.open({
                 templateUrl: 'scripts/components/util/from-node.modal.html',
                 size: 'md',
-                controller: function ($scope, $modalInstance, kWs) {
+                controller: function ($scope, $modalInstance) {
                     $scope.action = 'Open';
                     $scope.host = '127.0.0.1';
                     $scope.port = 9000;
@@ -147,10 +153,8 @@ angular.module('editorApp')
                             } else {
                                 kEditor.setModel(model);
                                 Notification.success({
-                                    startTop: 90,
                                     title: 'Open from node',
-                                    message: 'Model loaded from <strong>'+url+'</strong>',
-                                    delay: 5000
+                                    message: 'Model loaded from <strong>'+url+'</strong>'
                                 });
                                 $modalInstance.close();
                             }
@@ -195,10 +199,8 @@ angular.module('editorApp')
                                 compare.merge(model, kEditor.getModel()).applyOn(model);
                                 kEditor.setModel(model);
                                 Notification.success({
-                                    startTop: 90,
                                     title: 'Merge from node',
-                                    message: 'Model merged with <strong>'+url+'</strong>',
-                                    delay: 5000
+                                    message: 'Model merged with <strong>'+url+'</strong>'
                                 });
                                 $modalInstance.close();
                             }
@@ -225,10 +227,8 @@ angular.module('editorApp')
                 saveFile.save(modelStr, filename, '.json', 'application/json');
             } catch (err) {
                 Notification.error({
-                    startTop: 90,
                     title: 'Save',
-                    message: 'Unable to serialize model to JSON',
-                    delay: 5000
+                    message: 'Unable to serialize model to JSON'
                 });
             }
         };
@@ -260,8 +260,7 @@ angular.module('editorApp')
             if (deletions === 0) {
                 Notification.warning({
                     title: 'Delete selected',
-                    message: 'Nothing selected',
-                    delay: 3000
+                    message: 'Nothing selected'
                 });
             }
         };

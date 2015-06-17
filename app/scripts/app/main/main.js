@@ -5,7 +5,7 @@ angular.module('editorApp')
       $stateProvider
           .state('main', {
             parent: 'app',
-            url: '/',
+            url: '/?host&port&path',
             views: {
               'content@': {
                 templateUrl: 'scripts/app/main/main.html',
