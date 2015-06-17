@@ -283,9 +283,10 @@ body {
 
 .pkg-title {
   color: #999;
-  border: 1px solid #666;
-  border-left: none;
+  border-top: 1px solid #444;
+  border-bottom: 1px solid #444;
   border-right: none;
+  border-left: none;
   font-size: 12px;
   font-weight: bold;
   background-color: #1c1c1c;
@@ -311,9 +312,10 @@ body {
   display: block;
   padding: 5px 10px 5px 15px;
   margin-bottom: -1px;
-  border: 1px solid #333;
-  border-left: none;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
   border-right: none;
+  border-left: none;
   background-color: #222;
   color: #999;
   overflow: hidden;
