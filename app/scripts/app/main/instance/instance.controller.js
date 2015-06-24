@@ -242,7 +242,7 @@ angular.module('editorApp')
                             $scope.selectedHost,
                             $scope.selectedPort,
                             $scope.selectedPath,
-                            function (err) {
+                            function (err, model) {
                                 $timeout(function () {
                                     if (err) {
                                         $scope.processing = false;
@@ -250,6 +250,7 @@ angular.module('editorApp')
                                     } else {
                                         $scope.processing = false;
                                         $scope.success = true;
+                                        kEditor.setModel(model);
                                     }
                                 });
                             });
