@@ -25,7 +25,6 @@ angular.module('editorApp')
                 }
             });
         }
-        console.log($stateParams);
 
         $scope.loading = false;
 

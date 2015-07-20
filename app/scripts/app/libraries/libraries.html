@@ -36,18 +36,18 @@
         <div class="libraries-tdefs-container">
           <div class="col-md-3 fit-y">
             <div class="tdef-count">
-              <h4 class="text-center">{{ groups.length }}</h4>
+              <h4 class="text-center">{{ tdefs.groups.length }}</h4>
               <p class="text-muted text-center item-group">total <strong>groups</strong></p>
             </div>
             <div>
               <div class="libraries-tdef-list">
                 <div class="libraries-tdef-list-inner">
                   <div class="list-group">
-                    <a data-ui-sref="libraries"
-                       class="list-group-item"
-                       data-ng-class="(selectedTdef.package === tdef.package && selectedTdef.name === tdef.name) ? 'active':''"
-                       data-ng-repeat="tdef in filteredGroups = (groups | filter:tdefSearch | orderBy:'name')"
-                       data-ng-click="select(tdef)">
+                    <a
+                            class="list-group-item"
+                            data-ng-class="tdef.selected ? 'active':''"
+                            data-ng-repeat="tdef in filteredGroups = (tdefs.groups | filter:tdefSearch | orderBy:'name')"
+                            data-ng-click="select($event, tdef)">
                       <h4 class="list-group-item-heading">{{ tdef.name }}</h4>
                       <p class="list-group-item-text text-muted">{{ tdef.package }}</p>
                     </a>
@@ -60,17 +60,17 @@
 
           <div class="col-md-3 fit-y">
             <div class="tdef-count">
-              <h4 class="text-center">{{ nodes.length }}</h4>
+              <h4 class="text-center">{{ tdefs.nodes.length }}</h4>
               <p class="text-muted text-center item-node">total <strong>nodes</strong></p>
             </div>
             <div class="libraries-tdef-list">
               <div class="libraries-tdef-list-inner">
                 <div class="list-group">
-                  <a data-ui-sref="libraries"
-                     class="list-group-item"
-                     data-ng-class="(selectedTdef.package === tdef.package && selectedTdef.name === tdef.name) ? 'active':''"
-                     data-ng-repeat="tdef in filteredNodes = (nodes | filter:tdefSearch | orderBy:'name')"
-                     data-ng-click="select(tdef)">
+                  <a
+                          class="list-group-item"
+                          data-ng-class="tdef.selected ? 'active':''"
+                          data-ng-repeat="tdef in filteredNodes = (tdefs.nodes | filter:tdefSearch | orderBy:'name')"
+                          data-ng-click="select($event, tdef)">
                     <h4 class="list-group-item-heading">{{ tdef.name }}</h4>
                     <p class="list-group-item-text text-muted">{{ tdef.package }}</p>
                   </a>
@@ -82,17 +82,17 @@
 
           <div class="col-md-3 fit-y">
             <div class="tdef-count">
-              <h4 class="text-center">{{ chans.length }}</h4>
+              <h4 class="text-center">{{ tdefs.channels.length }}</h4>
               <p class="text-muted text-center item-channel">total <strong>channels</strong></p>
             </div>
             <div class="libraries-tdef-list">
               <div class="libraries-tdef-list-inner">
                 <div class="list-group">
-                  <a data-ui-sref="libraries"
-                     class="list-group-item"
-                     data-ng-class="(selectedTdef.package === tdef.package && selectedTdef.name === tdef.name) ? 'active':''"
-                     data-ng-repeat="tdef in filteredChans = (chans | filter:tdefSearch | orderBy:'name')"
-                     data-ng-click="select(tdef)">
+                  <a
+                          class="list-group-item"
+                          data-ng-class="tdef.selected ? 'active':''"
+                          data-ng-repeat="tdef in filteredChans = (tdefs.channels | filter:tdefSearch | orderBy:'name')"
+                          data-ng-click="select($event, tdef)">
                     <h4 class="list-group-item-heading">{{ tdef.name }}</h4>
                     <p class="list-group-item-text text-muted">{{ tdef.package }}</p>
                   </a>
@@ -104,17 +104,17 @@
 
           <div class="col-md-3 fit-y">
             <div class="tdef-count">
-              <h4 class="text-center">{{ comps.length }}</h4>
+              <h4 class="text-center">{{ tdefs.components.length }}</h4>
               <p class="text-muted text-center item-component">total <strong>components</strong></p>
             </div>
             <div class="libraries-tdef-list">
               <div class="libraries-tdef-list-inner">
                 <div class="list-group">
-                  <a data-ui-sref="libraries"
-                     class="list-group-item"
-                     data-ng-class="(selectedTdef.package === tdef.package && selectedTdef.name === tdef.name) ? 'active':''"
-                     data-ng-repeat="tdef in filteredComps = (comps | filter:tdefSearch | orderBy:'name')"
-                     data-ng-click="select(tdef)">
+                  <a
+                          class="list-group-item"
+                          data-ng-class="tdef.selected ? 'active':''"
+                          data-ng-repeat="tdef in filteredComps = (tdefs.components | filter:tdefSearch | orderBy:'name')"
+                          data-ng-click="select($event, tdef)">
                     <h4 class="list-group-item-heading">{{ tdef.name }}</h4>
                     <p class="list-group-item-text text-muted">{{ tdef.package }}</p>
                   </a>
@@ -128,37 +128,46 @@
     </div>
 
     <div class="col-md-4 libraries-selected-tdef" data-ng-if="!loading">
-      <div data-ng-if="selectedTdef" data-ng-cloak>
-        <h3>{{ selectedTdef.name }}</h3>
-        <p class="text-muted">{{ selectedTdef.package }}</p>
-        <ul class="list-unstyled tdef-detail">
-          <li>
-            <span class="name">Latest release</span>
-            <span class="value">{{ selectedTdef.release }}</span>
-          </li>
-          <li>
-            <span class="name">Latest snapshot</span>
-            <span class="value">{{ selectedTdef.snapshot }}</span>
-          </li>
-          <li>
-            <span class="name">Platforms</span>
-            <ul class="value">
-              <li data-ng-repeat="platform in selectedTdef.platforms">{{ platform }}</li>
-            </ul>
-          </li>
-          <li>
-            <label for="versions" class="name">Versions</label>
-            <select id="versions" class="form-control input-sm value" data-ng-model="selectedTdef.version" data-ng-change="changeVersion()" style="width: auto;">
-              <option value="{{ version }}"
-                      data-ng-repeat="version in selectedTdef.versions | semverReverseSort"
-                      data-ng-selected="version === selectedTdef.version">
-                {{ version }}
-              </option>
-            </select>
-          </li>
-        </ul>
-        <button class="btn btn-default pull-right" data-ng-click="merge()" data-ng-disabled="!isMergeable()">Merge&nbsp;<i class="fa fa-check-circle" data-ng-if="success"></i></button>
-      </div>
+      <accordion close-others="true">
+        <accordion-group data-ng-repeat="tdef in tdefs.getAll() | filter:{selected:true} | orderBy:'name'" is-open="tdef.uiOpen">
+          <accordion-heading>
+            {{ tdef.name + '/' + tdef.version }} <i class="pull-right glyphicon" data-ng-class="{'glyphicon-chevron-down': tdef.uiOpen, 'glyphicon-chevron-right': !tdef.uiOpen}"></i>
+          </accordion-heading>
+          <ul class="list-unstyled tdef-detail">
+            <li>
+              <span class="name">Package</span>
+              <span class="value">{{ tdef.package }}</span>
+            </li>
+            <li>
+              <span class="name">Latest release</span>
+              <span class="value">{{ tdef.release }}</span>
+            </li>
+            <li>
+              <span class="name">Latest snapshot</span>
+              <span class="value">{{ tdef.snapshot }}</span>
+            </li>
+            <li>
+              <span class="name">Platforms</span>
+              <ul class="value">
+                <li data-ng-repeat="platform in tdef.platforms">{{ platform }}</li>
+              </ul>
+            </li>
+            <li>
+              <label class="name">Versions</label>
+              <select class="form-control input-sm value" data-ng-model="tdef.version" data-ng-change="changeVersion()" style="width: auto;">
+                <option value="{{ version }}"
+                        data-ng-repeat="version in tdef.versions | semverReverseSort"
+                        data-ng-selected="version === tdef.version">
+                  {{ version }}
+                </option>
+              </select>
+            </li>
+          </ul>
+          <button class="btn btn-default pull-right" data-ng-click="merge(tdef)" data-ng-if="isMergeable(tdef)">Merge</button>
+          <span class="pull-right" data-ng-if="!isMergeable(tdef)">Merged&nbsp;<i class="fa fa-check-circle"></i></span>
+        </accordion-group>
+      </accordion>
+      <button class="btn btn-default pull-right" data-ng-click="mergeAll()" data-ng-if="(tdefs.getAll() | filter:{selected:true}).length > 1">Merge all</button>
     </div>
   </div>
 </div>

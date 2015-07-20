@@ -152,6 +152,11 @@ body {
   background-color: #222;
 }
 
+.sidebar-right {
+  border-right: none;
+  border-left: 1px solid #111;
+}
+
 .sidebar-header {
   margin: 0;
   color: #f6f6f6;
@@ -495,11 +500,16 @@ body {
   .libraries-selected-tdef {
     border-left: 1px solid #bbb;
     height: 100%;
+    overflow: auto;
   }
 }
 
 .fit-y {
   height: 100%;
+}
+
+.libraries-tdef-list .list-group-item {
+  cursor: pointer;
 }
 
 .libraries-tdef-list-inner .list-group .list-group-item {
