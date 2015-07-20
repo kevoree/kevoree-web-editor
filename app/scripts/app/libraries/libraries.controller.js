@@ -69,10 +69,24 @@ angular.module('editorApp')
             var mergeable = false;
 
             if (tdef.version) {
-                mergeable = !kEditor.getModel().findByPath(kModelHelper.fqnToPath(tdef.package)+'/typeDefinitions[name='+tdef.name+',version='+tdef.version+']');
+                mergeable = !kEditor.getModel().findByPath(kModelHelper.pkgFqnToPath(tdef.package)+'/typeDefinitions[name='+tdef.name+',version='+tdef.version+']');
             }
 
             return mergeable;
+        };
+
+        $scope.areMergeable = function () {
+            var tdefs = $scope.tdefs.getAll();
+
+            for (var i=0; i < tdefs.length; i++) {
+                if (tdefs[i].selected && tdefs[i].version) {
+                    if ($scope.isMergeable(tdefs[i])) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         };
 
         $scope.closeError = function () {

@@ -167,7 +167,10 @@
           <span class="pull-right" data-ng-if="!isMergeable(tdef)">Merged&nbsp;<i class="fa fa-check-circle"></i></span>
         </accordion-group>
       </accordion>
-      <button class="btn btn-default pull-right" data-ng-click="mergeAll()" data-ng-if="(tdefs.getAll() | filter:{selected:true}).length > 1">Merge all</button>
+      <div data-ng-if="(tdefs.getAll() | filter:{selected:true}).length > 1">
+        <button class="btn btn-default pull-right" data-ng-click="mergeAll()" data-ng-if="areMergeable()">Merge all</button>
+        <span class="pull-right" data-ng-if="!areMergeable()">Merged&nbsp;<i class="fa fa-check-circle"></i></span>
+      </div>
     </div>
   </div>
 </div>

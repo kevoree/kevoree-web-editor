@@ -48,7 +48,7 @@ angular.module('editorApp')
                         // then do some process over it
                         ['groups', 'nodes', 'components', 'channels'].forEach(function (type) {
                             tdefs[type] = Object.keys(tdefs[type]).map(function (key) {
-                                var siblings = model.select(kModelHelper.fqnToPath(tdefs[type][key].package)+'/typeDefinitions[name='+tdefs[type][key].name+']'),
+                                var siblings = model.select(kModelHelper.pkgFqnToPath(tdefs[type][key].package)+'/typeDefinitions[name='+tdefs[type][key].name+']'),
                                     release = kModelHelper.getLatestRelease(siblings.array),
                                     snapshot = kModelHelper.getLatestSnapshot(siblings.array);
 

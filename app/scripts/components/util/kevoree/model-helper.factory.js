@@ -263,6 +263,17 @@ angular.module('editorApp')
                 fqn += ']';
 
                 return fqn;
+            },
+
+            /**
+             *
+             * @param fqn
+             * @returns {string}
+             */
+            pkgFqnToPath: function (fqn) {
+                fqn = fqn.split('.');
+                var last = fqn.pop();
+                return 'packages[' + fqn.join(']/packages[') + ']/packages[' + last + ']';
             }
         };
     });
