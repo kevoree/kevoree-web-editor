@@ -17,11 +17,6 @@ angular.module('editorApp')
         };
         var initiated = false;
 
-        return {
-            init: init,
-            get: get
-        };
-
         function init() {
             if (initiated) {
                 return $q(function (resolve) {
@@ -150,4 +145,9 @@ angular.module('editorApp')
                     });
             });
         }
+
+        return {
+            init: init,
+            get: get
+        };
     });

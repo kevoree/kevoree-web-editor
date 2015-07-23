@@ -8,9 +8,7 @@
  * Controller of the editorApp options page
  */
 angular.module('editorApp')
-    .controller('SettingsCtrl', function ($scope, kScript, Notification) {
-        Notification.config({ top: 90 });
-
+    .controller('SettingsCtrl', function ($scope, kScript) {
         $scope.isKevSCacheEmpty = function () {
             return kScript.getCacheManager().getAll().length === 0;
         };
