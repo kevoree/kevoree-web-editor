@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('kRegistry', function ($http, $q, kFactory, kModelHelper, KEVOREE_REGISTRY_URL) {
+    .factory('kRegistry', function ($http, $q, storage, kFactory, kModelHelper, KEVOREE_REGISTRY_URL) {
         var model = null;
         var tdefs = {
             groups: {},
@@ -16,6 +16,7 @@ angular.module('editorApp')
             }
         };
         var initiated = false;
+        var takeFromStorage = false;
 
         function init() {
             if (initiated) {
@@ -25,54 +26,65 @@ angular.module('editorApp')
             } else {
                 return getAll()
                     .then(function (model) {
-                        // first init the different TypeDefinition items
-                        model.select('**/typeDefinitions[*]').array.forEach(function (tdef) {
-                            var pkgFqn = kModelHelper.genPkgName(tdef.eContainer()),
-                                key    = btoa(pkgFqn + '_' + tdef.name);
-
-                            tdefs[kModelHelper.getTypeDefinitionType(tdef)+'s'][key] = {
-                                package: pkgFqn,
-                                name: tdef.name,
-                                platforms: [],
-                                versions: [],
-                                selected: false,
-                                uiOpen: true
+                        if (takeFromStorage) {
+                            tdefs = storage.get('registry_libraries');
+                            tdefs.getAll = function () {
+                                return [].concat(tdefs.groups)
+                                    .concat(tdefs.nodes)
+                                    .concat(tdefs.channels)
+                                    .concat(tdefs.components);
                             };
-                        });
+                        } else {
+                            // first init the different TypeDefinition items
+                            model.select('**/typeDefinitions[*]').array.forEach(function (tdef) {
+                                var pkgFqn = kModelHelper.genPkgName(tdef.eContainer()),
+                                    key    = btoa(pkgFqn + '_' + tdef.name);
 
-                        // then do some process over it
-                        ['groups', 'nodes', 'components', 'channels'].forEach(function (type) {
-                            tdefs[type] = Object.keys(tdefs[type]).map(function (key) {
-                                var siblings = model.select(kModelHelper.pkgFqnToPath(tdefs[type][key].package)+'/typeDefinitions[name='+tdefs[type][key].name+']'),
-                                    release = kModelHelper.getLatestRelease(siblings.array),
-                                    snapshot = kModelHelper.getLatestSnapshot(siblings.array);
-
-                                tdefs[type][key].release = release ? release.version : null;
-                                tdefs[type][key].snapshot = snapshot ? snapshot.version : null;
-
-                                if (tdefs[type][key].release) {
-                                    tdefs[type][key].version = release.version;
-                                } else if (tdefs[type][key].snapshot) {
-                                    tdefs[type][key].version = snapshot.version;
-                                } else {
-                                    tdefs[type][key].version = null;
-                                }
-
-                                if (release) {
-                                    tdefs[type][key].platforms = kModelHelper.getPlatforms(release);
-                                } else if (snapshot) {
-                                    tdefs[type][key].platforms = kModelHelper.getPlatforms(snapshot);
-                                }
-
-                                siblings.array.forEach(function (tdef) {
-                                    if (tdefs[type][key].versions.indexOf(tdef.version) === -1) {
-                                        tdefs[type][key].versions.push(tdef.version);
-                                    }
-                                });
-
-                                return tdefs[type][key];
+                                tdefs[kModelHelper.getTypeDefinitionType(tdef)+'s'][key] = {
+                                    package: pkgFqn,
+                                    name: tdef.name,
+                                    platforms: [],
+                                    versions: [],
+                                    selected: false,
+                                    uiOpen: true
+                                };
                             });
-                        });
+
+                            // then do some process over it
+                            ['groups', 'nodes', 'components', 'channels'].forEach(function (type) {
+                                tdefs[type] = Object.keys(tdefs[type]).map(function (key) {
+                                    var siblings = model.select(kModelHelper.pkgFqnToPath(tdefs[type][key].package)+'/typeDefinitions[name='+tdefs[type][key].name+']'),
+                                        release = kModelHelper.getLatestRelease(siblings.array),
+                                        snapshot = kModelHelper.getLatestSnapshot(siblings.array);
+
+                                    tdefs[type][key].release = release ? release.version : null;
+                                    tdefs[type][key].snapshot = snapshot ? snapshot.version : null;
+
+                                    if (tdefs[type][key].release) {
+                                        tdefs[type][key].version = release.version;
+                                    } else if (tdefs[type][key].snapshot) {
+                                        tdefs[type][key].version = snapshot.version;
+                                    } else {
+                                        tdefs[type][key].version = null;
+                                    }
+
+                                    if (release) {
+                                        tdefs[type][key].platforms = kModelHelper.getPlatforms(release);
+                                    } else if (snapshot) {
+                                        tdefs[type][key].platforms = kModelHelper.getPlatforms(snapshot);
+                                    }
+
+                                    siblings.array.forEach(function (tdef) {
+                                        if (tdefs[type][key].versions.indexOf(tdef.version) === -1) {
+                                            tdefs[type][key].versions.push(tdef.version);
+                                        }
+                                    });
+
+                                    return tdefs[type][key];
+                                });
+                            });
+                            storage.set('registry_libraries', tdefs);
+                        }
 
                         initiated = true;
                         return tdefs;
@@ -100,9 +112,16 @@ angular.module('editorApp')
                         .then(function (res) {
                             try {
                                 var modelStr = JSON.stringify(res.data);
-                                var loader = kFactory.createJSONLoader();
-                                model = loader.loadModelFromString(modelStr).get(0);
-                                resolve(model);
+                                if (modelStr === storage.get('registry_model')) {
+                                    takeFromStorage = true;
+                                    resolve();
+                                } else {
+                                    takeFromStorage = false;
+                                    storage.set('registry_model', modelStr);
+                                    var loader = kFactory.createJSONLoader();
+                                    model = loader.loadModelFromString(modelStr).get(0);
+                                    resolve(model);
+                                }
                             } catch (err) {
                                 console.log('error', err.message);
                                 reject(new Error('Unable to load Kevoree Registry model'));
@@ -146,8 +165,16 @@ angular.module('editorApp')
             });
         }
 
+        /**
+         * Saves current tdefs state to storage
+         */
+        function save() {
+            storage.set('registry_libraries', tdefs);
+        }
+
         return {
             init: init,
-            get: get
+            get: get,
+            save: save
         };
     });

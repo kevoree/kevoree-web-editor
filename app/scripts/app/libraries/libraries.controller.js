@@ -92,4 +92,14 @@ angular.module('editorApp')
         $scope.closeError = function () {
             $scope.error = null;
         };
+
+        function beforeUnload() {
+            kRegistry.save();
+        }
+
+        window.addEventListener('beforeunload', beforeUnload);
+
+        $scope.$on('$destroy', function () {
+            window.removeEventListener('beforeunload', beforeUnload);
+        });
     });
