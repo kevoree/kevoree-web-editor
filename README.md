@@ -1,12 +1,19 @@
-# kevoree-web-editor
+# Kevoree Web Editor [![Build Status](https://drone.io/github.com/kevoree/kevoree-web-editor/status.png)](https://drone.io/github.com/kevoree/kevoree-web-editor/latest)
 
-New version using AngularJS.  
-You can try it here http://kwe.braindead.fr
+Web app for [Kevoree](http://kevoree.org/) model management  
+You can try it here [http://editor.kevoree.org](http://editor.kevoree.org)
 
-## Build & development
+## Overview
+ - [What is it for ?](README.md#what-is-it-for-)
+ - [How do I use it ?](README.md#how-do-i-use-it-)
+ - [How do I contribute ?](README.md#how-do-i-contribute-)
 
-Run `grunt` for building and `grunt serve` for preview.
+## What is it for ?
+The purpose of Kevoree Web Editor (KWE) is to provide an easy-to-use tool to manage your [Kevoree](http://kevoree.org/) models  & runtimes.  
+It is written in Javascript and has been designed to work as a static standalone Web application.
 
-## Testing
+## How do I use it ?
 
-Running `grunt test` will run the unit tests with karma.
+### Prerequisites
+ - an up-to-date browser because it uses many "new" features: **WebSocket**, **LocalStorage**, **WebSQL**, **SVG**, etc.
+ - some [Kevoree-related knowledge](http://kevoree.org/doc/#getting-started)
