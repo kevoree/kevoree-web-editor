@@ -1,8 +1,7 @@
 {
-  "name": "kevoreewebeditor",
+  "name": "kevoree-web-editor",
   "version": "5.0.1",
   "dependencies": {},
-  "repository": {},
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-autoprefixer": "^2.0.0",
@@ -39,5 +38,22 @@
   },
   "scripts": {
     "test": "grunt test"
-  }
+  },
+  "description": "Kevoree Web Editor - http://editor.kevoree.org",
+  "main": "",
+  "keywords": [
+    "kevoree",
+    "editor",
+    "model"
+  ],
+  "author": "Maxime Tricoire <max.tricoire@gmail.com>",
+  "license": "LGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevoree/kevoree-web-editor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kevoree/kevoree-web-editor/issues"
+  },
+  "homepage": "https://github.com/kevoree/kevoree-web-editor#readme"
 }
