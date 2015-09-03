@@ -254,7 +254,11 @@ angular.module('editorApp')
 
                 fqn = fqn[0].split('.');
                 var last = fqn.pop();
-                fqn = 'packages[' + fqn.join(']/packages[') + ']/*[name=' + last;
+                if (fqn.length === 0) {
+                  fqn = 'packages[name=' + last;
+                } else {
+                  fqn = 'packages[' + fqn.join(']/packages[') + ']/*[name=' + last;
+                }
 
                 if (vers) {
                     fqn += ',version=' + vers;
@@ -273,7 +277,11 @@ angular.module('editorApp')
             pkgFqnToPath: function (fqn) {
                 fqn = fqn.split('.');
                 var last = fqn.pop();
-                return 'packages[' + fqn.join(']/packages[') + ']/packages[' + last + ']';
+                if (fqn.length === 0) {
+                  return 'packages['+last+']';
+                } else {
+                  return 'packages[' + fqn.join(']/packages[') + ']/packages[' + last + ']';
+                }
             }
         };
     });

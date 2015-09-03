@@ -3,19 +3,20 @@
 angular.module('editorApp')
   .config(function () {
     var REGEX = {
-      statement:      /repo|include|add|remove|move|set|attach|detach|network|bind|unbind|start|stop/,
-      string:         /^"((?!")(?!(\r\n|\n|\r)).)*"$|^'((?!')(?!(\r\n|\n|\r)).)*'$/,
-      comment:        /\/\/((?!(\r\n|\n|\r)).)*/,
-      equal:          /=/,
-      colon:          /:/,
-      slash:          /[/]/,
-      typedefslash:   /[/](?![/])/,
-      instancelist:   /((\*|[a-zA-Z0-9_-]+)([.](\*|[a-zA-Z0-9_-]+))*)((([ ]|\t)*)(,(([ ]|\t)*)((\*|[a-zA-Z0-9_-]+)([.](\*|[a-zA-Z0-9_-]+))*)))*/,
-      typedef:        /[a-zA-Z0-9_]+([.][a-zA-Z0-9_-]+)*/,
-      instancepath:   /(\*|[a-zA-Z0-9_-]+)([.](\*|[a-zA-Z0-9_-]+))*/,
-      string2:        /[a-zA-Z0-9.:%@_-]+/,
-      string1:        /[a-zA-Z0-9_-]+/,
-      version:        /[a-zA-Z0-9._-]+/
+      statement:          /repo|include|add|remove|move|set|attach|detach|network|bind|unbind|start|stop/,
+      string:             /^"((?!")(?!(\r\n|\n|\r)).)*"$|^'((?!')(?!(\r\n|\n|\r)).)*'$/,
+      comment:            /\/\/((?!(\r\n|\n|\r)).)*/,
+      equal:              /=/,
+      colon:              /:/,
+      slash:              /[/]/,
+      typedefslash:       /[/](?![/])/,
+      instancelist:       /((\*|[a-zA-Z0-9_-]+)([.](\*|[a-zA-Z0-9_-]+))*)((([ ]|\t)*)(,(([ ]|\t)*)((\*|[a-zA-Z0-9_-]+)([.](\*|[a-zA-Z0-9_-]+))*)))*/,
+      typedef:            /[a-zA-Z0-9_]+([.][a-zA-Z0-9_-]+)*/,
+      instancepath:       /(\*|[a-zA-Z0-9_-]+)([.](\*|[a-zA-Z0-9_-]+))*/,
+      dottedinstancepath: /(\*|[a-zA-Z0-9_-]+)([.](\*|[a-zA-Z0-9_-]+))+/,
+      string2:            /[a-zA-Z0-9.:%@_-]+/,
+      string1:            /[a-zA-Z0-9_-]+/,
+      version:            /[a-zA-Z0-9._-]+/
     };
 
     var statements = {
@@ -71,7 +72,7 @@ angular.module('editorApp')
       },
 
       set: function (stream, state) {
-        state.expect = ['instancepath', '?slash', 'equal', 'string'];
+        state.expect = ['dottedinstancepath', '?slash', 'equal', 'string'];
         return 'statement';
       },
 
@@ -159,6 +160,10 @@ angular.module('editorApp')
 
       string2: function () {
         return 'string2';
+      },
+
+      dottedinstancepath: function (stream, state) {
+        return this.instancepath(stream, state);
       },
 
       instancepath: function (stream, state) {
@@ -302,7 +307,7 @@ angular.module('editorApp')
               }
 
               if (state.inString) {
-                // we are in the string, so passed " or ' character
+                // we are in a string after a " or a ' character
                 var c = stream.next(); // this is the first "real" character in the string
 
                 if (state.escaped) {
@@ -335,7 +340,7 @@ angular.module('editorApp')
               } else {
                 state.expect.splice(0, 0, expected);
                 stream.skipToEnd();
-                return 'error';              // Unstyled token
+                return 'error';
               }
 
             } else {
