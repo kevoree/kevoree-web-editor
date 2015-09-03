@@ -1,22 +1,28 @@
 'use strict';
 
 angular.module('editorApp')
-  .factory('kRegistry', function($http, $q, storage, kFactory, kModelHelper, KEVOREE_REGISTRY_URL) {
-    var model = null;
-    var tdefs = {
-      groups: {},
-      nodes: {},
-      channels: {},
-      components: {},
-      getAll: function() {
-        return [].concat(tdefs.groups)
-          .concat(tdefs.nodes)
-          .concat(tdefs.channels)
-          .concat(tdefs.components);
-      }
-    };
-    var initiated = false;
-    var takeFromStorage = false;
+  .factory('kRegistry', function($http, $q, storage, kFactory, kModelHelper, Notification, KEVOREE_REGISTRY_URL) {
+    var model, tdefs, initiated, takeFromStorage;
+
+    function clean() {
+      model = null;
+      tdefs = {
+        groups: {},
+        nodes: {},
+        channels: {},
+        components: {},
+        getAll: function() {
+          return [].concat(tdefs.groups)
+            .concat(tdefs.nodes)
+            .concat(tdefs.channels)
+            .concat(tdefs.components);
+        }
+      };
+      initiated = false;
+      takeFromStorage = false;
+    }
+
+    clean();
 
     function init() {
       if (initiated) {
@@ -171,9 +177,27 @@ angular.module('editorApp')
       storage.set('registry_libraries', tdefs);
     }
 
+    function isInit() {
+      var model = storage.get('registry_model');
+      return model ? model.length > 0: false;
+    }
+
+    function clearCache() {
+      clean();
+      storage.remove('registry_libraries');
+      storage.remove('registry_model');
+      Notification.success({
+          title: 'Registry Libraries cache',
+          message: 'Cleared successfully',
+          delay: 3000
+      });
+    }
+
     return {
       init: init,
       get: get,
-      save: save
+      save: save,
+      isInit: isInit,
+      clearCache: clearCache
     };
   });
