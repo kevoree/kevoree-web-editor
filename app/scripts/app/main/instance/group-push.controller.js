@@ -64,9 +64,6 @@ angular.module('editorApp')
             });
         });
 
-        console.log('ports', $scope.ports);
-        console.log('paths', $scope.paths);
-
         $scope.closeError = function () {
             $scope.error = null;
         };
