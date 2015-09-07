@@ -8,7 +8,7 @@
         group dictionaries and to its attached nodes dictionaries and their respective Network Informations</p>
     <div class="form-group input-group input-group-sm col-xs-12">
         <span class="input-group-addon" style="width: 60px">Host</span>
-        <select class="form-control" data-ng-model="selectedHost">
+        <select class="form-control" data-ng-model="selectedHost" data-ng-change="changeHost()">
             <option value="{{ value }}" data-ng-repeat="(value, node) in hosts" data-ng-selected="value === selectedHost">
                 {{ value + ' (' + node + ')' }}
             </option>
@@ -17,7 +17,7 @@
     </div>
     <div class="form-group input-group input-group-sm col-xs-12">
         <span class="input-group-addon" style="width: 60px">Port</span>
-        <select class="form-control" data-ng-model="selectedPort">
+        <select class="form-control" data-ng-model="selectedPort" data-ng-change="changePort()">
             <option value="{{ value }}" data-ng-repeat="(value, node) in ports" data-ng-selected="value === selectedPort">
                 {{ value + ' (' + node + ')' }}
             </option>
@@ -26,7 +26,7 @@
     </div>
     <div class="form-group input-group input-group-sm col-xs-12">
         <span class="input-group-addon" style="width: 60px">Path</span>
-        <select class="form-control" data-ng-model="selectedPath">
+        <select class="form-control" data-ng-model="selectedPath" data-ng-change="changePath()">
             <option value="{{ value }}" data-ng-repeat="(value, node) in paths" data-ng-selected="value === selectedPath">
                 {{ value + ' (' + node + ')' }}
             </option>
