@@ -1,6 +1,6 @@
 {
   "name": "kevoree-web-editor",
-  "version": "5.0.3",
+  "version": "5.0.4",
   "dependencies": {},
   "devDependencies": {
     "grunt": "^0.4.5",
