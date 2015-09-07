@@ -672,5 +672,11 @@ pre {
   word-wrap: break-word;
 }
 
+.help-block {
+  margin: 0;
+  margin-left: 2px;
+  font-size: 12px;
+}
+
 /* Angular-ui ui-bootstrap CSS trick http://angular-ui.github.io/bootstrap/#/getting_started  */
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }

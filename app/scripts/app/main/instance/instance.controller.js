@@ -10,11 +10,18 @@
 angular.module('editorApp')
   .controller('InstanceCtrl', function($scope, $timeout, $modal, hotkeys, ui, kEditor, kFactory, kInstance, kModelHelper) {
     $scope.instance = null;
+    $scope.instanceName = null;
     $scope.type = null;
     $scope.mainCollapsed = false;
     $scope.dicCollapsed = false;
     $scope.netCollapsed = false;
     $scope.fragCollapsed = {};
+
+    $scope.changeName = function (form, name) {
+      if (form.name.$valid) {
+        $scope.instance.name = name;
+      }
+    };
 
     $scope.changeVersion = function(version) {
       $scope.instance.typeDefinition = $scope.instance.typeDefinition.eContainer()
@@ -108,6 +115,7 @@ angular.module('editorApp')
         if ($scope.instance && ($scope.instance.path() !== path)) {
           // reset values
           $scope.instance = null;
+          $scope.instanceName = null;
           $scope.type = null;
           $scope.selectedVersion = null;
           $scope.versions = [];
@@ -120,6 +128,7 @@ angular.module('editorApp')
         if (path) {
           $scope.instance = kEditor.getModel().findByPath(path);
           if ($scope.instance && $scope.instance.getRefInParent() !== 'mBindings') {
+            $scope.instanceName = $scope.instance.name;
             $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
             timeout = $timeout(function() {
               processTypeDefinition();
