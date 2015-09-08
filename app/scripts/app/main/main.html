@@ -84,6 +84,11 @@
         <div class="menu-btn">
             <button type="button" class="btn btn-default" data-ng-click="toggleShortcutHelp()">Help</button>
         </div>
+        <div class="menu-btn pull-right" data-ng-switch data-on="synced">
+            <button type="button" class="btn btn-default" data-ng-click="connectSync($event)" data-ng-switch-when="false">Connect</button>
+            <span data-ng-switch-when="true" style="color: green">{{url}}</span>
+            <button type="button" class="btn btn-default" data-ng-click="disconnectSync($event)" data-ng-switch-when="true">Disconnect</button>
+        </div>
     </div>
     <div id="tdef-drag-panel" data-drop-target="dndLoad($name, $data)">
         <div data-ui-view="typedefs"></div>

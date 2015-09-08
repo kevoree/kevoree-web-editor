@@ -45,7 +45,7 @@ body {
   margin-bottom: 15px;
 }
 
-.CodeMirror {
+#kevscript-editor .CodeMirror {
   height: 500px;
 }
 
@@ -191,9 +191,10 @@ body {
   top: 51px;
   left: 0;
   right: 0;
-  height: 25px;
+  min-height: 25px;
   background-color: #222;
   padding-left: 5px;
+  padding-right: 5px;
 }
 
 .menubar .menu-btn {
@@ -205,15 +206,15 @@ body {
   border-radius: 0;
   height: 25px;
   padding: 0 7px;
+  margin-top: -1px;
   background-color: #222;
   color: #999;
   border: 1px solid #000;
-  border-top: none;
 }
 
 
-.menu-btn.open > .dropdown-toggle {
-  background-color: #333;
+.dropdown-toggle:hover {
+  background-color: #111;
   color: #999;
   border-color: #000;
 }
@@ -222,7 +223,6 @@ body {
 .menu-btn button:focus,
 .menu-btn button:active {
   border: 1px solid #000;
-  border-top: none;
   background-color: #333;
   color: #999;
 }
@@ -236,6 +236,8 @@ body {
   min-width: 0;
   background-color: #222;
   border-color: #000;
+  border-radius: 0;
+  margin-top: 0px;
 }
 
 .menu-btn .dropdown-menu > li > a {

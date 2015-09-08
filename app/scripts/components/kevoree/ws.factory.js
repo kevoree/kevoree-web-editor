@@ -69,11 +69,11 @@ angular.module('editorApp')
                     };
 
                     ws.onclose = function () {
-                        if (!answer && !failed) {
-                            clearTimeout(timeout);
-                            var err = new Error('Connection with ws://'+host+':'+port+path+' closed');
-                            callback(err, null, 'ws://'+host+':'+port+path);
-                        }
+                      if (!answer && !failed) {
+                        clearTimeout(timeout);
+                        var err = new Error('Connection with ws://'+host+':'+port+path+' closed');
+                        callback(err, null, 'ws://'+host+':'+port+path);
+                      }
                     };
                 } catch (err) {
                     clearTimeout(timeout);

@@ -404,7 +404,5 @@ angular.module('editorApp')
             }
         }
 
-
-
         return editor;
     });
