@@ -18,17 +18,29 @@
 
     <div class="col-md-8 fit-y" data-ng-if="!loading">
       <div class="fit-y">
-        <div class="libraries-search-input">
-          <div class="col-md-6">
-            <div class="form-group input-group col-xs-12">
-              <span class="input-group-addon">Package</span>
-              <input type="text" class="form-control" placeholder="Search by Package" data-ng-model="tdefSearch.package">
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group input-group col-xs-12">
+        <div class="libraries-search-input clearfix">
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group input-group input-group-sm col-xs-12">
               <span class="input-group-addon">TypeDefinition</span>
               <input type="text" class="form-control" placeholder="Search by TypeDefinition" data-ng-model="tdefSearch.name">
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group input-group input-group-sm col-xs-12">
+              <span class="input-group-addon">Platform</span>
+              <input type="text" class="form-control" placeholder="Search by platform" data-ng-model="tdefSearch.platforms">
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group input-group input-group-sm col-xs-12">
+              <span class="input-group-addon">Package</span>
+              <input type="text" class="form-control" placeholder="Search by package" data-ng-model="tdefSearch.package">
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group input-group input-group-sm col-xs-12">
+              <span class="input-group-addon">Version</span>
+              <input type="text" class="form-control" placeholder="Search by version" data-ng-model="tdefSearch.version">
             </div>
           </div>
         </div>
@@ -36,8 +48,8 @@
         <div class="libraries-tdefs-container">
           <div class="col-md-3 fit-y">
             <div class="tdef-count">
-              <h4 class="text-center">{{ tdefs.groups.length }}</h4>
-              <p class="text-muted text-center item-group">total <strong>groups</strong></p>
+              <h4 class="text-center">{{ filteredGroups.length }}</h4>
+              <p class="text-muted text-center item-group"><strong>groups</strong></p>
             </div>
             <div>
               <div class="libraries-tdef-list">
@@ -60,8 +72,8 @@
 
           <div class="col-md-3 fit-y">
             <div class="tdef-count">
-              <h4 class="text-center">{{ tdefs.nodes.length }}</h4>
-              <p class="text-muted text-center item-node">total <strong>nodes</strong></p>
+              <h4 class="text-center">{{ filteredNodes.length }}</h4>
+              <p class="text-muted text-center item-node"><strong>nodes</strong></p>
             </div>
             <div class="libraries-tdef-list">
               <div class="libraries-tdef-list-inner">
@@ -82,8 +94,8 @@
 
           <div class="col-md-3 fit-y">
             <div class="tdef-count">
-              <h4 class="text-center">{{ tdefs.channels.length }}</h4>
-              <p class="text-muted text-center item-channel">total <strong>channels</strong></p>
+              <h4 class="text-center">{{ filteredChans.length }}</h4>
+              <p class="text-muted text-center item-channel"><strong>channels</strong></p>
             </div>
             <div class="libraries-tdef-list">
               <div class="libraries-tdef-list-inner">
@@ -104,8 +116,8 @@
 
           <div class="col-md-3 fit-y">
             <div class="tdef-count">
-              <h4 class="text-center">{{ tdefs.components.length }}</h4>
-              <p class="text-muted text-center item-component">total <strong>components</strong></p>
+              <h4 class="text-center">{{ filteredComps.length }}</h4>
+              <p class="text-muted text-center item-component"><strong>components</strong></p>
             </div>
             <div class="libraries-tdef-list">
               <div class="libraries-tdef-list-inner">
@@ -127,7 +139,7 @@
       </div>
     </div>
 
-    <div class="col-md-4 libraries-selected-tdef" data-ng-if="!loading">
+    <div class="col-md-4 libraries-selected-tdef clearfix" data-ng-if="!loading">
       <accordion close-others="true">
         <accordion-group data-ng-repeat="tdef in tdefs.getAll() | filter:{selected:true} | orderBy:'name'" is-open="tdef.uiOpen">
           <accordion-heading>

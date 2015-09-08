@@ -417,6 +417,81 @@ body {
   background-color: #f5f5f5;
 }
 
+.libraries-search-input .input-group-addon {
+  width: 100px;
+}
+
+@media (min-width: 992px) {
+  #libraries-container {
+    position: absolute;
+    top: 65px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    overflow: hidden;
+  }
+
+  #libraries-inner-container {
+    position: absolute;
+    top: 20px;
+    left: 5px;
+    right: 5px;
+    bottom: 20px;
+    overflow: hidden;
+  }
+
+  .fit-y {
+    height: 100%;
+  }
+
+  .libraries-tdefs-container {
+    position: absolute;
+    top: 75px;
+    left: 0;
+    right: 5px;
+    bottom: 0;
+    overflow: hidden;
+  }
+
+  .libraries-tdef-list {
+    position: absolute;
+    top: 70px;
+    bottom: 0;
+    left: 15px;
+    right: 15px;
+    overflow: hidden;
+  }
+
+  .libraries-tdef-list-inner {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: -15px; /* Decrease this value for cross-browser compatibility */
+    overflow-x: auto;
+  }
+
+  .libraries-selected-tdef {
+    border-left: 1px solid #bbb;
+    height: 100%;
+    overflow: auto;
+  }
+}
+
+@media (max-width: 991px) {
+  .libraries-search-input {
+    padding-top: 10px;
+  }
+
+  .libraries-selected-tdef {
+    padding-bottom: 10px;
+  }
+
+  #libraries-container .loading-content {
+    padding: 10px;
+  }
+}
+
 @media (min-width: 768px) {
   .sidebar {
     position: fixed;
@@ -449,65 +524,6 @@ body {
   .editor {
     left: 250px;
   }
-
-  #libraries-container {
-    position: absolute;
-    top: 65px;
-    left: 15px;
-    right: 15px;
-    bottom: 15px;
-    overflow: hidden;
-  }
-
-  #libraries-inner-container {
-    position: absolute;
-    top: 20px;
-    left: 5px;
-    right: 5px;
-    bottom: 20px;
-    overflow: hidden;
-  }
-
-  .libraries-search-input {
-    height: 45px;
-  }
-
-  .libraries-tdefs-container {
-    position: absolute;
-    top: 45px;
-    left: 0;
-    right: 5px;
-    bottom: 0;
-    overflow: hidden;
-  }
-
-  .libraries-tdef-list {
-    position: absolute;
-    top: 70px;
-    bottom: 0;
-    left: 15px;
-    right: 15px;
-    overflow: hidden;
-  }
-
-  .libraries-tdef-list-inner {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: -15px; /* Decrease this value for cross-browser compatibility */
-    overflow-x: auto;
-  }
-
-  .libraries-selected-tdef {
-    border-left: 1px solid #bbb;
-    height: 100%;
-    overflow: auto;
-  }
-}
-
-.fit-y {
-  height: 100%;
 }
 
 .libraries-tdef-list .list-group-item {
