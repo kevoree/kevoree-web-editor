@@ -215,4 +215,9 @@ angular.module('editorApp')
         }
       }
     });
+
+    $scope.$on('$destroy', function () {
+      hotkeys.del('ctrl+shift+p');
+      hotkeys.del('ctrl+shift+l');
+    });
   });
