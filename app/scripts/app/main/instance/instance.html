@@ -117,8 +117,7 @@
     </div>
 </div>
 <div class="sidebar sidebar-right sidebar-right-footer" data-ng-if="instance && (type === 'group')">
-    <div class="push-pull-container">
-        <button class="btn btn-default k-btn btn-push" data-ng-click="push()" data-ng-disabled="instance.subNodes.size() === 0" title="Ctrl-Shift-P">Push</button>
-        <button class="btn btn-default k-btn btn-pull" data-ng-click="pull()" data-ng-disabled="instance.subNodes.size() === 0" title="Ctrl-Shift-L">Pull</button>
+    <div class="btn-container">
+        <button class="btn btn-default" data-ng-click="openGroupModal()" data-ng-disabled="instance.subNodes.size() === 0">Push/Pull model</button>
     </div>
 </div>

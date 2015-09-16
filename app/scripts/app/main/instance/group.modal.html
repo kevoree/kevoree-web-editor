@@ -1,8 +1,8 @@
 <div class="modal-header">
-    <h3 class="modal-title"><span class="text-capitalize">{{ type }}</span> <strong>{{ group.name }}</strong></h3>
+    <h3 class="modal-title">Connection with group <strong>{{ group.name }}</strong></h3>
 </div>
 <div class="modal-body">
-    <h5>Choose the URI to {{ type }}:</h5>
+    <h5>Choose the URI to connect to {{ group.name }}:</h5>
     <p class="text-muted">
         The following data are retrieved from <strong>{{ group.name }}</strong>
         group dictionaries and to its attached nodes dictionaries and their respective Network Informations</p>
@@ -36,7 +36,7 @@
 
     <div data-ng-if="processing">
         <hr/>
-        <h5 class="text-center">Trying to {{ type }} <strong>{{ 'ws://' + selectedHost + ':' + selectedPort + selectedPath }}</strong></h5>
+        <h5 class="text-center">Trying to connect to <strong>{{ 'ws://' + selectedHost + ':' + selectedPort + selectedPath }}</strong></h5>
         <div class="spinner">
             <div class="rect1"></div>
             <div class="rect2"></div>
@@ -57,11 +57,12 @@
         <div class="alert alert-success">
             <button type="button" class="close" data-ng-click="closeSuccess()"><span>&times;</span></button>
             <p><strong>Success</strong></p>
-            <p>Model pushed to <strong>{{ 'ws://' + selectedHost + ':' + selectedPort + selectedPath }}</strong></p>
+            <p>Model {{ action }} <strong>{{ 'ws://' + selectedHost + ':' + selectedPort + selectedPath }}</strong></p>
         </div>
     </div>
 </div>
 <div class="modal-footer">
-    <button id="{{action}}" class="btn btn-primary text-capitalize" data-ng-click="confirm()" data-ng-disabled="processing">{{ action }}</button>
+    <button class="btn btn-primary text-capitalize" data-ng-click="push()" data-ng-disabled="processing">Push</button>
+    <button class="btn btn-primary text-capitalize" data-ng-click="pull()" data-ng-disabled="processing">Pull</button>
     <button class="btn btn-default" data-ng-click="close()">Close</button>
 </div>
