@@ -189,22 +189,34 @@ angular.module('editorApp')
          * Inflate $scope.packages with value from kEditor.getModel()
          */
         function processModel() {
-            $scope.packages = {};
+            $scope.packages = [];
             var model = kEditor.getModel();
 
+            var pkgsMap = {};
             model.select('**/typeDefinitions[*]')
                 .array.forEach(function (tdef) {
                     var pkg = kModelHelper.genPkgName(tdef.eContainer());
-                    $scope.packages[pkg]           = $scope.packages[pkg]       || {};
-                    $scope.packages[pkg].tdefs     = $scope.packages[pkg].tdefs || {};
-                    $scope.packages[pkg].collapsed = false;
+                    pkgsMap[pkg]           = pkgsMap[pkg]       || {};
+                    pkgsMap[pkg].tdefs     = pkgsMap[pkg].tdefs || {};
 
-                    $scope.packages[pkg].tdefs[tdef.name] = {
+                    pkgsMap[pkg].tdefs[tdef.name] = {
                         name: tdef.name,
                         type: kModelHelper.getTypeDefinitionType(tdef),
                         pkgPath: tdef.eContainer().path()
                     };
                 });
+
+            Object.keys(pkgsMap).forEach(function (pkgName) {
+                var pkg = {
+                    name: pkgName,
+                    collapsed: false,
+                    tdefs: []
+                };
+                Object.keys(pkgsMap[pkgName].tdefs).forEach(function (tdefName) {
+                    pkg.tdefs.push(pkgsMap[pkgName].tdefs[tdefName]);
+                });
+                $scope.packages.push(pkg);
+            });
         }
 
         // listen to model changes on the editor
