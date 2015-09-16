@@ -17,6 +17,10 @@ angular.module('editorApp')
     $scope.selectedPath = instanceGroupPullHolder.path;
     $scope.processing = false;
 
+    $timeout(function() {
+      angular.element('#pull').focus();
+    }, 250);
+
     $scope.hosts = {
       '127.0.0.1': 'default'
     };

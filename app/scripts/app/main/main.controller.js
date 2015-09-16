@@ -219,10 +219,12 @@ angular.module('editorApp')
       });
     };
 
-    $scope.disconnectSync = function () {
+    $scope.disconnectSync = function() {
       if (syncWS) {
         syncWS.close();
-        $timeout(function () { $scope.synced = false; });
+        $timeout(function() {
+          $scope.synced = false;
+        });
       }
     };
 
@@ -262,8 +264,8 @@ angular.module('editorApp')
               syncWS = new WebSocket('ws://' + $scope.host + ':' + $scope.port + $scope.path);
 
               syncWS.addEventListener('open', function() {
-                $timeout(function () {
-                  parentScope.url = $scope.host + (($scope.port === 80) ? '':':'+$scope.port) + $scope.path;
+                $timeout(function() {
+                  parentScope.url = $scope.host + (($scope.port === 80) ? '' : ':' + $scope.port) + $scope.path;
                   parentScope.synced = true;
                 });
                 $modalInstance.close();
@@ -303,7 +305,9 @@ angular.module('editorApp')
               });
 
               syncWS.addEventListener('close', function() {
-                $timeout(function () { parentScope.synced = false; });
+                $timeout(function() {
+                  parentScope.synced = false;
+                });
                 Notification.warning({
                   title: $scope.title,
                   message: 'Connection with <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong> closed'
@@ -442,10 +446,10 @@ angular.module('editorApp')
               $scope.title = 'Save model';
               $scope.body = 'Would you like to save your current model to a file?';
               $scope.filename = 'model' + (Math.floor(Math.random() * (1000 - 100)) + 100);
-              $modalInstance.opened.then(function() {
+              $modalInstance.rendered.then(function() {
                 $timeout(function() {
                   angular.element('#filename').focus();
-                }, 100);
+                }, 250);
               });
 
               $scope.save = function() {

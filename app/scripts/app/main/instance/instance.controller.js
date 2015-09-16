@@ -111,35 +111,35 @@ angular.module('editorApp')
 
     var timeout;
     ui.setSelectedListener(function (path) {
-      $timeout(function() {
-        if ($scope.instance && ($scope.instance.path() !== path)) {
-          // reset values
-          $scope.instance = null;
-          $scope.instanceName = null;
-          $scope.type = null;
-          $scope.selectedVersion = null;
-          $scope.versions = [];
-          $scope.dicAttrs = [];
-          $scope.fragDicAttrs = [];
-          $scope.processing = true;
-        }
-      }).then(function () {
-        $timeout.cancel(timeout);
-        if (path) {
-          $scope.instance = kEditor.getModel().findByPath(path);
-          if ($scope.instance && $scope.instance.getRefInParent() !== 'mBindings') {
-            $scope.instanceName = $scope.instance.name;
-            $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
-            timeout = $timeout(function() {
-              processTypeDefinition();
-              $scope.processing = false;
-            });
-          } else {
-            // do not display mBindings
+        $timeout(function() {
+          if ($scope.instance && ($scope.instance.path() !== path)) {
+            // reset values
             $scope.instance = null;
+            $scope.instanceName = null;
+            $scope.type = null;
+            $scope.selectedVersion = null;
+            $scope.versions = [];
+            $scope.dicAttrs = [];
+            $scope.fragDicAttrs = [];
+            $scope.processing = true;
           }
-        }
-      });
+        }).then(function () {
+          $timeout.cancel(timeout);
+          if (path) {
+            $scope.instance = kEditor.getModel().findByPath(path);
+            if ($scope.instance && $scope.instance.getRefInParent() !== 'mBindings') {
+              $scope.instanceName = $scope.instance.name;
+              $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
+              timeout = $timeout(function() {
+                processTypeDefinition();
+                $scope.processing = false;
+              });
+            } else {
+              // do not display mBindings
+              $scope.instance = null;
+            }
+          }
+        });
     });
 
     /**

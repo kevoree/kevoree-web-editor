@@ -19,10 +19,11 @@ angular.module('editorApp')
                         $scope.title = 'Save Kevscript';
                         $scope.body = 'Would you like to save your current KevScript to a file?';
                         $scope.filename = 'model'+(Math.floor(Math.random() * (1000 - 100)) + 100);
-                        $modalInstance.opened.then(function () {
+
+                        $modalInstance.rendered.then(function () {
                             $timeout(function () {
                                 angular.element('#filename').focus();
-                            }, 100);
+                            }, 250);
                         });
 
                         $scope.save = function () {
@@ -77,6 +78,7 @@ angular.module('editorApp')
                     delay: 5000
                 });
             }
+            editor.focus();
         };
 
         $scope.uploadKevscript = function () {

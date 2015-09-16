@@ -22,6 +22,9 @@ angular.module('editorApp')
             })
             .finally(function () {
                 $scope.loading = false;
+                $timeout(function () {
+                    angular.element('#filter-by-tdef').focus();
+                });
             });
 
         $scope.select = function (evt, tdef) {
