@@ -17,7 +17,7 @@ angular.module('editorApp')
     $scope.netCollapsed = false;
     $scope.fragCollapsed = {};
 
-    $scope.changeName = function (form, name) {
+    $scope.changeName = function(form, name) {
       if (form.name.$valid) {
         $scope.instance.name = name;
       }
@@ -110,7 +110,7 @@ angular.module('editorApp')
     $scope.isTruish = kModelHelper.isTruish;
 
     var timeout;
-    ui.setSelectedListener(function(path) {
+    ui.setSelectedListener(function (path) {
       $timeout(function() {
         if ($scope.instance && ($scope.instance.path() !== path)) {
           // reset values
@@ -123,7 +123,7 @@ angular.module('editorApp')
           $scope.fragDicAttrs = [];
           $scope.processing = true;
         }
-      }).then(function() {
+      }).then(function () {
         $timeout.cancel(timeout);
         if (path) {
           $scope.instance = kEditor.getModel().findByPath(path);
@@ -197,7 +197,7 @@ angular.module('editorApp')
     hotkeys.add({
       combo: 'ctrl+shift+p',
       description: 'Push model using the currently selected group',
-      callback: function (event) {
+      callback: function(event) {
         if ($scope.instance && $scope.type === 'group') {
           event.preventDefault();
           $scope.push();
@@ -208,7 +208,7 @@ angular.module('editorApp')
     hotkeys.add({
       combo: 'ctrl+shift+l',
       description: 'Pull model using the currently selected group',
-      callback: function (event) {
+      callback: function(event) {
         if ($scope.instance && $scope.type === 'group') {
           event.preventDefault();
           $scope.pull();
@@ -216,7 +216,7 @@ angular.module('editorApp')
       }
     });
 
-    $scope.$on('$destroy', function () {
+    $scope.$on('$destroy', function() {
       hotkeys.del('ctrl+shift+p');
       hotkeys.del('ctrl+shift+l');
     });

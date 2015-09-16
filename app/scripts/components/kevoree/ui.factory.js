@@ -38,13 +38,15 @@ angular.module('editorApp')
                 editor.zpd({ zoomThreshold: [ 0.2, 1 ], zoomScale: 0.05 });
                 var zpdEditor = this.editor = editor.select('#snapsvg-zpd-'+editor.id);
                 zpdEditor.addClass('zpd');
-                editor.mousedown(function () {
-                    // remove all selected state
-                    editor.selectAll('.selected').forEach(function (elem) {
-                        elem.removeClass('selected');
-                    });
-                    if (ui.listener) {
-                        ui.listener();
+                editor.mousedown(function (evt) {
+                    if (evt.which === 1) {
+                        // remove all selected state
+                        editor.selectAll('.selected').forEach(function (elem) {
+                            elem.removeClass('selected');
+                        });
+                        if (ui.listener) {
+                            ui.listener();
+                        }
                     }
                 });
                 updateSVGDefs(this.model);
@@ -84,11 +86,6 @@ angular.module('editorApp')
                     .transform('t-5,-5');
             },
 
-            /**
-             *
-             * @param instance
-             * @returns {*}
-             */
             createGroup: function (instance) {
                 this.removeUIElem(instance.path());
                 updateSVGDefs(this.model);
