@@ -202,7 +202,12 @@ angular.module('editorApp')
                     pkgsMap[pkg].tdefs[tdef.name] = {
                         name: tdef.name,
                         type: kModelHelper.getTypeDefinitionType(tdef),
-                        pkgPath: tdef.eContainer().path()
+                        pkgPath: tdef.eContainer().path(),
+                        platforms: tdef
+                            .select('deployUnits[name=*]/filters[name=platform]')
+                            .array.map(function (meta) {
+                                return meta.value;
+                            })
                     };
                 });
 

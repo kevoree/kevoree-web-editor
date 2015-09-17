@@ -11,13 +11,13 @@ body {
   padding: 8px 15px 0;
 }
 .navbar {
-  z-index: 999999;
+  z-index: 1000;
 }
 #container {
   margin-top: 65px;
 }
 #loading {
-  z-index: 100000;
+  z-index: 1002;
   position: absolute;
   top: 76px;
   left: 0;
@@ -79,14 +79,6 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-}
-.hide-scrollbar {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: -15px;
-  overflow-y: scroll;
 }
 .clickable-box:not(.disabled):hover, .clickable-box:not(.disabled):focus, .clickable-box.active {
   font-weight: bold;
@@ -344,9 +336,6 @@ body {
   background: url('../images/channel.png') top right repeat-y;
   border-bottom: 1px solid #333;
 }
-.tooltip {
-  padding: 5px;
-}
 .btn-group-block {
   display: block;
 }
@@ -577,7 +566,7 @@ pre {
   }
 }
 .cfp-hotkeys-container {
-  z-index: 999999999;
+  z-index: 1001;
   top: 51px;
 }
 .cfp-hotkeys-close {
@@ -590,6 +579,9 @@ pre {
   margin: 0;
   margin-left: 2px;
   font-size: 12px;
+}
+.tooltip {
+    z-index: 1000;
 }
 
 /* Angular-ui ui-bootstrap CSS trick http://angular-ui.github.io/bootstrap/#/getting_started  */
