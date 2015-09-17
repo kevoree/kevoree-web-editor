@@ -8,13 +8,14 @@
  * Controller of the editorApp instance editor
  */
 angular.module('editorApp')
-    .controller('InstanceCtrl', function($scope, $timeout, $modal, hotkeys, ui, kEditor, kFactory, kInstance, kModelHelper) {
+    .controller('InstanceCtrl', function($scope, $sce, $timeout, $modal, hotkeys, ui, kEditor, kFactory, kInstance, kModelHelper) {
         $scope.instance = null;
         $scope.instanceName = null;
         $scope.type = null;
         $scope.mainCollapsed = false;
         $scope.dicCollapsed = false;
         $scope.netCollapsed = false;
+        $scope.descCollapsed = false;
         $scope.fragCollapsed = {};
 
         $scope.changeName = function(form, name) {
@@ -106,6 +107,7 @@ angular.module('editorApp')
                     $scope.type = null;
                     $scope.selectedVersion = null;
                     $scope.versions = [];
+                    $scope.description = null;
                     $scope.dicAttrs = [];
                     $scope.fragDicAttrs = [];
                     $scope.processing = true;
@@ -117,6 +119,10 @@ angular.module('editorApp')
                     if ($scope.instance && $scope.instance.getRefInParent() !== 'mBindings') {
                         $scope.instanceName = $scope.instance.name;
                         $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
+                        var descMeta = $scope.instance.typeDefinition.findMetaDataByID('description');
+                        if (descMeta) {
+                            $scope.description = $sce.trustAsHtml(descMeta.value);
+                        }
                         timeout = $timeout(function() {
                             processTypeDefinition();
                             $scope.processing = false;

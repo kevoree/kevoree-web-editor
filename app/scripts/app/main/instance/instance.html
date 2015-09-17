@@ -43,7 +43,17 @@
             </div>
         </form>
     </div>
-
+    <div data-ng-if="description">
+        <div data-ng-class="type+'-right-bg'">
+            <h5 class="sidebar-header sidebar-header-right point-cursor" data-ng-click="descCollapsed = !descCollapsed">
+                <i class="fa" data-ng-class="descCollapsed ? 'fa-plus':'fa-minus'"></i>
+                &nbsp;Description
+            </h5>
+        </div>
+        <div class="instance-form" data-collapse="descCollapsed">
+            <p class="text-justify" data-ng-bind-html="description"></p>
+        </div>
+    </div>
     <div data-ng-switch="processing">
         <div data-ng-switch-when="true">
             <div class="instance-form">
