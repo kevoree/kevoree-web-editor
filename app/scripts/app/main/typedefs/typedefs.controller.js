@@ -8,7 +8,7 @@
  * Controller of the editorApp TypeDefinition sidebar
  */
 angular.module('editorApp')
-    .controller('TypedefsCtrl', function ($scope, kEditor, ui, kModelHelper, kFactory, Notification, KWE_POSITION) {
+    .controller('TypedefsCtrl', function($scope, $sce, kEditor, ui, kModelHelper, kFactory, Notification, KWE_POSITION) {
         $scope.packages = {};
 
         $scope.dragDraggable = {
@@ -33,26 +33,32 @@ angular.module('editorApp')
             }
         };
 
-        $scope.hasPackages = function () {
+        $scope.hasPackages = function() {
             return Object.keys($scope.packages).length > 0;
         };
 
-        $scope.onStart = function (evt, obj) {
+        $scope.onStart = function(evt, obj) {
             ui.setDropTarget(null);
 
             if (obj.helper.hasClass('tdef-item-component') || obj.helper.hasClass('tdef-item-node')) {
                 var container = document.getElementById('editor-container');
-                this.offset = { left: container.offsetLeft, top: container.offsetTop };
+                this.offset = {
+                    left: container.offsetLeft,
+                    top: container.offsetTop
+                };
 
                 var pkgPath = obj.helper[0].dataset.pkgPath;
                 var tdefName = obj.helper[0].innerHTML.trim();
-                var tdefs = kEditor.getModel().select(pkgPath+'/typeDefinitions[name='+tdefName+']');
+                var tdefs = kEditor.getModel().select(pkgPath + '/typeDefinitions[name=' + tdefName + ']');
                 this.typeDef = kModelHelper.findBestVersion(tdefs.array);
             }
         };
 
-        $scope.onDrag = function (evt, obj) {
-            ui.mousePos = { x: evt.clientX, y: evt.clientY };
+        $scope.onDrag = function(evt, obj) {
+            ui.mousePos = {
+                x: evt.clientX,
+                y: evt.clientY
+            };
 
             if (obj.helper.hasClass('tdef-item-component') || obj.helper.hasClass('tdef-item-node')) {
                 clearTimeout(this.timeout);
@@ -60,7 +66,7 @@ angular.module('editorApp')
                     this.hoveredNode.select('.bg').removeClass('hovered error');
                 }
 
-                this.timeout = setTimeout(function () {
+                this.timeout = setTimeout(function() {
                     this.hoveredNode = ui.getHoveredNode(
                         ui.mousePos.x - this.offset.left,
                         ui.mousePos.y - this.offset.top);
@@ -81,7 +87,7 @@ angular.module('editorApp')
             }
         };
 
-        $scope.onStop = function (evt, obj) {
+        $scope.onStop = function(evt, obj) {
             if (obj.helper.hasClass('tdef-item-component') || obj.helper.hasClass('tdef-item-node')) {
                 clearTimeout(this.timeout);
                 if (this.hoveredNode) {
@@ -110,8 +116,8 @@ angular.module('editorApp')
             }
         };
 
-        $scope.addInstance = function (tdef) {
-            var tdefs = kEditor.getModel().select(tdef.pkgPath+'/typeDefinitions[name='+tdef.name+']');
+        $scope.addInstance = function(tdef) {
+            var tdefs = kEditor.getModel().select(tdef.pkgPath + '/typeDefinitions[name=' + tdef.name + ']');
             tdef = kModelHelper.findBestVersion(tdefs.array);
             var type = kModelHelper.getTypeDefinitionType(tdef);
 
@@ -120,7 +126,10 @@ angular.module('editorApp')
                 instance.started = true;
                 var pos = kFactory.createValue();
                 pos.name = KWE_POSITION;
-                pos.value = JSON.stringify({ x: 100, y: 100 });
+                pos.value = JSON.stringify({
+                    x: 100,
+                    y: 100
+                });
                 instance.addMetaData(pos);
             }
 
@@ -130,11 +139,11 @@ angular.module('editorApp')
             switch (type) {
                 case 'node':
                     if (selectedNodes.length > 0) {
-                        selectedNodes.forEach(function (nodeElem) {
+                        selectedNodes.forEach(function(nodeElem) {
                             var node = model.findByPath(nodeElem.attr('data-path'));
                             if (node) {
                                 instance = kFactory.createContainerNode();
-                                instance.name = 'node'+parseInt(Math.random()*1000);
+                                instance.name = 'node' + parseInt(Math.random() * 1000);
                                 preProcess(instance);
                                 model.addNodes(instance);
                                 node.addHosts(instance);
@@ -142,7 +151,7 @@ angular.module('editorApp')
                         });
                     } else {
                         instance = kFactory.createContainerNode();
-                        instance.name = 'node'+parseInt(Math.random()*1000);
+                        instance.name = 'node' + parseInt(Math.random() * 1000);
                         preProcess(instance);
                         model.addNodes(instance);
                     }
@@ -150,18 +159,18 @@ angular.module('editorApp')
 
                 case 'group':
                     instance = kFactory.createGroup();
-                    instance.name = 'group'+parseInt(Math.random()*1000);
+                    instance.name = 'group' + parseInt(Math.random() * 1000);
                     preProcess(instance);
                     model.addGroups(instance);
                     break;
 
                 case 'component':
                     if (selectedNodes.length > 0) {
-                        selectedNodes.forEach(function (nodeElem) {
+                        selectedNodes.forEach(function(nodeElem) {
                             var node = model.findByPath(nodeElem.attr('data-path'));
                             if (node) {
                                 instance = kFactory.createComponentInstance();
-                                instance.name = 'comp'+parseInt(Math.random()*1000);
+                                instance.name = 'comp' + parseInt(Math.random() * 1000);
                                 instance.typeDefinition = tdef;
                                 instance.started = true;
                                 node.addComponents(instance);
@@ -178,7 +187,7 @@ angular.module('editorApp')
 
                 case 'channel':
                     instance = kFactory.createChannel();
-                    instance.name = 'chan'+parseInt(Math.random()*1000);
+                    instance.name = 'chan' + parseInt(Math.random() * 1000);
                     preProcess(instance);
                     model.addHubs(instance);
                     break;
@@ -194,10 +203,12 @@ angular.module('editorApp')
 
             var pkgsMap = {};
             model.select('**/typeDefinitions[*]')
-                .array.forEach(function (tdef) {
+                .array.forEach(function(tdef) {
                     var pkg = kModelHelper.genPkgName(tdef.eContainer());
-                    pkgsMap[pkg]           = pkgsMap[pkg]       || {};
-                    pkgsMap[pkg].tdefs     = pkgsMap[pkg].tdefs || {};
+                    pkgsMap[pkg] = pkgsMap[pkg] || {};
+                    pkgsMap[pkg].tdefs = pkgsMap[pkg].tdefs || {};
+
+                    var descMeta = tdef.findMetaDataByID('description');
 
                     pkgsMap[pkg].tdefs[tdef.name] = {
                         name: tdef.name,
@@ -205,19 +216,20 @@ angular.module('editorApp')
                         pkgPath: tdef.eContainer().path(),
                         platforms: tdef
                             .select('deployUnits[name=*]/filters[name=platform]')
-                            .array.map(function (meta) {
+                            .array.map(function(meta) {
                                 return meta.value;
-                            })
+                            }),
+                        description: descMeta ? $sce.trustAsHtml(descMeta.value) : null
                     };
                 });
 
-            Object.keys(pkgsMap).forEach(function (pkgName) {
+            Object.keys(pkgsMap).forEach(function(pkgName) {
                 var pkg = {
                     name: pkgName,
                     collapsed: false,
                     tdefs: []
                 };
-                Object.keys(pkgsMap[pkgName].tdefs).forEach(function (tdefName) {
+                Object.keys(pkgsMap[pkgName].tdefs).forEach(function(tdefName) {
                     pkg.tdefs.push(pkgsMap[pkgName].tdefs[tdefName]);
                 });
                 $scope.packages.push(pkg);
@@ -230,7 +242,7 @@ angular.module('editorApp')
         // process model
         processModel();
 
-        $scope.$on('$destroy', function () {
+        $scope.$on('$destroy', function() {
             kEditor.removeListener(processModel);
         });
     });
