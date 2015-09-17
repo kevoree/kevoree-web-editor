@@ -55,6 +55,19 @@
             </button>
             <ul class="dropdown-menu" role="menu">
                 <li>
+                    <a data-ng-click="copy()">
+                        <span class="name">Copy selected instance(s)</span>
+                        <span class="shortcut">Ctrl+C</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-ng-click="paste()">
+                        <span class="name">Paste selected instance(s)</span>
+                        <span class="shortcut">Ctrl+V</span>
+                    </a>
+                </li>
+                <li class="divider"></li>
+                <li>
                     <a data-ng-click="fixOverlapping($event)">
                         <span class="name">Fix overlapping</span>
                         <span class="shortcut">Alt+O</span>

@@ -347,6 +347,43 @@ angular.module('editorApp')
       }
     };
 
+    // copy/paste logic
+    var clipboard = [];
+    $scope.copy = function () {
+        clipboard = ui.getSelectedPaths().filter(function (elem) {
+            return typeof elem === 'string';
+        });
+    };
+    $scope.paste = function () {
+        clipboard.forEach(function (path) {
+            var model = kEditor.getModel();
+            var instance = model.findByPath(path);
+            if (instance) {
+                var clone = kModelHelper.clone(instance);
+                switch (kModelHelper.getTypeDefinitionType(instance.typeDefinition)) {
+                    case 'node':
+                        model.addNodes(clone);
+                        if (instance.host) {
+                            instance.host.addHosts(clone);
+                        }
+                        break;
+                    case 'group':
+                        model.addGroups(clone);
+                        break;
+                    case 'channel':
+                        model.addHubs(clone);
+                        break;
+                    case 'component':
+                        instance.eContainer().addComponents(clone);
+                        break;
+                }
+            }
+        });
+        if (clipboard.length > 0) {
+            kEditor.drawModel();
+        }
+    };
+
     $scope.fixOverlapping = function(evt) {
       evt.preventDefault();
       kEditor.fixOverlapping();
@@ -499,6 +536,18 @@ angular.module('editorApp')
         evt.preventDefault();
         ui.selectAll();
       }
+    });
+
+    hotkeys.bindTo($scope).add({
+        combo: 'ctrl+c',
+        description: 'Copy the selected instance(s)',
+        callback: $scope.copy
+    });
+
+    hotkeys.bindTo($scope).add({
+        combo: 'ctrl+v',
+        description: 'Paste the selected instance(s)',
+        callback: $scope.paste
     });
 
     //hotkeys.bindTo($scope).add({

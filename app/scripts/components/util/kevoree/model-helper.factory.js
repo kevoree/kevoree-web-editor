@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('kModelHelper', function () {
+    .factory('kModelHelper', function (kFactory, KWE_POSITION) {
+
         function getOnlyReleases(tdefs) {
             return tdefs.filter(function (tdef) {
                 var v = semver.parse(tdef.version);
@@ -24,6 +25,42 @@ angular.module('editorApp')
                 }
             }
             return tdef;
+        }
+
+        function genNewName(instance, type, count) {
+            if (typeof count === 'undefined') { count = 0; }
+            var newName = instance.name + '_' + count;
+            var conflictInst;
+            switch (type) {
+                case 'node':
+                    conflictInst = instance.eContainer().findNodesByID(newName);
+                    if (conflictInst) {
+                        newName = genNewName(instance, type, ++count);
+                    }
+                    break;
+
+                case 'group':
+                    conflictInst = instance.eContainer().findGroupsByID(newName);
+                    if (conflictInst) {
+                        newName = genNewName(instance, type, ++count);
+                    }
+                    break;
+
+                case 'channel':
+                    conflictInst = instance.eContainer().findHubsByID(newName);
+                    if (conflictInst) {
+                        newName = genNewName(instance, type, ++count);
+                    }
+                    break;
+
+                case 'component':
+                    conflictInst = instance.eContainer().findComponentsByID(newName);
+                    if (conflictInst) {
+                        newName = genNewName(instance, type, ++count);
+                    }
+                    break;
+            }
+            return newName;
         }
 
         return {
@@ -282,6 +319,88 @@ angular.module('editorApp')
                 } else {
                   return 'packages[' + fqn.join(']/packages[') + ']/packages[' + last + ']';
                 }
+            },
+
+            /**
+             *
+             * @param instance the instance to clone
+             */
+            clone: function (instance) {
+                var that = this;
+
+                function initClone(clone) {
+                    clone.started = instance.started;
+                    var instancePosMeta = instance.findMetaDataByID(KWE_POSITION);
+                    if (instancePosMeta) {
+                        var instancePos = JSON.parse(instancePosMeta.value);
+                        var pos = kFactory.createValue();
+                        pos.name = KWE_POSITION;
+                        pos.value = JSON.stringify({
+                            x: instancePos.x + 50,
+                            y: instancePos.y + 50
+                        });
+                        clone.addMetaData(pos);
+                    }
+
+                    clone.dictionary = that.cloneDictionary(instance.dictionary);
+                }
+
+                var clone;
+                switch (this.getTypeDefinitionType(instance.typeDefinition)) {
+                    case 'node':
+                        clone = kFactory.createContainerNode();
+                        initClone(clone);
+                        clone.typeDefinition = instance.eContainer().findByPath(instance.typeDefinition.path());
+                        clone.name = genNewName(instance, 'node');
+                        instance.components.array.forEach(function (comp) {
+                            clone.addComponents(that.clone(comp));
+                        });
+                        instance.hosts.array.forEach(function (subNode) {
+                            var clonedNode = that.clone(subNode);
+                            instance.eContainer().addNodes(clonedNode);
+                            clone.addHosts(clonedNode);
+                        });
+                        break;
+
+                    case 'group':
+                        clone = kFactory.createGroup();
+                        initClone(clone);
+                        clone.typeDefinition = instance.eContainer().findByPath(instance.typeDefinition.path());
+                        clone.name = genNewName(instance, 'group');
+                        break;
+
+                    case 'channel':
+                        clone = kFactory.createChannel();
+                        initClone(clone);
+                        clone.typeDefinition = instance.eContainer().findByPath(instance.typeDefinition.path());
+                        clone.name = genNewName(instance, 'channel');
+                        break;
+
+                    case 'component':
+                        clone = kFactory.createComponentInstance();
+                        initClone(clone);
+                        clone.typeDefinition = instance.eContainer().eContainer().findByPath(instance.typeDefinition.path());
+                        clone.name = genNewName(instance, 'component');
+                        break;
+                }
+
+                return clone;
+            },
+
+            /**
+             * @param dic a dictionary
+             */
+            cloneDictionary: function (dic) {
+                var clone = kFactory.createDictionary();
+                if (dic) {
+                    dic.values.array.forEach(function (val) {
+                        var newVal = kFactory.createValue();
+                        newVal.name = val.name;
+                        newVal.value = val.value;
+                        clone.addValues(newVal);
+                    });
+                }
+                return clone;
             }
         };
     });

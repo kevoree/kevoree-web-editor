@@ -9,6 +9,12 @@
  */
 angular.module('editorApp')
     .controller('EditorCtrl', function ($scope, kEditor, ui, kModelHelper, kFactory, Notification, KWE_POSITION) {
+        // init the UI kFactory
+        ui.init();
+
+        // process model to create the instance UIs
+        kEditor.drawModel();
+
         $scope.dropDroppable = {
             onDrop: 'onDrop'
         };
@@ -111,52 +117,4 @@ angular.module('editorApp')
             ui.setDropTarget(null);
             return true;
         };
-
-        // init the UI kFactory
-        ui.init();
-
-        /**
-         * Create svg UIs based on current kEditor.getModel()
-         */
-        function processModel() {
-            var model = kEditor.getModel();
-
-            model.hubs.array.forEach(function (instance) {
-                ui.createChannel(instance);
-            });
-
-            model.nodes.array
-                .sort(function (a, b) {
-                    // TODO optimize this to loop only once to create node tree heights
-                    return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
-                })
-                .forEach(function (instance) {
-                    ui.createNode(instance);
-                    instance.components.array.forEach(function (instance) {
-                        ui.createComponent(instance);
-                    });
-                });
-
-            model.groups.array.forEach(function (instance) {
-                ui.createGroup(instance);
-
-                instance.subNodes.array.forEach(function (node) {
-                    ui.createGroupWire(instance, node);
-                });
-            });
-
-            model.mBindings.array.forEach(function (binding) {
-                ui.createBinding(binding);
-            });
-        }
-
-        // listen to model changes on the editor
-        kEditor.addListener(processModel);
-
-        // process model to create the instance UIs
-        processModel();
-
-        $scope.$on('$destroy', function () {
-            kEditor.removeListener(processModel);
-        });
     });

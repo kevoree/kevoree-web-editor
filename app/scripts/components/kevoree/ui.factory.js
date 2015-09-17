@@ -1485,6 +1485,12 @@ angular.module('editorApp')
                     });
             },
 
+            getSelectedPaths: function () {
+                return this.getSelected().map(function (elem) {
+                    return elem.attr('data-path');
+                });
+            },
+
             getSelectedNodes: function () {
                 return this.editor
                     .selectAll('.node > .selected').items

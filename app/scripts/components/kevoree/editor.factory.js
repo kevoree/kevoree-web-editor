@@ -34,6 +34,7 @@ angular.module('editorApp')
                 this.model.addModelTreeListener(this.modelListener);
 
                 ui.setModel(model);
+                this.drawModel();
 
                 this.listeners.forEach(function (listener) {
                     listener();
@@ -51,6 +52,7 @@ angular.module('editorApp')
                 kFactory.root(this.model);
                 this.model.addModelTreeListener(this.modelListener);
                 ui.setModel(this.model);
+                this.drawModel();
             },
 
             /**
@@ -108,6 +110,39 @@ angular.module('editorApp')
                 this.model.hubs.array.forEach(function (hub) {
                     relocate(hub, { x: chanX, y: 550 });
                     chanX += 120;
+                });
+            },
+
+            /**
+             * Create svg UIs based on current model
+             */
+            drawModel: function () {
+                this.model.hubs.array.forEach(function (instance) {
+                    ui.createChannel(instance);
+                });
+
+                this.model.nodes.array
+                    .sort(function (a, b) {
+                        // TODO optimize this to loop only once to create node tree heights
+                        return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
+                    })
+                    .forEach(function (instance) {
+                        ui.createNode(instance);
+                        instance.components.array.forEach(function (instance) {
+                            ui.createComponent(instance);
+                        });
+                    });
+
+                this.model.groups.array.forEach(function (instance) {
+                    ui.createGroup(instance);
+
+                    instance.subNodes.array.forEach(function (node) {
+                        ui.createGroupWire(instance, node);
+                    });
+                });
+
+                this.model.mBindings.array.forEach(function (binding) {
+                    ui.createBinding(binding);
                 });
             }
         };
