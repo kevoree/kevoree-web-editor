@@ -6,7 +6,7 @@
         <!-- Network name -->
         <div class="form-group" data-ng-class="form.name.$valid ? '':'has-error has-feedback'">
             <label for="name">Name</label>
-            <input id="name" name="name" type="text" class="form-control input-sm" placeholder="Network name" data-ng-model="net.name" required>
+            <input id="name" name="name" type="text" class="form-control input-sm" placeholder="Network name" data-ng-model="net.name" required data-focus="250">
             <span class="glyphicon glyphicon-remove form-control-feedback" data-ng-hide="form.name.$valid"></span>
         </div>
 
@@ -73,6 +73,6 @@
 </div>
 <div class="modal-footer">
     <button class="btn btn-warning" data-ng-click="delete()" data-ng-show="node.findNetworkInformationByID(net.name)">Delete</button>
-    <button class="btn btn-primary" data-ng-click="add()" data-ng-hide="node.findNetworkInformationByID(net.name)">Save</button>
+    <button class="btn btn-primary" data-ng-click="add()" data-ng-hide="node.findNetworkInformationByID(net.name)" data-ng-disabled="!canSave()">Save</button>
     <button class="btn btn-default" data-ng-click="$close()">Close</button>
 </div>

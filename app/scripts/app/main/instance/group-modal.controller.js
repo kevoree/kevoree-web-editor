@@ -17,12 +17,6 @@ angular.module('editorApp')
         $scope.selectedPath = groupModalHolder.path;
         $scope.processing = false;
 
-        $modalInstance.rendered.then(function() {
-            $timeout(function() {
-                angular.element('#push').focus();
-            }, 250);
-        });
-
         $scope.hosts = {
             '127.0.0.1': 'default'
         };

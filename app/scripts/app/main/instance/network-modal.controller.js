@@ -9,20 +9,16 @@ angular.module('editorApp')
             value: null
         };
 
-        $modalInstance.opened.then(function () {
-            $timeout(function () {
-                angular.element('input#name').focus();
-            }, 100);
-        });
-
         $scope.addNewVal = function () {
-            var val = kFactory.createValue();
-            val.name = $scope.newVal.name;
-            val.value = $scope.newVal.value;
-            $scope.net.addValues(val);
-            $scope.newVal.name = null;
-            $scope.newVal.value = null;
-            angular.element('input#newValName').focus();
+            if ($scope.newVal.name && $scope.newVal.value) {
+                var val = kFactory.createValue();
+                val.name = $scope.newVal.name;
+                val.value = $scope.newVal.value;
+                $scope.net.addValues(val);
+                $scope.newVal.name = null;
+                $scope.newVal.value = null;
+                angular.element('input#newValName').focus();
+            }
         };
 
         $scope.add = function () {
@@ -33,5 +29,9 @@ angular.module('editorApp')
         $scope.delete = function () {
             $scope.net.delete();
             $modalInstance.close();
+        };
+
+        $scope.canSave = function () {
+            return net.values.array.length > 0;
         };
     });

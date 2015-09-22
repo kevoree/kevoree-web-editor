@@ -8,7 +8,7 @@
         group dictionaries and to its attached nodes dictionaries and their respective Network Informations</p>
     <div class="form-group input-group input-group-sm col-xs-12">
         <span class="input-group-addon" style="width: 60px">Host</span>
-        <select class="form-control" data-ng-model="selectedHost" data-ng-change="changeHost()">
+        <select class="form-control" data-ng-model="selectedHost" data-ng-change="changeHost()" data-focus="250">
             <option value="{{ value }}" data-ng-repeat="(value, node) in hosts" data-ng-selected="value === selectedHost">
                 {{ value + ' (' + node + ')' }}
             </option>

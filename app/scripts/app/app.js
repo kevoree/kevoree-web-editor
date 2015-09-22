@@ -30,7 +30,7 @@ angular
       bootstrapContainer.remove();
     });
   })
-  .config(function($stateProvider, $urlRouterProvider, NotificationProvider) {
+  .config(function($stateProvider, $urlRouterProvider, hotkeysProvider, NotificationProvider) {
     $urlRouterProvider.otherwise('/');
 
     $stateProvider
@@ -43,6 +43,8 @@ angular
           }
         }
       });
+
+    hotkeysProvider.template = '<div class="editor-shortcuts" ng-include src="\'scripts/components/util/hotkeys.html\'" data-ng-if="helpVisible"></div>';
 
     NotificationProvider.setOptions({
       startTop: 90,
