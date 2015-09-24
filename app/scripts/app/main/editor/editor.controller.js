@@ -8,7 +8,7 @@
  * Controller of the editorApp editor
  */
 angular.module('editorApp')
-    .controller('EditorCtrl', function ($scope, kEditor, ui, kModelHelper, kFactory, Notification, KWE_POSITION) {
+    .controller('EditorCtrl', function ($scope, kEditor, ui, kModelHelper, kFactory, kInstance, Notification, KWE_POSITION) {
         // init the UI kFactory
         ui.init();
 
@@ -61,6 +61,7 @@ angular.module('editorApp')
                     y: ui.mousePos.y - editor.offsetTop
                 });
                 instance.addMetaData(pos);
+                kInstance.initDictionaries(instance);
             }
 
             var model = kEditor.getModel();
@@ -84,6 +85,7 @@ angular.module('editorApp')
                     instance = kFactory.createGroup();
                     instance.name = 'group'+parseInt(Math.random()*1000);
                     preProcess(instance);
+                    kInstance.initFragmentDictionaries(instance);
                     model.addGroups(instance);
                     break;
 
@@ -110,6 +112,7 @@ angular.module('editorApp')
                     instance = kFactory.createChannel();
                     instance.name = 'chan'+parseInt(Math.random()*1000);
                     preProcess(instance);
+                    kInstance.initFragmentDictionaries(instance);
                     model.addHubs(instance);
                     break;
             }
