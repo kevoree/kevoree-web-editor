@@ -410,6 +410,8 @@ angular.module('editorApp')
                                         ui.createBinding(binding);
                                     });
                                 }
+                            } else if (trace.source.eContainer().getRefInParent() === 'dictionary') {
+                                ui.updateValidity(trace.source.eContainer().eContainer());
                             }
                             break;
 

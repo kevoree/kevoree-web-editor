@@ -1,5 +1,4 @@
 <form name="{{ name }}" class="instance-form">
-
     <div data-ng-hide="!fragment || dictionary.values.size() > 0">
         <p class="text-muted"><em>No value</em> - <a href="#" data-ng-click="dictionary.delete()">Delete dictionary?</a></p>
     </div>
@@ -12,6 +11,7 @@
                type="text"
                class="form-control input-sm"
                data-ng-model="(dictionary.findValuesByID(attr.name)).value"
+               data-ng-change="onChange(this[name][attr.name])"
                data-ng-required="!isTruish(attr.optional)">
         <span data-ng-if="attr.datatype.name() === 'BYTE' || attr.datatype.name() === 'CHAR'"
               class="glyphicon glyphicon-remove form-control-feedback"
@@ -22,6 +22,7 @@
                   name="{{attr.name}}"
                   class="form-control input-sm"
                   data-ng-model="(dictionary.findValuesByID(attr.name)).value"
+                  data-ng-change="onChange(this[name][attr.name])"
                   data-ng-required="!isTruish(attr.optional)"
                   style="resize: vertical;">
         </textarea>
@@ -36,6 +37,7 @@
                class="form-control input-sm"
                data-string-to-number
                data-ng-model="(dictionary.findValuesByID(attr.name)).value"
+               data-ng-change="onChange(this[name][attr.name])"
                data-ng-required="!isTruish(attr.optional)">
         <span data-ng-if="attr.datatype.name() === 'LONG' || attr.datatype.name() === 'FLOAT' || attr.datatype.name() === 'DOUBLE' || attr.datatype.name() === 'SHORT' || attr.datatype.name() === 'INT'"
               class="glyphicon glyphicon-remove form-control-feedback"

@@ -8,7 +8,7 @@ angular.module('editorApp')
             path: '/'
         };
     })
-    .controller('GroupModalCtrl', function($scope, $modalInstance, $timeout, group, kEditor, kWs, groupModalHolder) {
+    .controller('GroupModalCtrl', function($scope, $modalInstance, $timeout, ui, group, kEditor, kWs, groupModalHolder) {
         $scope.type = 'push to';
         $scope.action = 'push';
         $scope.group = group;
@@ -16,6 +16,7 @@ angular.module('editorApp')
         $scope.selectedPort = groupModalHolder.port;
         $scope.selectedPath = groupModalHolder.path;
         $scope.processing = false;
+        $scope.modelHasErrors = ui.hasErrors();
 
         $scope.hosts = {
             '127.0.0.1': 'default'
@@ -83,6 +84,10 @@ angular.module('editorApp')
 
         $scope.closeError = function() {
             $scope.error = null;
+        };
+
+        $scope.closeModelHasErrorsWarning = function () {
+            $scope.modelHasErrors = null;
         };
 
         $scope.closeSuccess = function() {

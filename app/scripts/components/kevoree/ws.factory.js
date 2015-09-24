@@ -50,7 +50,10 @@ angular.module('editorApp')
                             var model = loader.loadModelFromString(msg.data).get(0);
                             answer = true;
                             ws.close();
-                            callback(null, model, 'ws://'+host+':'+port+path);
+                            setTimeout(function () {
+                                // prevent try/catch to catch an error in callback
+                                callback(null, model, 'ws://'+host+':'+port+path);
+                            });
                         } catch (err) {
                             clearTimeout(timeout);
                             console.warn('[ws.factory.getModel()] Error parsing model from message:');

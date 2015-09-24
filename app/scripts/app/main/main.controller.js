@@ -9,8 +9,6 @@
  */
 angular.module('editorApp')
   .controller('MainCtrl', function($scope, $timeout, $stateParams, $modal, kEditor, hotkeys, saveFile, ui, kModelHelper, kFactory, kWs, Notification) {
-
-
     if ($stateParams.host) {
       kWs.getModel($stateParams.host, $stateParams.port || 9000, $stateParams.path || '', function(err, model, url) {
         if (err) {

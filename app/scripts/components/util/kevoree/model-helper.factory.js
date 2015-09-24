@@ -277,6 +277,46 @@ angular.module('editorApp')
             },
 
             /**
+             * Returns true if the given instance dictionaries are valid
+             * @param instance
+             * @returns {boolean}
+             */
+            isValid: function (instance) {
+                if (instance.typeDefinition.dictionaryType.attributes.array.length > 0) {
+                    if (instance.dictionary && instance.dictionary.values.array.length > 0) {
+                        for (var i=0; i < instance.dictionary.values.array.length; i++) {
+                            var val = instance.dictionary.values.array[i];
+                            var attr = instance.typeDefinition.dictionaryType.findAttributesByID(val.name);
+                            if (!this.isValueValid(val, attr)) {
+                                return false;
+                            }
+                        }
+                    } else {
+                        for (var j=0; j < instance.typeDefinition.dictionaryType.attributes.array.length; j++) {
+                            if (!this.isTruish(instance.typeDefinition.dictionaryType.attributes.array[j].optional)) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            },
+
+            /**
+             *
+             *
+             */
+            isValueValid: function (val, attr) {
+                if (!this.isTruish(attr.optional)) {
+                    if (typeof val.value === 'undefined' || val.value === null || val.value.length === 0) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+
+            /**
              *
              * @param fqn
              * @returns {string}

@@ -2,6 +2,12 @@
     <h3 class="modal-title">Connection with group <strong>{{ group.name }}</strong></h3>
 </div>
 <div class="modal-body">
+    <div class="alert alert-warning" data-ng-if="modelHasErrors">
+        <button type="button" class="close" data-ng-click="closeModelHasErrorsWarning()"><span>&times;</span></button>
+        <p><strong>Warning</strong></p>
+        <p>Your current model contains error(s). Pushing it could break your running Kevoree runtimes.</p>
+    </div>
+
     <h5>Choose the URI to connect to {{ group.name }}:</h5>
     <p class="text-muted">
         The following data are retrieved from <strong>{{ group.name }}</strong>
