@@ -612,6 +612,10 @@ pre {
     z-index: 1000;
 }
 
+pull-right {
+    float: right;
+}
+
 /* Angular-ui ui-bootstrap CSS trick http://angular-ui.github.io/bootstrap/#/getting_started  */
 .nav, .pagination, .carousel, .panel-title a {
     cursor: pointer;

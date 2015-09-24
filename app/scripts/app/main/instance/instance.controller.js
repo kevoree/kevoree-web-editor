@@ -117,6 +117,7 @@ angular.module('editorApp')
                 if (path) {
                     $scope.instance = kEditor.getModel().findByPath(path);
                     if ($scope.instance && $scope.instance.getRefInParent() !== 'mBindings') {
+                        angular.element('.ui-notification').css('right', '260px');
                         $scope.instanceName = $scope.instance.name;
                         $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
                         var descMeta = $scope.instance.typeDefinition.findMetaDataByID('description');
@@ -131,6 +132,8 @@ angular.module('editorApp')
                         // do not display mBindings
                         $scope.instance = null;
                     }
+                } else {
+                    angular.element('.ui-notification').css('right', '10px');
                 }
             });
         });
