@@ -612,7 +612,7 @@ pre {
     z-index: 1000;
 }
 
-pull-right {
+.pull-right {
     float: right;
 }
 
