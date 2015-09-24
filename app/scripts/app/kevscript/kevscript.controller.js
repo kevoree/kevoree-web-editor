@@ -114,8 +114,9 @@ angular.module('editorApp')
                         }
 
                     } else {
-                        kEditor.setModel(model);
-                        $state.go('main');
+                        $state.go('main').then(function () {
+                            kEditor.setModel(model);
+                        });
                     }
                 });
             }
