@@ -14,6 +14,13 @@ It is written in Javascript and has been designed to work as a static standalone
 
 ## How do I use it ?
 
+```sh
+# only once :
+npm install # retrieve the dependencies
+
+grunt serve
+```
+
 ### Prerequisites
  - an up-to-date browser because it uses many "new" features: **WebSocket**, **LocalStorage**, **WebSQL**, **SVG**, etc.
  - some [Kevoree-related knowledge](http://kevoree.org/doc/#getting-started)
