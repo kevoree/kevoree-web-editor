@@ -17,6 +17,7 @@ It is written in Javascript and has been designed to work as a static standalone
 ```sh
 # only once :
 npm install # retrieve the dependencies
+bower install
 
 grunt serve
 ```
