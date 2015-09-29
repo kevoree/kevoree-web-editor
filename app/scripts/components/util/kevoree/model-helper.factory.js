@@ -282,7 +282,7 @@ angular.module('editorApp')
              * @returns {boolean}
              */
             isValid: function (instance) {
-                if (instance.typeDefinition.dictionaryType.attributes.array.length > 0) {
+                if (instance.typeDefinition.dictionaryType && instance.typeDefinition.dictionaryType.attributes.array.length > 0) {
                     if (instance.dictionary && instance.dictionary.values.array.length > 0) {
                         for (var i=0; i < instance.dictionary.values.array.length; i++) {
                             var val = instance.dictionary.values.array[i];

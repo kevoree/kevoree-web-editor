@@ -1785,30 +1785,34 @@ angular.module('editorApp')
             };
 
             var dragMove = function(dx, dy, x, y, evt) {
-                if ((typeof dx === 'object') && (dx.type === 'touchmove')) {
-                    evt = dx;
-                    x = evt.changedTouches[0].clientX;
-                    y = evt.changedTouches[0].clientY;
-                    dx = x - this.data('dragStartX');
-                    dy = y - this.data('dragStartY');
-                }
-
-                this.transform(this.data('ot') + (this.data('ot') ? 'T' : 't') + [dx, dy]);
-
-                if (this.data('hasMoved')) {
-                    var handlers = this.data('dragMove');
-                    if (handlers) {
-                        handlers.forEach(function(handler) {
-                            handler.apply(this, [dx, dy, x, y, evt]);
-                        }.bind(this));
+                var dragStartX = this.data('dragStartX'),
+                    dragStartY = this.data('dragStartY');
+                if (typeof dragStartX !== 'undefined' && typeof dragStartY !== 'undefined') {
+                    if ((typeof dx === 'object') && (dx.type === 'touchmove')) {
+                        evt = dx;
+                        x = evt.changedTouches[0].clientX;
+                        y = evt.changedTouches[0].clientY;
+                        dx = x - dragStartX;
+                        dy = y - dragStartY;
                     }
-                } else {
-                    this.data('hasMoved', true);
-                    var firstDragMoveHandlers = this.data('firstDragMove');
-                    if (firstDragMoveHandlers) {
-                        firstDragMoveHandlers.forEach(function(handler) {
-                            handler.apply(this, [dx, dy, x, y, evt]);
-                        }.bind(this));
+
+                    this.transform(this.data('ot') + (this.data('ot') ? 'T' : 't') + [dx, dy]);
+
+                    if (this.data('hasMoved')) {
+                        var handlers = this.data('dragMove');
+                        if (handlers) {
+                            handlers.forEach(function(handler) {
+                                handler.apply(this, [dx, dy, x, y, evt]);
+                            }.bind(this));
+                        }
+                    } else {
+                        this.data('hasMoved', true);
+                        var firstDragMoveHandlers = this.data('firstDragMove');
+                        if (firstDragMoveHandlers) {
+                            firstDragMoveHandlers.forEach(function(handler) {
+                                handler.apply(this, [dx, dy, x, y, evt]);
+                            }.bind(this));
+                        }
                     }
                 }
             };
@@ -1850,7 +1854,19 @@ angular.module('editorApp')
             };
 
             Element.prototype.draggable = function() {
-                return this.drag(dragMove, dragStart, dragEnd);
+                return this.drag(function (dx, dy, x, y, evt) {
+                    if (evt.which === 1) {
+                        dragMove.apply(this, arguments);
+                    }
+                }, function (x, y, evt) {
+                    if (evt.which === 1) {
+                        dragStart.apply(this, arguments);
+                    }
+                }, function (evt) {
+                    if (evt.which === 1) {
+                        dragEnd.apply(this, arguments);
+                    }
+                });
             };
 
             Element.prototype.dragStart = function(handler) {
@@ -1886,26 +1902,28 @@ angular.module('editorApp')
             };
 
             Element.prototype.selectable = function() {
-                var selectable = function(evt) {
-                    evt.cancelBubble = true;
+                var selectable = function (evt) {
+                    if (evt.which === 1) {
+                        evt.cancelBubble = true;
 
-                    if (!evt.ctrlKey && !evt.shiftKey) {
-                        ui.editor.selectAll('.selected').forEach(function(elem) {
-                            elem.removeClass('selected');
-                        });
-                    }
-                    if (evt.ctrlKey || evt.shiftKey) {
-                        this.select('.bg').toggleClass('selected');
+                        if (!evt.ctrlKey && !evt.shiftKey) {
+                            ui.editor.selectAll('.selected').forEach(function(elem) {
+                                elem.removeClass('selected');
+                            });
+                        }
+                        if (evt.ctrlKey || evt.shiftKey) {
+                            this.select('.bg').toggleClass('selected');
 
-                    } else {
-                        this.select('.bg').addClass('selected');
-                    }
-                    if (ui.listener) {
-                        var selected = ui.editor.selectAll('.selected').items;
-                        if (selected.length === 1) {
-                            ui.listener(selected[0].parent().attr('data-path'));
                         } else {
-                            ui.listener();
+                            this.select('.bg').addClass('selected');
+                        }
+                        if (ui.listener) {
+                            var selected = ui.editor.selectAll('.selected').items;
+                            if (selected.length === 1) {
+                                ui.listener(selected[0].parent().attr('data-path'));
+                            } else {
+                                ui.listener();
+                            }
                         }
                     }
                 };
