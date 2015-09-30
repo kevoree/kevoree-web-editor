@@ -92,8 +92,7 @@ angular.module('editorApp')
                 case 'component':
                     instance = kFactory.createComponentInstance();
                     instance.name = 'comp'+parseInt(Math.random()*1000);
-                    instance.typeDefinition = tdef;
-                    instance.started = true;
+                    preProcess(instance);
                     if (dropTarget) {
                         node = model.findByPath(dropTarget.attr('data-path'));
                         if (node) {
