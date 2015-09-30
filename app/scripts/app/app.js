@@ -24,10 +24,7 @@ angular
   .run(function($rootScope, kRegistry, VERSION) {
     $rootScope.VERSION = VERSION;
 
-    var start = new Date().getTime();
-    console.log('loading...');
     kRegistry.init().then(function () {
-        console.log('loading done', ((new Date().getTime()) - start) +'ms');
         // fade out the loading container when bootstrap is done
         angular.element('#bootstrap-container').fadeOut(function() {
           this.remove();

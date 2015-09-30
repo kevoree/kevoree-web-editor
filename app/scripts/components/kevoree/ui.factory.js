@@ -280,12 +280,12 @@ angular.module('editorApp')
 
                     data = {
                         from: {
-                            x: grpMatrix.e,
-                            y: grpMatrix.f + (GROUP_RADIUS / 2) + GROUP_PLUG_RADIUS
+                            x: 0,
+                            y: 0 + (GROUP_RADIUS / 2) + GROUP_PLUG_RADIUS
                         },
                         to: {
-                            x: toBox.x,
-                            y: toBox.y
+                            x: toBox.x - grpMatrix.e,
+                            y: toBox.y - grpMatrix.f
                         },
                         width: nodeElem.select('.bg').asPX('width'),
                         height: nodeElem.select('.bg').asPX('height')
@@ -339,7 +339,7 @@ angular.module('editorApp')
                             fill: 'white'
                         });
 
-                    this.editor
+                    grpElem
                         .group()
                         .attr({
                             'class': 'group-wire',
@@ -352,13 +352,13 @@ angular.module('editorApp')
                         .selectable()
                         .startPtDrag(function(dx, dy) {
                             var data = this.data('data');
-                            var nFrom = {
-                                x: data.from.x + dx,
-                                y: data.from.y + dy
+                            var newTo = {
+                                x: data.to.x - dx,
+                                y: data.to.y - dy
                             };
-                            var anchor = computeWireNodeAnchor(nFrom, data.to, data.width, data.height);
+                            var anchor = computeWireNodeAnchor(data.from, newTo, data.width, data.height);
                             wireBg.attr({
-                                d: 'M' + nFrom.x + ',' + nFrom.y + ' ' + anchor.x + ',' + anchor.y
+                                d: 'M' + data.from.x + ',' + data.from.y + ' ' + anchor.x + ',' + anchor.y
                             });
                             nodePlug.attr({
                                 cx: anchor.x,
@@ -617,8 +617,6 @@ angular.module('editorApp')
                 }
 
                 this.updateValidity(instance);
-
-                return node;
             },
 
             createComponent: function(instance) {
@@ -1052,8 +1050,6 @@ angular.module('editorApp')
                 host.append(comp);
 
                 this.updateValidity(instance);
-
-                return comp;
             },
 
             createBinding: function(binding) {
@@ -1185,7 +1181,7 @@ angular.module('editorApp')
                         'clip-path': 'url(#chan-clip)'
                     });
 
-                var chan = this.editor
+                this.editor
                     .group()
                     .attr({
                         'class': 'instance chan',
@@ -1220,8 +1216,6 @@ angular.module('editorApp')
                     .relocate(instance);
 
                 this.updateValidity(instance);
-
-                return chan;
             },
 
             updateValidity: function(instance) {
@@ -1754,6 +1748,17 @@ angular.module('editorApp')
 
             hasErrors: function () {
                 return this.editor.selectAll('.invalid-icon').length > 0;
+            },
+
+            order: function () {
+                var that = this;
+                // this.editor.selectAll('.group-wire').forEach(function (wire) {
+                //     var group = that.editor.select('.group[data-path="'+wire.attr('data-from')+'"]');
+                //     wire.node.parentNode.insertBefore(wire.node, group.node.nextSibling);
+                // });
+                this.editor.selectAll('.binding').forEach(function (binding) {
+                    binding.node.parentNode.appendChild(binding.node);
+                });
             }
         };
 
@@ -1762,6 +1767,11 @@ angular.module('editorApp')
          */
         Snap.plugin(function(Snap, Element) {
             var dragStart = function(x, y, evt) {
+                if (!this.parent().hasClass('instance')) {
+                    var instances = angular.element(ui.editor.node).find('> .instance');
+                    this.node.parentNode.insertBefore(this.node, instances[instances.length-1].nextSibling);
+                }
+
                 this.data('dragStartX', x);
                 this.data('dragStartY', y);
 
