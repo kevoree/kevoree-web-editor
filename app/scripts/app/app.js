@@ -21,13 +21,17 @@ angular
     'ngDragDrop',
     'semverSort'
   ])
-  .run(function($rootScope, VERSION) {
+  .run(function($rootScope, kRegistry, VERSION) {
     $rootScope.VERSION = VERSION;
 
-    // fade out the loading container when bootstrap is done
-    var bootstrapContainer = angular.element('#bootstrap-container');
-    bootstrapContainer.fadeOut(function() {
-      bootstrapContainer.remove();
+    var start = new Date().getTime();
+    console.log('loading...');
+    kRegistry.init().then(function () {
+        console.log('loading done', ((new Date().getTime()) - start) +'ms');
+        // fade out the loading container when bootstrap is done
+        angular.element('#bootstrap-container').fadeOut(function() {
+          this.remove();
+        });
     });
   })
   .config(function($stateProvider, $urlRouterProvider, hotkeysProvider, NotificationProvider) {
