@@ -25,3 +25,13 @@ svg#editor .hovered.error {
     stroke: red;
     cursor: not-allowed;
 }
+
+svg#editor text.hovered {
+    stroke: none;
+    fill: green;
+}
+
+svg#editor text.hovered.error {
+    stroke: none;
+    fill: red;
+}

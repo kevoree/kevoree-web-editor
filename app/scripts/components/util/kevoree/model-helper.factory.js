@@ -103,6 +103,19 @@ angular.module('editorApp')
             },
 
             /**
+             * Returns all the channel types of the given model
+             */
+            getChannelTypes: function (model) {
+                var types = [];
+                model.select('**/typeDefinitions[]').array.forEach(function (tdef) {
+                    if (this.getTypeDefinitionType(tdef) === 'channel') {
+                        types.push(tdef);
+                    }
+                }.bind(this));
+                return types;
+            },
+
+            /**
              *
              * @param tdefs
              * @returns {*}
@@ -282,8 +295,11 @@ angular.module('editorApp')
              * @returns {boolean}
              */
             isValid: function (instance) {
-                if (instance.typeDefinition.dictionaryType && instance.typeDefinition.dictionaryType.attributes.array.length > 0) {
-                    if (instance.dictionary && instance.dictionary.values.array.length > 0) {
+                if (instance.typeDefinition &&
+                    instance.typeDefinition.dictionaryType &&
+                    instance.typeDefinition.dictionaryType.attributes.array.length > 0) {
+                    if (instance.dictionary &&
+                        instance.dictionary.values.array.length > 0) {
                         for (var i=0; i < instance.dictionary.values.array.length; i++) {
                             var val = instance.dictionary.values.array[i];
                             var attr = instance.typeDefinition.dictionaryType.findAttributesByID(val.name);
