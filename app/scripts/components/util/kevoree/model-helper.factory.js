@@ -87,19 +87,22 @@ angular.module('editorApp')
              * @returns {*}
              */
             getTypeDefinitionType: function (tdef) {
-                switch (tdef.metaClassName()) {
-                    case 'org.kevoree.NodeType':
-                        return 'node';
+                if (tdef) {
+                    switch (tdef.metaClassName()) {
+                        case 'org.kevoree.NodeType':
+                            return 'node';
 
-                    case 'org.kevoree.GroupType':
-                        return 'group';
+                        case 'org.kevoree.GroupType':
+                            return 'group';
 
-                    case 'org.kevoree.ComponentType':
-                        return 'component';
+                        case 'org.kevoree.ComponentType':
+                            return 'component';
 
-                    case 'org.kevoree.ChannelType':
-                        return 'channel';
+                        case 'org.kevoree.ChannelType':
+                            return 'channel';
+                    }
                 }
+                return null;
             },
 
             /**
