@@ -28,13 +28,15 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
+    <div data-ui-view="navbar"></div>
+    <div id="container" class="container-fluid">
+
+      <div data-ui-view="content" class="row"></div>
+    </div>
+
     <div id="bootstrap-container">
       <style type="text/css" scoped="scoped">
-        div.bootstrap-loading {
-          position: fixed ;
-        }
-
-        div.bootstrap-loading div.loading-message {
+        .bootstrap-loading .loading-message {
           background-color: #333333 ;
           bottom: 0;
           left: 0;
@@ -45,17 +47,17 @@
           z-index: 999999 ;
         }
 
-        div.bootstrap-loading div.loading-message.ng-leave {
+        .bootstrap-loading .loading-message.ng-leave {
           opacity: 1.0 ;
           transition: all linear 200ms ;
           -webkit-transition: all linear 200ms ;
         }
 
-        div.bootstrap-loading div.loading-message.ng-leave-active {
+        .bootstrap-loading .loading-message.ng-leave-active {
           opacity: 0 ;
         }
 
-        div.bootstrap-loading div.messaging {
+        .bootstrap-loading .messaging {
           color: #FFFFFF ;
           font-family: monospace ;
           left: 0;
@@ -66,13 +68,13 @@
           top: 50% ;
         }
 
-        div.bootstrap-loading h1 {
+        .bootstrap-loading h1 {
           font-size: 20px ;
           line-height: 35px ;
           margin: 0 0 20px 0;
         }
 
-        div.bootstrap-loading p {
+        .bootstrap-loading p {
           font-size: 16px ;
           line-height: 14px ;
           margin: 0;
@@ -88,12 +90,6 @@
       </div>
     </div>
 
-    <div data-ui-view="navbar"></div>
-    <div id="container" class="container-fluid">
-
-      <div data-ui-view="content" class="row"></div>
-    </div>
-
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
      <script>
        !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
@@ -101,7 +97,7 @@
        r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
        }(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-       ga('create', 'UA-XXXXX-X');
+       ga('create', 'UA-61834488-1');
        ga('send', 'pageview');
     </script>
 
@@ -142,6 +138,7 @@
     <script src="scripts/app/main/main.controller.js"></script>
     <script src="scripts/app/main/typedefs/typedefs.controller.js"></script>
     <script src="scripts/app/main/editor/editor.controller.js"></script>
+    <script src="scripts/app/main/editor/select-chan-modal.controller.js"></script>
     <script src="scripts/app/main/instance/instance.controller.js"></script>
     <script src="scripts/app/main/instance/network-modal.controller.js"></script>
     <script src="scripts/app/main/instance/group-modal.controller.js"></script>

@@ -20,12 +20,6 @@ angular.module('editorApp')
                         $scope.body = 'Would you like to save your current KevScript to a file?';
                         $scope.filename = 'model'+(Math.floor(Math.random() * (1000 - 100)) + 100);
 
-                        $modalInstance.rendered.then(function () {
-                            $timeout(function () {
-                                angular.element('#filename').focus();
-                            }, 250);
-                        });
-
                         $scope.save = function () {
                             function endsWith(str, suffix) {
                                 return str.indexOf(suffix, str.length - suffix.length) !== -1;

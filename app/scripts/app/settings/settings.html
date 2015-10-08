@@ -1,17 +1,23 @@
 <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 well" data-ng-cloak>
-  <h4>Kevoree Web Editor settings:</h4>
-  <ul class="list-group list-group-with-buttons">
-    <li class="list-group-item">
-      <strong>Version</strong>
-      <span class="pull-right">{{ VERSION }}</span>
-    </li>
-    <li class="list-group-item">
-      <strong>Clear KevScript cache</strong>
-      <button class="btn btn-sm btn-warning pull-right" data-ng-click="clearKevSCache()" data-ng-disabled="isKevSCacheEmpty()">Clear</button>
-    </li>
-    <li class="list-group-item">
-      <strong>Clear Registry Libraries cache</strong>
-      <button class="btn btn-sm btn-warning pull-right" data-ng-click="clearLibrariesCache()" data-ng-disabled="isLibrariesCacheEmpty()">Clear</button>
-    </li>
-  </ul>
+    <h4>Kevoree Web Editor settings:</h4>
+    <ul class="list-group list-group-with-buttons">
+        <li class="list-group-item clearfix">
+            <div class="col-sm-6">Version</div>
+            <div class="col-sm-6">
+                <span class="pull-right">{{ VERSION }}</span>
+            </div>
+        </li>
+        <li class="list-group-item clearfix">
+            <div class="col-sm-6">Clear KevScript cache</div>
+            <div class="col-sm-6">
+                <button class="btn btn-sm btn-warning pull-right" data-ng-click="clearKevSCache()" data-ng-disabled="isKevSCacheEmpty()">Clear</button>
+            </div>
+        </li>
+        <li class="list-group-item clearfix">
+            <div class="col-sm-6">Clear Registry Libraries cache</div>
+            <div class="col-sm-6">
+                <button class="btn btn-sm btn-warning pull-right" data-ng-click="clearLibrariesCache()" data-ng-disabled="isLibrariesCacheEmpty()">Clear</button>
+            </div>
+        </li>
+    </ul>
 </div>

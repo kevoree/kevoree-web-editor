@@ -10,9 +10,6 @@ body {
 .navbar-img {
     padding: 8px 15px 0;
 }
-.navbar {
-    z-index: 1000;
-}
 #container {
     margin-top: 65px;
 }
@@ -386,9 +383,11 @@ body {
         top: 0;
         bottom: 0;
         left: 0;
-        right: -15px;
-        /* Decrease this value for cross-browser compatibility */
-        overflow-x: auto;
+        right: 0;
+        overflow: hidden;
+    }
+    .libraries-tdef-list-inner:hover {
+        overflow-y: auto;
     }
     .libraries-selected-tdef {
         border-left: 1px solid #bbb;
@@ -472,6 +471,26 @@ body {
 }
 .tdef-detail .value {
     float: right;
+}
+.select-chan-panel {
+    font-size: 13px;
+    border-color: #222;
+    margin: 0;
+}
+.select-chan-panel .panel-heading {
+    font-size: 13px;
+    font-weight: bold;
+    padding: 5px 10px;
+    color: #fff;
+    background-color: #222;
+    border-radius: 0;
+}
+.select-chan-panel .list-group {
+    max-height: 150px;
+    overflow-y: auto;
+}
+.select-chan-panel .list-group-item {
+    padding: 5px 10px;
 }
 @media (max-width: 767px) {
     .navbar {

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('ui', function(kFactory, kModelHelper, KWE_POSITION) {
+    .factory('ui', function($modal, kFactory, kModelHelper, KWE_POSITION) {
         var GROUP_RADIUS = 55,
             GROUP_PLUG_RADIUS = 10,
             NODE_WIDTH = 210,
@@ -280,12 +280,12 @@ angular.module('editorApp')
 
                     data = {
                         from: {
-                            x: grpMatrix.e,
-                            y: grpMatrix.f + (GROUP_RADIUS / 2) + GROUP_PLUG_RADIUS
+                            x: 0,
+                            y: 0 + (GROUP_RADIUS / 2) + GROUP_PLUG_RADIUS
                         },
                         to: {
-                            x: toBox.x,
-                            y: toBox.y
+                            x: toBox.x - grpMatrix.e,
+                            y: toBox.y - grpMatrix.f
                         },
                         width: nodeElem.select('.bg').asPX('width'),
                         height: nodeElem.select('.bg').asPX('height')
@@ -339,7 +339,7 @@ angular.module('editorApp')
                             fill: 'white'
                         });
 
-                    this.editor
+                    grpElem
                         .group()
                         .attr({
                             'class': 'group-wire',
@@ -352,13 +352,13 @@ angular.module('editorApp')
                         .selectable()
                         .startPtDrag(function(dx, dy) {
                             var data = this.data('data');
-                            var nFrom = {
-                                x: data.from.x + dx,
-                                y: data.from.y + dy
+                            var newTo = {
+                                x: data.to.x - dx,
+                                y: data.to.y - dy
                             };
-                            var anchor = computeWireNodeAnchor(nFrom, data.to, data.width, data.height);
+                            var anchor = computeWireNodeAnchor(data.from, newTo, data.width, data.height);
                             wireBg.attr({
-                                d: 'M' + nFrom.x + ',' + nFrom.y + ' ' + anchor.x + ',' + anchor.y
+                                d: 'M' + data.from.x + ',' + data.from.y + ' ' + anchor.x + ',' + anchor.y
                             });
                             nodePlug.attr({
                                 cx: anchor.x,
@@ -617,8 +617,6 @@ angular.module('editorApp')
                 }
 
                 this.updateValidity(instance);
-
-                return node;
             },
 
             createComponent: function(instance) {
@@ -712,24 +710,42 @@ angular.module('editorApp')
                                 });
 
                                 clearTimeout(this.data('bindingTimeout'));
+                                var portElem = this.data('hoveredPort');
+                                if (portElem) {
+                                    portElem.select('text').removeClass('hovered error');
+                                }
                                 var chanElem = this.data('hoveredChan');
                                 if (chanElem) {
                                     chanElem.select('.bg').removeClass('hovered error');
                                 }
 
                                 var timeout = setTimeout(function() {
-                                    var chanElem = ui.getHoveredChan(portPos.x + dx, portPos.y + dy);
-                                    if (chanElem) {
-                                        this.data('hoveredChan', chanElem);
-                                        var chanBg = chanElem.select('.bg');
-                                        chanBg.addClass('hovered');
-
-                                        var chan = ui.model.findByPath(chanElem.attr('data-path'));
-                                        if (kModelHelper.isAlreadyBound(instance.findProvidedByID(portType.name), chan)) {
-                                            chanBg.addClass('error');
-                                        }
-                                    } else {
+                                    var portElem = ui.getHoveredPort(portPos.x + dx, portPos.y + dy);
+                                    if (portElem) {
                                         this.data('hoveredChan', null);
+                                        this.data('hoveredPort', portElem);
+                                        var portText = portElem.select('text');
+                                        portText.addClass('hovered');
+
+                                        if (portElem.hasClass('provided')) {
+                                            portText.addClass('error');
+                                        }
+
+                                    } else {
+                                        this.data('hoveredPort', null);
+                                        var chanElem = ui.getHoveredChan(portPos.x + dx, portPos.y + dy);
+                                        if (chanElem) {
+                                            this.data('hoveredChan', chanElem);
+                                            var chanBg = chanElem.select('.bg');
+                                            chanBg.addClass('hovered');
+
+                                            var chan = ui.model.findByPath(chanElem.attr('data-path'));
+                                            if (kModelHelper.isAlreadyBound(instance.findProvidedByID(portType.name), chan)) {
+                                                chanBg.addClass('error');
+                                            }
+                                        } else {
+                                            this.data('hoveredChan', null);
+                                        }
                                     }
                                 }.bind(this), 100);
                                 this.data('bindingTimeout', timeout);
@@ -757,19 +773,19 @@ angular.module('editorApp')
                             function() {
                                 clearTimeout(this.data('bindingTimeout'));
 
+                                var port = instance.findProvidedByID(portType.name);
+                                if (!port) {
+                                    port = kFactory.createPort();
+                                    port.name = portType.name;
+                                    port.portTypeRef = portType;
+                                    instance.addProvided(port);
+                                }
+
                                 var hoveredChan = this.data('hoveredChan');
                                 if (hoveredChan) {
                                     if (!hoveredChan.select('.bg').hasClass('error')) {
                                         var chan = ui.model.findByPath(hoveredChan.attr('data-path'));
                                         if (chan) {
-                                            var port = instance.findProvidedByID(portType.name);
-                                            if (!port) {
-                                                port = kFactory.createPort();
-                                                port.name = portType.name;
-                                                port.portTypeRef = portType;
-                                                instance.addProvided(port);
-                                            }
-
                                             var binding = kFactory.createMBinding();
                                             binding.hub = chan;
                                             binding.port = port;
@@ -779,12 +795,50 @@ angular.module('editorApp')
 
                                     // remove ui feedback
                                     hoveredChan.select('.bg').removeClass('hovered error');
+                                } else {
+                                    var hoveredPort = this.data('hoveredPort');
+                                    if (hoveredPort) {
+                                        if (!hoveredPort.select('text').hasClass('error')) {
+                                            var otherPortName = hoveredPort.attr('data-name');
+                                            var otherPortComp = ui.model.findByPath(hoveredPort.parent().attr('data-path'));
+                                            var otherPort = otherPortComp.findRequiredByID(otherPortName);
+
+                                            $modal
+                                                .open({
+                                                    templateUrl: 'scripts/app/main/editor/select-chan.modal.html',
+                                                    controller: 'SelectChanModalCtrl',
+                                                    resolve: { otherPort: otherPort }
+                                                })
+                                                .result.then(function (chanInstance) {
+                                                    if (chanInstance) {
+                                                        var binding = kFactory.createMBinding();
+                                                        binding.hub = chanInstance;
+                                                        binding.port = port;
+                                                        ui.model.addMBindings(binding);
+
+                                                        if (!otherPort) {
+                                                            otherPort = kFactory.createPort();
+                                                            otherPort.name = otherPortName;
+                                                            otherPort.portTypeRef = otherPortComp.typeDefinition.findRequiredByID(otherPortName);
+                                                            otherPortComp.addRequired(otherPort);
+                                                        }
+
+                                                        var binding2 = kFactory.createMBinding();
+                                                        binding2.hub = chanInstance;
+                                                        binding2.port = otherPort;
+                                                        ui.model.addMBindings(binding2);
+                                                    }
+                                                });
+                                        }
+                                        hoveredPort.select('text').removeClass('hovered error');
+                                    }
                                 }
 
                                 this.data('binding').remove();
 
                                 this.removeData('binding');
                                 this.removeData('bindingTimeout');
+                                this.removeData('hoveredPort');
                                 this.removeData('hoveredChan');
                                 this.removeData('portPos');
                             });
@@ -822,14 +876,10 @@ angular.module('editorApp')
                             strokeWidth: 2
                         })
                         .mouseover(function() {
-                            this.attr({
-                                strokeWidth: 3
-                            });
+                            this.attr({ strokeWidth: 3 });
                         })
                         .mouseout(function() {
-                            this.attr({
-                                strokeWidth: 2
-                            });
+                            this.attr({ strokeWidth: 2 });
                         })
                         .mousedown(function(evt) {
                             evt.cancelBubble = true;
@@ -856,24 +906,40 @@ angular.module('editorApp')
                                 });
 
                                 clearTimeout(this.data('bindingTimeout'));
+                                var portElem = this.data('hoveredPort');
+                                if (portElem) {
+                                    portElem.select('text').removeClass('hovered error');
+                                }
                                 var chanElem = this.data('hoveredChan');
                                 if (chanElem) {
                                     chanElem.select('.bg').removeClass('hovered error');
                                 }
 
                                 var timeout = setTimeout(function() {
-                                    var chanElem = ui.getHoveredChan(portPos.x + dx, portPos.y + dy);
-                                    if (chanElem) {
-                                        this.data('hoveredChan', chanElem);
-                                        var chanBg = chanElem.select('.bg');
-                                        chanBg.addClass('hovered');
-
-                                        var chan = ui.model.findByPath(chanElem.attr('data-path'));
-                                        if (kModelHelper.isAlreadyBound(instance.findRequiredByID(portType.name), chan)) {
-                                            chanBg.addClass('error');
+                                    var portElem = ui.getHoveredPort(portPos.x + dx, portPos.y + dy);
+                                    if (portElem) {
+                                        this.data('hoveredChan', null);
+                                        this.data('hoveredPort', portElem);
+                                        if (portElem.hasClass('required')) {
+                                            portElem.select('text').addClass('hovered error');
+                                        } else {
+                                            portElem.select('text').addClass('hovered');
                                         }
                                     } else {
-                                        this.data('hoveredChan', null);
+                                        this.data('hoveredPort', null);
+                                        var chanElem = ui.getHoveredChan(portPos.x + dx, portPos.y + dy);
+                                        if (chanElem) {
+                                            this.data('hoveredChan', chanElem);
+                                            var chanBg = chanElem.select('.bg');
+                                            chanBg.addClass('hovered');
+
+                                            var chan = ui.model.findByPath(chanElem.attr('data-path'));
+                                            if (kModelHelper.isAlreadyBound(instance.findRequiredByID(portType.name), chan)) {
+                                                chanBg.addClass('error');
+                                            }
+                                        } else {
+                                            this.data('hoveredChan', null);
+                                        }
                                     }
                                 }.bind(this), 100);
                                 this.data('bindingTimeout', timeout);
@@ -901,19 +967,19 @@ angular.module('editorApp')
                             function() {
                                 clearTimeout(this.data('bindingTimeout'));
 
+                                var port = instance.findRequiredByID(portType.name);
+                                if (!port) {
+                                    port = kFactory.createPort();
+                                    port.name = portType.name;
+                                    port.portTypeRef = portType;
+                                    instance.addRequired(port);
+                                }
+
                                 var hoveredChan = this.data('hoveredChan');
                                 if (hoveredChan) {
                                     if (!hoveredChan.select('.bg').hasClass('error')) {
                                         var chan = ui.model.findByPath(hoveredChan.attr('data-path'));
                                         if (chan) {
-                                            var port = instance.findRequiredByID(portType.name);
-                                            if (!port) {
-                                                port = kFactory.createPort();
-                                                port.name = portType.name;
-                                                port.portTypeRef = portType;
-                                                instance.addRequired(port);
-                                            }
-
                                             var binding = kFactory.createMBinding();
                                             binding.hub = chan;
                                             binding.port = port;
@@ -923,6 +989,43 @@ angular.module('editorApp')
 
                                     // remove ui feedback
                                     hoveredChan.select('.bg').removeClass('hovered error');
+                                } else {
+                                    var hoveredPort = this.data('hoveredPort');
+                                    if (hoveredPort) {
+                                        if (!hoveredPort.select('text').hasClass('error')) {
+                                            var otherPortName = hoveredPort.attr('data-name');
+                                            var otherPortComp = ui.model.findByPath(hoveredPort.parent().attr('data-path'));
+                                            var otherPort = otherPortComp.findProvidedByID(otherPortName);
+
+                                            $modal
+                                                .open({
+                                                    templateUrl: 'scripts/app/main/editor/select-chan.modal.html',
+                                                    controller: 'SelectChanModalCtrl',
+                                                    resolve: { otherPort: otherPort },
+                                                })
+                                                .result.then(function (chanInstance) {
+                                                    if (chanInstance) {
+                                                        var binding = kFactory.createMBinding();
+                                                        binding.hub = chanInstance;
+                                                        binding.port = port;
+                                                        ui.model.addMBindings(binding);
+
+                                                        if (!otherPort) {
+                                                            otherPort = kFactory.createPort();
+                                                            otherPort.name = otherPortName;
+                                                            otherPort.portTypeRef = otherPortComp.typeDefinition.findProvidedByID(otherPortName);
+                                                            otherPortComp.addProvided(otherPort);
+                                                        }
+
+                                                        var binding2 = kFactory.createMBinding();
+                                                        binding2.hub = chanInstance;
+                                                        binding2.port = otherPort;
+                                                        ui.model.addMBindings(binding2);
+                                                    }
+                                                });
+                                        }
+                                        hoveredPort.select('text').removeClass('hovered error');
+                                    }
                                 }
 
                                 this.data('binding').remove();
@@ -930,6 +1033,7 @@ angular.module('editorApp')
                                 this.removeData('binding');
                                 this.removeData('bindingTimeout');
                                 this.removeData('hoveredChan');
+                                this.removeData('hoveredPort');
                                 this.removeData('portPos');
                             });
 
@@ -1052,8 +1156,6 @@ angular.module('editorApp')
                 host.append(comp);
 
                 this.updateValidity(instance);
-
-                return comp;
             },
 
             createBinding: function(binding) {
@@ -1185,7 +1287,7 @@ angular.module('editorApp')
                         'clip-path': 'url(#chan-clip)'
                     });
 
-                var chan = this.editor
+                this.editor
                     .group()
                     .attr({
                         'class': 'instance chan',
@@ -1220,8 +1322,6 @@ angular.module('editorApp')
                     .relocate(instance);
 
                 this.updateValidity(instance);
-
-                return chan;
             },
 
             updateValidity: function(instance) {
@@ -1717,6 +1817,17 @@ angular.module('editorApp')
                 return null;
             },
 
+            getHoveredPort: function (x, y) {
+                var ports = this.editor
+                    .selectAll('.port').items;
+                for (var i = 0; i < ports.length; i++) {
+                    if (isPointInsideElem(ports[i], x, y)) {
+                        return ports[i];
+                    }
+                }
+                return null;
+            },
+
             invokeListener: function(selected) {
                 if (this.listener) {
                     if (selected) {
@@ -1754,6 +1865,12 @@ angular.module('editorApp')
 
             hasErrors: function () {
                 return this.editor.selectAll('.invalid-icon').length > 0;
+            },
+
+            order: function () {
+                this.editor.selectAll('.binding').forEach(function (binding) {
+                    binding.node.parentNode.appendChild(binding.node);
+                });
             }
         };
 
@@ -1762,6 +1879,11 @@ angular.module('editorApp')
          */
         Snap.plugin(function(Snap, Element) {
             var dragStart = function(x, y, evt) {
+                if (!this.parent().hasClass('instance')) {
+                    var instances = angular.element(ui.editor.node).find('> .instance');
+                    this.node.parentNode.insertBefore(this.node, instances[instances.length-1].nextSibling);
+                }
+
                 this.data('dragStartX', x);
                 this.data('dragStartY', y);
 
@@ -1785,30 +1907,34 @@ angular.module('editorApp')
             };
 
             var dragMove = function(dx, dy, x, y, evt) {
-                if ((typeof dx === 'object') && (dx.type === 'touchmove')) {
-                    evt = dx;
-                    x = evt.changedTouches[0].clientX;
-                    y = evt.changedTouches[0].clientY;
-                    dx = x - this.data('dragStartX');
-                    dy = y - this.data('dragStartY');
-                }
-
-                this.transform(this.data('ot') + (this.data('ot') ? 'T' : 't') + [dx, dy]);
-
-                if (this.data('hasMoved')) {
-                    var handlers = this.data('dragMove');
-                    if (handlers) {
-                        handlers.forEach(function(handler) {
-                            handler.apply(this, [dx, dy, x, y, evt]);
-                        }.bind(this));
+                var dragStartX = this.data('dragStartX'),
+                    dragStartY = this.data('dragStartY');
+                if (typeof dragStartX !== 'undefined' && typeof dragStartY !== 'undefined') {
+                    if ((typeof dx === 'object') && (dx.type === 'touchmove')) {
+                        evt = dx;
+                        x = evt.changedTouches[0].clientX;
+                        y = evt.changedTouches[0].clientY;
+                        dx = x - dragStartX;
+                        dy = y - dragStartY;
                     }
-                } else {
-                    this.data('hasMoved', true);
-                    var firstDragMoveHandlers = this.data('firstDragMove');
-                    if (firstDragMoveHandlers) {
-                        firstDragMoveHandlers.forEach(function(handler) {
-                            handler.apply(this, [dx, dy, x, y, evt]);
-                        }.bind(this));
+
+                    this.transform(this.data('ot') + (this.data('ot') ? 'T' : 't') + [dx, dy]);
+
+                    if (this.data('hasMoved')) {
+                        var handlers = this.data('dragMove');
+                        if (handlers) {
+                            handlers.forEach(function(handler) {
+                                handler.apply(this, [dx, dy, x, y, evt]);
+                            }.bind(this));
+                        }
+                    } else {
+                        this.data('hasMoved', true);
+                        var firstDragMoveHandlers = this.data('firstDragMove');
+                        if (firstDragMoveHandlers) {
+                            firstDragMoveHandlers.forEach(function(handler) {
+                                handler.apply(this, [dx, dy, x, y, evt]);
+                            }.bind(this));
+                        }
                     }
                 }
             };
@@ -1850,7 +1976,19 @@ angular.module('editorApp')
             };
 
             Element.prototype.draggable = function() {
-                return this.drag(dragMove, dragStart, dragEnd);
+                return this.drag(function (dx, dy, x, y, evt) {
+                    if (evt.which === 1) {
+                        dragMove.apply(this, arguments);
+                    }
+                }, function (x, y, evt) {
+                    if (evt.which === 1) {
+                        dragStart.apply(this, arguments);
+                    }
+                }, function (evt) {
+                    if (evt.which === 1) {
+                        dragEnd.apply(this, arguments);
+                    }
+                });
             };
 
             Element.prototype.dragStart = function(handler) {
@@ -1886,26 +2024,28 @@ angular.module('editorApp')
             };
 
             Element.prototype.selectable = function() {
-                var selectable = function(evt) {
-                    evt.cancelBubble = true;
+                var selectable = function (evt) {
+                    if (evt.which === 1) {
+                        evt.cancelBubble = true;
 
-                    if (!evt.ctrlKey && !evt.shiftKey) {
-                        ui.editor.selectAll('.selected').forEach(function(elem) {
-                            elem.removeClass('selected');
-                        });
-                    }
-                    if (evt.ctrlKey || evt.shiftKey) {
-                        this.select('.bg').toggleClass('selected');
+                        if (!evt.ctrlKey && !evt.shiftKey) {
+                            ui.editor.selectAll('.selected').forEach(function(elem) {
+                                elem.removeClass('selected');
+                            });
+                        }
+                        if (evt.ctrlKey || evt.shiftKey) {
+                            this.select('.bg').toggleClass('selected');
 
-                    } else {
-                        this.select('.bg').addClass('selected');
-                    }
-                    if (ui.listener) {
-                        var selected = ui.editor.selectAll('.selected').items;
-                        if (selected.length === 1) {
-                            ui.listener(selected[0].parent().attr('data-path'));
                         } else {
-                            ui.listener();
+                            this.select('.bg').addClass('selected');
+                        }
+                        if (ui.listener) {
+                            var selected = ui.editor.selectAll('.selected').items;
+                            if (selected.length === 1) {
+                                ui.listener(selected[0].parent().attr('data-path'));
+                            } else {
+                                ui.listener();
+                            }
                         }
                     }
                 };

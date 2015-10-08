@@ -144,6 +144,8 @@ angular.module('editorApp')
                 this.model.mBindings.array.forEach(function (binding) {
                     ui.createBinding(binding);
                 });
+
+                ui.order();
             }
         };
 

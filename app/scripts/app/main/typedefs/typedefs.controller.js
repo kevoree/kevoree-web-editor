@@ -8,7 +8,7 @@
  * Controller of the editorApp TypeDefinition sidebar
  */
 angular.module('editorApp')
-    .controller('TypedefsCtrl', function($scope, $sce, kEditor, ui, kModelHelper, kFactory, Notification, KWE_POSITION) {
+    .controller('TypedefsCtrl', function($scope, $sce, kEditor, ui, kModelHelper, kFactory, kInstance, Notification, KWE_POSITION) {
         $scope.packages = {};
 
         $scope.dragDraggable = {
@@ -131,6 +131,7 @@ angular.module('editorApp')
                     y: 100
                 });
                 instance.addMetaData(pos);
+                kInstance.initDictionaries(instance);
             }
 
             var model = kEditor.getModel();
@@ -171,8 +172,7 @@ angular.module('editorApp')
                             if (node) {
                                 instance = kFactory.createComponentInstance();
                                 instance.name = 'comp' + parseInt(Math.random() * 1000);
-                                instance.typeDefinition = tdef;
-                                instance.started = true;
+                                preProcess(instance);
                                 node.addComponents(instance);
                             }
                         });
