@@ -10,7 +10,6 @@
 angular.module('editorApp')
     .controller('InstanceCtrl', function($scope, $sce, $timeout, $modal, hotkeys, ui, kEditor, kFactory, kInstance, kModelHelper) {
         $scope.instance = null;
-        $scope.instanceName = null;
         $scope.type = null;
         $scope.mainCollapsed = false;
         $scope.dicCollapsed = false;
@@ -19,6 +18,7 @@ angular.module('editorApp')
         $scope.fragCollapsed = {};
 
         $scope.changeName = function(form, name) {
+            console.log('changeName', name, form.name.$valid);
             if (form.name.$valid) {
                 $scope.instance.name = name;
             }
@@ -103,7 +103,6 @@ angular.module('editorApp')
                 if ($scope.instance && ($scope.instance.path() !== path)) {
                     // reset values
                     $scope.instance = null;
-                    $scope.instanceName = null;
                     $scope.type = null;
                     $scope.selectedVersion = null;
                     $scope.versions = [];
@@ -118,13 +117,15 @@ angular.module('editorApp')
                     $scope.instance = kEditor.getModel().findByPath(path);
                     if ($scope.instance && $scope.instance.getRefInParent() !== 'mBindings') {
                         angular.element('.ui-notification').css('right', '260px');
-                        $scope.instanceName = $scope.instance.name;
+                        // using preName to prevent user from naming two instances with the same name
+                        $scope.instance.preName = $scope.instance.name;
                         $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
                         var descMeta = $scope.instance.typeDefinition.findMetaDataByID('description');
                         if (descMeta) {
                             $scope.description = $sce.trustAsHtml(descMeta.value);
                         }
                         timeout = $timeout(function() {
+                            // in a timeout because processTypeDefinition() can be CPU intensive
                             processTypeDefinition();
                             $scope.processing = false;
                         });

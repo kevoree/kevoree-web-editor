@@ -25,12 +25,13 @@
                         type="text"
                         class="form-control input-sm"
                         placeholder="Instance name"
-                        data-ng-model="instanceName"
-                        data-ng-change="changeName(form, instanceName)"
+                        data-ng-model="instance.preName"
+                        data-ng-change="changeName(form, instance.preName)"
                         data-instance="instance"
                         data-instance-name
                         data-instance-type="type"
-                        required>
+                        required
+                        data-focus="250">
                 <span class="glyphicon glyphicon-remove form-control-feedback" data-ng-hide="form.name.$valid"></span>
                 <p class="help-block" data-ng-if="!form.name.$valid">Name must be unique and not null</p>
             </div>
