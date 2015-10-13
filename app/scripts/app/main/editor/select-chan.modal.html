@@ -24,7 +24,7 @@
                     <div data-ng-if="instances.length === 0" class="list-group-item">
                         <em>none found</em>
                     </div>
-                    <a href="#" class="list-group-item" data-ng-repeat="chan in instances" data-ng-click="select(chan)" data-ng-class="chan.selected ? 'active':''">
+                    <a class="point-cursor" class="list-group-item" data-ng-repeat="chan in instances" data-ng-click="select(chan)" data-ng-class="chan.selected ? 'active':''">
                         {{ chan.typeDefinition.name }}
                         <span class="pull-right">{{ chan.name }}</span>
                     </a>
@@ -34,7 +34,7 @@
                     <div data-ng-if="types.length === 0" class="list-group-item">
                         <em>none found</em>
                     </div>
-                    <a href="#" class="list-group-item" data-ng-repeat="type in types" data-ng-click="select(type)" data-ng-class="type.selected ? 'active':''">
+                    <a class="point-cursor" class="list-group-item" data-ng-repeat="type in types" data-ng-click="select(type)" data-ng-class="type.selected ? 'active':''">
                       {{ type.name }}
                       <span class="pull-right">{{ 'v' + type.version }}</span>
                   </a>

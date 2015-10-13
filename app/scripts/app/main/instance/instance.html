@@ -52,7 +52,7 @@
         </div>
         <div class="instance-form" data-collapse="descCollapsed">
             <p class="text-justify" data-ng-bind-html="description | truncate:descLength | trustHtml"></p>
-            <a href="#" data-ng-if="showMore" data-ng-click="toggleShowMore()">{{ showMoreAction }}</a>
+            <a class="point-cursor" data-ng-if="showMore" data-ng-click="toggleShowMore()">{{ showMoreAction }}</a>
         </div>
     </div>
     <div data-ng-switch="processing">
@@ -101,7 +101,7 @@
                         <h5 class="sidebar-header sidebar-header-right point-cursor clearfix" data-ng-click="netCollapsed = !netCollapsed">
                             <i class="fa" data-ng-class="netCollapsed ? 'fa-plus':'fa-minus'"></i>
                             &nbsp;Network Informations - <strong>{{ net.name }}</strong>
-                            <a href="#" class="pull-right" data-ng-click="manageNetwork($event, net)"><i class="fa fa-cog"></i></a>
+                            <a class="point-cursor" class="pull-right" data-ng-click="manageNetwork($event, net)"><i class="fa fa-cog"></i></a>
                         </h5>
                     </div>
                     <div data-collapse="netCollapsed">
@@ -119,7 +119,7 @@
                     </div>
                 </div>
                 <div class="instance-form">
-                    <a href="#" data-ng-click="addNetwork()">Add new network</a>
+                    <a class="point-cursor" data-ng-click="addNetwork()">Add new network</a>
                 </div>
             </div>
         </div>
