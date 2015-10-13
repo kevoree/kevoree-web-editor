@@ -1,15 +1,21 @@
 'use strict';
 
 angular.module('editorApp')
-    .controller('SelectChanModalCtrl', function ($scope, $modalInstance, otherPort, orderByFilter, kInstance, kEditor, kFactory, kModelHelper, KWE_POSITION) {
+    .controller('SelectChanModalCtrl', function ($scope, $modalInstance, startPort, endPort, orderByFilter, kInstance, kEditor, kFactory, kModelHelper, KWE_POSITION) {
         var selected;
+        console.log('STARTPORT', startPort);
+        console.log('ENDPORT', endPort);
         $scope.instances = orderByFilter(kEditor.getModel().hubs.array.filter(function (chan) {
             chan.selected = false;
-            return !kModelHelper.isAlreadyBound(otherPort, chan);
+            return !kModelHelper.isAlreadyBound(endPort, chan) &&
+                !kModelHelper.isAlreadyBound(startPort, chan) &&
+                kModelHelper.isCompatible(chan.typeDefinition, startPort.eContainer().eContainer()) &&
+                kModelHelper.isCompatible(chan.typeDefinition, endPort.eContainer().eContainer());
         }), 'typeDefinition.name');
-        $scope.types = orderByFilter(kModelHelper.getChannelTypes(kEditor.getModel()).map(function (type) {
+        $scope.types = orderByFilter(kModelHelper.getChannelTypes(kEditor.getModel()).filter(function (type) {
             type.selected = false;
-            return type;
+            return kModelHelper.isCompatible(type, startPort.eContainer().eContainer()) &&
+                kModelHelper.isCompatible(type, endPort.eContainer().eContainer());
         }), 'name');
 
         if ($scope.instances.length > 0) {

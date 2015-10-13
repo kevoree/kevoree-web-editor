@@ -3,7 +3,7 @@ angular.module('editorApp')
 
 .constant('APP_NAME', 'Kevoree Web Editor')
 
-.constant('VERSION', '5.5.2')
+.constant('VERSION', '5.6.0')
 
 .constant('NPM_REGISTRY_URL', 'http://registry.npmjs.org/{name}/-/{name}-{version}.tgz')
 

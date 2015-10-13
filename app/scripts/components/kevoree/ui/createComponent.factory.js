@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('uiCreateComponent', function ($modal, uiUtils, util, kFactory, kModelHelper, COMP_HEIGHT, NODE_HEIGHT) {
+    .factory('uiCreateComponent', function ($modal, uiUtils, util, kFactory, kModelHelper, Notification, COMP_HEIGHT, NODE_HEIGHT) {
         return function (ui, instance) {
             ui.removeUIElem(instance.path());
             uiUtils.updateSVGDefs(ui.model);
@@ -123,7 +123,8 @@ angular.module('editorApp')
                                         chanBg.addClass('hovered');
 
                                         var chan = ui.model.findByPath(chanElem.attr('data-path'));
-                                        if (kModelHelper.isAlreadyBound(instance.findProvidedByID(portType.name), chan)) {
+                                        if (kModelHelper.isAlreadyBound(instance.findProvidedByID(portType.name), chan) ||
+                                            !kModelHelper.isCompatible(chan.typeDefinition, instance.eContainer())) {
                                             chanBg.addClass('error');
                                         }
                                     } else {
@@ -166,13 +167,21 @@ angular.module('editorApp')
 
                             var hoveredChan = this.data('hoveredChan');
                             if (hoveredChan) {
+                                var chan = ui.model.findByPath(hoveredChan.attr('data-path'));
                                 if (!hoveredChan.select('.bg').hasClass('error')) {
-                                    var chan = ui.model.findByPath(hoveredChan.attr('data-path'));
                                     if (chan) {
                                         var binding = kFactory.createMBinding();
                                         binding.hub = chan;
                                         binding.port = port;
                                         ui.model.addMBindings(binding);
+                                    }
+                                } else {
+                                    if (chan && !kModelHelper.isCompatible(chan.typeDefinition, instance.eContainer())) {
+                                        Notification.error({
+                                            title: 'Binding error',
+                                            message: '<strong>'+chan.typeDefinition.name+'</strong> cannot run on platform <strong>'+kModelHelper.getPlatforms(instance.eContainer().typeDefinition).join('')+'</strong>',
+                                            delay: 10000
+                                        });
                                     }
                                 }
 
@@ -185,12 +194,21 @@ angular.module('editorApp')
                                         var otherPortName = hoveredPort.attr('data-name');
                                         var otherPortComp = ui.model.findByPath(hoveredPort.parent().attr('data-path'));
                                         var otherPort = otherPortComp.findRequiredByID(otherPortName);
+                                        if (!otherPort) {
+                                            otherPort = kFactory.createPort();
+                                            otherPort.name = otherPortName;
+                                            otherPort.portTypeRef = otherPortComp.typeDefinition.findRequiredByID(otherPortName);
+                                            otherPortComp.addRequired(otherPort);
+                                        }
 
                                         $modal
                                             .open({
                                                 templateUrl: 'scripts/app/main/editor/select-chan.modal.html',
                                                 controller: 'SelectChanModalCtrl',
-                                                resolve: { otherPort: otherPort }
+                                                resolve: {
+                                                    startPort: port,
+                                                    endPort: otherPort
+                                                }
                                             })
                                             .result.then(function (chanInstance) {
                                                 if (chanInstance) {
@@ -198,13 +216,6 @@ angular.module('editorApp')
                                                     binding.hub = chanInstance;
                                                     binding.port = port;
                                                     ui.model.addMBindings(binding);
-
-                                                    if (!otherPort) {
-                                                        otherPort = kFactory.createPort();
-                                                        otherPort.name = otherPortName;
-                                                        otherPort.portTypeRef = otherPortComp.typeDefinition.findRequiredByID(otherPortName);
-                                                        otherPortComp.addRequired(otherPort);
-                                                    }
 
                                                     var binding2 = kFactory.createMBinding();
                                                     binding2.hub = chanInstance;
@@ -317,7 +328,8 @@ angular.module('editorApp')
                                         chanBg.addClass('hovered');
 
                                         var chan = ui.model.findByPath(chanElem.attr('data-path'));
-                                        if (kModelHelper.isAlreadyBound(instance.findRequiredByID(portType.name), chan)) {
+                                        if (kModelHelper.isAlreadyBound(instance.findRequiredByID(portType.name), chan) ||
+                                            !kModelHelper.isCompatible(chan.typeDefinition, instance.eContainer())) {
                                             chanBg.addClass('error');
                                         }
                                     } else {
@@ -360,13 +372,21 @@ angular.module('editorApp')
 
                             var hoveredChan = this.data('hoveredChan');
                             if (hoveredChan) {
+                                var chan = ui.model.findByPath(hoveredChan.attr('data-path'));
                                 if (!hoveredChan.select('.bg').hasClass('error')) {
-                                    var chan = ui.model.findByPath(hoveredChan.attr('data-path'));
                                     if (chan) {
                                         var binding = kFactory.createMBinding();
                                         binding.hub = chan;
                                         binding.port = port;
                                         ui.model.addMBindings(binding);
+                                    }
+                                } else {
+                                    if (chan && !kModelHelper.isCompatible(chan.typeDefinition, instance.eContainer())) {
+                                        Notification.error({
+                                            title: 'Binding error',
+                                            message: '<strong>'+chan.typeDefinition.name+'</strong> cannot run on platform <strong>'+kModelHelper.getPlatforms(instance.eContainer().typeDefinition).join('')+'</strong>',
+                                            delay: 10000
+                                        });
                                     }
                                 }
 
@@ -379,12 +399,21 @@ angular.module('editorApp')
                                         var otherPortName = hoveredPort.attr('data-name');
                                         var otherPortComp = ui.model.findByPath(hoveredPort.parent().attr('data-path'));
                                         var otherPort = otherPortComp.findProvidedByID(otherPortName);
+                                        if (!otherPort) {
+                                            otherPort = kFactory.createPort();
+                                            otherPort.name = otherPortName;
+                                            otherPort.portTypeRef = otherPortComp.typeDefinition.findProvidedByID(otherPortName);
+                                            otherPortComp.addProvided(otherPort);
+                                        }
 
                                         $modal
                                             .open({
                                                 templateUrl: 'scripts/app/main/editor/select-chan.modal.html',
                                                 controller: 'SelectChanModalCtrl',
-                                                resolve: { otherPort: otherPort },
+                                                resolve: {
+                                                    startPort: port,
+                                                    endPort: otherPort
+                                                }
                                             })
                                             .result.then(function (chanInstance) {
                                                 if (chanInstance) {
@@ -392,13 +421,6 @@ angular.module('editorApp')
                                                     binding.hub = chanInstance;
                                                     binding.port = port;
                                                     ui.model.addMBindings(binding);
-
-                                                    if (!otherPort) {
-                                                        otherPort = kFactory.createPort();
-                                                        otherPort.name = otherPortName;
-                                                        otherPort.portTypeRef = otherPortComp.typeDefinition.findProvidedByID(otherPortName);
-                                                        otherPortComp.addProvided(otherPort);
-                                                    }
 
                                                     var binding2 = kFactory.createMBinding();
                                                     binding2.hub = chanInstance;
