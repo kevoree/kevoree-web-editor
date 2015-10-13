@@ -8,7 +8,7 @@
  * Controller of the editorApp TypeDefinition sidebar
  */
 angular.module('editorApp')
-    .controller('TypedefsCtrl', function($scope, $sce, kEditor, ui, kModelHelper, kFactory, kInstance, Notification, KWE_POSITION) {
+    .controller('TypedefsCtrl', function($scope, kEditor, ui, kModelHelper, kFactory, kInstance, Notification, KWE_POSITION) {
         $scope.packages = {};
 
         $scope.dragDraggable = {
@@ -219,7 +219,7 @@ angular.module('editorApp')
                             .array.map(function(meta) {
                                 return meta.value;
                             }),
-                        description: descMeta ? $sce.trustAsHtml(descMeta.value) : null
+                        description: descMeta ? descMeta.value : null
                     };
                 });
 
