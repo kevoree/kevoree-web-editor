@@ -30,8 +30,7 @@
                         data-instance="instance"
                         data-instance-name
                         data-instance-type="type"
-                        required
-                        data-focus="250">
+                        required>
                 <span class="glyphicon glyphicon-remove form-control-feedback" data-ng-hide="form.name.$valid"></span>
                 <p class="help-block" data-ng-if="!form.name.$valid">Name must be unique and not null</p>
             </div>
@@ -52,7 +51,8 @@
             </h5>
         </div>
         <div class="instance-form" data-collapse="descCollapsed">
-            <p class="text-justify" data-ng-bind-html="description"></p>
+            <p class="text-justify" data-ng-bind-html="description | truncate:descLength | trustHtml"></p>
+            <a href="#" data-ng-if="showMore" data-ng-click="toggleShowMore()">{{ showMoreAction }}</a>
         </div>
     </div>
     <div data-ng-switch="processing">

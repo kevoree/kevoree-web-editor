@@ -8,7 +8,7 @@
  * Controller of the editorApp instance editor
  */
 angular.module('editorApp')
-    .controller('InstanceCtrl', function($scope, $sce, $timeout, $modal, hotkeys, ui, kEditor, kFactory, kInstance, kModelHelper) {
+    .controller('InstanceCtrl', function($scope, $timeout, $modal, hotkeys, ui, kEditor, kFactory, kInstance, kModelHelper) {
         $scope.instance = null;
         $scope.type = null;
         $scope.mainCollapsed = false;
@@ -122,7 +122,21 @@ angular.module('editorApp')
                         $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
                         var descMeta = $scope.instance.typeDefinition.findMetaDataByID('description');
                         if (descMeta) {
-                            $scope.description = $sce.trustAsHtml(descMeta.value);
+                            $scope.description = descMeta.value;
+                            if ($scope.description.length > 100) {
+                                $scope.descLength = 100;
+                                $scope.showMore = true;
+                                $scope.showMoreAction = 'Show more';
+                                $scope.toggleShowMore = function () {
+                                    if ($scope.showMoreAction === 'Show more') {
+                                        $scope.descLength = $scope.description.length;
+                                        $scope.showMoreAction = 'Hide';
+                                    } else {
+                                        $scope.descLength = 100;
+                                        $scope.showMoreAction = 'Show more';
+                                    }
+                                };
+                            }
                         }
                         timeout = $timeout(function() {
                             // in a timeout because processTypeDefinition() can be CPU intensive
