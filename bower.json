@@ -15,7 +15,7 @@
     "bootstrap": "^3.2.0",
     "codemirror": "^4.8",
     "fontawesome": "~4.3.0",
-    "kevoree-kevscript": "^3.0.2",
+    "kevoree-kevscript": "^3.1.0",
     "kevoree-library": "^5.0.9",
     "semver": "~4.3.4",
     "snap.svg": "~0.4.1",
