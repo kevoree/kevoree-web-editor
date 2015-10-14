@@ -107,12 +107,11 @@ angular.module('editorApp')
           resolve(model);
         } else {
           $http({
-              method: 'POST',
+              method: 'GET',
               url: KEVOREE_REGISTRY_URL,
               headers: {
-                'Content-Type': 'text/plain'
-              },
-              data: ['/packages[*]']
+                'Accept': 'application/json'
+              }
             })
             .then(function(res) {
               try {
