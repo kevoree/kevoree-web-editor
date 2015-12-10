@@ -246,23 +246,28 @@ angular.module('editorApp')
              * @param node
              */
             isCompatible: function (tdef, node) {
-                var nodePlatforms = [];
-                node.typeDefinition.deployUnits.array
-                    .forEach(function (du) {
-                        var filter = du.findFiltersByID('platform');
-                        if (filter) {
-                            nodePlatforms.push(filter.value);
+                if (tdef.select('metaData[name=virtual]').array.length > 0) {
+                    // tdef is virtual, so it is compatible
+                    return true;
+
+                } else {
+                    var nodePlatforms = [];
+                    node.typeDefinition.deployUnits.array
+                        .forEach(function (du) {
+                            var filter = du.findFiltersByID('platform');
+                            if (filter) {
+                                nodePlatforms.push(filter.value);
+                            }
+                        });
+
+                    for (var i=0; i < nodePlatforms.length; i++) {
+                        if (tdef.select('deployUnits[name=*]/filters[name=platform,value='+nodePlatforms[i]+']').array.length > 0) {
+                            return true;
                         }
-                    });
-
-
-                for (var i=0; i < nodePlatforms.length; i++) {
-                    if (tdef.select('deployUnits[name=*]/filters[name=platform,value='+nodePlatforms[i]+']').array.length > 0) {
-                        return true;
                     }
-                }
 
-                return false;
+                    return false;
+                }
             },
 
             /**
