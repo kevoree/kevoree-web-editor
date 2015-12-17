@@ -8,23 +8,22 @@
  * Controller of the editorApp registry libraries page
  */
 angular.module('editorApp')
-    .controller('LibrariesCtrl', function ($scope, $timeout, kRegistry, kModelHelper, kFactory, kEditor, KEVOREE_REGISTRY_URL) {
-        $scope.KEVOREE_REGISTRY_URL = KEVOREE_REGISTRY_URL;
+    .controller('LibrariesCtrl', function ($scope, $timeout, kRegistry, kModelHelper, kFactory, kEditor) {
         $scope.loading = true;
 
         kRegistry
             .init()
             .then(function (tdefs) {
                 $scope.tdefs = tdefs;
+                $timeout(function () {
+                    angular.element('#filter-by-tdef').focus();
+                });
             })
             .catch(function (err) {
                 $scope.error = err.message;
             })
             .finally(function () {
                 $scope.loading = false;
-                $timeout(function () {
-                    angular.element('#filter-by-tdef').focus();
-                });
             });
 
         $scope.select = function (evt, tdef) {

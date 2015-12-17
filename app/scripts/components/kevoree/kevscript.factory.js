@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('kScript', function (Notification, storage, KEVOREE_REGISTRY_URL) {
+    .factory('kScript', function (Notification, storage, kRegistry) {
         var KEY = 'kevs.';
         function CacheManager() {}
         CacheManager.prototype.get = function (key) {
@@ -37,12 +37,18 @@ angular.module('editorApp')
         };
 
         var kevs = new KevoreeKevscript(new CacheManager());
-        var url = new URL(KEVOREE_REGISTRY_URL);
-        kevs.setOptions({
-            registry: {
-                host: url.hostname,
-                port: url.port
-            }
-        });
+
+        var changeUrl = function () {
+            var url = new URL(kRegistry.getUrl());
+            kevs.setOptions({
+                registry: {
+                    host: url.hostname,
+                    port: url.port
+                }
+            });
+        };
+
+        kRegistry.onUrlChange(changeUrl);
+        changeUrl();
         return kevs;
     });
