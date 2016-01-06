@@ -239,8 +239,12 @@ angular.module('editorApp')
                     if (path) {
                         var instance = ui.model.findByPath(path);
                         if (instance) {
-                            var val = instance.findMetaDataByID('access_mode');
-                            if (val && val.value === 'read-only') {
+                            var readOnly = false;
+                            if (typeof instance.findMetaDataByID === 'function') {
+                                var val = instance.findMetaDataByID('access_mode');
+                                readOnly = (val && val.value === 'read-only');
+                            }
+                            if (readOnly) {
                                 Notification.warning({
                                     title: 'Delete instance',
                                     message: 'Cannot delete read-only instance "'+instance.name+'"',
