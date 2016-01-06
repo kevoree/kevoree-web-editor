@@ -15,6 +15,11 @@ angular.module('editorApp')
                 $scope.isTruish = function (val) {
                     return (val === 'true' || val === true || val > 0);
                 };
+
+                $scope.isReadOnly = function () {
+                    var val = $scope.dictionary.eContainer().findMetaDataByID('access_mode');
+                    return (val && val.value === 'read-only');
+                };
             }
         };
     });

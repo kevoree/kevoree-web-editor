@@ -12,7 +12,8 @@
                class="form-control input-sm"
                data-ng-model="(dictionary.findValuesByID(attr.name)).value"
                data-ng-change="onChange(this[name][attr.name])"
-               data-ng-required="!isTruish(attr.optional)">
+               data-ng-required="!isTruish(attr.optional)"
+               data-ng-disabled="isReadOnly()">
         <span data-ng-if="attr.datatype.name() === 'BYTE' || attr.datatype.name() === 'CHAR'"
               class="glyphicon glyphicon-remove form-control-feedback"
               data-ng-hide="this[name][attr.name].$valid"></span>
@@ -24,7 +25,8 @@
                   data-ng-model="(dictionary.findValuesByID(attr.name)).value"
                   data-ng-change="onChange(this[name][attr.name])"
                   data-ng-required="!isTruish(attr.optional)"
-                  style="resize: vertical;">
+                  style="resize: vertical;"
+                  data-ng-disabled="isReadOnly()">
         </textarea>
         <span data-ng-if="attr.datatype.name() === 'STRING'"
               class="glyphicon glyphicon-remove form-control-feedback"
@@ -38,14 +40,15 @@
                data-string-to-number
                data-ng-model="(dictionary.findValuesByID(attr.name)).value"
                data-ng-change="onChange(this[name][attr.name])"
-               data-ng-required="!isTruish(attr.optional)">
+               data-ng-required="!isTruish(attr.optional)"
+               data-ng-disabled="isReadOnly()">
         <span data-ng-if="attr.datatype.name() === 'LONG' || attr.datatype.name() === 'FLOAT' || attr.datatype.name() === 'DOUBLE' || attr.datatype.name() === 'SHORT' || attr.datatype.name() === 'INT'"
               class="glyphicon glyphicon-remove form-control-feedback"
               data-ng-hide="this[name][attr.name].$valid"></span>
 
         <div data-ng-if="attr.datatype.name() === 'BOOLEAN'" class="btn-group btn-group-block clearfix">
-            <label class="btn btn-sm btn-default" data-ng-model="(dictionary.findValuesByID(attr.name)).value" data-btn-radio="'true'">True</label>
-            <label class="btn btn-sm btn-default" data-ng-model="(dictionary.findValuesByID(attr.name)).value" data-btn-radio="'false'">False</label>
+            <label class="btn btn-sm btn-default" data-ng-model="(dictionary.findValuesByID(attr.name)).value" data-btn-radio="'true'" data-ng-disabled="isReadOnly()">True</label>
+            <label class="btn btn-sm btn-default" data-ng-model="(dictionary.findValuesByID(attr.name)).value" data-btn-radio="'false'" data-ng-disabled="isReadOnly()">False</label>
         </div>
     </div>
 </form>

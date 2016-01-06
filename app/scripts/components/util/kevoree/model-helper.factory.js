@@ -340,6 +340,20 @@ angular.module('editorApp')
                 return true;
             },
 
+            isVirtual: function (elem) {
+                if (Kotlin.isType(elem, KevoreeLibrary.org.kevoree.Instance)) {
+                    return this.isVirtual(elem.typeDefinition);
+                } else if (Kotlin.isType(elem, KevoreeLibrary.org.kevoree.TypeDefinition)) {
+                    var virtual = elem.findMetaDataByID('virtual');
+                    return virtual !== null;
+                } else if (Kotlin.isType(elem, KevoreeLibrary.org.kevoree.MBinding)) {
+                    if (elem.hub) {
+                        return this.isVirtual(elem.hub.typeDefinition);
+                    }
+                }
+                return false;
+            },
+
             /**
              *
              * @param fqn

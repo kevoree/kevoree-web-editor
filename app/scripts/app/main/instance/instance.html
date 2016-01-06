@@ -6,17 +6,11 @@
         </h5>
     </div>
     <div class="instance-form" data-collapse="mainCollapsed">
+        <div class="instance-metas pull-right">
+            <i class="fa fa-cube" title="Virtual type" data-ng-if="isVirtual()"></i>
+            <i class="fa fa-lock" title="Read-only instance" data-ng-if="isReadOnly()"></i>
+        </div>
         <form name="form">
-            <div class="form-group">
-                <label for="version">Version</label>
-                <select
-                        id="version"
-                        class="form-control input-sm"
-                        data-ng-model="selectedVersion"
-                        data-ng-change="changeVersion(selectedVersion)">
-                    <option value="{{ version }}" data-ng-repeat="(index, version) in versions | semverReverseSort" data-ng-selected="version === selectedVersion">{{ version }}</option>
-                </select>
-            </div>
             <div class="form-group" data-ng-class="form.name.$valid ? '':'has-error has-feedback'">
                 <label for="name">Name</label>
                 <input
@@ -30,15 +24,27 @@
                         data-instance="instance"
                         data-instance-name
                         data-instance-type="type"
+                        data-ng-disabled="isReadOnly()"
                         required>
                 <span class="glyphicon glyphicon-remove form-control-feedback" data-ng-hide="form.name.$valid"></span>
                 <p class="help-block" data-ng-if="!form.name.$valid">Name must be unique and not null</p>
             </div>
+            <div class="form-group">
+                <label for="version">Version</label>
+                <select
+                        id="version"
+                        class="form-control input-sm"
+                        data-ng-model="selectedVersion"
+                        data-ng-change="changeVersion(selectedVersion)"
+                        data-ng-disabled="isReadOnly()">
+                    <option value="{{ version }}" data-ng-repeat="(index, version) in versions | semverReverseSort" data-ng-selected="version === selectedVersion">{{ version }}</option>
+                </select>
+            </div>
             <div class="form-group clearfix">
                 <label>State</label>
                 <div class="btn-group btn-group-block">
-                    <label class="btn btn-sm btn-default" data-ng-model="instance.started" data-btn-radio="true">Started</label>
-                    <label class="btn btn-sm btn-default" data-ng-model="instance.started" data-btn-radio="false">Stopped</label>
+                    <label class="btn btn-sm btn-default" data-ng-model="instance.started" data-btn-radio="true" data-ng-disabled="isReadOnly()">Started</label>
+                    <label class="btn btn-sm btn-default" data-ng-model="instance.started" data-btn-radio="false" data-ng-disabled="isReadOnly()">Stopped</label>
                 </div>
             </div>
         </form>

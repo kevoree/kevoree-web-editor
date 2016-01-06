@@ -97,6 +97,19 @@ angular.module('editorApp')
 
         $scope.isTruish = kModelHelper.isTruish;
 
+        $scope.isReadOnly = function () {
+            // TODO put that code in kModelHelper
+            if ($scope.instance) {
+                var val = $scope.instance.findMetaDataByID('access_mode');
+                return val && val.value === 'read-only';
+            }
+            return false;
+        };
+
+        $scope.isVirtual = function () {
+            return kModelHelper.isVirtual($scope.instance);
+        };
+
         var timeout;
         ui.setSelectedListener(function(path) {
             $timeout(function() {

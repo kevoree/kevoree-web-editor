@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('ui', function(util, uiUtils, uiCreateGroup, uiCreateGroupWire, uiCreateNode, uiCreateComponent, uiCreateBinding, uiCreateChannel, kModelHelper, kFactory, KWE_POSITION, NODE_WIDTH, NODE_HEIGHT, INVALID_RADIUS, GROUP_RADIUS, CHANNEL_RADIUS) {
+    .factory('ui', function(util, uiUtils, uiCreateGroup, uiCreateGroupWire, uiCreateNode, uiCreateComponent, uiCreateBinding, uiCreateChannel, kModelHelper, kFactory, Notification, KWE_POSITION, NODE_WIDTH, NODE_HEIGHT, INVALID_RADIUS, GROUP_RADIUS, CHANNEL_RADIUS) {
 
         var ui = {
             /**
@@ -239,14 +239,23 @@ angular.module('editorApp')
                     if (path) {
                         var instance = ui.model.findByPath(path);
                         if (instance) {
-                            if (instance.hosts) {
-                                // also remove child nodes recursively
-                                instance.hosts.array.forEach(function deleteChild(node) {
-                                    node.hosts.array.forEach(deleteChild);
-                                    node.delete();
+                            var val = instance.findMetaDataByID('access_mode');
+                            if (val && val.value === 'read-only') {
+                                Notification.warning({
+                                    title: 'Delete instance',
+                                    message: 'Cannot delete read-only instance "'+instance.name+'"',
+                                    delay: 3000
                                 });
+                            } else {
+                                if (instance.hosts) {
+                                    // also remove child nodes recursively
+                                    instance.hosts.array.forEach(function deleteChild(node) {
+                                        node.hosts.array.forEach(deleteChild);
+                                        node.delete();
+                                    });
+                                }
+                                instance.delete();
                             }
-                            instance.delete();
                         }
                     } else {
                         if (elem.hasClass('group-wire')) {
