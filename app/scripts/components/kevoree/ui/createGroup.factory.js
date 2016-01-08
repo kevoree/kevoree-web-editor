@@ -35,8 +35,10 @@ angular.module('editorApp')
                 .drag(
                     function(dx, dy) {
                         var plugPos = this.data('plugPos');
+                        var mouseX = plugPos.x + dx;
+                        var mouseY = plugPos.y + dy;
                         this.data('wire').attr({
-                            d: 'M' + plugPos.x + ',' + plugPos.y + ' ' + (plugPos.x + dx) + ',' + (plugPos.y + dy)
+                            d: 'M' + plugPos.x + ',' + plugPos.y + ' ' + mouseX + ',' + mouseY
                         });
 
                         clearTimeout(this.data('wireTimeout'));

@@ -63,9 +63,14 @@ angular.module('editorApp')
          * @param elem
          * @param x
          * @param y
+         * @param m transform matrix (translations & zoom of the editor panel)
          */
-        function isPointInsideElem(elem, x, y) {
+        function isPointInsideElem(elem, x, y, m) {
             var bbox = getAbsoluteBBox(elem);
+            bbox.x = (bbox.x * m.a) + m.e;
+            bbox.y = (bbox.y * m.a) + m.f;
+            bbox.width *= m.a;
+            bbox.height *= m.a;
             return x >= bbox.x &&
                 x <= bbox.x + bbox.width &&
                 y >= bbox.y &&

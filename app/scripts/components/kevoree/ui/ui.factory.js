@@ -591,14 +591,15 @@ angular.module('editorApp')
             },
 
             getHoveredNode: function(x, y, bannedPath) {
+                var m = this.editor.transform().localMatrix;
                 return this.editor
                     .selectAll('.node').items
                     .filter(function(node) {
                         if (bannedPath) {
                             return node.attr('data-path') !== bannedPath &&
-                                uiUtils.isPointInsideElem(node, x, y);
+                                uiUtils.isPointInsideElem(node, x, y, m);
                         } else {
-                            return uiUtils.isPointInsideElem(node, x, y);
+                            return uiUtils.isPointInsideElem(node, x, y, m);
                         }
                     })
                     .sort(function(a, b) {
@@ -621,7 +622,7 @@ angular.module('editorApp')
                 var ports = this.editor
                     .selectAll('.port').items;
                 for (var i = 0; i < ports.length; i++) {
-                    if (uiUtils.isPointInsideElem(ports[i], x, y)) {
+                    if (uiUtils.isPointInsideElem(ports[i], x, y, this.editor.transform().localMatrix)) {
                         return ports[i];
                     }
                 }
