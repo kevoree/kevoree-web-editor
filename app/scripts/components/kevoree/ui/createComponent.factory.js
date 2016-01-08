@@ -561,5 +561,7 @@ angular.module('editorApp')
             host.append(comp);
 
             ui.updateValidity(instance);
+
+            return comp;
         };
     });

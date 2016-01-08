@@ -98,7 +98,7 @@ angular.module('editorApp')
             },
 
             createComponent: function (instance) {
-                uiCreateComponent(this, instance);
+                return uiCreateComponent(this, instance);
             },
 
             createBinding: function (instance) {
@@ -427,7 +427,9 @@ angular.module('editorApp')
                 });
 
                 // recreate the new component
-                ui.createComponent(comp);
+                var compUi = ui.createComponent(comp);
+                compUi.select('.bg').addClass('selected');
+                this.refreshNode(comp.eContainer().path());
             },
 
             /**

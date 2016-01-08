@@ -18,7 +18,6 @@ angular.module('editorApp')
         $scope.fragCollapsed = {};
 
         $scope.changeName = function(form, name) {
-            console.log('changeName', name, form.name.$valid);
             if (form.name.$valid) {
                 $scope.instance.name = name;
             }

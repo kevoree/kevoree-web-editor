@@ -17,8 +17,11 @@ angular.module('editorApp')
                 };
 
                 $scope.isReadOnly = function () {
-                    var val = $scope.dictionary.eContainer().findMetaDataByID('access_mode');
-                    return (val && val.value === 'read-only');
+                    if ($scope.dictionary && $scope.dictionary.eContainer()) {
+                        var val = $scope.dictionary.eContainer().findMetaDataByID('access_mode');
+                        return (val && val.value === 'read-only');
+                    }
+                    return false;
                 };
             }
         };
