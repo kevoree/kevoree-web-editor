@@ -33,12 +33,10 @@ angular.module('editorApp')
                     });
                 })
                 .drag(
-                    function(dx, dy) {
+                    function(dx, dy, cx, cy) {
                         var plugPos = this.data('plugPos');
-                        var mouseX = plugPos.x + dx;
-                        var mouseY = plugPos.y + dy;
                         this.data('wire').attr({
-                            d: 'M' + plugPos.x + ',' + plugPos.y + ' ' + mouseX + ',' + mouseY
+                            d: 'M' + plugPos.x + ',' + plugPos.y + ' ' + (plugPos.x + dx) + ',' + (plugPos.y + dy)
                         });
 
                         clearTimeout(this.data('wireTimeout'));
@@ -48,7 +46,8 @@ angular.module('editorApp')
                         }
 
                         var timeout = setTimeout(function() {
-                            var nodeElem = ui.getHoveredNode(mouseX, mouseY);
+                            var pt = uiUtils.getPointInEditor(cx, cy);
+                            var nodeElem = ui.getHoveredNode(pt.x, pt.y);
                             if (nodeElem) {
                                 this.data('hoveredNode', nodeElem);
                                 var nodeBg = nodeElem.select('.bg');

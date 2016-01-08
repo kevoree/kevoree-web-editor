@@ -75,7 +75,7 @@ angular.module('editorApp')
                         evt.cancelBubble = true;
                     })
                     .drag(
-                        function(dx, dy) {
+                        function(dx, dy, cx, cy) {
                             var portPos = this.data('portPos');
                             var middle = {
                                 x: 0,
@@ -103,7 +103,8 @@ angular.module('editorApp')
                             }
 
                             var timeout = setTimeout(function() {
-                                var portElem = ui.getHoveredPort(portPos.x + dx, portPos.y + dy);
+                                var pt = uiUtils.getPointInEditor(cx, cy);
+                                var portElem = ui.getHoveredPort(pt.x, pt.y);
                                 if (portElem) {
                                     this.data('hoveredChan', null);
                                     this.data('hoveredPort', portElem);
@@ -282,7 +283,7 @@ angular.module('editorApp')
                         evt.cancelBubble = true;
                     })
                     .drag(
-                        function(dx, dy) {
+                        function(dx, dy, cx, cy) {
                             var portPos = this.data('portPos');
                             var middle = {
                                 x: 0,
@@ -310,7 +311,8 @@ angular.module('editorApp')
                             }
 
                             var timeout = setTimeout(function() {
-                                var portElem = ui.getHoveredPort(portPos.x + dx, portPos.y + dy);
+                                var pt = uiUtils.getPointInEditor(cx, cy);
+                                var portElem = ui.getHoveredPort(pt.x, pt.y);
                                 if (portElem) {
                                     this.data('hoveredChan', null);
                                     this.data('hoveredPort', portElem);

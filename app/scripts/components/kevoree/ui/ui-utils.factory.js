@@ -77,6 +77,16 @@ angular.module('editorApp')
                 y <= bbox.y + bbox.height;
         }
 
+        /**
+         * @param x
+         * @param y
+         * @returns { x, y } points within the editor context (equivalent to Chrome's offsetX offsetY)
+         */
+        function getPointInEditor(x, y) {
+            var offset = angular.element('svg#editor').offset();
+            return { x: x - offset.left, y: y - offset.top };
+        }
+
         function computeWireNodeAnchor(from, to, width, height) {
             function getHorizontalAlignment() {
                 if (from.x >= to.x + width / 3 && from.x <= to.x + (width / 3) * 2) {
@@ -256,6 +266,7 @@ angular.module('editorApp')
             isPointInsideElem: isPointInsideElem,
             computeWireNodeAnchor: computeWireNodeAnchor,
             computeBindingCoords: computeBindingCoords,
-            updateSVGDefs: updateSVGDefs
+            updateSVGDefs: updateSVGDefs,
+            getPointInEditor: getPointInEditor
         };
     });
