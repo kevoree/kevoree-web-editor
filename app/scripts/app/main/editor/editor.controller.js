@@ -8,7 +8,7 @@
  * Controller of the editorApp editor
  */
 angular.module('editorApp')
-    .controller('EditorCtrl', function ($scope, kEditor, ui, kModelHelper, kFactory, kInstance, Notification, KWE_POSITION) {
+    .controller('EditorCtrl', function ($scope, kEditor, ui, uiUtils, kModelHelper, kFactory, kInstance, Notification, KWE_POSITION) {
         // init the UI kFactory
         ui.init();
 
@@ -49,16 +49,17 @@ angular.module('editorApp')
             var tdefs = kEditor.getModel().select(pkgPath+'/typeDefinitions[name='+tdefName+']');
             var tdef = kModelHelper.findBestVersion(tdefs.array);
             var type = kModelHelper.getTypeDefinitionType(tdef);
-            var editor = ui.getEditorContainer();
+            var m = ui.editor.transform().localMatrix;
 
             function preProcess(instance) {
                 instance.typeDefinition = tdef;
                 instance.started = true;
                 var pos = kFactory.createValue();
                 pos.name = KWE_POSITION;
+                var pt = uiUtils.getPointInEditor(ui.mousePos.x, ui.mousePos.y);
                 pos.value = JSON.stringify({
-                    x: ui.mousePos.x - editor.offsetLeft,
-                    y: ui.mousePos.y - editor.offsetTop
+                    x: pt.x - m.e,
+                    y: pt.y - m.f
                 });
                 instance.addMetaData(pos);
                 kInstance.initDictionaries(instance);
