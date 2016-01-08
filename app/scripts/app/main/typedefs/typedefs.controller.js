@@ -209,16 +209,16 @@ angular.module('editorApp')
                     pkgsMap[pkg].tdefs = pkgsMap[pkg].tdefs || {};
 
                     var descMeta = tdef.findMetaDataByID('description');
-
+                    var platforms = {};
+                    tdef.select('deployUnits[name=*]/filters[name=platform]')
+                        .array.forEach(function (meta) {
+                            platforms[meta.value] = true;
+                        });
                     pkgsMap[pkg].tdefs[tdef.name] = {
                         name: tdef.name,
                         type: kModelHelper.getTypeDefinitionType(tdef),
                         pkgPath: tdef.eContainer().path(),
-                        platforms: tdef
-                            .select('deployUnits[name=*]/filters[name=platform]')
-                            .array.map(function(meta) {
-                                return meta.value;
-                            }),
+                        platforms: Object.keys(platforms),
                         description: descMeta ? descMeta.value : null
                     };
                 });
