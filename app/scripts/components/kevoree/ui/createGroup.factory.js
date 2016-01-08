@@ -48,7 +48,7 @@ angular.module('editorApp')
                         }
 
                         var timeout = setTimeout(function() {
-                            var nodeElem = ui.getHoveredNode(plugPos.x + dx, plugPos.y + dy);
+                            var nodeElem = ui.getHoveredNode(mouseX, mouseY);
                             if (nodeElem) {
                                 this.data('hoveredNode', nodeElem);
                                 var nodeBg = nodeElem.select('.bg');
