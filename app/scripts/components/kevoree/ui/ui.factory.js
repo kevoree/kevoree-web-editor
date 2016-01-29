@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('ui', function(util, uiUtils, uiCreateGroup, uiCreateGroupWire, uiCreateNode, uiCreateComponent, uiCreateBinding, uiCreateChannel, kModelHelper, kFactory, Notification, KWE_POSITION, NODE_WIDTH, NODE_HEIGHT, INVALID_RADIUS, GROUP_RADIUS, CHANNEL_RADIUS) {
+    .factory('ui', function(util, uiUtils, uiCreateGroup, uiCreateGroupWire, uiCreateNode, uiCreateComponent, uiCreateBinding, uiCreateChannel, kModelHelper, kFactory, Notification, KWE_POSITION, KWE_FOLD, NODE_WIDTH, NODE_HEIGHT, INVALID_RADIUS, GROUP_RADIUS, CHANNEL_RADIUS) {
 
         var ui = {
             /**
@@ -432,6 +432,96 @@ angular.module('editorApp')
                 this.refreshNode(comp.eContainer().path());
             },
 
+            toggleFold: function (node, isFolded) {
+                function toggleSubNodes(node) {
+                    node.components.array.forEach(toggleComp);
+                    node.hosts.array.forEach(toggleSubNodes);
+
+                    var uiNode = ui.editor.select('.node[data-path="'+node.path()+'"]');
+                    if (uiNode) {
+                        if (isFolded) {
+                            uiNode.addClass('hide');
+                        } else {
+                            uiNode.removeClass('hide');
+                        }
+                    }
+                }
+
+                function toggleComp(comp) {
+                    comp.provided.array.forEach(togglePort);
+                    comp.required.array.forEach(togglePort);
+
+                    var uiComp = ui.editor.select('.comp[data-path="'+comp.path()+'"]');
+                    if (uiComp) {
+                        if (isFolded) {
+                            uiComp.addClass('hide');
+                        } else {
+                            uiComp.removeClass('hide');
+                        }
+                    }
+                }
+
+                function togglePort(port) {
+                    port.bindings.array.forEach(toggleBinding);
+                }
+
+                function toggleBinding(binding) {
+                    if (binding.hub) {
+                        toggleChannel(binding.hub);
+                    }
+
+                    var uiBinding = ui.editor.select('.binding[data-path="'+binding.path()+'"]');
+                    if (uiBinding) {
+                        if (isFolded) {
+                            uiBinding.addClass('hide');
+                        } else {
+                            uiBinding.removeClass('hide');
+                        }
+                    }
+                }
+
+                function toggleChannel(chan) {
+                    var uiChan = ui.editor.select('.chan[data-path="'+chan.path()+'"]');
+                    if (uiChan) {
+                        if (kModelHelper.isChannelDistributed(chan)) {
+                            if (isFolded) {
+                                uiChan.attr({
+                                    strokeDasharray: '5 3'
+                                });
+                            } else {
+                                uiChan.attr({
+                                    strokeDasharray: ''
+                                });
+                            }
+                        } else {
+                            if (isFolded) {
+                                uiChan.addClass('hide');
+                            } else {
+                                uiChan.removeClass('hide');
+                            }
+                        }
+                    }
+                }
+
+                node.components.array.forEach(toggleComp);
+                node.hosts.array.forEach(toggleSubNodes);
+
+                var uiNode = ui.editor.select('.node[data-path="'+node.path()+'"]');
+                if (uiNode) {
+                    if (isFolded) {
+                        uiNode.select('.bg').attr({
+                            height: NODE_HEIGHT,
+                            strokeDasharray: '5 3'
+                        });
+                    } else {
+                        uiNode.select('.bg').attr({
+                            height: uiUtils.getNodeUIHeight(node),
+                            strokeDasharray: ''
+                        });
+                    }
+                }
+            },
+
             /**
              * Refresh a node's UI (and it's children too)
              * @param path
@@ -503,7 +593,7 @@ angular.module('editorApp')
                                 'clip-path': 'url(#comp-clip-' + treeHeight + ')'
                             });
 
-                        var PORT_X_PADDING = 24;
+                        var PORT_X_PADDING = 3;
                         instance.typeDefinition.required.array.forEach(function(portType) {
                             var port = comp.select('.required[data-name="' + portType.name + '"]');
                             port.transform('t' + (computedWidth - PORT_X_PADDING) + ',' + port.transform().localMatrix.f);
@@ -511,6 +601,9 @@ angular.module('editorApp')
 
                         this.updateValidity(instance);
                     }
+                } else {
+                    console.log('create comp', instance);
+                    this.createComponent(instance);
                 }
             },
 

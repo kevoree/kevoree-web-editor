@@ -133,7 +133,7 @@ angular.module('editorApp')
                         var redrawBinding = function(binding) {
                             var elem = ui.editor.select('.binding[data-path="' + binding.path() + '"]');
                             if (elem) {
-                                elem.data('startPtDrag').apply(elem, args);
+                                elem.data('endPtDrag').apply(elem, args);
                             }
                         }.bind(this);
 

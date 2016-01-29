@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('uiCreateGroupWire', function (uiUtils, util, GROUP_RADIUS, GROUP_PLUG_RADIUS) {
+    .factory('uiCreateGroupWire', function (uiUtils, util, GROUP_RADIUS) {
         return function(ui, group, node) {
-            var grpElem, nodeElem, wireElem, data = {};
+            var grpElem, nodeElem, wireElem, wireBg, pt, data = {};
 
             function computeData() {
                 grpElem = ui.editor.select('.group[data-path="' + group.path() + '"]');
@@ -16,7 +16,7 @@ angular.module('editorApp')
                 data = {
                     from: {
                         x: 0,
-                        y: 0 + (GROUP_RADIUS / 2) + GROUP_PLUG_RADIUS
+                        y: 0
                     },
                     to: {
                         x: toBox.x - grpMatrix.e,
@@ -28,17 +28,18 @@ angular.module('editorApp')
             }
             computeData();
             var toAnchor = uiUtils.computeWireNodeAnchor(data.from, data.to, data.width, data.height);
-
             if (wireElem) {
                 // update data
                 wireElem
                     .data('data', data);
                 // update bg location
-                wireElem
-                    .selectAll('path')
+                wireBg = wireElem
+                    .select('path')
                     .attr({
                         d: 'M' + data.from.x + ',' + data.from.y + ' ' + toAnchor.x + ',' + toAnchor.y
                     });
+                pt = wireBg.getPointAtLength(GROUP_RADIUS + 2);
+                wireBg.attr({ d: 'M' + pt.x + ',' + pt.y + ' ' + toAnchor.x + ',' + toAnchor.y });
                 // update node plug location
                 wireElem
                     .select('circle')
@@ -47,7 +48,7 @@ angular.module('editorApp')
                         cy: toAnchor.y
                     });
             } else {
-                var wireBg = ui.editor
+                wireBg = ui.editor
                     .path('M' + data.from.x + ',' + data.from.y + ' ' + toAnchor.x + ',' + toAnchor.y)
                     .attr({
                         fill: 'none',
@@ -95,6 +96,8 @@ angular.module('editorApp')
                         wireBg.attr({
                             d: 'M' + data.from.x + ',' + data.from.y + ' ' + anchor.x + ',' + anchor.y
                         });
+                        pt = wireBg.getPointAtLength(GROUP_RADIUS + 2);
+                        wireBg.attr({ d: 'M' + pt.x + ',' + pt.y + ' ' + anchor.x + ',' + anchor.y });
                         nodePlug.attr({
                             cx: anchor.x,
                             cy: anchor.y
@@ -110,6 +113,8 @@ angular.module('editorApp')
                         wireBg.attr({
                             d: 'M' + data.from.x + ',' + data.from.y + ' ' + anchor.x + ',' + anchor.y
                         });
+                        pt = wireBg.getPointAtLength(GROUP_RADIUS + 2);
+                        wireBg.attr({ d: 'M' + pt.x + ',' + pt.y + ' ' + anchor.x + ',' + anchor.y });
                         nodePlug.attr({
                             cx: anchor.x,
                             cy: anchor.y
@@ -119,6 +124,9 @@ angular.module('editorApp')
                         computeData();
                         this.data('data', data);
                     });
+
+                pt = wireBg.getPointAtLength(GROUP_RADIUS + 2);
+                wireBg.attr({ d: 'M' + pt.x + ',' + pt.y + ' ' + toAnchor.x + ',' + toAnchor.y });
             }
         };
     });

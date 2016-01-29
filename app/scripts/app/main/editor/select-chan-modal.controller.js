@@ -3,8 +3,6 @@
 angular.module('editorApp')
     .controller('SelectChanModalCtrl', function ($scope, $modalInstance, startPort, endPort, orderByFilter, kInstance, kEditor, kFactory, kModelHelper, KWE_POSITION) {
         var selected;
-        console.log('STARTPORT', startPort);
-        console.log('ENDPORT', endPort);
         $scope.instances = orderByFilter(kEditor.getModel().hubs.array.filter(function (chan) {
             chan.selected = false;
             return !kModelHelper.isAlreadyBound(endPort, chan) &&
@@ -18,14 +16,9 @@ angular.module('editorApp')
                 kModelHelper.isCompatible(type, endPort.eContainer().eContainer());
         }), 'name');
 
-        if ($scope.instances.length > 0) {
-            $scope.instances[0].selected = true;
-            selected = $scope.instances[0];
-        } else if ($scope.types.length > 0) {
+        if ($scope.types.length > 0) {
             $scope.types[0].selected = true;
             selected = $scope.types[0];
-        } else {
-
         }
 
         $scope.isValid = function () {

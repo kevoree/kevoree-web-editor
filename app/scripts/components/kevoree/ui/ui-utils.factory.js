@@ -170,13 +170,13 @@ angular.module('editorApp')
             var chanM = chanElem.transform().localMatrix,
                 chan = {
                     x: chanM.e,
-                    y: chanM.f + (CHANNEL_RADIUS / 2)
+                    y: chanM.f
                 },
                 compBox = getAbsoluteBBox(portElem.parent()),
                 portM = portElem.transform().localMatrix,
                 port = {
-                    x: compBox.x + portM.e,
-                    y: compBox.y + portM.f + 15
+                    x: compBox.x + portM.e + 2,
+                    y: compBox.y + portM.f + COMP_HEIGHT - 5
                 },
                 middle = {
                     x: 0,
@@ -247,9 +247,9 @@ angular.module('editorApp')
                         var compClip = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
                         compClip.id = 'comp-clip-' + height;
                         var compRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                        compRect.setAttribute('width', (NODE_WIDTH + (20 * height) - 112) + '');
+                        compRect.setAttribute('width', (NODE_WIDTH + (20 * height) - 60) + '');
                         compRect.setAttribute('height', '100%');
-                        compRect.setAttribute('x', 46 + '');
+                        compRect.setAttribute('x', 20 + '');
                         compRect.setAttribute('y', 0 + '');
                         compClip.appendChild(compRect);
                         defs.appendChild(compClip);

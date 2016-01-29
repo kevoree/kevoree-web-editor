@@ -355,6 +355,24 @@ angular.module('editorApp')
             },
 
             /**
+             * @param channel instance
+             * @returns false if channel is only fragmented on one node
+             */
+            isChannelDistributed: function (channel) {
+                var nodes = {};
+
+                channel.bindings.array.forEach(function (binding) {
+                    if (binding.port && binding.port.eContainer()) {
+                        var comp = binding.port.eContainer();
+                        var node = this.getHighestNode(comp);
+                        nodes[node.path()] = true;
+                    }
+                }.bind(this));
+
+                return Object.keys(nodes).length > 1;
+            },
+
+            /**
              *
              * @param fqn
              * @returns {string}

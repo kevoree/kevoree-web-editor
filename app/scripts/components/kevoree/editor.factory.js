@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('kEditor', function (kFactory, kModelHelper, kInstance, ui, Notification, KWE_POSITION) {
+    .factory('kEditor', function (kFactory, kModelHelper, kInstance, ui, Notification, KWE_POSITION, KWE_FOLD, CHANNEL_RADIUS, GROUP_RADIUS) {
 
         function KevoreeEditor() {
             this.model = kFactory.createContainerRoot();
@@ -90,10 +90,16 @@ angular.module('editorApp')
                     }
                 }
 
-                var groupX = 75;
+                var groupX = GROUP_RADIUS + 20;
                 this.model.groups.array.forEach(function (group) {
-                    relocate(group, { x: groupX, y: 75 });
-                    groupX += 140;
+                    relocate(group, { x: groupX, y: GROUP_RADIUS + 20 });
+                    groupX += GROUP_RADIUS * 2 + 20;
+                });
+
+                var chanX = CHANNEL_RADIUS + 20;
+                this.model.hubs.array.forEach(function (hub) {
+                    relocate(hub, { x: chanX, y: 180 });
+                    chanX += CHANNEL_RADIUS * 2 + 20;
                 });
 
                 var nodeX = 25;
@@ -101,15 +107,9 @@ angular.module('editorApp')
                     if (!node.host) {
                         // root node (= no parent)
                         var height = kModelHelper.getNodeTreeHeight(node);
-                        relocate(node, { x: nodeX, y: 150 });
+                        relocate(node, { x: nodeX, y: 220 });
                         nodeX += 230 + (height * 20);
                     }
-                });
-
-                var chanX = 75;
-                this.model.hubs.array.forEach(function (hub) {
-                    relocate(hub, { x: chanX, y: 550 });
-                    chanX += 120;
                 });
             },
 
@@ -362,6 +362,12 @@ angular.module('editorApp')
                                     }
                                 }
                                 break;
+
+                            case 'metaData':
+                                if (trace.value.name === KWE_FOLD && trace.source.getRefInParent() === 'nodes') {
+                                    ui.toggleFold(trace.source, kModelHelper.isTruish(trace.value.value));
+                                }
+                                break;
                         }
                     }
 
@@ -398,7 +404,7 @@ angular.module('editorApp')
                             break;
 
                         case 'value':
-                            //console.log('SET value', trace);
+                            // console.log('SET value', trace);
                             if (trace.source.getRefInParent() === 'metaData' && trace.source.name === KWE_POSITION) {
                                 ui.updatePosition(trace.source.eContainer());
                                 if (trace.source.eContainer().getRefInParent() === 'nodes') {
@@ -412,6 +418,12 @@ angular.module('editorApp')
                                         ui.createBinding(binding);
                                     });
                                 }
+                            } else if (trace.source.getRefInParent() === 'metaData' && trace.source.name === KWE_FOLD) {
+                                // fold/unfold
+                                if (trace.source.eContainer().getRefInParent() === 'nodes') {
+                                    ui.toggleFold(trace.source.eContainer(), kModelHelper.isTruish(trace.source.value));
+                                }
+
                             } else if (trace.source.eContainer().getRefInParent() === 'dictionary') {
                                 ui.updateValidity(trace.source.eContainer().eContainer());
                             }

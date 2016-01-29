@@ -6,5 +6,5 @@ angular.module('editorApp')
     .constant('NODE_WIDTH',        210)
     .constant('NODE_HEIGHT',       50)
     .constant('COMP_HEIGHT',       40)
-    .constant('CHANNEL_RADIUS',    45)
+    .constant('CHANNEL_RADIUS',    12)
     .constant('INVALID_RADIUS',    5);

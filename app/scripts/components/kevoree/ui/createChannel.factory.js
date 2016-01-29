@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('uiCreateChannel', function (uiUtils, util, CHANNEL_RADIUS) {
+    .factory('uiCreateChannel', function(uiUtils, util, CHANNEL_RADIUS) {
         return function(ui, instance) {
             ui.removeUIElem(instance.path());
             uiUtils.updateSVGDefs(ui.model);
@@ -9,39 +9,41 @@ angular.module('editorApp')
             var bg = ui.editor
                 .circle(0, 0, CHANNEL_RADIUS)
                 .attr({
-                    fill: '#d57129',
-                    stroke: '#fff',
-                    strokeWidth: 3,
+                    fill: '#DB661D',
+                    stroke: util.isTruish(instance.started) ? '#fff' : '#000',
+                    strokeWidth: 2,
+                    // strokeDasharray: '5 3',
                     'class': 'bg',
-                    opacity: 0.75
+                    opacity: 0.75,
+                    title: instance.name + ': ' + instance.typeDefinition.name
                 });
 
-            var nameText = ui.editor
-                .text(0, -5, instance.name)
-                .attr({
-                    fill: util.isTruish(instance.started) ? '#fff' : '#000',
-                    textAnchor: 'middle',
-                    'class': 'name',
-                    'clip-path': 'url(#chan-clip)'
-                });
+            // var nameText = ui.editor
+            //     .text(0, -5, instance.name)
+            //     .attr({
+            //         fill: util.isTruish(instance.started) ? '#fff' : '#000',
+            //         textAnchor: 'middle',
+            //         'class': 'name',
+            //         'clip-path': 'url(#chan-clip)'
+            //     });
+            //
+            // var tdefText = ui.editor
+            //     .text(0, 10, instance.typeDefinition.name)
+            //     .attr({
+            //         fill: 'white',
+            //         textAnchor: 'middle',
+            //         'clip-path': 'url(#chan-clip)'
+            //     });
 
-            var tdefText = ui.editor
-                .text(0, 10, instance.typeDefinition.name)
-                .attr({
-                    fill: 'white',
-                    textAnchor: 'middle',
-                    'clip-path': 'url(#chan-clip)'
-                });
-
-            ui.editor
+            var channel = ui.editor
                 .group()
                 .attr({
                     'class': 'instance chan',
                     'data-path': instance.path()
                 })
                 .append(bg)
-                .append(nameText)
-                .append(tdefText)
+                // .append(nameText)
+                // .append(tdefText)
                 .selectable()
                 .draggable()
                 .dragMove(function() {
@@ -49,7 +51,7 @@ angular.module('editorApp')
                     instance.bindings.array.forEach(function(binding) {
                         //factory.createBinding(binding);
                         var elem = ui.editor.select('.binding[data-path="' + binding.path() + '"]');
-                        elem.data('endPtDrag').apply(elem, args);
+                        elem.data('startPtDrag').apply(elem, args);
                     });
                 })
                 .dragEnd(function() {
@@ -66,6 +68,43 @@ angular.module('editorApp')
                     });
                 })
                 .relocate(instance);
+
+                bg
+                    .mousemove(function (e, cx, cy) {
+                        clearTimeout(this.data('showName'));
+                        var timeout = setTimeout(function () {
+                            var pt = uiUtils.getPointInEditor(cx, cy + 5),
+                                textAnchor, x;
+                            var width = ui.editor.getBBox().width;
+                            if (pt.x > (width / 2)) {
+                                x = - (CHANNEL_RADIUS * 2);
+                                textAnchor = 'end';
+                            } else {
+                                x = CHANNEL_RADIUS * 2;
+                                textAnchor = 'start';
+                            }
+                            var elem = channel.select('.name');
+                            if (elem) {
+                                elem.attr({ x: x, textAnchor: textAnchor });
+                            } else {
+                                channel.append(ui.editor
+                                    .text(x, 0, instance.name + ': ' + instance.typeDefinition.name)
+                                    .attr({
+                                        fill: util.isTruish(instance.started) ? '#fff' : '#000',
+                                        textAnchor: textAnchor,
+                                        'class': 'name'
+                                    }));
+                            }
+                        }, 300);
+                        this.data('showName', timeout);
+                    })
+                    .mouseout(function() {
+                        clearTimeout(this.data('showName'));
+                        var elem = channel.select('.name');
+                        if (elem) {
+                            elem.remove();
+                        }
+                    });
 
             ui.updateValidity(instance);
         };

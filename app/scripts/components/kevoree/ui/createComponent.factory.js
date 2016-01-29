@@ -47,12 +47,12 @@ angular.module('editorApp')
                 .append(nameText)
                 .append(tdefText);
 
-            var PORT_X_PADDING = 24,
+            var PORT_X_PADDING = 3,
                 providedDy = 0,
                 requiredDy = 0;
             instance.typeDefinition.provided.array.forEach(function(portType) {
                 var portPlug = ui.editor
-                    .circle(0, (COMP_HEIGHT / 2) - 5, 11)
+                    .rect(-8, 5, 10, COMP_HEIGHT - 10, 2)
                     .attr({
                         fill: '#bc7645',
                         stroke: '#ECCA40',
@@ -77,10 +77,7 @@ angular.module('editorApp')
                     .drag(
                         function(dx, dy, cx, cy) {
                             var portPos = this.data('portPos');
-                            var middle = {
-                                x: 0,
-                                y: 0
-                            };
+                            var middle = { x: 0, y: 0 };
                             if (portPos.x > (portPos.x + dx)) {
                                 middle.x = (portPos.x + dx) + (portPos.x - (portPos.x + dx)) / 2;
                             } else {
@@ -140,7 +137,7 @@ angular.module('editorApp')
                                 compBox = uiUtils.getAbsoluteBBox(comp);
                             var portPos = {
                                 x: portM.e + compBox.x,
-                                y: portM.f + compBox.y + (COMP_HEIGHT / 2) - 5
+                                y: portM.f + compBox.y + ((COMP_HEIGHT - 6) / 2) + 3
                             };
                             this.data('portPos', portPos);
                             var binding = ui.editor
@@ -239,10 +236,9 @@ angular.module('editorApp')
                         });
 
                 var text = ui.editor
-                    .text(0, COMP_HEIGHT - 4, portType.name.substr(0, (portType.name.length > 5) ? 5 : portType.name.length))
+                    .text(6, COMP_HEIGHT - 4, portType.name.substr(0, 6))
                     .attr({
                         fill: 'white',
-                        textAnchor: 'middle',
                         title: portType.name
                     })
                     .append(Snap.parse('<title>' + portType.name + '</title>'));
@@ -264,7 +260,7 @@ angular.module('editorApp')
 
             instance.typeDefinition.required.array.forEach(function(portType) {
                 var portPlug = ui.editor
-                    .circle(0, (COMP_HEIGHT / 2) - 5, 11)
+                    .rect(-3, 5, 10, COMP_HEIGHT - 10, 2)
                     .attr({
                         fill: '#bc7645',
                         stroke: '#C60808',
@@ -346,7 +342,7 @@ angular.module('editorApp')
                                 compBox = uiUtils.getAbsoluteBBox(comp);
                             var portPos = {
                                 x: portM.e + compBox.x,
-                                y: portM.f + compBox.y + (COMP_HEIGHT / 2) - 5
+                                y: portM.f + compBox.y + ((COMP_HEIGHT - 6) / 2) + 3
                             };
                             this.data('portPos', portPos);
                             var binding = ui.editor
@@ -445,10 +441,10 @@ angular.module('editorApp')
                         });
 
                 var text = ui.editor
-                    .text(0, COMP_HEIGHT - 4, portType.name.substr(0, (portType.name.length > 5) ? 5 : portType.name.length))
+                    .text(-6, COMP_HEIGHT - 4, portType.name.substr(0, 6))
                     .attr({
                         fill: 'white',
-                        textAnchor: 'middle',
+                        textAnchor: 'end',
                         title: portType.name
                     })
                     .append(Snap.parse('<title>' + portType.name + '</title>'));
@@ -524,7 +520,7 @@ angular.module('editorApp')
                         port.bindings.array.forEach(function(binding) {
                             var elem = ui.editor.select('.binding[data-path="' + binding.path() + '"]');
                             if (elem) {
-                                elem.data('startPtDrag').apply(elem, args);
+                                elem.data('endPtDrag').apply(elem, args);
                             }
                         });
                     };
