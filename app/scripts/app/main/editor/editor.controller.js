@@ -128,6 +128,25 @@ angular.module('editorApp')
          */
         function moveInstance(axis, delta) {
             return function () {
+                // ui.getSelected().forEach(function (elem) {
+                //     switch (axis) {
+                //         case 'up':
+                //             elem.transform(elem.transform().local + 'T0,-' + delta);
+                //             break;
+                //
+                //         case 'right':
+                //             elem.transform(elem.transform().local + 'T'+delta+',0');
+                //             break;
+                //
+                //         case 'down':
+                //             elem.transform(elem.transform().local + 'T0,' + delta);
+                //             break;
+                //
+                //         case 'left':
+                //             elem.transform(elem.transform().local + 'T-'+delta+',0');
+                //             break;
+                //     }
+                // });
                 var selected = ui.getSelectedPaths();
                 if (selected) {
                     selected.forEach(function (path) {
