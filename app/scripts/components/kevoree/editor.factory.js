@@ -159,22 +159,22 @@ angular.module('editorApp')
             var fragDic, selected, highestNode;
 
             function processRefreshRecursively(node) {
-                node.components.array.forEach(processComponent);
+                node.components.array.forEach(function (comp) {
+                  comp.provided.array.forEach(function (port) {
+                    port.bindings.array.forEach(function (binding) {
+                        ui.createBinding(binding);
+                    });
+                  });
+                  comp.required.array.forEach(function (port) {
+                    port.bindings.array.forEach(function (binding) {
+                        ui.createBinding(binding);
+                    });
+                  });
+                });
                 node.groups.array.forEach(function (group) {
                     ui.createGroupWire(group, node);
                 });
                 node.hosts.array.forEach(processRefreshRecursively);
-            }
-
-            function processComponent(comp) {
-                comp.provided.array.forEach(processPort);
-                comp.required.array.forEach(processPort);
-            }
-
-            function processPort(port) {
-                port.bindings.array.forEach(function (binding) {
-                    ui.createBinding(binding);
-                });
             }
 
             if (trace.elementAttributeName === 'typeDefinitions' || trace.elementAttributeName === 'packages') {

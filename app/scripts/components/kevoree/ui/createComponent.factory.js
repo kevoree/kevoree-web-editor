@@ -3,6 +3,7 @@
 angular.module('editorApp')
     .factory('uiCreateComponent', function ($modal, uiUtils, util, kFactory, kModelHelper, Notification, COMP_HEIGHT, NODE_HEIGHT) {
         return function (ui, instance) {
+            var output, input;
             ui.removeUIElem(instance.path());
             uiUtils.updateSVGDefs(ui.model);
 
@@ -133,7 +134,7 @@ angular.module('editorApp')
                             this.data('bindingTimeout', timeout);
                         },
                         function() {
-                            var portM = port.transform().localMatrix,
+                            var portM = input.transform().localMatrix,
                                 compBox = uiUtils.getAbsoluteBBox(comp);
                             var portPos = {
                                 x: portM.e + compBox.x,
@@ -243,7 +244,7 @@ angular.module('editorApp')
                     })
                     .append(Snap.parse('<title>' + portType.name + '</title>'));
 
-                var port = ui.editor
+                input = ui.editor
                     .group()
                     .attr({
                         'class': 'port provided',
@@ -253,7 +254,7 @@ angular.module('editorApp')
                     .append(text)
                     .transform('t' + PORT_X_PADDING + ',' + providedDy);
 
-                comp.append(port);
+                comp.append(input);
 
                 providedDy += COMP_HEIGHT;
             });
@@ -338,7 +339,7 @@ angular.module('editorApp')
                             this.data('bindingTimeout', timeout);
                         },
                         function() {
-                            var portM = port.transform().localMatrix,
+                            var portM = output.transform().localMatrix,
                                 compBox = uiUtils.getAbsoluteBBox(comp);
                             var portPos = {
                                 x: portM.e + compBox.x,
@@ -449,7 +450,7 @@ angular.module('editorApp')
                     })
                     .append(Snap.parse('<title>' + portType.name + '</title>'));
 
-                var port = ui.editor
+                output = ui.editor
                     .group()
                     .attr({
                         'class': 'port required',
@@ -459,7 +460,7 @@ angular.module('editorApp')
                     .append(text)
                     .transform('t' + (computedWidth - PORT_X_PADDING) + ',' + requiredDy);
 
-                comp.append(port);
+                comp.append(output);
 
                 requiredDy += COMP_HEIGHT;
             });

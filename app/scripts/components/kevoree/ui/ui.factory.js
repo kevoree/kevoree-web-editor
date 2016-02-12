@@ -377,59 +377,56 @@ angular.module('editorApp')
             },
 
             updateCompTypeDefinition: function(comp, oldTypeDef) {
-                // get rid of the old bindings (if any) related to old type def
-                var compare = kFactory.createModelCompare();
-                var diff = compare.diff(oldTypeDef, comp.typeDefinition);
-                var portType, port;
-                diff.traces.array.forEach(function(trace) {
-                    if (trace.traceType.name() === 'REMOVE') {
-                        switch (trace.refName) {
-                            case 'provided':
-                                // remove of a provided port
-                                portType = ui.model.findByPath(trace.objPath);
-                                port = comp.findProvidedByID(portType.name);
-                                if (port) {
-                                    port.delete();
-                                }
-                                break;
-
-                            case 'required':
-                                // remove of a required port
-                                portType = ui.model.findByPath(trace.objPath);
-                                port = comp.findRequiredByID(portType.name);
-                                if (port) {
-                                    port.delete();
-                                }
-                                break;
-                        }
-                    } else if (trace.traceType.name() === 'ADD') {
-                        switch (trace.refName) {
-                            case 'provided':
-                                // add a provided port
-                                portType = ui.model.findByPath(trace.previousPath);
-                                port = kFactory.createPort();
-                                port.name = portType.name;
-                                port.portTypeRef = portType;
-                                comp.addProvided(port);
-                                break;
-
-                            case 'required':
-                                // add a required port
-                                portType = ui.model.findByPath(trace.previousPath);
-                                port = kFactory.createPort();
-                                port.name = portType.name;
-                                port.portTypeRef = portType;
-                                comp.addRequired(port);
-                                break;
-                        }
-
+              oldTypeDef.required.array.forEach(function (oldPortType) {
+                var found = false;
+                comp.typeDefinition.required.array.forEach(function (portType) {
+                  if (portType.name === oldPortType.name) {
+                    found = true;
+                    // port still exists in new typeDef
+                    var port = comp.findRequiredByID(portType.name);
+                    if (port) {
+                      port.portTypeRef = portType;
                     }
+                  }
                 });
+                if (!found) {
+                  var port = comp.findRequiredByID(oldPortType.name);
+                  if (port) {
+                    port.bindings.array.forEach(function (binding) {
+                      binding.delete();
+                    });
+                    port.delete();
+                  }
+                }
+              });
 
-                // recreate the new component
-                var compUi = ui.createComponent(comp);
-                compUi.select('.bg').addClass('selected');
-                this.refreshNode(comp.eContainer().path());
+              oldTypeDef.provided.array.forEach(function (oldPortType) {
+                var found = false;
+                comp.typeDefinition.provided.array.forEach(function (portType) {
+                  if (portType.name === oldPortType.name) {
+                    found = true;
+                    // port still exists in new typeDef
+                    var port = comp.findProvidedByID(oldPortType.name);
+                    if (port) {
+                      port.portTypeRef = portType;
+                    }
+                  }
+                });
+                if (!found) {
+                  var port = comp.findProvidedByID(oldPortType.name);
+                  if (port) {
+                    port.bindings.array.forEach(function (binding) {
+                      binding.delete();
+                    });
+                    port.delete();
+                  }
+                }
+              });
+
+              // recreate the new component
+              var compUi = ui.createComponent(comp);
+              compUi.select('.bg').addClass('selected');
+              this.refreshNode(comp.eContainer().path());
             },
 
             toggleFold: function (node, isFolded) {
@@ -566,6 +563,19 @@ angular.module('editorApp')
                         dy += child.select('.bg').asPX('height') + 10;
                     });
 
+                    instance.components.array.forEach(function(comp) {
+                      comp.provided.array.forEach(function (port) {
+                        port.bindings.array.forEach(function (binding) {
+                          ui.createBinding(binding);
+                        });
+                      });
+                      comp.required.array.forEach(function (port) {
+                        port.bindings.array.forEach(function (binding) {
+                          ui.createBinding(binding);
+                        });
+                      });
+                    });
+
                     this.updateValidity(instance);
                 }
             },
@@ -602,7 +612,6 @@ angular.module('editorApp')
                         this.updateValidity(instance);
                     }
                 } else {
-                    console.log('create comp', instance);
                     this.createComponent(instance);
                 }
             },
