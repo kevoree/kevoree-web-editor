@@ -310,13 +310,11 @@ angular.module('editorApp')
                 var elem = this.editor.select('.instance[data-path="' + previousPath + '"]');
                 if (elem) {
                     // update data-path and name
-                    elem.attr({
-                            'data-path': instance.path()
-                        })
-                        .select('text.name')
-                        .attr({
-                            text: instance.name
-                        });
+                    elem.attr({ 'data-path': instance.path() });
+                    var name = elem.select('text.name');
+                    if (name) {
+                      name.attr({ text: instance.name });
+                    }
 
                     // update location only if not a child of someone
                     if (!elem.parent().hasClass('node')) {
@@ -342,10 +340,9 @@ angular.module('editorApp')
                                 fillOpacity: util.isTruish(instance.started) ? 1 : 0.65
                             });
                     } else {
-                        elem.select('text.name')
-                            .attr({
-                                fill: util.isTruish(instance.started) ? '#fff' : '#000'
-                            });
+                        if (name) {
+                          name.attr({ fill: util.isTruish(instance.started) ? '#fff' : '#000' });
+                        }
                     }
 
                     // update group-wire if it is a node
