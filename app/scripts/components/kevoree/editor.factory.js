@@ -34,7 +34,6 @@ angular.module('editorApp')
                 this.model.addModelTreeListener(this.modelListener);
 
                 ui.setModel(model);
-                this.drawModel();
 
                 this.listeners.forEach(function (listener) {
                     listener();

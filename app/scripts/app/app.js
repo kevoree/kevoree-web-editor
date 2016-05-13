@@ -17,11 +17,13 @@ angular
         'ui.codemirror',
         'ui.utils',
         'ui-notification',
+        'treeControl',
         'cfp.hotkeys',
         'ngDragDrop',
-        'semverSort'
+        'semverSort',
+        'hljs'
     ])
-    .run(function($rootScope, kRegistry, Notification, VERSION, KEVOREE_REGISTRY_URL) {
+    .run(function($rootScope, $stateParams, kEditor, kRegistry, kWs, Notification, VERSION, KEVOREE_REGISTRY_URL) {
         $rootScope.VERSION = VERSION;
         $rootScope.KEVOREE_REGISTRY_URL = KEVOREE_REGISTRY_URL;
 
@@ -37,15 +39,32 @@ angular
                 // fade out the loading container when bootstrap is done
                 angular.element('#bootstrap-container').fadeOut(function() {
                     this.remove();
+                    if ($stateParams.host) {
+                      kWs.getModel($stateParams.host, $stateParams.port || 9000, $stateParams.path || '', function(err, model, url) {
+                        if (err) {
+                          Notification.error({
+                            title: 'Open from node',
+                            message: 'Unable to load model from <strong>' + url + '</strong>'
+                          });
+                        } else {
+                          kEditor.setModel(model);
+                          Notification.success({
+                            title: 'Open from node',
+                            message: 'Model loaded from <strong>' + url + '</strong>'
+                          });
+                        }
+                      });
+                    }
                 });
             });
     })
-    .config(function($stateProvider, $urlRouterProvider, hotkeysProvider, NotificationProvider) {
+    .config(function($stateProvider, $urlRouterProvider, hotkeysProvider, hljsServiceProvider, NotificationProvider) {
         $urlRouterProvider.otherwise('/');
 
         $stateProvider
             .state('app', {
                 abstract: true,
+                url: '?host&port&path',
                 views: {
                     'navbar@': {
                         templateUrl: 'scripts/app/navbar/navbar.html',
@@ -55,6 +74,10 @@ angular
             });
 
         hotkeysProvider.template = '<div class="editor-shortcuts" ng-include src="\'scripts/components/util/hotkeys.html\'" data-ng-if="helpVisible"></div>';
+
+        hljsServiceProvider.setOptions({
+          tabReplace: '  '
+        });
 
         NotificationProvider.setOptions({
             startTop: 90,

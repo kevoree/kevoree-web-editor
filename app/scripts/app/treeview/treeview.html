@@ -1,0 +1,80 @@
+<div class="tab-container" data-ng-cloak>
+  <div class="col-md-4 col-lg-3 fit-y">
+    <div class="well fit-y">
+      <div class="row clearfix">
+        <div class="col-xs-12">
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control" placeholder="Filter by name, tag, property value" ng-model="filterExpr">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button">
+                <i class="fa fa-search"></i>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="row clearfix" style="margin-top: 10px">
+        <div class="col-xs-12">
+          <a class="treeview-action" data-ng-click="collapse()" title="Collapse">
+            <i class="fa fa-compress"></i>
+          </a>
+          <a href="" class="treeview-action" data-ng-click="expand()" title="Expand">
+            <i class="fa fa-expand"></i>
+          </a>
+          <a href="" class="treeview-action" data-ng-click="selectNodes()" title="Select nodes">
+            <i class="fa fa-check-square-o"></i>
+          </a>
+          <a href="" class="treeview-action" data-ng-click="clearSelected()" title="Clear selected">
+            <i class="fa fa-times-circle"></i>
+          </a>
+          <a href="" class="treeview-action" data-ng-click="toggleSort()" title="{{ treeReverseOrder ? 'Sort desc' : 'Sort asc' }}">
+            <i class="fa" data-ng-class="{ 'fa-sort-asc': !treeReverseOrder, 'fa-sort-desc': treeReverseOrder }"></i>
+          </a>
+        </div>
+      </div>
+      <div class="fit-y" style="margin-top: 10px">
+        <div class="treecontrol-container">
+          <div class="treecontrol-inner-container">
+            <treecontrol
+                class="tree-classic"
+                tree-model="tree"
+                selected-nodes="selectedNodes"
+                expanded-nodes="expandedNodes"
+                on-selection="onSelect(node, selected)"
+                filter-expression="filterExpr"
+                order-by="treeOrderBy"
+                reverse-order="treeReverseOrder"
+                options="treeOptions">
+              <span class="">{{ node.name }}</span>
+            </treecontrol>
+          </div>
+        </div>
+      </div>
+      <em data-ng-if="tree.length === 0">No instance in current model</em>
+    </div>
+  </div>
+  <div class="treeview-rightpanel col-md-8 col-lg-9 fit-y">
+    <tabset class="tab-set" active="0">
+      <tab index="0" heading="JSON">
+        <div class="tab-pane-container well">
+          <pre data-ng-repeat="node in selectedNodes">
+            <code data-hljs data-hljs-language="json" data-hljs-source="beautify(node)"></code>
+          </pre>
+        </div>
+      </tab>
+      <tab index="1" heading="Actions">
+        <div class="tab-pane-container well">
+          TODO
+        </div>
+      </tab>
+    </tabset>
+    <!-- <div class="well">
+      <p><strong>Selected instances:</strong> {{ selectedNodes.length }}</p>
+      <pre data-ng-repeat="node in selectedNodes">{{ beautify(node) }}</pre>
+    </div>
+    <div class="well">
+      <h4>Action batching:</h4>
+      <p>TODO</p>
+    </div> -->
+  </div>
+</div>

@@ -21,6 +21,9 @@
       <li data-ng-class="{active: $state.includes('kevscript')}">
         <a data-ui-sref="kevscript" data-ng-click="!isCollapsed ? (isCollapsed = !isCollapsed):''">KevScript Editor</a>
       </li>
+      <li data-ng-class="{active: $state.includes('treeview')}">
+        <a data-ui-sref="treeview" data-ng-click="!isCollapsed ? (isCollapsed = !isCollapsed):''">TreeView</a>
+      </li>
     </ul>
     <ul class="nav navbar-right navbar-nav navbar-collapse collapse" data-collapse="isCollapsed">
       <li data-ng-class="{active: $state.includes('settings')}">

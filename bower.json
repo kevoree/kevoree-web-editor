@@ -20,7 +20,10 @@
     "semver": "~4.3.4",
     "snap.svg": "~0.4.1",
     "snap.svg.zpd": "~0.0.10",
-    "ui-router": "~0.2.13"
+    "ui-router": "~0.2.13",
+    "angular-tree-control": "^0.2.26",
+    "highlight": "^9.3.0",
+    "angular-highlightjs": "^0.6.1"
   },
   "devDependencies": {
     "angular-mocks": "1.4.5"

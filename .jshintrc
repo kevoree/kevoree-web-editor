@@ -17,6 +17,7 @@
   "trailing": true,
   "smarttabs": true,
   "globals": {
+    "hljs": false,
     "Snap": false,
     "mina": false,
     "Kotlin": false,

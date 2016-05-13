@@ -9,22 +9,10 @@
  */
 angular.module('editorApp')
   .controller('MainCtrl', function($scope, $timeout, $stateParams, $modal, kEditor, hotkeys, saveFile, ui, kModelHelper, kFactory, kWs, Notification) {
-    if ($stateParams.host) {
-      kWs.getModel($stateParams.host, $stateParams.port || 9000, $stateParams.path || '', function(err, model, url) {
-        if (err) {
-          Notification.error({
-            title: 'Open from node',
-            message: 'Unable to load model from <strong>' + url + '</strong>'
-          });
-        } else {
-          kEditor.setModel(model);
-          Notification.success({
-            title: 'Open from node',
-            message: 'Model loaded from <strong>' + url + '</strong>'
-          });
-        }
-      });
+    function onModelHandler() {
+      kEditor.drawModel();
     }
+    kEditor.addListener(onModelHandler);
 
     $scope.loading = false;
     $scope.synced = false;
@@ -559,4 +547,8 @@ angular.module('editorApp')
     //    description: 'Redo the last modification',
     //    callback: $scope.redo
     //});
+
+    $scope.$on('$destroy', function () {
+      kEditor.removeListener(onModelHandler);
+    });
   });

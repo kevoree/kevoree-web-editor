@@ -36,6 +36,9 @@ body {
 #kevscript-editor .CodeMirror {
     height: 500px;
 }
+#tree-container {
+  margin-top: 15px;
+}
 .btn-container {
     height: 100%;
     display: table-cell;
@@ -336,14 +339,49 @@ body {
 .btn-group-block {
     display: block;
 }
-#libraries-container {
-    background-color: #f5f5f5;
-}
 .libraries-search-input .input-group-addon {
     width: 100px;
 }
+.whitish-bg {
+    background-color: #f5f5f5;
+}
+treecontrol.tree-classic li .tree-selected {
+  background-color: inherit;
+  font-weight: bold;
+}
+
+treecontrol > ul > li {
+  padding-left: 0;
+}
+.treeview-rightpanel > * {
+  margin-top: 30px;
+}
+.treeview-rightpanel > *:first-child {
+  margin-top: 0;
+}
+.treeview-action {
+  padding: 0 6px;
+}
+.treeview-action:hover,
+.treeview-action:focus,
+.treeview-action:active {
+  text-decoration: none;
+}
+
+.tab-set .nav > li > a {
+  background-color: #ccc;
+  color: #777;
+}
+.tab-set .nav-tabs > li.active > a,
+.tab-set .nav-tabs > li.active > a:hover,
+.tab-set .nav-tabs > li.active > a:focus {
+  margin-right: 2px;
+  color: #555;
+  cursor: default;
+  background-color: #fff;
+}
 @media (min-width: 992px) {
-    #libraries-container {
+    .tab-container {
         position: absolute;
         top: 65px;
         left: 15px;
@@ -394,6 +432,40 @@ body {
         height: 100%;
         overflow: auto;
     }
+    .treecontrol-container {
+      position: absolute;
+      top: 95px;
+      left: 30px;
+      right: 30px;
+      bottom: 15px;
+    }
+    .treecontrol-inner-container {
+      height: 100%;
+      overflow-y: scroll;
+      border: 1px solid #ccc;
+      padding: 3px;
+    }
+    .tab-set {
+      position: absolute;
+      top: 0;
+      right: 15px;
+      left: 15px;
+      bottom: 0;
+    }
+    .tab-content {
+      position: absolute;
+      top: 42px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+    .tab-pane {
+      height: 100%;
+    }
+    .tab-pane-container {
+      height: 100%;
+      overflow-y: scroll;
+    }
 }
 @media (max-width: 991px) {
     .libraries-search-input {
@@ -402,7 +474,7 @@ body {
     .libraries-selected-tdef {
         padding-bottom: 10px;
     }
-    #libraries-container .loading-content {
+    .tab-container .loading-content {
         padding: 10px;
     }
 }
