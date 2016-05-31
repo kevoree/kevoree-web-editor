@@ -1,0 +1,14 @@
+<div class="panel-group">
+  <div class="panel panel-default" data-ng-repeat="item in items">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a role="button" data-ng-click="item.isCollapsed = !item.isCollapsed">
+          {{ item.name }}
+        </a>
+      </h4>
+    </div>
+    <div data-collapse="item.isCollapsed">
+      <hljs data-hljs-language="json" data-hljs-source="beautify(item)"></hljs>
+    </div>
+  </div>
+</div>

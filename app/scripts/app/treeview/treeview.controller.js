@@ -8,20 +8,22 @@
  * Controller of the editorApp treeview page
  */
 angular.module('editorApp')
-  .controller('TreeViewCtrl', function ($scope, $timeout, $state, kEditor, kFactory) {
+  .controller('TreeViewCtrl', function ($scope, $timeout, $state, kEditor, kModelHelper) {
     function transformModelToTree(model) {
       function transformComponentToTreeItem(comp) {
         return {
+          type: 'component',
           name: comp.name,
-          tags: [],
+          tags: kModelHelper.getInstanceTags(comp),
           path: comp.path()
         };
       }
 
       function transformNodeToTreeItem(node) {
         return {
+          type: 'node',
           name: node.name,
-          tags: [],
+          tags: kModelHelper.getInstanceTags(node),
           path: node.path(),
           children: node.components.array.map(transformComponentToTreeItem)
         };
@@ -29,67 +31,83 @@ angular.module('editorApp')
 
       function transformGroupToTreeItem(group) {
         return {
+          type: 'group',
           name: group.name,
+          tags: kModelHelper.getInstanceTags(group),
           path: group.path()
         };
       }
 
       function transformChannelToTreeItem(chan) {
         return {
+          type: 'channel',
           name: chan.name,
+          tags: kModelHelper.getInstanceTags(chan),
           path: chan.path()
         };
       }
 
-      return model.nodes.array.map(transformNodeToTreeItem);
-        // .concat(model.groups.array.map(transformGroupToTreeItem))
-        // .concat(model.hubs.array.map(transformChannelToTreeItem));
+      return model.nodes.array.map(transformNodeToTreeItem)
+        .concat(model.groups.array.map(transformGroupToTreeItem))
+        .concat(model.hubs.array.map(transformChannelToTreeItem));
     }
 
-    function onModelHandler() {
+    function processModel() {
       $scope.tree = transformModelToTree(kEditor.getModel());
+      $scope.nbInstances = kModelHelper.getNbInstances(kEditor.getModel());
+      console.log('PROCESS MODEL');
     }
 
-    $scope.selectedNodes = [];
-    $scope.expandedNodes = [];
-    $scope.treeOptions = { multiSelection: true };
-    $scope.treeReverseOrder = false;
-    $scope.treeOrderBy = [ 'name' ];
     $scope.tree = transformModelToTree(kEditor.getModel());
+    $scope.nbInstances = kModelHelper.getNbInstances(kEditor.getModel());
+    $scope.selectedItems = [];
+    $scope.expandedItems = [];
+    $scope.treeOptions = { multiSelection: true };
+    $scope.treeOrderBy = 'name';
 
-    kEditor.addListener(onModelHandler);
-
-    $scope.onSelect = function (node, selected) {
-      console.log('onSelect', node, selected);
-    };
+    kEditor.addListener(processModel);
 
     $scope.collapse = function () {
-      $scope.expandedNodes = [];
+      $scope.expandedItems = [];
     };
 
     $scope.expand = function () {
-      $scope.expandedNodes = $scope.tree;
+      $scope.expandedItems = $scope.tree.slice(0);
     };
 
     $scope.selectNodes = function () {
-      $scope.selectedNodes = $scope.tree;
+      $scope.selectedItems = $scope.tree.slice(0).filter(function (item) {
+        return item.type === 'node';
+      });
+    };
+
+    $scope.selectGroups = function () {
+      $scope.selectedItems = $scope.tree.slice(0).filter(function (item) {
+        return item.type === 'group';
+      });
+    };
+
+    $scope.selectChannels = function () {
+      $scope.selectedItems = $scope.tree.slice(0).filter(function (item) {
+        return item.type === 'channel';
+      });
+    };
+
+    $scope.selectComponents = function () {
+      $scope.expand();
+      $scope.selectedItems = [];
+      $scope.tree.forEach(function (item) {
+        if (item.type === 'node') {
+          $scope.selectedItems = $scope.selectedItems.concat(item.children.slice(0));
+        }
+      });
     };
 
     $scope.clearSelected = function () {
-      $scope.selectedNodes = [];
-    };
-
-    $scope.toggleSort = function () {
-      $scope.treeReverseOrder = !$scope.treeReverseOrder;
-      console.log('toggleSort', $scope.treeReverseOrder);
-    };
-
-    $scope.beautify = function (node) {
-      var serializer = kFactory.createJSONSerializer();
-      return JSON.stringify(JSON.parse(serializer.serialize(kEditor.getModel().findByPath(node.path))), null, 2);
+      $scope.selectedItems = [];
     };
 
     $scope.$on('$destroy', function () {
-      kEditor.removeListener(onModelHandler);
+      kEditor.removeListener(processModel);
     });
   });

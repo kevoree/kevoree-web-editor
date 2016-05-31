@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col-md-8">
+    <fieldset>
+      <legend>Current tags</legend>
+        <span class="tag badge" ng-repeat="tag in tags">
+          <span>{{ tag }}</span>
+          <a href="" ng-click="removeTag(tag)"><i class="fa fa-times"></i></a>
+        </span>
+    </fieldset>
+  </div>
+  <div class="col-md-4">
+    <fieldset>
+      <legend>Tag the selection</legend>
+      <div class="input-group">
+        <input type="text" class="form-control" ng-model="tag" placeholder="Tag name" ui-keypress="{13: 'addTag()'}" />
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button" ng-click="addTag()" ng-disabled="tag.length === 0">Add</button>
+        </span>
+      </div>
+    </fieldset>
+  </div>
+</div>

@@ -21,7 +21,8 @@ angular
         'cfp.hotkeys',
         'ngDragDrop',
         'semverSort',
-        'hljs'
+        'hljs',
+        'chart.js'
     ])
     .run(function($rootScope, $stateParams, kEditor, kRegistry, kWs, Notification, VERSION, KEVOREE_REGISTRY_URL) {
         $rootScope.VERSION = VERSION;

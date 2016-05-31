@@ -51,6 +51,12 @@ body {
     width: 200px;
     margin-left: 15px;
 }
+.tag.badge {
+  margin: 0 2px;
+}
+.tag.badge a {
+  color: white;
+}
 .k-btn {
     color: #f6f6f6;
     background-color: #111;
@@ -349,7 +355,6 @@ treecontrol.tree-classic li .tree-selected {
   background-color: inherit;
   font-weight: bold;
 }
-
 treecontrol > ul > li {
   padding-left: 0;
 }
@@ -359,6 +364,9 @@ treecontrol > ul > li {
 .treeview-rightpanel > *:first-child {
   margin-top: 0;
 }
+.treeview-actions {
+  margin-top: 8px;
+}
 .treeview-action {
   padding: 0 6px;
 }
@@ -366,6 +374,13 @@ treecontrol > ul > li {
 .treeview-action:focus,
 .treeview-action:active {
   text-decoration: none;
+}
+.treecontrol-container {
+  margin-top: 8px;
+}
+.treecontrol-inner-container {
+  border: 1px solid #ccc;
+  padding: 3px;
 }
 
 .tab-set .nav > li > a {
@@ -434,16 +449,15 @@ treecontrol > ul > li {
     }
     .treecontrol-container {
       position: absolute;
-      top: 95px;
+      top: 80px;
       left: 30px;
       right: 30px;
       bottom: 15px;
+      margin-top: 0;
     }
     .treecontrol-inner-container {
       height: 100%;
       overflow-y: scroll;
-      border: 1px solid #ccc;
-      padding: 3px;
     }
     .tab-set {
       position: absolute;
@@ -476,6 +490,9 @@ treecontrol > ul > li {
     }
     .tab-container .loading-content {
         padding: 10px;
+    }
+    .treeview-rightpanel {
+      margin: 15px 0;
     }
 }
 @media (min-width: 768px) {

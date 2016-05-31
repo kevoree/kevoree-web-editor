@@ -6,14 +6,14 @@
           <div class="input-group input-group-sm">
             <input type="text" class="form-control" placeholder="Filter by name, tag, property value" ng-model="filterExpr">
             <span class="input-group-btn">
-              <button class="btn btn-default" type="button">
-                <i class="fa fa-search"></i>
+              <button class="btn btn-default" type="button" data-ng-click="filterExpr = ''" title="Clear filter" ng-disabled="!filterExpr.length">
+                <i class="fa fa-times"></i>
               </button>
             </span>
           </div>
         </div>
       </div>
-      <div class="row clearfix" style="margin-top: 10px">
+      <div class="treeview-actions row clearfix">
         <div class="col-xs-12">
           <a class="treeview-action" data-ng-click="collapse()" title="Collapse">
             <i class="fa fa-compress"></i>
@@ -22,59 +22,64 @@
             <i class="fa fa-expand"></i>
           </a>
           <a href="" class="treeview-action" data-ng-click="selectNodes()" title="Select nodes">
-            <i class="fa fa-check-square-o"></i>
+            N
+          </a>
+          <a href="" class="treeview-action" data-ng-click="selectComponents()" title="Select components">
+            C
+          </a>
+          <a href="" class="treeview-action" data-ng-click="selectGroups()" title="Select groups">
+            G
+          </a>
+          <a href="" class="treeview-action" data-ng-click="selectChannels()" title="Select channels">
+            Ch
           </a>
           <a href="" class="treeview-action" data-ng-click="clearSelected()" title="Clear selected">
-            <i class="fa fa-times-circle"></i>
+            <i class="fa fa-square-o"></i>
           </a>
-          <a href="" class="treeview-action" data-ng-click="toggleSort()" title="{{ treeReverseOrder ? 'Sort desc' : 'Sort asc' }}">
-            <i class="fa" data-ng-class="{ 'fa-sort-asc': !treeReverseOrder, 'fa-sort-desc': treeReverseOrder }"></i>
-          </a>
+          <span class="pull-right">{{ selectedItems.length + '/' + nbInstances }} </span>
         </div>
       </div>
-      <div class="fit-y" style="margin-top: 10px">
+      <div class="fit-y">
         <div class="treecontrol-container">
           <div class="treecontrol-inner-container">
+            <em data-ng-if="tree.length === 0">No instance in current model</em>
             <treecontrol
                 class="tree-classic"
                 tree-model="tree"
-                selected-nodes="selectedNodes"
-                expanded-nodes="expandedNodes"
-                on-selection="onSelect(node, selected)"
+                selected-nodes="selectedItems"
+                expanded-nodes="expandedItems"
                 filter-expression="filterExpr"
                 order-by="treeOrderBy"
-                reverse-order="treeReverseOrder"
                 options="treeOptions">
-              <span class="">{{ node.name }}</span>
+              <span>{{ node.name }}</span>
             </treecontrol>
           </div>
         </div>
       </div>
-      <em data-ng-if="tree.length === 0">No instance in current model</em>
     </div>
   </div>
   <div class="treeview-rightpanel col-md-8 col-lg-9 fit-y">
     <tabset class="tab-set" active="0">
-      <tab index="0" heading="JSON">
+      <tab index="0" heading="Model">
         <div class="tab-pane-container well">
-          <pre data-ng-repeat="node in selectedNodes">
-            <code data-hljs data-hljs-language="json" data-hljs-source="beautify(node)"></code>
-          </pre>
+          <tab-model></tab-model>
         </div>
       </tab>
-      <tab index="1" heading="Actions">
+      <tab index="1" heading="Params" data-ng-if="selectedItems.length">
         <div class="tab-pane-container well">
-          TODO
+          <tab-params items="selectedItems"></tab-params>
+        </div>
+      </tab>
+      <tab index="2" heading="Actions" data-ng-if="selectedItems.length">
+        <div class="tab-pane-container well">
+          <tab-actions items="selectedItems"></tab-actions>
+        </div>
+      </tab>
+      <tab index="3" heading="JSON" data-ng-if="selectedItems.length">
+        <div class="tab-pane-container well">
+          <tab-json items="selectedItems"></tab-json>
         </div>
       </tab>
     </tabset>
-    <!-- <div class="well">
-      <p><strong>Selected instances:</strong> {{ selectedNodes.length }}</p>
-      <pre data-ng-repeat="node in selectedNodes">{{ beautify(node) }}</pre>
-    </div>
-    <div class="well">
-      <h4>Action batching:</h4>
-      <p>TODO</p>
-    </div> -->
   </div>
 </div>

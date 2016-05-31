@@ -110,45 +110,47 @@ angular.module('editorApp')
             },
 
             updateValidity: function(instance) {
-                var elem = this.editor.select('.instance[data-path="' + instance.path() + '"]');
-                var icon = this.editor.select('.instance[data-path="' + instance.path() + '"] > .invalid-icon');
-                if (kModelHelper.isValid(instance)) {
-                    if (icon) {
-                        icon.remove();
-                    }
-                } else {
-                    if (icon) {
-                        icon.remove();
-                    }
-                    icon = this.editor
-                        .circle(0, 0, INVALID_RADIUS)
-                        .attr({
-                            'class': 'invalid-icon',
-                            fill: 'red',
-                            stroke: 'black',
-                            title: 'Invalid dictionary attributes'
-                        });
-                    var matrix = icon.transform().localMatrix;
-                    switch (kModelHelper.getTypeDefinitionType(instance.typeDefinition)) {
-                        case 'node':
-                            matrix.e = elem.getBBox().width - (INVALID_RADIUS * 2);
-                            matrix.f = INVALID_RADIUS * 2;
-                            break;
+                if (this.editor) {
+                  var elem = this.editor.select('.instance[data-path="' + instance.path() + '"]');
+                  var icon = this.editor.select('.instance[data-path="' + instance.path() + '"] > .invalid-icon');
+                  if (kModelHelper.isValid(instance)) {
+                      if (icon) {
+                          icon.remove();
+                      }
+                  } else {
+                      if (icon) {
+                          icon.remove();
+                      }
+                      icon = this.editor
+                          .circle(0, 0, INVALID_RADIUS)
+                          .attr({
+                              'class': 'invalid-icon',
+                              fill: 'red',
+                              stroke: 'black',
+                              title: 'Invalid dictionary attributes'
+                          });
+                      var matrix = icon.transform().localMatrix;
+                      switch (kModelHelper.getTypeDefinitionType(instance.typeDefinition)) {
+                          case 'node':
+                              matrix.e = elem.getBBox().width - (INVALID_RADIUS * 2);
+                              matrix.f = INVALID_RADIUS * 2;
+                              break;
 
-                        case 'group':
-                            matrix.f = -GROUP_RADIUS + (INVALID_RADIUS * 2);
-                            break;
+                          case 'group':
+                              matrix.f = -GROUP_RADIUS + (INVALID_RADIUS * 2);
+                              break;
 
-                        case 'channel':
-                            matrix.f = -CHANNEL_RADIUS + (INVALID_RADIUS * 2);
-                            break;
+                          case 'channel':
+                              matrix.f = -CHANNEL_RADIUS + (INVALID_RADIUS * 2);
+                              break;
 
-                        case 'component':
-                            matrix.e = elem.getBBox().width;
-                            break;
-                    }
-                    icon.transform(matrix);
-                    elem.append(icon);
+                          case 'component':
+                              matrix.e = elem.getBBox().width;
+                              break;
+                      }
+                      icon.transform(matrix);
+                      elem.append(icon);
+                  }
                 }
             },
 

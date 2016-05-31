@@ -11,6 +11,8 @@ angular.module('editorApp')
 
 .constant('KWE_FOLD', 'kwe_fold')
 
+.constant('KWE_TAG', 'kwe_tag')
+
 .constant('KEVOREE_REGISTRY_URL', 'http://registry.kevoree.org/')
 
 ;

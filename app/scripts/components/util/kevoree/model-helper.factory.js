@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('kModelHelper', function (kFactory, KWE_POSITION) {
+    .factory('kModelHelper', function (kFactory, KWE_POSITION, KWE_TAG) {
 
         function getOnlyReleases(tdefs) {
             return tdefs.filter(function (tdef) {
@@ -154,14 +154,30 @@ angular.module('editorApp')
             getPlatforms : function (tdef) {
                 var platforms = [];
 
-                tdef.deployUnits.array.forEach(function (du) {
-                    var platform = du.findFiltersByID('platform');
-                    if (platform && platforms.indexOf(platform.value) === -1) {
-                        platforms.push(platform.value);
-                    }
-                });
+                if (tdef) {
+                  tdef.deployUnits.array.forEach(function (du) {
+                      var platform = du.findFiltersByID('platform');
+                      if (platform && platforms.indexOf(platform.value) === -1) {
+                          platforms.push(platform.value);
+                      }
+                  });
+                }
 
                 return platforms;
+            },
+
+            /**
+             * Returns the list of KWE_TAG from the instance if any
+             * @param instance
+             * @returns {array}
+             */
+            getInstanceTags: function (instance) {
+              var tags = [];
+              var meta = instance.findMetaDataByID(KWE_TAG);
+              if (meta && meta.value.length > 0) {
+                tags = meta.value.split(',');
+              }
+              return tags;
             },
 
             /**
@@ -217,6 +233,33 @@ angular.module('editorApp')
                 walk(comp.eContainer());
 
                 return depth;
+            },
+
+            getNbInstances: function (model) {
+              return this.getNbNodes(model) +
+                this.getNbGroups(model) +
+                this.getNbChannels(model) +
+                this.getNbComponents(model);
+            },
+
+            getNbNodes: function (model) {
+              return model.nodes.array.length;
+            },
+
+            getNbGroups: function (model) {
+              return model.groups.array.length;
+            },
+
+            getNbChannels: function (model) {
+              return model.hubs.array.length;
+            },
+
+            getNbComponents: function (model) {
+              var count = 0;
+              model.nodes.array.forEach(function (node) {
+                count += node.components.array.length;
+              });
+              return count;
             },
 
             /**

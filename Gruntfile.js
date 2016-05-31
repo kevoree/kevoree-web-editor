@@ -409,6 +409,7 @@ module.exports = function (grunt) {
           NPM_REGISTRY_URL: 'http://registry.npmjs.org/{name}/-/{name}-{version}.tgz',
           KWE_POSITION: 'kwe_position',
           KWE_FOLD: 'kwe_fold',
+          KWE_TAG: 'kwe_tag',
           KEVOREE_REGISTRY_URL: process.env.KEVOREE_REGISTRY_URL || 'http://registry.kevoree.org/'
         }
       }

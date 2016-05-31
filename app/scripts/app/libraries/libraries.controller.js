@@ -14,7 +14,6 @@ angular.module('editorApp')
 		kRegistry
 			.init()
 			.then(function(tdefs) {
-				console.log(tdefs);
 				$scope.tdefs = tdefs;
 				$timeout(function() {
 					angular.element('#filter-by-tdef').focus();
