@@ -36,6 +36,9 @@
           <a href="" class="treeview-action" data-ng-click="clearSelected()" title="Clear selected">
             <i class="fa fa-square-o"></i>
           </a>
+          <a href="" class="treeview-action" data-ng-click="toggleTags()" title="{{ showTags ? 'Hide tags':'Show tags' }}">
+            <i class="fa" ng-class="showTags ? 'fa-eye-slash':'fa-eye'"></i>
+          </a>
           <span class="pull-right">{{ selectedItems.length + '/' + nbInstances }} </span>
         </div>
       </div>
@@ -52,7 +55,7 @@
                 order-by="treeOrderBy"
                 options="treeOptions">
               <span>{{ node.name }}</span>
-              <span class="tag badge pull-right" ng-repeat="tag in node.tags">{{ tag }}</span>
+              <span class="tag badge pull-right" ng-repeat="tag in node.tags" ng-if="showTags">{{ tag }}</span>
             </treecontrol>
           </div>
         </div>
@@ -71,9 +74,9 @@
           <tab-params items="selectedItems"></tab-params>
         </div>
       </tab>
-      <tab index="2" heading="Actions" data-ng-if="selectedItems.length">
+      <tab index="2" heading="Tags" data-ng-if="selectedItems.length">
         <div class="tab-pane-container well">
-          <tab-actions items="selectedItems"></tab-actions>
+          <tab-tags items="selectedItems"></tab-tags>
         </div>
       </tab>
       <tab index="3" heading="JSON" data-ng-if="selectedItems.length">

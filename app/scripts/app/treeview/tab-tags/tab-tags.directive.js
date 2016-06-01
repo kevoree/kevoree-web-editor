@@ -1,19 +1,18 @@
 'use strict';
 
 angular.module('editorApp')
-  .directive('tabActions', function () {
+  .directive('tabTags', function () {
     return {
       restrict: 'AE',
       scope: {
         items: '='
       },
-      templateUrl: 'scripts/app/treeview/tab-actions/tab-actions.html',
+      templateUrl: 'scripts/app/treeview/tab-tags/tab-tags.html',
       controller: function ($scope, kEditor, kFactory, kModelHelper, KWE_TAG) {
         $scope.tag = '';
         $scope.tags = [];
 
         function processTags() {
-          console.log('PROCESS TAGS');
           $scope.tags = [];
           $scope.items.forEach(function (item) {
             var instance = kEditor.getModel().findByPath(item.path);
@@ -53,7 +52,6 @@ angular.module('editorApp')
               }
               item.tags = tags;
               tagMeta.value = tags.join(',');
-              console.log('ADD TAG', $scope.tag, ' TO ', instance.name);
             });
             $scope.tag = '';
             processTags();

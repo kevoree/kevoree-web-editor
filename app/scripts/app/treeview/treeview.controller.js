@@ -59,6 +59,7 @@ angular.module('editorApp')
 
     $scope.tree = transformModelToTree(kEditor.getModel());
     $scope.nbInstances = kModelHelper.getNbInstances(kEditor.getModel());
+    $scope.showTags = true;
     $scope.selectedItems = [];
     $scope.expandedItems = [];
     $scope.treeOptions = { multiSelection: true };
@@ -104,6 +105,10 @@ angular.module('editorApp')
 
     $scope.clearSelected = function () {
       $scope.selectedItems = [];
+    };
+
+    $scope.toggleTags = function () {
+      $scope.showTags = !$scope.showTags;
     };
 
     $scope.$on('$destroy', function () {
