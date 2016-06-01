@@ -14,33 +14,61 @@
     <legend>{{ type.name + ' - ' + type.version }}</legend>
     <div ng-repeat="attr in dictionary">
       <div ng-switch="attr.type">
-        <div class="form-group" ng-switch-when="text">
-          <label class="control-label" for="{{ attr.name }}">{{ attr.name + (attr.optional ? '':' *') }}</label>
-          <textarea
-              id="{{ attr.name }}"
-              class="form-control"
-              rows="1"
-              placeholder="{{ attr.defaultValue ? 'Default: ' + attr.defaultValue : '' }}"
-              ng-model="attr.value"></textarea>
+        <div ng-switch-when="text">
+          <div class="form-group form-group-sm">
+            <label class="control-label" for="{{ attr.name }}">{{ attr.name + (attr.optional ? '':' *') }}</label>
+            <div class="row-fluid clearfix">
+              <div class="col-md-4">
+                <textarea
+                    id="{{ attr.name }}"
+                    class="form-control"
+                    rows="1"
+                    placeholder="{{ attr.defaultValue ? 'Default: ' + attr.defaultValue : '' }}"
+                    ng-model="attr.value"></textarea>
+              </div>
+              <div class="col-md-8 form-inline text-right">
+                <input type="text" class="form-control" placeholder="Prepend" ng-model="prepend[attr.name]" ng-init="prepend[attr.name] = ''" style="width: 80px"/>
+                <input type="number" class="form-control" placeholder="String length" ng-model="length[attr.name]" ng-init="length[attr.name] = 5" style="width: 80px"/>
+                <input type="text" class="form-control" placeholder="Append" ng-model="append[attr.name]" ng-init="append[attr.name] = ''" style="width: 80px"/>
+                <button class="btn btn-sm btn-default" ng-click="random(attr)">Random</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="form-group" ng-switch-when="number">
-          <label class="control-label" for="{{ attr.name }}">{{ attr.name + (attr.optional ? '':' *') }}</label>
-          <input
-              id="{{ attr.name }}"
-              type="number"
-              class="form-control"
-              placeholder="{{ attr.defaultValue ? 'Default: ' + attr.defaultValue : '' }}"
-              ng-model="attr.value" />
+        <div ng-switch-when="number">
+          <div class="form-group form-group-sm">
+            <label class="control-label" for="{{ attr.name }}">{{ attr.name + (attr.optional ? '':' *') }}</label>
+            <div class="row-fluid clearfix">
+              <div class="col-md-4">
+                <input
+                    id="{{ attr.name }}"
+                    type="number"
+                    class="form-control"
+                    placeholder="{{ attr.defaultValue ? 'Default: ' + attr.defaultValue : '' }}"
+                    ng-model="attr.value" />
+              </div>
+              <div class="col-md-8 form-inline text-right">
+                <input type="number" class="form-control" placeholder="Min value" ng-model="min[attr.name]" ng-init="min[attr.name] = 0" style="width: 80px"/>
+                <input type="number" class="form-control" placeholder="Max value" ng-model="max[attr.name]" ng-init="max[attr.name] = 65535" style="width: 80px"/>
+                <button class="btn btn-sm btn-default" ng-click="random(attr)">Random</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="form-group" ng-switch-when="boolean">
-          <label class="control-label" for="{{ attr.name }}">{{ attr.name + (attr.optional ? '':' *') }}</label>
-          <div class="btn-group btn-group-block clearfix">
-            <label class="btn btn-sm btn-default" ng-model="attr.value" btn-radio="'true'">True</label>
-            <label class="btn btn-sm btn-default" ng-model="attr.value" btn-radio="'false'">False</label>
+        <div ng-switch-when="boolean">
+          <div class="form-group form-group-sm">
+            <label class="control-label" for="{{ attr.name }}">{{ attr.name + (attr.optional ? '':' *') }}</label>
+            <div class="btn-group btn-group-block clearfix">
+              <label class="btn btn-sm btn-default" ng-model="attr.value" btn-radio="'true'">True</label>
+              <label class="btn btn-sm btn-default" ng-model="attr.value" btn-radio="'false'">False</label>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <div class="col-xs-12">
+      <button class="btn btn-default" ng-click="applyToAllInstances()">Apply to selection</button>
+      <button class="btn btn-default pull-right" ng-click="allRandom()">All random</button>
+    </div>
   </fieldset>
-  <button class="btn btn-default" ng-click="applyToAllInstances()">Apply to selection</button>
 </div>

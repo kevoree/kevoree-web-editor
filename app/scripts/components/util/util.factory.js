@@ -11,7 +11,36 @@ angular.module('editorApp')
             return (val === 'true' || val > 0 || val === true);
         }
 
+        /**
+         * @param {number} length optional
+         * @returns {string}
+         */
+        function randomString(length) {
+          length = length || 5;
+          var text = '';
+          var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+          for (var i=0; i < length; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+          }
+
+          return text;
+        }
+
+        /**
+         * @param {number} min val optional (default: 0)
+         * @param {number} max val optional (default: 65535)
+         * @returns {number}
+         */
+        function randomNumber(min, max) {
+          if (typeof min !== 'number') { min = 0; }
+          if (typeof max !== 'number') { max = 65535; }
+          return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
         return {
-            isTruish: isTruish
+            isTruish: isTruish,
+            randomString: randomString,
+            randomNumber: randomNumber
         };
     });

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-  .directive('tabParams', function (kEditor, kModelHelper) {
+  .directive('tabParams', function (kEditor, kModelHelper, util) {
     return {
       restrict: 'AE',
       scope: {
@@ -28,6 +28,11 @@ angular.module('editorApp')
 
         function process() {
           $scope.error = false;
+          $scope.length = {};
+          $scope.prepend = {};
+          $scope.append = {};
+          $scope.min = {};
+          $scope.max = {};
           var model = kEditor.getModel();
 
           if ($scope.items.length > 1) {
@@ -45,6 +50,7 @@ angular.module('editorApp')
             }
           }
 
+          $scope.util = util;
           $scope.instance = model.findByPath($scope.items[0].path);
           $scope.type = $scope.instance.typeDefinition;
           $scope.dictionary = [];
@@ -78,6 +84,18 @@ angular.module('editorApp')
               val.value = attr.value;
             });
           });
+        };
+
+        $scope.random = function (attr) {
+          if (attr.type === 'number') {
+            attr.value = util.randomNumber($scope.min[attr.name], $scope.max[attr.name]);
+          } else if (attr.type !== 'boolean') {
+            attr.value = $scope.prepend[attr.name] + util.randomString($scope.length[attr.name]) + $scope.append[attr.name];
+          }
+        };
+
+        $scope.allRandom = function () {
+          $scope.dictionary.forEach($scope.random);
         };
       }
     };

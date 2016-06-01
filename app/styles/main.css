@@ -373,7 +373,9 @@ treecontrol > ul > li {
   margin-top: 8px;
 }
 .treeview-action {
-  padding: 0 6px;
+  display: inline-block;
+  width: 25px;
+  text-align: center;
 }
 .treeview-action:hover,
 .treeview-action:focus,
@@ -391,6 +393,7 @@ treecontrol > ul > li {
 .tab-set .nav > li > a {
   background-color: #ccc;
   color: #777;
+  padding: 4px 12px;
 }
 .tab-set .nav-tabs > li.active > a,
 .tab-set .nav-tabs > li.active > a:hover,
@@ -473,7 +476,7 @@ treecontrol > ul > li {
     }
     .tab-content {
       position: absolute;
-      top: 42px;
+      top: 30px;
       left: 0;
       right: 0;
       bottom: 0;
