@@ -22,7 +22,7 @@
     "snap.svg.zpd": "~0.0.10",
     "ui-router": "~0.2.13",
     "angular-tree-control": "^0.2.26",
-    "highlight": "^9.3.0",
+    "highlightjs": "^9.4.0",
     "angular-highlightjs": "^0.6.1",
     "angular-chart.js": "^0.10.2"
   },
@@ -33,7 +33,6 @@
   "moduleName": "editorApp",
   "resolutions": {
     "angular": "1.4.5",
-    "codemirror": "^5.0",
-    "d3": "^3.5.17"
+    "codemirror": "^5.0"
   }
 }
