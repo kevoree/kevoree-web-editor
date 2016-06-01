@@ -52,6 +52,7 @@
                 order-by="treeOrderBy"
                 options="treeOptions">
               <span>{{ node.name }}</span>
+              <span class="tag badge pull-right" ng-repeat="tag in node.tags">{{ tag }}</span>
             </treecontrol>
           </div>
         </div>

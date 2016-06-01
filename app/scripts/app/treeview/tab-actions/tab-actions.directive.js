@@ -13,6 +13,7 @@ angular.module('editorApp')
         $scope.tags = [];
 
         function processTags() {
+          console.log('PROCESS TAGS');
           $scope.tags = [];
           $scope.items.forEach(function (item) {
             var instance = kEditor.getModel().findByPath(item.path);
@@ -33,7 +34,7 @@ angular.module('editorApp')
         });
 
         $scope.addTag = function () {
-          if ($scope.tag.trim().length > 0) {
+          if ($scope.tag.trim().length > 0 && $scope.tag.indexOf(',') === -1) {
             $scope.tag = $scope.tag.trim();
             $scope.items.forEach(function (item) {
               var instance = kEditor.getModel().findByPath(item.path);
@@ -44,15 +45,26 @@ angular.module('editorApp')
                 tagMeta.value = '';
                 instance.addMetaData(tagMeta);
               }
-              var tags = tagMeta.value.split(',');
+              var tags = tagMeta.value.split(',').filter(function (tag) {
+                return tag.trim().length > 0;
+              });
               if (tags.indexOf($scope.tag) === -1) {
                 tags.push($scope.tag);
               }
               item.tags = tags;
               tagMeta.value = tags.join(',');
+              console.log('ADD TAG', $scope.tag, ' TO ', instance.name);
             });
             $scope.tag = '';
             processTags();
+          }
+        };
+
+        $scope.validate = function () {
+          if ($scope.tag.indexOf(',') !== -1) {
+            $scope.error = 'Character "," is not allowed in a tag';
+          } else {
+            $scope.error = null;
           }
         };
 

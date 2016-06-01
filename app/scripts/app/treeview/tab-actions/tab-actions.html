@@ -11,12 +11,13 @@
   <div class="col-md-4">
     <fieldset>
       <legend>Tag the selection</legend>
-      <div class="input-group">
-        <input type="text" class="form-control" ng-model="tag" placeholder="Tag name" ui-keypress="{13: 'addTag()'}" />
+      <div class="input-group" ng-class="error ? 'has-error has-feedback':''">
+        <input type="text" class="form-control" ng-model="tag" placeholder="Tag name" ui-keypress="{13: 'addTag()'}" ng-change="validate()"/>
         <span class="input-group-btn">
           <button class="btn btn-default" type="button" ng-click="addTag()" ng-disabled="tag.length === 0">Add</button>
         </span>
       </div>
+      <span class="text-danger" ng-if="error">{{ error }}</span>
     </fieldset>
   </div>
 </div>
