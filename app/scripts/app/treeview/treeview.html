@@ -4,7 +4,7 @@
       <div class="row clearfix">
         <div class="col-xs-12">
           <div class="input-group input-group-sm">
-            <input type="text" class="form-control" placeholder="Filter by name, tag, property value" ng-model="filterExpr">
+            <input type="text" class="form-control" placeholder="Filter by name, tag, type, version" ng-model="filterExpr">
             <span class="input-group-btn">
               <button class="btn btn-default" type="button" data-ng-click="filterExpr = ''" title="Clear filter" ng-disabled="!filterExpr.length">
                 <i class="fa fa-times"></i>
@@ -54,7 +54,7 @@
                 filter-expression="filterExpr"
                 order-by="treeOrderBy"
                 options="treeOptions">
-              <span>{{ node.name }}</span>
+              <span title="{{ node.typeName + ' - ' + node.version }}">{{ node.name }}</span>
               <span class="tag badge pull-right" ng-repeat="tag in node.tags" ng-if="showTags">{{ tag }}</span>
             </treecontrol>
           </div>

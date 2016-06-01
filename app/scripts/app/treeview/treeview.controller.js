@@ -10,40 +10,52 @@
 angular.module('editorApp')
   .controller('TreeViewCtrl', function ($scope, $timeout, $state, kEditor, kModelHelper) {
     function transformModelToTree(model) {
-      function transformComponentToTreeItem(comp) {
+      function transformComponentToTreeItem(instance) {
         return {
+          name: instance.name,
           type: 'component',
-          name: comp.name,
-          tags: kModelHelper.getInstanceTags(comp),
-          path: comp.path()
+          typeName: instance.typeDefinition.name,
+          version: instance.typeDefinition.version,
+          platforms: kModelHelper.getPlatforms(instance.typeDefinition),
+          tags: kModelHelper.getInstanceTags(instance),
+          path: instance.path()
         };
       }
 
-      function transformNodeToTreeItem(node) {
+      function transformNodeToTreeItem(instance) {
         return {
+          name: instance.name,
           type: 'node',
-          name: node.name,
-          tags: kModelHelper.getInstanceTags(node),
-          path: node.path(),
-          children: node.components.array.map(transformComponentToTreeItem)
+          typeName: instance.typeDefinition.name,
+          version: instance.typeDefinition.version,
+          platforms: kModelHelper.getPlatforms(instance.typeDefinition),
+          tags: kModelHelper.getInstanceTags(instance),
+          path: instance.path(),
+          children: instance.components.array.map(transformComponentToTreeItem)
         };
       }
 
-      function transformGroupToTreeItem(group) {
+      function transformGroupToTreeItem(instance) {
         return {
+          name: instance.name,
           type: 'group',
-          name: group.name,
-          tags: kModelHelper.getInstanceTags(group),
-          path: group.path()
+          typeName: instance.typeDefinition.name,
+          version: instance.typeDefinition.version,
+          platforms: kModelHelper.getPlatforms(instance.typeDefinition),
+          tags: kModelHelper.getInstanceTags(instance),
+          path: instance.path()
         };
       }
 
-      function transformChannelToTreeItem(chan) {
+      function transformChannelToTreeItem(instance) {
         return {
+          name: instance.name,
           type: 'channel',
-          name: chan.name,
-          tags: kModelHelper.getInstanceTags(chan),
-          path: chan.path()
+          typeName: instance.typeDefinition.name,
+          version: instance.typeDefinition.version,
+          platforms: kModelHelper.getPlatforms(instance.typeDefinition),
+          tags: kModelHelper.getInstanceTags(instance),
+          path: instance.path()
         };
       }
 
