@@ -11,13 +11,17 @@ angular.module('editorApp')
       link: function ($scope) {
         function processData() {
           $scope.items.forEach(function (item) {
-            item.isCollapsed = true;
+            if (typeof item.isCollapsed === 'undefined') {
+              item.isCollapsed = true;
+            }
           });
         }
 
         processData();
         var unwatchItems = $scope.$watchCollection('items', processData);
+        kEditor.addListener(processData);
         $scope.$on('$destroy', function () {
+          kEditor.removeListener(processData);
           unwatchItems();
         });
 

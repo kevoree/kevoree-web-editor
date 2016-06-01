@@ -33,7 +33,8 @@ angular.module('editorApp')
         });
 
         $scope.addTag = function () {
-          if ($scope.tag.length > 0) {
+          if ($scope.tag.trim().length > 0) {
+            $scope.tag = $scope.tag.trim();
             $scope.items.forEach(function (item) {
               var instance = kEditor.getModel().findByPath(item.path);
               var tagMeta = instance.findMetaDataByID(KWE_TAG);
@@ -47,10 +48,11 @@ angular.module('editorApp')
               if (tags.indexOf($scope.tag) === -1) {
                 tags.push($scope.tag);
               }
+              item.tags = tags;
               tagMeta.value = tags.join(',');
-              $scope.tag = '';
-              processTags();
             });
+            $scope.tag = '';
+            processTags();
           }
         };
 
@@ -63,6 +65,7 @@ angular.module('editorApp')
               var i = tags.indexOf(tag);
               if (i !== -1) {
                 tags.splice(i, 1);
+                item.tags = tags;
                 tagMeta.value = tags.join(',');
                 processTags();
               }
