@@ -55,7 +55,6 @@ angular.module('editorApp')
     function processModel() {
       $scope.tree = transformModelToTree(kEditor.getModel());
       $scope.nbInstances = kModelHelper.getNbInstances(kEditor.getModel());
-      console.log('PROCESS MODEL');
     }
 
     $scope.tree = transformModelToTree(kEditor.getModel());
