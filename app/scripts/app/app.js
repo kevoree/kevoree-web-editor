@@ -29,7 +29,7 @@ angular
         $rootScope.KEVOREE_REGISTRY_URL = KEVOREE_REGISTRY_URL;
 
         kRegistry.init()
-            .catch(function (err) {
+            .catch(function(err) {
                 Notification.error({
                     title: 'Kevoree Registry',
                     message: err.message,
@@ -41,20 +41,20 @@ angular
                 angular.element('#bootstrap-container').fadeOut(function() {
                     this.remove();
                     if ($stateParams.host) {
-                      kWs.getModel($stateParams.host, $stateParams.port || 9000, $stateParams.path || '', function(err, model, url) {
-                        if (err) {
-                          Notification.error({
-                            title: 'Open from node',
-                            message: 'Unable to load model from <strong>' + url + '</strong>'
-                          });
-                        } else {
-                          kEditor.setModel(model);
-                          Notification.success({
-                            title: 'Open from node',
-                            message: 'Model loaded from <strong>' + url + '</strong>'
-                          });
-                        }
-                      });
+                        kWs.getModel($stateParams.host, $stateParams.port || 9000, $stateParams.path || '', function(err, model, url) {
+                            if (err) {
+                                Notification.error({
+                                    title: 'Open from node',
+                                    message: 'Unable to load model from <strong>' + url + '</strong>'
+                                });
+                            } else {
+                                kEditor.setModel(model);
+                                Notification.success({
+                                    title: 'Open from node',
+                                    message: 'Model loaded from <strong>' + url + '</strong>'
+                                });
+                            }
+                        });
                     }
                 });
             });
@@ -77,7 +77,7 @@ angular
         hotkeysProvider.template = '<div class="editor-shortcuts" ng-include src="\'scripts/components/util/hotkeys.html\'" data-ng-if="helpVisible"></div>';
 
         hljsServiceProvider.setOptions({
-          tabReplace: '  '
+            tabReplace: '  '
         });
 
         NotificationProvider.setOptions({

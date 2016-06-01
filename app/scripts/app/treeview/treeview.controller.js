@@ -8,7 +8,15 @@
  * Controller of the editorApp treeview page
  */
 angular.module('editorApp')
-  .controller('TreeViewCtrl', function ($scope, $timeout, $state, kEditor, kModelHelper) {
+  .filter('filtered', function () {
+    return function (filteredItems) {
+      filteredItems.forEach(function (item) {
+        item.filtered = true;
+      });
+      return filteredItems;
+    };
+  })
+  .controller('TreeViewCtrl', function ($scope, $filter, kEditor, kModelHelper) {
     function transformModelToTree(model) {
       function transformComponentToTreeItem(instance) {
         return {
@@ -18,7 +26,8 @@ angular.module('editorApp')
           version: instance.typeDefinition.version,
           platforms: kModelHelper.getPlatforms(instance.typeDefinition),
           tags: kModelHelper.getInstanceTags(instance),
-          path: instance.path()
+          path: instance.path(),
+          isFiltered: false
         };
       }
 
@@ -31,6 +40,7 @@ angular.module('editorApp')
           platforms: kModelHelper.getPlatforms(instance.typeDefinition),
           tags: kModelHelper.getInstanceTags(instance),
           path: instance.path(),
+          isFiltered: false,
           children: instance.components.array.map(transformComponentToTreeItem)
         };
       }
@@ -43,7 +53,8 @@ angular.module('editorApp')
           version: instance.typeDefinition.version,
           platforms: kModelHelper.getPlatforms(instance.typeDefinition),
           tags: kModelHelper.getInstanceTags(instance),
-          path: instance.path()
+          path: instance.path(),
+          isFiltered: false
         };
       }
 
@@ -55,7 +66,8 @@ angular.module('editorApp')
           version: instance.typeDefinition.version,
           platforms: kModelHelper.getPlatforms(instance.typeDefinition),
           tags: kModelHelper.getInstanceTags(instance),
-          path: instance.path()
+          path: instance.path(),
+          isFiltered: false
         };
       }
 
@@ -77,6 +89,16 @@ angular.module('editorApp')
     $scope.treeOptions = { multiSelection: true };
     $scope.treeOrderBy = 'name';
     $scope.filterExpr = '';
+    // $scope.filterFunc = function (item) {
+    //   var match = $filter('filter')([item], $scope.filterExpr, $scope.filterComparator).length > 0;
+    //   item.isFiltered = !match;
+    //   if (item.children) {
+    //     item.children.forEach(function (child) {
+    //       child.isFiltered = !match;
+    //     });
+    //   }
+    //   return match;
+    // };
     $scope.filterComparator = false;
     $scope.treeReverse = false;
 
@@ -91,21 +113,21 @@ angular.module('editorApp')
     };
 
     $scope.selectNodes = function () {
-      $scope.selectedItems = $scope.tree.slice(0).filter(function (item) {
+      $scope.selectedItems = $filter('filter')($scope.tree.filter(function (item) {
         return item.type === 'node';
-      });
+      }), $scope.filterExpr, $scope.filterComparator);
     };
 
     $scope.selectGroups = function () {
-      $scope.selectedItems = $scope.tree.slice(0).filter(function (item) {
+      $scope.selectedItems = $filter('filter')($scope.tree.filter(function (item) {
         return item.type === 'group';
-      });
+      }), $scope.filterExpr, $scope.filterComparator);
     };
 
     $scope.selectChannels = function () {
-      $scope.selectedItems = $scope.tree.slice(0).filter(function (item) {
+      $scope.selectedItems = $filter('filter')($scope.tree.filter(function (item) {
         return item.type === 'channel';
-      });
+      }), $scope.filterExpr, $scope.filterComparator);
     };
 
     $scope.selectComponents = function () {
@@ -113,14 +135,10 @@ angular.module('editorApp')
       $scope.selectedItems = [];
       $scope.tree.forEach(function (item) {
         if (item.type === 'node') {
-          $scope.selectedItems = $scope.selectedItems.concat(item.children.slice(0));
+          $scope.selectedItems = $scope.selectedItems.concat(
+            $filter('filter')(item.children, $scope.filterExpr, $scope.filterComparator)
+          );
         }
-      });
-    };
-
-    $scope.selectShown = function () {
-      $scope.tree.forEach(function (item) {
-        console.log(item);
       });
     };
 
