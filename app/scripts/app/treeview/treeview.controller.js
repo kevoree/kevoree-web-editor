@@ -76,6 +76,9 @@ angular.module('editorApp')
     $scope.expandedItems = [];
     $scope.treeOptions = { multiSelection: true };
     $scope.treeOrderBy = 'name';
+    $scope.filterExpr = '';
+    $scope.filterComparator = false;
+    $scope.treeReverse = false;
 
     kEditor.addListener(processModel);
 
@@ -115,12 +118,22 @@ angular.module('editorApp')
       });
     };
 
+    $scope.selectShown = function () {
+      $scope.tree.forEach(function (item) {
+        console.log(item);
+      });
+    };
+
     $scope.clearSelected = function () {
       $scope.selectedItems = [];
     };
 
     $scope.toggleTags = function () {
       $scope.showTags = !$scope.showTags;
+    };
+
+    $scope.reverseSort = function () {
+      $scope.treeReverse = !$scope.treeReverse;
     };
 
     $scope.$on('$destroy', function () {

@@ -11,16 +11,29 @@
               </button>
             </span>
           </div>
+          <div class="checkbox checkbox-sm">
+            <label>
+              <input type="checkbox" ng-model="filterComparator"> Strict matching
+            </label>
+          </div>
         </div>
       </div>
       <div class="treeview-actions row clearfix">
         <div class="col-xs-12">
-          <a class="treeview-action" data-ng-click="collapse()" title="Collapse">
+          <a href="" class="treeview-action" data-ng-click="collapse()" title="Collapse">
             <i class="fa fa-compress"></i>
           </a>
           <a href="" class="treeview-action" data-ng-click="expand()" title="Expand">
             <i class="fa fa-expand"></i>
           </a>
+          <a href="" class="treeview-action" data-ng-click="toggleTags()" title="{{ showTags ? 'Hide tags':'Show tags' }}">
+            <i class="fa" ng-class="showTags ? 'fa-eye-slash':'fa-eye'"></i>
+          </a>
+          <a href="" class="treeview-action" data-ng-click="reverseSort()" title="{{ showTags ? 'Sort desc':'Sort asc' }}">
+            <i class="fa" ng-class="treeReverse ? 'fa-sort-alpha-desc':'fa-sort-alpha-asc'"></i>
+          </a>
+        </div>
+        <div class="col-xs-12">
           <a href="" class="treeview-action" data-ng-click="selectNodes()" title="Select nodes">
             N
           </a>
@@ -33,11 +46,11 @@
           <a href="" class="treeview-action" data-ng-click="selectChannels()" title="Select channels">
             Ch
           </a>
+          <a href="" class="treeview-action" data-ng-click="selectShown()" title="Select shown">
+            <i class="fa fa-check-square-o"></i>
+          </a>
           <a href="" class="treeview-action" data-ng-click="clearSelected()" title="Clear selected">
             <i class="fa fa-square-o"></i>
-          </a>
-          <a href="" class="treeview-action" data-ng-click="toggleTags()" title="{{ showTags ? 'Hide tags':'Show tags' }}">
-            <i class="fa" ng-class="showTags ? 'fa-eye-slash':'fa-eye'"></i>
           </a>
           <span class="pull-right">{{ selectedItems.length + '/' + nbInstances }} </span>
         </div>
@@ -52,7 +65,9 @@
                 selected-nodes="selectedItems"
                 expanded-nodes="expandedItems"
                 filter-expression="filterExpr"
+                filter-comparator="filterComparator"
                 order-by="treeOrderBy"
+                reverse-order="{{treeReverse}}"
                 options="treeOptions">
               <span title="{{ node.typeName + ' - ' + node.version }}">{{ node.name }}</span>
               <span class="tag badge pull-right" ng-repeat="tag in node.tags" ng-if="showTags">{{ tag }}</span>

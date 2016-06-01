@@ -64,6 +64,11 @@ body {
     width: 200px;
     margin-left: 25px;
 }
+.checkbox-sm {
+  margin: 0;
+  font-size: 11px;
+  line-height: 20px;
+}
 .btn-container .btn[disabled] {
     background-color: #ccc;
     color: #777;
@@ -449,7 +454,7 @@ treecontrol > ul > li {
     }
     .treecontrol-container {
       position: absolute;
-      top: 80px;
+      top: 115px;
       left: 30px;
       right: 30px;
       bottom: 15px;
