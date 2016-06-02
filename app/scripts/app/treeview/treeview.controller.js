@@ -144,6 +144,33 @@ angular.module('editorApp')
       $scope.treeReverse = !$scope.treeReverse;
     };
 
+    $scope.selectByTag = function (tag) {
+      $scope.selectedItems = [];
+      var types = [];
+      $scope.tree.forEach(function (item) {
+        if (item.tags.indexOf(tag) !== -1) {
+          if (types.indexOf(item.type) === -1) {
+            types.push(item.type);
+          }
+          $scope.selectedItems.push(item);
+        }
+        if (item.children) {
+          item.children.forEach(function (item) {
+            if (item.tags.indexOf(tag) !== -1) {
+              if (types.indexOf(item.type) === -1) {
+                types.push(item.type);
+              }
+              $scope.selectedItems.push(item);
+            }
+          });
+        }
+      });
+
+      if (types.indexOf('component') !== -1) {
+        $scope.expand();
+      }
+    };
+
     $scope.$on('$destroy', function () {
       kEditor.removeListener(processModel);
     });

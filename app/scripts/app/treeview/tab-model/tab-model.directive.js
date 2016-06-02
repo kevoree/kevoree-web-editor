@@ -4,6 +4,10 @@ angular.module('editorApp')
   .directive('tabModel', function (kEditor, kModelHelper) {
     return {
       restrict: 'AE',
+      scope: {
+        items: '=',
+        onTagClicked: '='
+      },
       templateUrl: 'scripts/app/treeview/tab-model/tab-model.html',
       link: function ($scope) {
         function processData() {
@@ -17,57 +21,40 @@ angular.module('editorApp')
             kModelHelper.getNbGroups(model),
             kModelHelper.getNbChannels(model)
           ];
-
-          // $scope.platformsData = [];
-          // $scope.platformsLabels = [];
-          // var allPlatforms = {};
-          // var platforms = {
-          //   nodes: {},
-          //   groups: {},
-          //   channels: {},
-          //   components: {}
-          // };
-          // function processPlatform(instance, type) {
-          //   kModelHelper.getPlatforms(instance.typeDefinition)
-          //     .forEach(function (platform) {
-          //       allPlatforms[platform] = true;
-          //       if (platforms[type][platform]) {
-          //         platforms[type][platform] += 1;
-          //       } else {
-          //         platforms[type][platform] = 1;
-          //       }
-          //     }
-          //   );
-          // }
-          // model.nodes.array.forEach(function (instance) {
-          //   processPlatform(instance, 'nodes');
-          //   instance.components.array.forEach(function (comp) {
-          //     processPlatform(comp, 'components');
-          //   });
-          // });
-          // model.groups.array.forEach(function (instance) {
-          //   processPlatform(instance, 'groups');
-          // });
-          // model.hubs.array.forEach(function (instance) {
-          //   processPlatform(instance, 'channels');
-          // });
-          //
-          // $scope.platformsSeries = Object.keys(allPlatforms);
-          // $scope.platformsSeries.forEach(function (platform) {
-          //   $scope.platformsData.push([
-          //     platforms.nodes[platform] || 0,
-          //     platforms.components[platform] || 0,
-          //     platforms.groups[platform] || 0,
-          //     platforms.channels[platform] || 0
-          //   ]);
-          // });
         }
 
-        processData();
+        function processTags() {
+          $scope.tags = [];
+          $scope.items.forEach(function (item) {
+            item.tags.forEach(function (tag) {
+              if ($scope.tags.indexOf(tag) === -1) {
+                $scope.tags.push(tag);
+              }
+            });
+            if (item.children) {
+              item.children.forEach(function (child) {
+                child.tags.forEach(function (tag) {
+                  if ($scope.tags.indexOf(tag) === -1) {
+                    $scope.tags.push(tag);
+                  }
+                });
+              });
+            }
+          });
+        }
+
+        function modelHandler() {
+          processData();
+          processTags();
+        }
+
+        modelHandler();
         kEditor.addListener(processData);
+        var unwatchTags = $scope.$watch('items', processTags, true);
 
         $scope.$on('$destroy', function () {
           kEditor.removeListener(processData);
+          unwatchTags();
         });
       }
     };

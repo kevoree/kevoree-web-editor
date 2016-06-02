@@ -45,10 +45,27 @@ angular.module('editorApp')
           return Math.random() < 0.5;
         }
 
+        /**
+         * @param {array}
+         * @returns {array} unique (using "===" check) items array
+         */
+        function arrayUnique(array) {
+          var a = array.concat();
+          for (var i=0; i<a.length; ++i) {
+            for (var j=i+1; j<a.length; ++j) {
+              if (a[i] === a[j]) {
+                a.splice(j--, 1);
+              }
+            }
+          }
+          return a;
+        }
+
         return {
             isTruish: isTruish,
             randomString: randomString,
             randomNumber: randomNumber,
-            randomBoolean: randomBoolean
+            randomBoolean: randomBoolean,
+            arrayUnique: arrayUnique
         };
     });
