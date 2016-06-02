@@ -24,13 +24,19 @@
                     class="form-control"
                     rows="1"
                     placeholder="{{ attr.defaultValue ? 'Default: ' + attr.defaultValue : '' }}"
-                    ng-model="attr.value"></textarea>
+                    ng-model="attr.value"
+                    ng-disabled="each[attr.name]"></textarea>
               </div>
               <div class="col-md-8 form-inline text-right">
                 <input type="text" class="form-control" placeholder="Prepend" ng-model="prepend[attr.name]" ng-init="prepend[attr.name] = ''" style="width: 80px"/>
                 <input type="number" class="form-control" placeholder="String length" ng-model="length[attr.name]" ng-init="length[attr.name] = 5" style="width: 80px"/>
                 <input type="text" class="form-control" placeholder="Append" ng-model="append[attr.name]" ng-init="append[attr.name] = ''" style="width: 80px"/>
-                <button class="btn btn-sm btn-default" ng-click="random(attr)">Random</button>
+                <button class="btn btn-sm btn-default" ng-click="random(attr)" ng-disabled="each[attr.name]">Random</button>
+                <div class="checkbox">
+                  <label title="Generate a new value for each instance">
+                    <input type="checkbox" ng-model="each[attr.name]" ng-init="each[attr.name] = false"> Each
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -45,12 +51,18 @@
                     type="number"
                     class="form-control"
                     placeholder="{{ attr.defaultValue ? 'Default: ' + attr.defaultValue : '' }}"
-                    ng-model="attr.value" />
+                    ng-model="attr.value"
+                    ng-disabled="each[attr.name]" />
               </div>
               <div class="col-md-8 form-inline text-right">
                 <input type="number" class="form-control" placeholder="Min value" ng-model="min[attr.name]" ng-init="min[attr.name] = 0" style="width: 80px"/>
                 <input type="number" class="form-control" placeholder="Max value" ng-model="max[attr.name]" ng-init="max[attr.name] = 65535" style="width: 80px"/>
-                <button class="btn btn-sm btn-default" ng-click="random(attr)">Random</button>
+                <button class="btn btn-sm btn-default" ng-click="random(attr)" ng-disabled="each[attr.name]">Random</button>
+                <div class="checkbox">
+                  <label title="Generate a new value for each instance">
+                    <input type="checkbox" ng-model="each[attr.name]" ng-init="each[attr.name] = false"> Each
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -58,9 +70,21 @@
         <div ng-switch-when="boolean">
           <div class="form-group form-group-sm">
             <label class="control-label" for="{{ attr.name }}">{{ attr.name + (attr.optional ? '':' *') }}</label>
-            <div class="btn-group btn-group-block clearfix">
-              <label class="btn btn-sm btn-default" ng-model="attr.value" btn-radio="'true'">True</label>
-              <label class="btn btn-sm btn-default" ng-model="attr.value" btn-radio="'false'">False</label>
+            <div class="row-fluid clearfix">
+              <div class="col-md-4">
+                <div class="btn-group btn-group-block clearfix" ng-disabled="each[attr.name]">
+                  <label class="btn btn-sm btn-default" ng-model="attr.value" btn-radio="'true'">True</label>
+                  <label class="btn btn-sm btn-default" ng-model="attr.value" btn-radio="'false'">False</label>
+                </div>
+              </div>
+              <div class="col-md-8 form-inline text-right">
+                <button class="btn btn-sm btn-default" ng-click="random(attr)" ng-disabled="each[attr.name]">Random</button>
+                <div class="checkbox">
+                  <label title="Generate a new value for each instance">
+                    <input type="checkbox" ng-model="each[attr.name]" ng-init="each[attr.name] = false"> Each
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -68,7 +92,10 @@
     </div>
     <div class="col-xs-12">
       <button class="btn btn-default" ng-click="applyToAllInstances()">Apply to selection</button>
-      <button class="btn btn-default pull-right" ng-click="allRandom()">All random</button>
+      <div class="pull-right">
+        <button class="btn btn-default" ng-click="allRandom()">All random</button>
+        <button class="btn btn-default" ng-click="toggleEach()">Toggle each</button>
+      </div>
     </div>
   </fieldset>
 </div>

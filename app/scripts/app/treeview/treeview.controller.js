@@ -89,16 +89,6 @@ angular.module('editorApp')
     $scope.treeOptions = { multiSelection: true };
     $scope.treeOrderBy = 'name';
     $scope.filterExpr = '';
-    // $scope.filterFunc = function (item) {
-    //   var match = $filter('filter')([item], $scope.filterExpr, $scope.filterComparator).length > 0;
-    //   item.isFiltered = !match;
-    //   if (item.children) {
-    //     item.children.forEach(function (child) {
-    //       child.isFiltered = !match;
-    //     });
-    //   }
-    //   return match;
-    // };
     $scope.filterComparator = false;
     $scope.treeReverse = false;
 

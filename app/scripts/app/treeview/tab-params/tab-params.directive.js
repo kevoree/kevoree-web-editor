@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-  .directive('tabParams', function (kEditor, kModelHelper, util) {
+  .directive('tabParams', function (kEditor, kModelHelper, kInstance, util) {
     return {
       restrict: 'AE',
       scope: {
@@ -33,6 +33,8 @@ angular.module('editorApp')
           $scope.append = {};
           $scope.min = {};
           $scope.max = {};
+          $scope.each = {};
+          $scope.toggleEachFlag = false;
           var model = kEditor.getModel();
 
           if ($scope.items.length > 1) {
@@ -79,23 +81,45 @@ angular.module('editorApp')
         $scope.applyToAllInstances = function () {
           $scope.items.forEach(function (item) {
             var instance = kEditor.getModel().findByPath(item.path);
+            kInstance.initDictionaries(instance);
             $scope.dictionary.forEach(function (attr) {
               var val = instance.dictionary.findValuesByID(attr.name);
+              if ($scope.each[attr.name]) {
+                $scope.random(attr);
+              }
               val.value = attr.value;
             });
+          });
+          $scope.dictionary.forEach(function (attr) {
+            attr.value = null;
           });
         };
 
         $scope.random = function (attr) {
-          if (attr.type === 'number') {
-            attr.value = util.randomNumber($scope.min[attr.name], $scope.max[attr.name]);
-          } else if (attr.type !== 'boolean') {
-            attr.value = $scope.prepend[attr.name] + util.randomString($scope.length[attr.name]) + $scope.append[attr.name];
+          switch (attr.type) {
+            case 'text':
+              attr.value = $scope.prepend[attr.name] + util.randomString($scope.length[attr.name]) + $scope.append[attr.name];
+              break;
+
+            case 'number':
+              attr.value = util.randomNumber($scope.min[attr.name], $scope.max[attr.name]);
+              break;
+
+            case 'boolean':
+              attr.value = util.randomBoolean() + '';
+              break;
           }
         };
 
         $scope.allRandom = function () {
           $scope.dictionary.forEach($scope.random);
+        };
+
+        $scope.toggleEach = function () {
+          $scope.toggleEachFlag = !$scope.toggleEachFlag;
+          Object.keys($scope.each).forEach(function (name) {
+            $scope.each[name] = $scope.toggleEachFlag;
+          });
         };
       }
     };

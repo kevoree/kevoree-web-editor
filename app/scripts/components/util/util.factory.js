@@ -38,9 +38,17 @@ angular.module('editorApp')
           return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
+        /**
+         * @returns {boolean}
+         */
+        function randomBoolean() {
+          return Math.random() < 0.5;
+        }
+
         return {
             isTruish: isTruish,
             randomString: randomString,
-            randomNumber: randomNumber
+            randomNumber: randomNumber,
+            randomBoolean: randomBoolean
         };
     });
