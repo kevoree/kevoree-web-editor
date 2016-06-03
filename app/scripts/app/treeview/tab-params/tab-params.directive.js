@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-  .directive('tabParams', function (kEditor, kModelHelper, kInstance, util) {
+  .directive('tabParams', function ($timeout, kEditor, kModelHelper, kInstance, util) {
     return {
       restrict: 'AE',
       scope: {
@@ -27,6 +27,7 @@ angular.module('editorApp')
         }
 
         function process() {
+          $scope.message = null;
           $scope.error = false;
           $scope.length = {};
           $scope.prepend = {};
@@ -79,20 +80,30 @@ angular.module('editorApp')
       },
       controller: function ($scope) {
         $scope.applyToAllInstances = function () {
-          $scope.items.forEach(function (item) {
-            var instance = kEditor.getModel().findByPath(item.path);
-            kInstance.initDictionaries(instance);
-            $scope.dictionary.forEach(function (attr) {
-              var val = instance.dictionary.findValuesByID(attr.name);
-              if ($scope.each[attr.name]) {
-                $scope.random(attr);
-              }
-              val.value = attr.value;
+          try {
+            $scope.items.forEach(function (item) {
+              var instance = kEditor.getModel().findByPath(item.path);
+              kInstance.initDictionaries(instance);
+              $scope.dictionary.forEach(function (attr) {
+                var val = instance.dictionary.findValuesByID(attr.name);
+                if ($scope.each[attr.name]) {
+                  $scope.random(attr);
+                }
+                val.value = attr.value;
+              });
             });
-          });
-          $scope.dictionary.forEach(function (attr) {
-            attr.value = null;
-          });
+            $scope.dictionary.forEach(function (attr) {
+              attr.value = null;
+            });
+            $scope.message = { type: 'success', content: 'Success' };
+          } catch (err) {
+            $scope.message = { type: 'danger', content: 'Error (check console for more information)' };
+            console.error(err);
+          }
+
+          $timeout(function () {
+            $scope.message = null;
+          }, 1500);
         };
 
         $scope.random = function (attr) {

@@ -16,11 +16,13 @@ angular.module('editorApp')
           $scope.tags = [];
           $scope.items.forEach(function (item) {
             var instance = kEditor.getModel().findByPath(item.path);
-            kModelHelper.getInstanceTags(instance).forEach(function (tag) {
-              if ($scope.tags.indexOf(tag) === -1) {
-                $scope.tags.push(tag);
-              }
-            });
+            if (instance) {
+              kModelHelper.getInstanceTags(instance).forEach(function (tag) {
+                if ($scope.tags.indexOf(tag) === -1) {
+                  $scope.tags.push(tag);
+                }
+              });
+            }
           });
         }
 

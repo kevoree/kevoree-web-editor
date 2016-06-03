@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-  .config(function () {
+  .run(function (kEditor) {
     var REGEX = {
       statement:          /repo|include|add|remove|move|set|attach|detach|network|bind|unbind|start|stop/,
       string:             /^"((?!")(?!(\r\n|\n|\r)).)*"$|^'((?!')(?!(\r\n|\n|\r)).)*'$/,
@@ -18,6 +18,8 @@ angular.module('editorApp')
       string1:            /[a-zA-Z0-9_-]+/,
       version:            /[a-zA-Z0-9._-]+/
     };
+
+    function getName(i) { return i.name }
 
     var statements = {
       repo: function (stream, state) {
@@ -369,13 +371,25 @@ angular.module('editorApp')
         },
         lineComment: '//',
         startState: function () {
+          var model = kEditor.getModel();
+          var varList = [ '*' ]
+                          .concat(model.nodes.array.map(getName))
+                          .concat(model.groups.array.map(getName))
+                          .concat(model.hubs.array.map(getName));
+
+          model.nodes.array.forEach(function (node) {
+            node.components.array.forEach(function (comp) {
+              varList.push(node.name+'.'+comp.name);
+            });
+          });
+
           return {
             expect: [],
             currentStatement: null,
             inString: false,
             stringTag: null,
             escaped: false,
-            varList : []
+            varList : varList
           };
         }
       };

@@ -441,35 +441,37 @@ angular.module('editorApp')
            * Create svg UIs based on current model
            */
           drawModel: function () {
-              this.model.hubs.array.forEach(function (instance) {
-                  ui.createChannel(instance);
-              });
+              if (ui.editor) {
+                this.model.hubs.array.forEach(function (instance) {
+                    ui.createChannel(instance);
+                });
 
-              this.model.nodes.array
-                  .sort(function (a, b) {
-                      // TODO optimize this to loop only once to create node tree heights
-                      return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
-                  })
-                  .forEach(function (instance) {
-                      ui.createNode(instance);
-                      instance.components.array.forEach(function (instance) {
-                          ui.createComponent(instance);
-                      });
-                  });
+                this.model.nodes.array
+                    .sort(function (a, b) {
+                        // TODO optimize this to loop only once to create node tree heights
+                        return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
+                    })
+                    .forEach(function (instance) {
+                        ui.createNode(instance);
+                        instance.components.array.forEach(function (instance) {
+                            ui.createComponent(instance);
+                        });
+                    });
 
-              this.model.groups.array.forEach(function (instance) {
-                  ui.createGroup(instance);
+                this.model.groups.array.forEach(function (instance) {
+                    ui.createGroup(instance);
 
-                  instance.subNodes.array.forEach(function (node) {
-                      ui.createGroupWire(instance, node);
-                  });
-              });
+                    instance.subNodes.array.forEach(function (node) {
+                        ui.createGroupWire(instance, node);
+                    });
+                });
 
-              this.model.mBindings.array.forEach(function (binding) {
-                  ui.createBinding(binding);
-              });
+                this.model.mBindings.array.forEach(function (binding) {
+                    ui.createBinding(binding);
+                });
 
-              ui.order();
+                ui.order();
+              }
           }
       };
 

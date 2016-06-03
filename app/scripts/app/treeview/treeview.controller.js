@@ -8,19 +8,12 @@
  * Controller of the editorApp treeview page
  */
 angular.module('editorApp')
-  .filter('filtered', function () {
-    return function (filteredItems) {
-      filteredItems.forEach(function (item) {
-        item.filtered = true;
-      });
-      return filteredItems;
-    };
-  })
   .controller('TreeViewCtrl', function ($scope, $filter, kEditor, kModelHelper) {
     function transformModelToTree(model) {
       function transformComponentToTreeItem(instance) {
         return {
           name: instance.name,
+          kevsName: instance.eContainer().name + '.' + instance.name,
           type: 'component',
           typeName: instance.typeDefinition.name,
           version: instance.typeDefinition.version,
@@ -79,6 +72,17 @@ angular.module('editorApp')
     function processModel() {
       $scope.tree = transformModelToTree(kEditor.getModel());
       $scope.nbInstances = kModelHelper.getNbInstances(kEditor.getModel());
+      if ($scope.selectedItems.length > 0) {
+        var oldSelection = $scope.selectedItems;
+        $scope.selectedItems = [];
+        oldSelection.forEach(function (oldItem) {
+          for (var i=0; i < $scope.tree.length; i++) {
+            if ($scope.tree[i].name === oldItem.name) {
+              $scope.selectedItems.push($scope.tree[i]);
+            }
+          }
+        });
+      }
     }
 
     $scope.tree = transformModelToTree(kEditor.getModel());

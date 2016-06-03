@@ -1,4 +1,4 @@
-<div class="tab-container" data-ng-cloak>
+<div class="tab-container" ng-cloak>
   <div class="col-md-4 col-lg-3 fit-y">
     <div class="well fit-y">
       <div class="row clearfix">
@@ -6,7 +6,7 @@
           <div class="input-group input-group-sm">
             <input type="text" class="form-control" placeholder="Filter by name, tag, type, version" ng-model="filterExpr">
             <span class="input-group-btn">
-              <button class="btn btn-default" type="button" data-ng-click="filterExpr = ''" title="Clear filter" ng-disabled="!filterExpr.length">
+              <button class="btn btn-default" type="button" ng-click="filterExpr = ''" title="Clear filter" ng-disabled="!filterExpr.length">
                 <i class="fa fa-times"></i>
               </button>
             </span>
@@ -20,25 +20,25 @@
       </div>
       <div class="treeview-actions row clearfix">
         <div class="col-xs-12">
-          <a href="" class="treeview-action" data-ng-click="collapse()" title="Collapse">
+          <a href="" class="treeview-action" ng-click="collapse()" title="Collapse">
             <i class="fa fa-compress"></i>
           </a>
-          <a href="" class="treeview-action" data-ng-click="expand()" title="Expand">
+          <a href="" class="treeview-action" ng-click="expand()" title="Expand">
             <i class="fa fa-expand"></i>
           </a>
-          <a href="" class="treeview-action" data-ng-click="toggleTags()" title="{{ showTags ? 'Hide tags':'Show tags' }}">
+          <a href="" class="treeview-action" ng-click="toggleTags()" title="{{ showTags ? 'Hide tags':'Show tags' }}">
             <i class="fa" ng-class="showTags ? 'fa-eye-slash':'fa-eye'"></i>
           </a>
-          <a href="" class="treeview-action" data-ng-click="reverseSort()" title="{{ showTags ? 'Sort desc':'Sort asc' }}">
+          <a href="" class="treeview-action" ng-click="reverseSort()" title="{{ showTags ? 'Sort desc':'Sort asc' }}">
             <i class="fa" ng-class="treeReverse ? 'fa-sort-alpha-desc':'fa-sort-alpha-asc'"></i>
           </a>
         </div>
         <div class="col-xs-12">
-          <a href="" class="treeview-action" data-ng-click="selectNodes()" title="Select nodes">N</a>
-          <a href="" class="treeview-action" data-ng-click="selectComponents()" title="Select components">C</a>
-          <a href="" class="treeview-action" data-ng-click="selectGroups()" title="Select groups">G</a>
-          <a href="" class="treeview-action" data-ng-click="selectChannels()" title="Select channels">Ch</a>
-          <a href="" class="treeview-action" data-ng-click="clearSelected()" title="Clear selected">
+          <a href="" class="treeview-action" ng-click="selectNodes()" title="Select nodes">N</a>
+          <a href="" class="treeview-action" ng-click="selectComponents()" title="Select components">C</a>
+          <a href="" class="treeview-action" ng-click="selectGroups()" title="Select groups">G</a>
+          <a href="" class="treeview-action" ng-click="selectChannels()" title="Select channels">Ch</a>
+          <a href="" class="treeview-action" ng-click="clearSelected()" title="Clear selected">
             <i class="fa fa-square-o"></i>
           </a>
           <span class="pull-right">{{ selectedItems.length + '/' + nbInstances }} </span>
@@ -73,17 +73,22 @@
           <tab-model items="tree" on-tag-clicked="selectByTag"></tab-model>
         </div>
       </tab>
-      <tab index="1" heading="Params" data-ng-if="selectedItems.length">
+      <tab index="1" heading="Params" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-params items="selectedItems"></tab-params>
         </div>
       </tab>
-      <tab index="2" heading="Tags" data-ng-if="selectedItems.length">
+      <tab index="2" heading="Tags" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-tags items="selectedItems"></tab-tags>
         </div>
       </tab>
-      <tab index="3" heading="JSON" data-ng-if="selectedItems.length">
+      <tab index="3" heading="KevScript" select="$broadcast('kevs-tab-selected')" ng-if="selectedItems.length">
+        <div class="tab-pane-container well">
+          <tab-kevs items="selectedItems"></tab-kevs>
+        </div>
+      </tab>
+      <tab index="4" heading="JSON" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-json items="selectedItems"></tab-json>
         </div>

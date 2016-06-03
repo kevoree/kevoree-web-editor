@@ -29,12 +29,18 @@ body {
     text-align: center;
     color: #ddd;
 }
-#kevscript-editor {
+.kevscript-editor {
     margin-top: 15px;
     margin-bottom: 15px;
 }
-#kevscript-editor .CodeMirror {
+.kevscript-editor .CodeMirror {
     height: 500px;
+}
+.kevscript-editor.extended {
+  margin: 10px 0;
+}
+.kevscript-editor.extended .CodeMirror {
+  height: 200px;
 }
 #tree-container {
   margin-top: 15px;
@@ -486,7 +492,7 @@ treecontrol > ul > li {
     }
     .tab-pane-container {
       height: 100%;
-      overflow-y: scroll;
+      overflow-y: auto;
     }
 }
 @media (max-width: 991px) {

@@ -3,7 +3,8 @@
     <div class="panel-heading">
       <h4 class="panel-title">
         <a role="button" data-ng-click="item.isCollapsed = !item.isCollapsed">
-          {{ item.name }}
+          <span>{{ item.name }}</span>
+          <i class="fa pull-right" ng-class="item.isCollapsed ? 'fa-plus':'fa-minus'"></i>
         </a>
       </h4>
     </div>
