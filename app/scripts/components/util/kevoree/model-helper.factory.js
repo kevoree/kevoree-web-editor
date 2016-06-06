@@ -106,19 +106,6 @@ angular.module('editorApp')
             },
 
             /**
-             * Returns all the channel types of the given model
-             */
-            getChannelTypes: function (model) {
-                var types = [];
-                model.select('**/typeDefinitions[]').array.forEach(function (tdef) {
-                    if (this.getTypeDefinitionType(tdef) === 'channel') {
-                        types.push(tdef);
-                    }
-                }.bind(this));
-                return types;
-            },
-
-            /**
              *
              * @param tdefs
              * @returns {*}
@@ -198,6 +185,42 @@ angular.module('editorApp')
                     }
                 });
                 return max + 1;
+            },
+
+            /**
+             * Returns all the node types of the given model
+             */
+            getNodeTypes: function (model) {
+              return model.select('**/typeDefinitions[*]').array.filter(function (tdef) {
+                return tdef.metaClassName() === 'org.kevoree.NodeType';
+              });
+            },
+
+            /**
+             * Returns all the group types of the given model
+             */
+            getGroupTypes: function (model) {
+              return model.select('**/typeDefinitions[*]').array.filter(function (tdef) {
+                return tdef.metaClassName() === 'org.kevoree.GroupType';
+              });
+            },
+
+            /**
+             * Returns all the component types of the given model
+             */
+            getComponentTypes: function (model) {
+              return model.select('**/typeDefinitions[*]').array.filter(function (tdef) {
+                return tdef.metaClassName() === 'org.kevoree.ComponentType';
+              });
+            },
+
+            /**
+             * Returns all the channel types of the given model
+             */
+            getChannelTypes: function (model) {
+              return model.select('**/typeDefinitions[*]').array.filter(function (tdef) {
+                return tdef.metaClassName() === 'org.kevoree.ChannelType';
+              });
             },
 
             /**

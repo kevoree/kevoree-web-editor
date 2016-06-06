@@ -38,7 +38,7 @@
           <a href="" class="treeview-action" ng-click="selectComponents()" title="Select components">C</a>
           <a href="" class="treeview-action" ng-click="selectGroups()" title="Select groups">G</a>
           <a href="" class="treeview-action" ng-click="selectChannels()" title="Select channels">Ch</a>
-          <a href="" class="treeview-action" ng-click="clearSelected()" title="Clear selected">
+          <a href="" class="treeview-action" ng-click="clearSelected()" title="Clear selection">
             <i class="fa fa-square-o"></i>
           </a>
           <span class="pull-right">{{ selectedItems.length + '/' + nbInstances }} </span>
@@ -73,22 +73,27 @@
           <tab-model items="tree" on-tag-clicked="selectByTag"></tab-model>
         </div>
       </tab>
-      <tab index="1" heading="Params" ng-if="selectedItems.length">
+      <!-- <tab index="1" heading="Create">
+        <div class="tab-pane-container well">
+          <tab-create></tab-create>
+        </div>
+      </tab> -->
+      <tab index="2" heading="Params" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-params items="selectedItems"></tab-params>
         </div>
       </tab>
-      <tab index="2" heading="Tags" ng-if="selectedItems.length">
+      <tab index="3" heading="Tags" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-tags items="selectedItems"></tab-tags>
         </div>
       </tab>
-      <tab index="3" heading="KevScript" select="$broadcast('kevs-tab-selected')" ng-if="selectedItems.length">
+      <tab index="4" heading="KevScript" select="$broadcast('kevs-tab-selected')" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-kevs items="selectedItems"></tab-kevs>
         </div>
       </tab>
-      <tab index="4" heading="JSON" ng-if="selectedItems.length">
+      <tab index="5" heading="JSON" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-json items="selectedItems"></tab-json>
         </div>

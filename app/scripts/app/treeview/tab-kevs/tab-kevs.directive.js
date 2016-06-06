@@ -34,7 +34,9 @@ angular.module('editorApp')
           theme: 'kevscript',
           lineWrapping: true,
           lineNumbers: true,
-          styleActiveLine: true
+          styleActiveLine: true,
+          gutters: [ 'CodeMirror-lint-markers' ],
+          lint: true
         };
 
         $scope.transform = function () {

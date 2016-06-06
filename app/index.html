@@ -17,6 +17,7 @@
     <!-- endbower -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="bower_components/codemirror/lib/codemirror.css" />
+    <link rel="stylesheet" href="bower_components/codemirror/addon/lint/lint.css" />
     <link rel="stylesheet" href="bower_components/codemirror/addon/hint/show-hint.css" />
     <link rel="stylesheet" href="bower_components/codemirror/addon/dialog/dialog.css" />
 
@@ -133,6 +134,7 @@
     <script src="bower_components/Chart.js/Chart.js"></script>
     <script src="bower_components/angular-chart.js/dist/angular-chart.js"></script>
     <!-- endbower -->
+    <script src="bower_components/codemirror/addon/lint/lint.js"></script>
     <script src="bower_components/codemirror/addon/hint/show-hint.js"></script>
     <script src="bower_components/codemirror/addon/selection/active-line.js"></script>
     <script src="bower_components/codemirror/addon/search/search.js"></script>
@@ -160,11 +162,12 @@
     <script src="scripts/app/libraries/libraries.controller.js"></script>
     <script src="scripts/app/treeview/treeview.js"></script>
     <script src="scripts/app/treeview/treeview.controller.js"></script>
+    <script src="scripts/app/treeview/tab-model/tab-model.directive.js"></script>
+    <!-- <script src="scripts/app/treeview/tab-create/tab-create.directive.js"></script> -->
     <script src="scripts/app/treeview/tab-params/tab-params.directive.js"></script>
     <script src="scripts/app/treeview/tab-tags/tab-tags.directive.js"></script>
-    <script src="scripts/app/treeview/tab-json/tab-json.directive.js"></script>
-    <script src="scripts/app/treeview/tab-model/tab-model.directive.js"></script>
     <script src="scripts/app/treeview/tab-kevs/tab-kevs.directive.js"></script>
+    <script src="scripts/app/treeview/tab-json/tab-json.directive.js"></script>
     <script src="scripts/components/kevoree/editor.factory.js"></script>
     <script src="scripts/components/kevoree/kevscript.factory.js"></script>
     <script src="scripts/components/kevoree/dictionary.directive.js"></script>
@@ -190,9 +193,10 @@
     <script src="scripts/components/util/truncate.filter.js"></script>
     <script src="scripts/components/util/trust-html.filter.js"></script>
     <script src="scripts/components/util/save-file.factory.js"></script>
-    <script src="scripts/components/util/codemirror/kevs-hint.js"></script>
     <script src="scripts/components/util/util.factory.js"></script>
+    <script src="scripts/components/util/codemirror/kevs-hint.js"></script>
     <script src="scripts/components/util/codemirror/kevs-parser.js"></script>
+    <script src="scripts/components/util/codemirror/kevs-lint.js"></script>
     <script src="scripts/components/util/kevoree/model-helper.factory.js"></script>
     <!-- endbuild -->
 </body>

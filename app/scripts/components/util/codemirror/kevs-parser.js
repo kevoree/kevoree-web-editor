@@ -19,7 +19,7 @@ angular.module('editorApp')
       version:            /[a-zA-Z0-9._-]+/
     };
 
-    function getName(i) { return i.name }
+    function getName(i) { return i.name; }
 
     var statements = {
       repo: function (stream, state) {
@@ -121,12 +121,25 @@ angular.module('editorApp')
             for (i=0; i < varList.length; i++) {
               // check that instancepath is available against previous ADD lines decl
               if (state.varList.indexOf(varList[i]) !== -1) {
-                return 'error';
+                // editor.addLineWidget(err.line - 1, msg, {coverGutter: false, noHScroll: true});
+                state.errors.push({
+                  str: stream.string,
+                  column: stream.pos,
+                  message: '\'' + varList[i] + '\' is already defined in model',
+                  severity: 'warning'
+                });
+                return 'warning';
               }
 
               // check that instancepath is available against previous var in this instanceList (=> add n0, n0 == error)
               if (i < varList.length-1 && varList[i] === varList[varList.length-1]) {
-                return 'error';
+                state.errors.push({
+                  str: stream.string,
+                  column: stream.pos,
+                  message: '\'' + varList[i] + '\' is already defined in model',
+                  severity: 'warning'
+                });
+                return 'warning';
               }
             }
 
@@ -142,7 +155,13 @@ angular.module('editorApp')
             for (i=0; i < varList.length; i++) {
               // check that instancepath has been declared
               if (state.varList.indexOf(varList[i]) === -1) {
-                return 'error';
+                state.errors.push({
+                  str: stream.string,
+                  column: stream.pos,
+                  message: '\'' + varList[i] + '\' is already defined in model',
+                  severity: 'warning'
+                });
+                return 'warning';
               }
             }
             return 'instancelist';
@@ -173,12 +192,17 @@ angular.module('editorApp')
         var str = stream.current();
         var dotIndex = str.lastIndexOf('.');
         var instPath = str;
-
         switch (state.currentStatement) {
           case 'attach':
           case 'detach':
             if (state.varList.indexOf(stream.current()) === -1) {
-              return 'error';
+              state.errors.push({
+                str: stream.string,
+                column: stream.pos,
+                message: '\'' + instPath + '\' is already defined in model',
+                severity: 'warning'
+              });
+              return 'warning';
             }
             return 'instancepath';
 
@@ -193,13 +217,23 @@ angular.module('editorApp')
                 }
               }
             }
+            state.errors.push({
+              str: stream.string,
+              column: stream.pos,
+              message: '\'' + instPath + '\' is not defined'
+            });
             return 'error';
 
           case 'bind':
           case 'unbind':
             if (state.expect.length === 1) {
               if (str.split('.').length !== 3) {
-                // component instance cannot be less that a.b.c
+                // port ref must at least be a.b.c
+                state.errors.push({
+                  str: stream.string,
+                  column: stream.pos,
+                  message: '\'' + str + '\' does not refer to a port'
+                });
                 return 'error';
               }
             }
@@ -213,18 +247,27 @@ angular.module('editorApp')
                 }
               }
             }
-
+            state.errors.push({
+              str: stream.string,
+              column: stream.pos,
+              message: '\'' + instPath + '\' is not defined'
+            });
             return 'error';
 
           case 'network':
+            var nets = stream.current().split('.');
             if (state.varList.length > 0) {
               for (i=0; i < state.varList.length; i++) {
-                var nets = stream.current().split('.');
                 if (nets.length === 3 && nets[0] === state.varList[i]) {
                   return 'instancepath';
                 }
               }
             }
+            state.errors.push({
+              str: stream.string,
+              column: stream.pos,
+              message: '\'' + nets[0] + '\' is not defined'
+            });
             return 'error';
 
           default:
@@ -385,6 +428,7 @@ angular.module('editorApp')
 
           return {
             expect: [],
+            errors: [],
             currentStatement: null,
             inString: false,
             stringTag: null,
