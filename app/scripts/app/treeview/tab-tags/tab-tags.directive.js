@@ -27,10 +27,10 @@ angular.module('editorApp')
         }
 
         processTags();
-        kEditor.addListener(processTags);
+        var unregister = kEditor.addListener('modelUpdate', processTags);
         var unwatchItems = $scope.$watchCollection('items', processTags);
         $scope.$on('$destroy', function () {
-          kEditor.removeListener(processTags);
+          unregister();
           unwatchItems();
         });
 

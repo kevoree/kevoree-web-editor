@@ -151,7 +151,6 @@ angular.module('editorApp')
           case 'start':
           case 'stop':
           case 'pause':
-          case 'remove':
             for (i=0; i < varList.length; i++) {
               // check that instancepath has been declared
               if (state.varList.indexOf(varList[i]) === -1) {

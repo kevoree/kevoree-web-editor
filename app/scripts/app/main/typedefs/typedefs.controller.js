@@ -237,12 +237,14 @@ angular.module('editorApp')
         }
 
         // listen to model changes on the editor
-        kEditor.addListener(processModel);
+        var unregister = kEditor.addListener('modelUpdate:tdefs', processModel);
+        var unregister2 = kEditor.addListener('newModel', processModel);
 
         // process model
         processModel();
 
         $scope.$on('$destroy', function() {
-            kEditor.removeListener(processModel);
+            unregister();
+            unregister2();
         });
     });

@@ -73,11 +73,11 @@
           <tab-model items="tree" on-tag-clicked="selectByTag"></tab-model>
         </div>
       </tab>
-      <!-- <tab index="1" heading="Create">
+      <tab index="1" heading="Create">
         <div class="tab-pane-container well">
-          <tab-create></tab-create>
+          <tab-create update-tree="updateTree"></tab-create>
         </div>
-      </tab> -->
+      </tab>
       <tab index="2" heading="Params" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-params items="selectedItems"></tab-params>

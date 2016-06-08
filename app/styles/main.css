@@ -45,6 +45,10 @@ body {
 #tree-container {
   margin-top: 15px;
 }
+.help-text {
+  cursor: help;
+  border-bottom: 1px dotted #777;
+}
 .btn-container {
     height: 100%;
     display: table-cell;

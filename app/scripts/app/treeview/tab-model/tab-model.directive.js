@@ -49,12 +49,11 @@ angular.module('editorApp')
         }
 
         modelHandler();
-        kEditor.addListener(processData);
         var unwatchTags = $scope.$watch('items', processTags, true);
-
+        var unwatchItems = $scope.$watchCollection('items', modelHandler);
         $scope.$on('$destroy', function () {
-          kEditor.removeListener(processData);
           unwatchTags();
+          unwatchItems();
         });
       }
     };

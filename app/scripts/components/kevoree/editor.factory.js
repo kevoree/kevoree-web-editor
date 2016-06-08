@@ -2,10 +2,7 @@
 
 angular.module('editorApp')
     .factory('kEditor', function (kFactory, kModelHelper, kInstance, ui, Notification, KWE_POSITION, KWE_FOLD, KWE_TAG, CHANNEL_RADIUS, GROUP_RADIUS) {
-      /**
-       *
-       * @param editor
-       */
+
       function modelReactor(editor) {
         /**
           * Updates UI according to model changes
@@ -13,30 +10,29 @@ angular.module('editorApp')
           */
         return function (trace) {
           var fragDic, selected, highestNode;
+          editor.invokeListeners('modelUpdate');
 
           function processRefreshRecursively(node) {
               node.components.array.forEach(function (comp) {
                 comp.provided.array.forEach(function (port) {
                   port.bindings.array.forEach(function (binding) {
-                      ui.createBinding(binding);
+                      if (ui.editor) { ui.createBinding(binding); }
                   });
                 });
                 comp.required.array.forEach(function (port) {
                   port.bindings.array.forEach(function (binding) {
-                      ui.createBinding(binding);
+                      if (ui.editor) { ui.createBinding(binding); }
                   });
                 });
               });
               node.groups.array.forEach(function (group) {
-                  ui.createGroupWire(group, node);
+                  if (ui.editor) { ui.createGroupWire(group, node); }
               });
               node.hosts.array.forEach(processRefreshRecursively);
           }
 
           if (trace.elementAttributeName === 'typeDefinitions' || trace.elementAttributeName === 'packages') {
-              editor.listeners.forEach(function (listener) {
-                  listener();
-              });
+            editor.invokeListeners('modelUpdate:tdefs');
           }
 
           try {
@@ -46,18 +42,26 @@ angular.module('editorApp')
                       if (trace.elementAttributeName === 'hubs' ||
                           trace.elementAttributeName === 'nodes' ||
                           trace.elementAttributeName === 'groups') {
-                          ui.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
+                          if (ui.editor) {
+                            ui.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
+                          }
                       } else if (trace.elementAttributeName === 'mBindings') {
-                          ui.deleteBinding(trace.previous_value); // jshint ignore:line
+                          if (ui.editor) {
+                            ui.deleteBinding(trace.previous_value); // jshint ignore:line
+                          }
                       }
                   } else {
                       if (trace.elementAttributeName === 'hosts' ||
                           trace.elementAttributeName === 'components') {
-                          ui.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
+                          if (ui.editor) {
+                            ui.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
+                          }
 
                       } else if (trace.elementAttributeName === 'groups') {
                           // means detaching a node from a group
-                          ui.deleteGroupWire(trace.previous_value, trace.previousPath); // jshint ignore:line
+                          if (ui.editor) {
+                            ui.deleteGroupWire(trace.previous_value, trace.previousPath); // jshint ignore:line
+                          }
                           fragDic = trace.value.findFragmentDictionaryByID(trace.source.name);
                           if (fragDic) {
                               fragDic.delete();
@@ -92,26 +96,26 @@ angular.module('editorApp')
                   if (trace.previousPath === '/') {
                       switch (trace.elementAttributeName) {
                           case 'hubs':
-                              ui.deleteChannels();
+                              if (ui.editor) { ui.deleteChannels(); }
                               break;
 
                           case 'nodes':
-                              ui.deleteNodes();
+                              if (ui.editor) { ui.deleteNodes(); }
                               break;
 
                           case 'groups':
-                              ui.deleteGroups();
+                              if (ui.editor) { ui.deleteGroups(); }
                               break;
 
                           case 'mBindings':
-                              ui.deleteBindings();
+                              if (ui.editor) { ui.deleteBindings(); }
                               break;
                       }
                   } else {
                       switch (trace.elementAttributeName) {
                           case 'groups':
                               trace.value.array.forEach(function (group) {
-                                  ui.deleteGroupWire(group.path(), trace.previousPath);
+                                  if (ui.editor) { ui.deleteGroupWire(group.path(), trace.previousPath); }
                                   var fragDic = group.findFragmentDictionaryByID(trace.source.name);
                                   if (fragDic) {
                                       fragDic.delete();
@@ -121,7 +125,7 @@ angular.module('editorApp')
 
                           case 'bindings':
                               trace.value.array.forEach(function (binding) {
-                                  ui.deleteBinding(binding.path());
+                                  if (ui.editor) { ui.deleteBinding(binding.path()); }
                                   if (!binding.hub || !binding.port) {
                                       binding.delete();
                                   }
@@ -139,49 +143,54 @@ angular.module('editorApp')
                       switch (trace.elementAttributeName) {
                           case 'hubs':
                               //console.log('ADD hubs', trace);
-                              ui.createChannel(trace.value);
+                              if (ui.editor) { ui.createChannel(trace.value); }
                               break;
 
                           case 'nodes':
                           case 'hosts':
                               //console.log('ADD nodes|hosts', trace);
-                              ui.createNode(trace.value);
-                              ui.refreshNode(kModelHelper.getHighestNode(trace.value).path());
+                              if (ui.editor) {
+                                ui.createNode(trace.value);
+                                highestNode = kModelHelper.getHighestNode(trace.value);
+                                if (highestNode) {
+                                  ui.refreshNode(highestNode.path());
+                                }
+                              }
                               break;
 
                           case 'groups':
                               //console.log('ADD groups', trace);
-                              ui.createGroup(trace.value);
+                              if (ui.editor) { ui.createGroup(trace.value); }
                               break;
 
                           case 'mBindings':
                               //console.log('ADD mBinding', trace);
-                              ui.createBinding(trace.value);
+                              if (ui.editor) { ui.createBinding(trace.value); }
                               break;
                       }
                   } else {
                       switch (trace.elementAttributeName) {
                           case 'groups':
                               //console.log('ADD .groups', trace);
-                              ui.createGroupWire(trace.value, trace.source);
+                              if (ui.editor) { ui.createGroupWire(trace.value, trace.source); }
                               break;
 
                           case 'components':
                               //console.log('ADD .components', trace);
-                              ui.createComponent(trace.value);
+                              if (ui.editor) { ui.createComponent(trace.value); }
 
                               highestNode = kModelHelper.getHighestNode(trace.value);
-                              ui.refreshNode(highestNode.path());
+                              if (ui.editor) { ui.refreshNode(highestNode.path()); }
                               processRefreshRecursively(highestNode);
                               break;
 
                           case 'hosts':
                               //console.log('ADD .hosts', trace.source.path(), trace.value.path());
-                              ui.createNode(trace.value);
+                              if (ui.editor) { ui.createNode(trace.value); }
 
                               // recursively recreate children UIs
                               trace.value.components.array.forEach(function (comp) {
-                                  ui.createComponent(comp);
+                                  if (ui.editor) { ui.createComponent(comp); }
                               });
                               trace.value.hosts.array
                                   .sort(function (a, b) {
@@ -189,39 +198,43 @@ angular.module('editorApp')
                                       return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
                                   })
                                   .forEach(function updateChildNode(childNode) {
-                                      ui.createNode(childNode);
+                                      if (ui.editor) { ui.createNode(childNode); }
                                       childNode.components.array.forEach(function (comp) {
-                                          ui.createComponent(comp);
+                                          if (ui.editor) { ui.createComponent(comp); }
                                       });
                                       childNode.hosts.array.forEach(updateChildNode);
                                   });
 
                               highestNode = kModelHelper.getHighestNode(trace.source);
-                              ui.refreshNode(highestNode.path());
+                              if (ui.editor) { ui.refreshNode(highestNode.path()); }
                               processRefreshRecursively(highestNode);
                               break;
 
                           case 'subNodes':
                               //console.log('ADD .subNodes', trace);
                               kInstance.initFragmentDictionaries(trace.source);
-                              selected = ui.getSelected();
-                              if (selected.length === 1 && (selected[0].attr('data-path') === trace.source.path())) {
-                                  ui.invokeListener(trace.source.path());
+                              if (ui.editor) {
+                                selected = ui.getSelected();
+                                if (selected.length === 1 && (selected[0].attr('data-path') === trace.source.path())) {
+                                    if (ui.editor) { ui.invokeListener(trace.source.path()); }
+                                }
                               }
                               break;
 
                           case 'bindings':
                               if (trace.source.getRefInParent() === 'hubs') {
-                                  selected = ui.getSelected();
-                                  if (selected.length === 1 && (selected[0].attr('data-path') === trace.source.path())) {
-                                      ui.invokeListener(trace.source.path());
+                                  if (ui.editor) {
+                                    selected = ui.getSelected();
+                                    if (selected.length === 1 && (selected[0].attr('data-path') === trace.source.path())) {
+                                        if (ui.editor) { ui.invokeListener(trace.source.path()); }
+                                    }
                                   }
                               }
                               break;
 
                           case 'metaData':
                               if (trace.value.name === KWE_FOLD && trace.source.getRefInParent() === 'nodes') {
-                                  ui.toggleFold(trace.source, kModelHelper.isTruish(trace.value.value));
+                                  if (ui.editor) { ui.toggleFold(trace.source, kModelHelper.isTruish(trace.value.value)); }
                               // } else if (trace.value.name === KWE_TAG && trace.source.getRefInParent() === 'metaData') {
                               //   editor.listeners.forEach(function (listener) {
                               //       listener();
@@ -260,28 +273,28 @@ angular.module('editorApp')
                                   comp.required.array.forEach(processPort);
                               });
                           }
-                          ui.updateInstance(trace.previousPath, trace.source);
+                          if (ui.editor) { ui.updateInstance(trace.previousPath, trace.source); }
                           break;
 
                       case 'value':
                           // console.log('SET value', trace);
                           if (trace.source.getRefInParent() === 'metaData' && trace.source.name === KWE_POSITION) {
-                              ui.updatePosition(trace.source.eContainer());
+                              if (ui.editor) { ui.updatePosition(trace.source.eContainer()); }
                               if (trace.source.eContainer().getRefInParent() === 'nodes') {
                                   processRefreshRecursively(trace.source.eContainer());
                               } else if (trace.source.eContainer().getRefInParent() === 'groups') {
                                   trace.source.eContainer().subNodes.array.forEach(function (node) {
-                                      ui.createGroupWire(trace.source.eContainer(), node);
+                                      if (ui.editor) { ui.createGroupWire(trace.source.eContainer(), node); }
                                   });
                               } else if (trace.source.eContainer().getRefInParent() === 'hubs') {
                                   trace.source.eContainer().bindings.array.forEach(function (binding) {
-                                      ui.createBinding(binding);
+                                      if (ui.editor) { ui.createBinding(binding); }
                                   });
                               }
                           } else if (trace.source.getRefInParent() === 'metaData' && trace.source.name === KWE_FOLD) {
                               // fold/unfold
                               if (trace.source.eContainer().getRefInParent() === 'nodes') {
-                                  ui.toggleFold(trace.source.eContainer(), kModelHelper.isTruish(trace.source.value));
+                                  if (ui.editor) { ui.toggleFold(trace.source.eContainer(), kModelHelper.isTruish(trace.source.value)); }
                               }
                           //
                           // } else if (trace.source.getRefInParent() === 'metaData' && trace.source.name === KWE_TAG) {
@@ -289,13 +302,13 @@ angular.module('editorApp')
                           //       listener();
                           //   });
                           } else if (trace.source.eContainer().getRefInParent() === 'dictionary') {
-                              ui.updateValidity(trace.source.eContainer().eContainer());
+                              if (ui.editor) { ui.updateValidity(trace.source.eContainer().eContainer()); }
                           }
                           break;
 
                       case 'started':
                           //console.log('SET started', trace);
-                          ui.updateInstance(trace.previousPath, trace.source);
+                          if (ui.editor) { ui.updateInstance(trace.previousPath, trace.source); }
                           break;
 
                       case 'typeDefinition':
@@ -303,7 +316,9 @@ angular.module('editorApp')
                               switch (trace.source.getRefInParent()) {
                                   case 'components':
                                       //console.log('SET typeDef', trace);
-                                      ui.updateCompTypeDefinition(trace.source, trace.previous_value); // jshint ignore:line
+                                      if (ui.editor) {
+                                        ui.updateCompTypeDefinition(trace.source, trace.previous_value); // jshint ignore:line
+                                      }
                                       break;
 
                                   default:
@@ -335,7 +350,6 @@ angular.module('editorApp')
           this.modelListener = {
               elementChanged: modelReactor(this)
           };
-
           ui.setModel(this.model);
       }
 
@@ -360,9 +374,7 @@ angular.module('editorApp')
 
               ui.setModel(model);
 
-              this.listeners.forEach(function (listener) {
-                  listener();
-              });
+              this.invokeListeners('newModel');
           },
 
           /**
@@ -381,20 +393,29 @@ angular.module('editorApp')
 
           /**
            * Add listener that will be invoked on each call to setModel()
+           * @param {string} event
            * @param {Function} listener
+           * @returns {Function} unregister listener
            */
-          addListener: function (listener) {
+          addListener: function (event, listener) {
               if (this.listeners.indexOf(listener) === -1) {
-                  this.listeners.push(listener);
+                  this.listeners[event] = this.listeners[event] || [];
+                  this.listeners[event].push(listener);
               }
+              return function () {
+                this.listeners[event].splice(this.listeners[event].indexOf(listener), 1);
+              }.bind(this);
           },
 
           /**
-           *
-           * @param {Function} listener
+           * @param {string} event
            */
-          removeListener: function (listener) {
-              this.listeners.splice(this.listeners.indexOf(listener), 1);
+          invokeListeners: function (event) {
+            if (this.listeners[event]) {
+              this.listeners[event].forEach(function (listener) {
+                listener();
+              });
+            }
           },
 
           /**
@@ -441,37 +462,36 @@ angular.module('editorApp')
            * Create svg UIs based on current model
            */
           drawModel: function () {
-              if (ui.editor) {
-                this.model.hubs.array.forEach(function (instance) {
-                    ui.createChannel(instance);
+            if (ui.editor) {
+              this.model.hubs.array.forEach(function (instance) {
+                  if (ui.editor) { ui.createChannel(instance); }
+              });
+
+              this.model.nodes.array
+                  .sort(function (a, b) {
+                      // TODO optimize this to loop only once to create node tree heights
+                      return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
+                  })
+                  .forEach(function (instance) {
+                      ui.createNode(instance);
+                      instance.components.array.forEach(function (instance) {
+                          ui.createComponent(instance);
+                      });
+                  });
+
+              this.model.groups.array.forEach(function (instance) {
+                ui.createGroup(instance);
+                instance.subNodes.array.forEach(function (node) {
+                  ui.createGroupWire(instance, node);
                 });
+              });
 
-                this.model.nodes.array
-                    .sort(function (a, b) {
-                        // TODO optimize this to loop only once to create node tree heights
-                        return kModelHelper.getNodeTreeHeight(b) - kModelHelper.getNodeTreeHeight(a);
-                    })
-                    .forEach(function (instance) {
-                        ui.createNode(instance);
-                        instance.components.array.forEach(function (instance) {
-                            ui.createComponent(instance);
-                        });
-                    });
+              this.model.mBindings.array.forEach(function (binding) {
+                ui.createBinding(binding);
+              });
 
-                this.model.groups.array.forEach(function (instance) {
-                    ui.createGroup(instance);
-
-                    instance.subNodes.array.forEach(function (node) {
-                        ui.createGroupWire(instance, node);
-                    });
-                });
-
-                this.model.mBindings.array.forEach(function (binding) {
-                    ui.createBinding(binding);
-                });
-
-                ui.order();
-              }
+              ui.order();
+            }
           }
       };
 

@@ -9,6 +9,7 @@
  */
 angular.module('editorApp')
   .controller('TreeViewCtrl', function ($scope, $filter, kEditor, kModelHelper) {
+    var nodes;
     function transformModelToTree(model) {
       function transformComponentToTreeItem(instance) {
         return {
@@ -64,7 +65,9 @@ angular.module('editorApp')
         };
       }
 
-      return model.nodes.array.map(transformNodeToTreeItem)
+      nodes = model.nodes.array.map(transformNodeToTreeItem);
+
+      return nodes
         .concat(model.groups.array.map(transformGroupToTreeItem))
         .concat(model.hubs.array.map(transformChannelToTreeItem));
     }
@@ -85,6 +88,8 @@ angular.module('editorApp')
       }
     }
 
+    $scope.updateTree = processModel;
+
     $scope.tree = transformModelToTree(kEditor.getModel());
     $scope.nbInstances = kModelHelper.getNbInstances(kEditor.getModel());
     $scope.showTags = true;
@@ -96,7 +101,7 @@ angular.module('editorApp')
     $scope.filterComparator = false;
     $scope.treeReverse = false;
 
-    kEditor.addListener(processModel);
+    var unregister = kEditor.addListener('newModel', processModel);
 
     $scope.collapse = function () {
       $scope.expandedItems = [];
@@ -107,9 +112,7 @@ angular.module('editorApp')
     };
 
     $scope.selectNodes = function () {
-      $scope.selectedItems = $filter('filter')($scope.tree.filter(function (item) {
-        return item.type === 'node';
-      }), $scope.filterExpr, $scope.filterComparator);
+      $scope.selectedItems = $filter('filter')(nodes, $scope.filterExpr, $scope.filterComparator);
     };
 
     $scope.selectGroups = function () {
@@ -176,6 +179,6 @@ angular.module('editorApp')
     };
 
     $scope.$on('$destroy', function () {
-      kEditor.removeListener(processModel);
+      unregister();
     });
   });

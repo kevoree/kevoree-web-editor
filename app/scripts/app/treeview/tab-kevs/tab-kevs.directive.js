@@ -1,29 +1,15 @@
 'use strict';
 
 angular.module('editorApp')
-  .directive('tabKevs', function ($timeout) {
+  .directive('tabKevs', function () {
     return {
       restrict: 'AE',
       scope: {
         items: '='
       },
       templateUrl: 'scripts/app/treeview/tab-kevs/tab-kevs.html',
-      link: function (scope) {
-        var unregister = scope.$on('kevs-tab-selected', function () {
-          $timeout(function () {
-            scope.inEditor.refresh();
-            scope.outEditor.refresh();
-          }, 100);
-        });
-
-        var unwatch = scope.$watchCollection('items', scope.transform);
-
-        scope.$on('$destroy', function () {
-          unregister();
-          unwatch();
-        });
-      },
-      controller: function ($scope, kEditor, kScript) {
+      controller: function ($scope, $timeout, kEditor, kScript) {
+        var changeId;
         $scope.message = null;
         $scope.inEditor = null;
         $scope.outEditor = null;
@@ -39,7 +25,7 @@ angular.module('editorApp')
           lint: true
         };
 
-        $scope.transform = function () {
+        function transform() {
           var inLines = $scope.inEditor.getValue().split('\n');
           var outKevs = [];
           inLines.forEach(function (line) {
@@ -56,12 +42,27 @@ angular.module('editorApp')
             }
           });
           $scope.outKevs = outKevs.join('\n');
-        };
+        }
+
+        var unregister = $scope.$on('kevs-tab-selected', function () {
+          $timeout(function () {
+            $scope.inEditor.refresh();
+            $scope.outEditor.refresh();
+          }, 100);
+        });
+
+        var unwatch = $scope.$watchCollection('items', transform);
+
+        $scope.$on('$destroy', function () {
+          unregister();
+          unwatch();
+        });
 
         $scope.inOnLoad = function (e) {
           $scope.inEditor = e;
-          $scope.inEditor.on('changes', function () {
-            $scope.transform();
+          $scope.inEditor.on('change', function () {
+            $timeout.cancel(changeId);
+            changeId = $timeout(transform, 200);
           });
         };
         $scope.outOnLoad = function (e) {

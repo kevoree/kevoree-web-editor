@@ -12,7 +12,7 @@ angular.module('editorApp')
     function onModelHandler() {
       kEditor.drawModel();
     }
-    kEditor.addListener(onModelHandler);
+    var unregister = kEditor.addListener('newModel', onModelHandler);
 
     $scope.loading = false;
     $scope.synced = false;
@@ -549,6 +549,6 @@ angular.module('editorApp')
     //});
 
     $scope.$on('$destroy', function () {
-      kEditor.removeListener(onModelHandler);
+      unregister();
     });
   });

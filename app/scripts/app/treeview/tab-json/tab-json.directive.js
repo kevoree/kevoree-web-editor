@@ -19,9 +19,7 @@ angular.module('editorApp')
 
         processData();
         var unwatchItems = $scope.$watchCollection('items', processData);
-        kEditor.addListener(processData);
         $scope.$on('$destroy', function () {
-          kEditor.removeListener(processData);
           unwatchItems();
         });
 
