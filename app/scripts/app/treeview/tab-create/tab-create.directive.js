@@ -117,6 +117,11 @@ angular.module('editorApp')
         };
 
         scope.isValid = function () {
+          if (scope.selectedType === 'component') {
+            if (scope.availableNodes.length === 0) {
+              return false;
+            }
+          }
           return scope.namePattern.trim().length > 0 &&
                  scope.selectedType.length > 0 &&
                  scope.instancesCount > 0 &&
