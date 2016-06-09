@@ -19,9 +19,7 @@ angular.module('editorApp')
 
         processData();
         var unwatchItems = $scope.$watchCollection('items', processData);
-        $scope.$on('$destroy', function () {
-          unwatchItems();
-        });
+        $scope.$on('$destroy', unwatchItems);
 
         $scope.beautify = function (item) {
           var serializer = kFactory.createJSONSerializer();

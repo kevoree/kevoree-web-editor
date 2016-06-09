@@ -366,12 +366,46 @@ body {
 .whitish-bg {
     background-color: #f5f5f5;
 }
-treecontrol.tree-classic li .tree-selected {
-  background-color: inherit;
-  font-weight: bold;
+.tree .item {
+  margin: 1px 0;
+  cursor: pointer;
+  line-height: 20px;
 }
-treecontrol > ul > li {
-  padding-left: 0;
+.tree .item .tree .item {
+  padding-left: 15px;
+}
+.tree .item .icon {
+  float: left;
+  display: inline-block;
+  width: 12px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 3px;
+}
+.tree .item .icon.component {
+  background: url('../images/component.png') top left repeat;
+}
+.tree .item .icon.node {
+  background: url('../images/node.png') top left repeat;
+}
+.tree .item .icon.channel {
+  background: url('../images/channel.png') top left repeat;
+}
+.tree .item .icon.group {
+  background: url('../images/group.png') top left repeat;
+}
+.tree .item .expand-handle {
+  padding-left: 2px;
+  color: white;
+  font-size: x-small;
+  vertical-align: middle;
+  line-height: inherit;
+}
+.tree > .item > .name:hover {
+  background-color: #eee;
+}
+.tree > .item.selected > .name > span {
+  font-weight: bold;
 }
 .treeview-rightpanel > * {
   margin-top: 30px;

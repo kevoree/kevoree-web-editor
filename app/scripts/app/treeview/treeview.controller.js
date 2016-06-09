@@ -9,7 +9,6 @@
  */
 angular.module('editorApp')
   .controller('TreeViewCtrl', function ($scope, $filter, kEditor, kModelHelper) {
-    var nodes;
     function transformModelToTree(model) {
       function transformComponentToTreeItem(instance) {
         return {
@@ -20,8 +19,7 @@ angular.module('editorApp')
           version: instance.typeDefinition.version,
           platforms: kModelHelper.getPlatforms(instance.typeDefinition),
           tags: kModelHelper.getInstanceTags(instance),
-          path: instance.path(),
-          isFiltered: false
+          path: instance.path()
         };
       }
 
@@ -34,7 +32,6 @@ angular.module('editorApp')
           platforms: kModelHelper.getPlatforms(instance.typeDefinition),
           tags: kModelHelper.getInstanceTags(instance),
           path: instance.path(),
-          isFiltered: false,
           children: instance.components.array.map(transformComponentToTreeItem)
         };
       }
@@ -47,8 +44,7 @@ angular.module('editorApp')
           version: instance.typeDefinition.version,
           platforms: kModelHelper.getPlatforms(instance.typeDefinition),
           tags: kModelHelper.getInstanceTags(instance),
-          path: instance.path(),
-          isFiltered: false
+          path: instance.path()
         };
       }
 
@@ -60,37 +56,42 @@ angular.module('editorApp')
           version: instance.typeDefinition.version,
           platforms: kModelHelper.getPlatforms(instance.typeDefinition),
           tags: kModelHelper.getInstanceTags(instance),
-          path: instance.path(),
-          isFiltered: false
+          path: instance.path()
         };
       }
 
-      nodes = model.nodes.array.map(transformNodeToTreeItem);
-
-      return nodes
+      return model.nodes.array.map(transformNodeToTreeItem)
         .concat(model.groups.array.map(transformGroupToTreeItem))
         .concat(model.hubs.array.map(transformChannelToTreeItem));
     }
 
     function processModel() {
-      $scope.tree = transformModelToTree(kEditor.getModel());
-      $scope.nbInstances = kModelHelper.getNbInstances(kEditor.getModel());
-      if ($scope.selectedItems.length > 0) {
-        var oldSelection = $scope.selectedItems;
-        $scope.selectedItems = [];
-        oldSelection.forEach(function (oldItem) {
-          for (var i=0; i < $scope.tree.length; i++) {
-            if ($scope.tree[i].name === oldItem.name) {
-              $scope.selectedItems.push($scope.tree[i]);
+      var oldItems = $scope.items;
+      $scope.items = transformModelToTree(kEditor.getModel());
+      $scope.selectedItems = [];
+      oldItems.forEach(function (oldItem) {
+        $scope.items.forEach(function (item) {
+          if (oldItem.path === item.path) {
+            item.selected = oldItem.selected;
+            item.expanded = oldItem.expanded;
+            if (oldItem.children && item.children) {
+              oldItem.children.forEach(function (oldChild) {
+                item.children.forEach(function (child) {
+                  if (oldChild.path === child.path) {
+                    child.selected = oldChild.selected;
+                    child.expanded = oldChild.expanded;
+                  }
+                });
+              });
             }
           }
         });
-      }
+      });
+      $scope.selectedItems = $scope.getSelection();
+      $scope.nbInstances = kModelHelper.getNbInstances(kEditor.getModel());
     }
 
-    $scope.updateTree = processModel;
-
-    $scope.tree = transformModelToTree(kEditor.getModel());
+    $scope.items = transformModelToTree(kEditor.getModel());
     $scope.nbInstances = kModelHelper.getNbInstances(kEditor.getModel());
     $scope.showTags = true;
     $scope.selectedItems = [];
@@ -102,45 +103,142 @@ angular.module('editorApp')
     $scope.treeReverse = false;
 
     var unregister = kEditor.addListener('newModel', processModel);
+    var unregister2 = kEditor.addListener('modelUpdate', processModel);
+
+    var ctrlKey = false;
+    function onKeyDown(evt) {
+      ctrlKey = evt.ctrlKey;
+    }
+
+    function onKeyUp(evt) {
+      ctrlKey = evt.ctrlKey;
+    }
+
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
+
+    $scope.onClick = function (item) {
+      var oldVal = item.selected;
+      if (!ctrlKey) {
+        $scope.clearSelected();
+      }
+      item.selected = !oldVal;
+      $scope.items.forEach(function (i) {
+        if (i.selected) {
+          $scope.selectedItems.push(i);
+        }
+        if (i.children) {
+          i.children.forEach(function (i) {
+            if (i.selected) {
+              $scope.selectedItems.push(i);
+            }
+          });
+        }
+      });
+    };
+
+    $scope.getSelection = function () {
+      var selection = [];
+      $scope.items.forEach(function (item) {
+        if (item.selected) {
+          selection.push(item);
+        }
+        if (item.children) {
+          item.children.forEach(function (item) {
+            if (item.selected) {
+              selection.push(item);
+            }
+          });
+        }
+      });
+      return selection;
+    };
 
     $scope.collapse = function () {
-      $scope.expandedItems = [];
+      $scope.items.forEach(function (item) {
+        item.expanded = false;
+      });
     };
 
     $scope.expand = function () {
-      $scope.expandedItems = $scope.tree.slice(0);
+      $scope.items.forEach(function (item) {
+        item.expanded = true;
+      });
+    };
+
+    $scope.selectAll = function () {
+      $scope.selectedItems.length = 0;
+      $scope.items.forEach(function (item) {
+        item.selected = true;
+        $scope.selectedItems.push(item);
+        if (item.children) {
+          item.children.forEach(function (child) {
+            child.selected = true;
+            $scope.selectedItems.push(child);
+          });
+        }
+      });
     };
 
     $scope.selectNodes = function () {
-      $scope.selectedItems = $filter('filter')(nodes, $scope.filterExpr, $scope.filterComparator);
+      if (!ctrlKey) {
+        $scope.clearSelected();
+      }
+      $scope.selectedItems = $filter('filter')($scope.items.filter(function (item) {
+        return item.type === 'node';
+      }), $scope.filterExpr, $scope.filterComparator).map(function (item) {
+        item.selected = true;
+        return item;
+      });
     };
 
     $scope.selectGroups = function () {
-      $scope.selectedItems = $filter('filter')($scope.tree.filter(function (item) {
+      if (!ctrlKey) {
+        $scope.clearSelected();
+      }
+      $scope.selectedItems = $filter('filter')($scope.items.filter(function (item) {
         return item.type === 'group';
-      }), $scope.filterExpr, $scope.filterComparator);
+      }), $scope.filterExpr, $scope.filterComparator).map(function (item) {
+        item.selected = true;
+        return item;
+      });
     };
 
     $scope.selectChannels = function () {
-      $scope.selectedItems = $filter('filter')($scope.tree.filter(function (item) {
+      if (!ctrlKey) {
+        $scope.clearSelected();
+      }
+      $scope.selectedItems = $filter('filter')($scope.items.filter(function (item) {
         return item.type === 'channel';
-      }), $scope.filterExpr, $scope.filterComparator);
+      }), $scope.filterExpr, $scope.filterComparator).map(function (item) {
+        item.selected = true;
+        return item;
+      });
     };
 
     $scope.selectComponents = function () {
-      $scope.expand();
-      $scope.selectedItems = [];
-      $scope.tree.forEach(function (item) {
+      if (!ctrlKey) {
+        $scope.clearSelected();
+      }
+      $scope.items.forEach(function (item) {
         if (item.type === 'node') {
-          $scope.selectedItems = $scope.selectedItems.concat(
-            $filter('filter')(item.children, $scope.filterExpr, $scope.filterComparator)
-          );
+          $scope.selectedItems = $filter('filter')(item.children, $scope.filterExpr, $scope.filterComparator).map(function (child) {
+            item.expanded = true;
+            child.selected = true;
+            return child;
+          });
         }
       });
     };
 
     $scope.clearSelected = function () {
-      $scope.selectedItems = [];
+      $scope.selectedItems.length = 0;
+      $scope.items.forEach(function unselect(item) {
+        item.selected = false;
+        if (item.children) {
+          item.children.forEach(unselect);
+        }
+      });
     };
 
     $scope.toggleTags = function () {
@@ -152,33 +250,30 @@ angular.module('editorApp')
     };
 
     $scope.selectByTag = function (tag) {
-      $scope.selectedItems = [];
-      var types = [];
-      $scope.tree.forEach(function (item) {
+      if (!ctrlKey) {
+        $scope.clearSelected();
+      }
+      $scope.items.forEach(function (item) {
         if (item.tags.indexOf(tag) !== -1) {
-          if (types.indexOf(item.type) === -1) {
-            types.push(item.type);
-          }
+          item.selected = true;
           $scope.selectedItems.push(item);
         }
         if (item.children) {
-          item.children.forEach(function (item) {
-            if (item.tags.indexOf(tag) !== -1) {
-              if (types.indexOf(item.type) === -1) {
-                types.push(item.type);
-              }
-              $scope.selectedItems.push(item);
+          item.children.forEach(function (child) {
+            if (child.tags.indexOf(tag) !== -1) {
+              item.expanded = true;
+              child.selected = true;
+              $scope.selectedItems.push(child);
             }
           });
         }
       });
-
-      if (types.indexOf('component') !== -1) {
-        $scope.expand();
-      }
     };
 
     $scope.$on('$destroy', function () {
       unregister();
+      unregister2();
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keyup', onKeyUp);
     });
   });

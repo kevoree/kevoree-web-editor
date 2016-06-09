@@ -29,6 +29,7 @@ angular.module('editorApp')
         function process() {
           $scope.message = null;
           $scope.error = false;
+          // $scope.started = null;
           $scope.length = {};
           $scope.prepend = {};
           $scope.append = {};
@@ -40,19 +41,19 @@ angular.module('editorApp')
 
           if ($scope.items.length > 1) {
             var first = model.findByPath($scope.items[0].path);
-            $scope.types = [ first.name + ': ' + first.typeDefinition.name + '/' + first.typeDefinition.version ];
+            $scope.types = [ first.name + ': ' + kModelHelper.getFqn(first.typeDefinition) ];
             for (var i=1; i < $scope.items.length; i++) {
               var prev = model.findByPath($scope.items[i-1].path),
                   curr = model.findByPath($scope.items[i].path);
-              if (prev.typeDefinition.name !== curr.typeDefinition.name ||
-                  prev.typeDefinition.version !== curr.typeDefinition.version) {
-                $scope.types.push(curr.name + ': ' + curr.typeDefinition.name + '/' + curr.typeDefinition.version);
+              if (kModelHelper.getFqn(prev.typeDefinition) !== kModelHelper.getFqn(curr.typeDefinition)) {
+                $scope.types.push(curr.name + ': ' + kModelHelper.getFqn(curr.typeDefinition));
                 $scope.error = true;
                 return;
               }
             }
           }
 
+          $scope.kModelHelper = kModelHelper;
           $scope.util = util;
           $scope.instance = model.findByPath($scope.items[0].path);
           $scope.type = $scope.instance.typeDefinition;
@@ -74,15 +75,14 @@ angular.module('editorApp')
         }
 
         var unwatchItems = $scope.$watchCollection('items', process);
-        $scope.$on('$destroy', function () {
-          unwatchItems();
-        });
+        $scope.$on('$destroy', unwatchItems);
       },
       controller: function ($scope) {
         $scope.applyToAllInstances = function () {
           try {
             $scope.items.forEach(function (item) {
               var instance = kEditor.getModel().findByPath(item.path);
+              kEditor.disableListeners();
               kInstance.initDictionaries(instance);
               $scope.dictionary.forEach(function (attr) {
                 var val = instance.dictionary.findValuesByID(attr.name);
@@ -92,6 +92,8 @@ angular.module('editorApp')
                 val.value = attr.value;
               });
             });
+            kEditor.enableListeners();
+            kEditor.invokeListeners('modelUpdate');
             $scope.dictionary.forEach(function (attr) {
               attr.value = null;
             });

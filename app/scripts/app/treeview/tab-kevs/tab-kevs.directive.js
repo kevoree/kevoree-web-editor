@@ -44,7 +44,7 @@ angular.module('editorApp')
           $scope.outKevs = outKevs.join('\n');
         }
 
-        var unregister = $scope.$on('kevs-tab-selected', function () {
+        var unregister = $scope.$on('treeview:tab:kevs', function () {
           $timeout(function () {
             $scope.inEditor.refresh();
             $scope.outEditor.refresh();

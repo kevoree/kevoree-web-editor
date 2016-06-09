@@ -18,7 +18,7 @@
           class="form-control"
           ng-model="selectedInstanceType"
           ng-disabled="instanceTypes[selectedType].length === 0"
-          ng-options="tdef.name for tdef in instanceTypes[selectedType]">
+          ng-options="tdef.name for tdef in instanceTypes[selectedType] | isCompatible:selectedType:selectedNode.instance">
       </select>
       <span class="help-block" ng-if="instanceTypes[selectedType].length === 0">No {{ selectedType }} type available in current model. <a ui-sref="libraries">Add some</a></span>
     </div>
@@ -31,15 +31,16 @@
           class="form-control"
           ng-model="selectedNode"
           ng-disabled="availableNodes.length === 0"
-          ng-options="node.name for node in availableNodes">
+          ng-options="node.name for node in availableNodes"
+          ng-change="onSelectedNodeChange(selectedNode)">
       </select>
     </div>
   </div>
   <div class="row-fluid">
     <div class="form-group col-xs-12">
-      <label for="instancesCount">How many instances to create</label>
+      <label for="nbInstances">How many instances to create</label>
       <input
-          name="instancesCount"
+          name="nbInstances"
           type="number"
           min="0"
           class="form-control"

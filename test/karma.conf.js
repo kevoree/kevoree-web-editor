@@ -39,7 +39,6 @@ module.exports = function(config) {
       'bower_components/snap.svg/dist/snap.svg-min.js',
       'bower_components/snap.svg.zpd/snap.svg.zpd.js',
       'bower_components/ui-router/release/angular-ui-router.js',
-      'bower_components/angular-tree-control/angular-tree-control.js',
       'bower_components/highlightjs/highlight.pack.js',
       'bower_components/angular-highlightjs/build/angular-highlightjs.js',
       'bower_components/Chart.js/Chart.js',

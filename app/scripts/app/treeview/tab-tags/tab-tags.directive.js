@@ -27,12 +27,8 @@ angular.module('editorApp')
         }
 
         processTags();
-        var unregister = kEditor.addListener('modelUpdate', processTags);
         var unwatchItems = $scope.$watchCollection('items', processTags);
-        $scope.$on('$destroy', function () {
-          unregister();
-          unwatchItems();
-        });
+        $scope.$on('$destroy', unwatchItems);
 
         $scope.addTag = function () {
           if ($scope.tag.trim().length > 0 && $scope.tag.indexOf(',') === -1) {

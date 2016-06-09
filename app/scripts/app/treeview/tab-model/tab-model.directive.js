@@ -49,12 +49,8 @@ angular.module('editorApp')
         }
 
         modelHandler();
-        var unwatchTags = $scope.$watch('items', processTags, true);
         var unwatchItems = $scope.$watchCollection('items', modelHandler);
-        $scope.$on('$destroy', function () {
-          unwatchTags();
-          unwatchItems();
-        });
+        $scope.$on('$destroy', unwatchItems);
       }
     };
   });

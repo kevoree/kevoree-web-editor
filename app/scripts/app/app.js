@@ -17,7 +17,6 @@ angular
         'ui.codemirror',
         'ui.utils',
         'ui-notification',
-        'treeControl',
         'cfp.hotkeys',
         'ngDragDrop',
         'semverSort',

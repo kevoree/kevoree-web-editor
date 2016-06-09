@@ -12,10 +12,7 @@ angular.module('editorApp')
         scope.namePattern = '{metatype}{index}';
 
         function createTdefItem(tdef) {
-          return {
-            name: kModelHelper.genPkgName(tdef.eContainer()) + '.' + tdef.name + '/' + tdef.version,
-            tdef: tdef
-          };
+          return { name: kModelHelper.getFqn(tdef), tdef: tdef };
         }
 
         function process() {
@@ -32,8 +29,13 @@ angular.module('editorApp')
           if (scope.instanceTypes[scope.selectedType].length > 0) {
             scope.selectedInstanceType = scope.instanceTypes[scope.selectedType][0];
           }
-          scope.availableNodes = model.nodes.array;
-          scope.selectedNode = model.nodes.array[0];
+          scope.availableNodes = model.nodes.array.map(function (node) {
+            return {
+              name: node.name + ': ' + kModelHelper.getFqn(node.typeDefinition),
+              instance: node
+            };
+          });
+          scope.selectedNode = scope.availableNodes[0];
           scope.instancesCount = 1;
           scope.randomNumber = util.randomNumber();
           scope.randomStr = util.randomString();
@@ -42,12 +44,15 @@ angular.module('editorApp')
 
         process();
         var unregister = kEditor.addListener('newModel', process);
+        var unregister2 = kEditor.addListener('modelUpdate', process);
         scope.$on('$destroy', function () {
           unregister();
+          unregister2();
         });
 
         scope.create = function () {
           var model = kEditor.getModel();
+          kEditor.disableListeners();
           for (var i=0; i < scope.instancesCount; i++) {
             var name = $filter('namingPattern')(scope.namePattern, {
               index: i,
@@ -95,17 +100,31 @@ angular.module('editorApp')
                 model.addHubs(instance);
                 break;
               case 'component':
-                scope.selectedNode.addComponents(instance);
+                scope.selectedNode.instance.addComponents(instance);
                 break;
             }
           }
-          scope.updateTree();
+          kEditor.enableListeners();
+          kEditor.invokeListeners('modelUpdate');
         };
 
         scope.onTypeChange = function () {
           if (scope.instanceTypes[scope.selectedType].length > 0) {
-            scope.selectedInstanceType = scope.instanceTypes[scope.selectedType][0];
+            scope.selectedInstanceType = $filter('isCompatible')(
+              scope.instanceTypes[scope.selectedType],
+              scope.selectedType,
+              scope.selectedNode.instance
+            )[0];
           }
+        };
+
+        scope.onSelectedNodeChange = function (node) {
+          scope.selectedNode = node;
+          scope.selectedInstanceType = $filter('isCompatible')(
+            scope.instanceTypes[scope.selectedType],
+            scope.selectedType,
+            scope.selectedNode.instance
+          )[0];
         };
 
         scope.transform = function (namePattern, index) {

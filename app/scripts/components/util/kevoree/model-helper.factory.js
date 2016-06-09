@@ -81,6 +81,16 @@ angular.module('editorApp')
                 return name;
             },
 
+            getFqn: function (tdef) {
+              var pkg = this.genPkgName(tdef.eContainer());
+              if (pkg === 'org.kevoree.library') {
+                pkg = '';
+              } else {
+                pkg += '.';
+              }
+              return pkg + tdef.name + '/' + tdef.version;
+            },
+
             /**
              *
              * @param tdef

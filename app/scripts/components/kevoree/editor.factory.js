@@ -346,6 +346,7 @@ angular.module('editorApp')
       function KevoreeEditor() {
           this.model = kFactory.createContainerRoot();
           kFactory.root(this.model);
+          this.listenersEnabled = true;
           this.listeners = [];
           this.modelListener = {
               elementChanged: modelReactor(this)
@@ -403,7 +404,9 @@ angular.module('editorApp')
                   this.listeners[event].push(listener);
               }
               return function () {
-                this.listeners[event].splice(this.listeners[event].indexOf(listener), 1);
+                if (this.listeners[event]) {
+                  this.listeners[event].splice(this.listeners[event].indexOf(listener), 1);                  
+                }
               }.bind(this);
           },
 
@@ -411,10 +414,24 @@ angular.module('editorApp')
            * @param {string} event
            */
           invokeListeners: function (event) {
-            if (this.listeners[event]) {
+            if (this.listenersEnabled && this.listeners[event]) {
               this.listeners[event].forEach(function (listener) {
                 listener();
               });
+            }
+          },
+
+          disableListeners: function () {
+            this.listenersEnabled = false;
+          },
+
+          enableListeners: function () {
+            this.listenersEnabled = true;
+          },
+
+          removeAllListeners: function () {
+            for (var event in this.listeners) {
+              delete this.listeners[event];
             }
           },
 
@@ -464,7 +481,7 @@ angular.module('editorApp')
           drawModel: function () {
             if (ui.editor) {
               this.model.hubs.array.forEach(function (instance) {
-                  if (ui.editor) { ui.createChannel(instance); }
+                  ui.createChannel(instance);
               });
 
               this.model.nodes.array

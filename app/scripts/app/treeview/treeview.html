@@ -34,6 +34,7 @@
           </a>
         </div>
         <div class="col-xs-12">
+          <a href="" class="treeview-action" ng-click="selectAll()" title="Select all">All</a>
           <a href="" class="treeview-action" ng-click="selectNodes()" title="Select nodes">N</a>
           <a href="" class="treeview-action" ng-click="selectComponents()" title="Select components">C</a>
           <a href="" class="treeview-action" ng-click="selectGroups()" title="Select groups">G</a>
@@ -41,26 +42,75 @@
           <a href="" class="treeview-action" ng-click="clearSelected()" title="Clear selection">
             <i class="fa fa-square-o"></i>
           </a>
-          <span class="pull-right">{{ selectedItems.length + '/' + nbInstances }} </span>
+          <span class="pull-right" title="selection / nb instances">{{ getSelection().length + '/' + nbInstances }} </span>
         </div>
       </div>
       <div class="fit-y">
         <div class="treecontrol-container">
           <div class="treecontrol-inner-container">
-            <em data-ng-if="tree.length === 0">No instance in current model</em>
-            <treecontrol
-                class="tree-classic"
-                tree-model="tree"
-                selected-nodes="selectedItems"
-                expanded-nodes="expandedItems"
-                filter-expression="filterExpr"
-                filter-comparator="filterComparator"
-                order-by="treeOrderBy"
-                reverse-order="{{treeReverse}}"
-                options="treeOptions">
-              <span title="{{ node.typeName + ' - ' + node.version }}">{{ node.name }}</span>
-              <span class="tag badge pull-right" ng-repeat="tag in node.tags" ng-if="showTags">{{ tag }}</span>
-            </treecontrol>
+            <em data-ng-if="items.length === 0">No instance in current model</em>
+            <ul class="list-unstyled tree">
+              <li
+                  class="item"
+                  ng-repeat="item in items | filter:filterExpr:filterComparator | orderBy:'name':treeReverse"
+                  ng-class="{ selected: item.selected, expanded: item.expanded }">
+                <span class="icon {{ item.type }}">
+                  <i
+                      class="expand-handle fa"
+                      ng-class="item.expanded ? 'fa-minus':'fa-plus'"
+                      ng-if="item.children && item.children.length > 0"
+                      ng-click="item.expanded = !item.expanded"></i>
+                </span>
+                <div
+                    class="name"
+                    ng-click="onClick(item)"
+                    ng-mouseenter="item.hovered = true"
+                    ng-mouseleave="item.hovered = false">
+                  <span>{{ item.name }}</span>
+                  <em
+                      class="text-muted"
+                      ng-class="{ hide: !item.hovered }">{{ item.typeName + '/' + item.version }}</em>
+                  <span
+                      class="tag badge pull-right"
+                      ng-repeat="tag in item.tags"
+                      ng-if="showTags && item.tags.length < 3">{{ tag }}</span>
+                  <span
+                      class="tag badge pull-right"
+                      ng-if="showTags && item.tags.length >= 3"
+                      tooltip="tags: {{ item.tags.join(', ') }}"
+                      tooltip-placement="right"
+                      tooltip-append-to-body="true">...</span>
+                </div>
+                <ul class="list-unstyled tree" ng-if="item.expanded">
+                  <li
+                      class="item"
+                      ng-repeat="child in item.children | filter:filterExpr:filterComparator | orderBy:'name':treeReverse"
+                      ng-class="child.selected ? 'selected':''">
+                    <span class="icon {{ child.type }}"></span>
+                    <div
+                        class="name"
+                        ng-click="onClick(child)"
+                        ng-mouseenter="child.hovered = true"
+                        ng-mouseleave="child.hovered = false">
+                      <span>{{ child.name }}</span>
+                      <em
+                          class="text-muted"
+                          ng-class="{ hide: !child.hovered }">{{ child.typeName + '/' + child.version }}</em>
+                      <span
+                          class="tag badge pull-right"
+                          ng-repeat="tag in child.tags"
+                          ng-if="showTags && child.tags.length < 3">{{ tag }}</span>
+                      <span
+                          class="tag badge pull-right"
+                          ng-if="showTags && child.tags.length >= 3"
+                          tooltip="tags: {{ child.tags.join(', ') }}"
+                          tooltip-placement="right"
+                          tooltip-append-to-body="true">...</span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
@@ -70,12 +120,12 @@
     <tabset class="tab-set" active="0">
       <tab index="0" heading="Model">
         <div class="tab-pane-container well">
-          <tab-model items="tree" on-tag-clicked="selectByTag"></tab-model>
+          <tab-model items="items" on-tag-clicked="selectByTag"></tab-model>
         </div>
       </tab>
       <tab index="1" heading="Create">
         <div class="tab-pane-container well">
-          <tab-create update-tree="updateTree"></tab-create>
+          <tab-create></tab-create>
         </div>
       </tab>
       <tab index="2" heading="Params" ng-if="selectedItems.length">
@@ -88,7 +138,7 @@
           <tab-tags items="selectedItems"></tab-tags>
         </div>
       </tab>
-      <tab index="4" heading="KevScript" select="$broadcast('kevs-tab-selected')" ng-if="selectedItems.length">
+      <tab index="4" heading="KevScript" select="$broadcast('treeview:tab:kevs')" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-kevs items="selectedItems"></tab-kevs>
         </div>

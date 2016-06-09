@@ -11,6 +11,9 @@ angular.module('editorApp')
             templateUrl: 'scripts/app/treeview/treeview.html',
             controller: 'TreeViewCtrl'
           }
+        },
+        onExit: function (kEditor) {
+          kEditor.removeAllListeners();
         }
       });
   });
