@@ -13,7 +13,7 @@ angular.module('editorApp')
           }
         },
         onExit: function (kEditor) {
-          kEditor.removeAllListeners();
+          kEditor.removeModelUpdateListeners('treeview');
         }
       });
   });

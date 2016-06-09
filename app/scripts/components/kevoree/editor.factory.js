@@ -10,7 +10,7 @@ angular.module('editorApp')
           */
         return function (trace) {
           var fragDic, selected, highestNode;
-          editor.invokeListeners('modelUpdate');
+          editor.invokeModelUpdateListeners();
 
           function processRefreshRecursively(node) {
               node.components.array.forEach(function (comp) {
@@ -32,7 +32,7 @@ angular.module('editorApp')
           }
 
           if (trace.elementAttributeName === 'typeDefinitions' || trace.elementAttributeName === 'packages') {
-            editor.invokeListeners('modelUpdate:tdefs');
+            editor.invokeModelUpdateListeners('tdefs');
           }
 
           try {
@@ -235,10 +235,6 @@ angular.module('editorApp')
                           case 'metaData':
                               if (trace.value.name === KWE_FOLD && trace.source.getRefInParent() === 'nodes') {
                                   if (ui.editor) { ui.toggleFold(trace.source, kModelHelper.isTruish(trace.value.value)); }
-                              // } else if (trace.value.name === KWE_TAG && trace.source.getRefInParent() === 'metaData') {
-                              //   editor.listeners.forEach(function (listener) {
-                              //       listener();
-                              //   });
                               }
                               break;
                       }
@@ -296,11 +292,6 @@ angular.module('editorApp')
                               if (trace.source.eContainer().getRefInParent() === 'nodes') {
                                   if (ui.editor) { ui.toggleFold(trace.source.eContainer(), kModelHelper.isTruish(trace.source.value)); }
                               }
-                          //
-                          // } else if (trace.source.getRefInParent() === 'metaData' && trace.source.name === KWE_TAG) {
-                          //   editor.listeners.forEach(function (listener) {
-                          //       listener();
-                          //   });
                           } else if (trace.source.eContainer().getRefInParent() === 'dictionary') {
                               if (ui.editor) { ui.updateValidity(trace.source.eContainer().eContainer()); }
                           }
@@ -346,8 +337,9 @@ angular.module('editorApp')
       function KevoreeEditor() {
           this.model = kFactory.createContainerRoot();
           kFactory.root(this.model);
-          this.listenersEnabled = true;
-          this.listeners = [];
+          this.modelUpdateListenersEnabled = true;
+          this.modelUpdateListeners = [];
+          this.newModelListeners = [];
           this.modelListener = {
               elementChanged: modelReactor(this)
           };
@@ -375,7 +367,7 @@ angular.module('editorApp')
 
               ui.setModel(model);
 
-              this.invokeListeners('newModel');
+              this.invokeNewModelListeners();
           },
 
           /**
@@ -393,46 +385,96 @@ angular.module('editorApp')
           },
 
           /**
-           * Add listener that will be invoked on each call to setModel()
-           * @param {string} event
+           * Add a listener that will be invoked each time a new model is set
+           * @param {string} id
            * @param {Function} listener
            * @returns {Function} unregister listener
            */
-          addListener: function (event, listener) {
-              if (this.listeners.indexOf(listener) === -1) {
-                  this.listeners[event] = this.listeners[event] || [];
-                  this.listeners[event].push(listener);
+          addNewModelListener: function (id, listener) {
+            if (!this.newModelListeners[id]) {
+              this.newModelListeners[id] = [];
+            }
+            this.newModelListeners[id].push(listener);
+
+            return function () {
+              if (this.newModelListeners[id]) {
+                this.newModelListeners[id].splice(this.newModelListeners[id].indexOf(listener), 1);
               }
-              return function () {
-                if (this.listeners[event]) {
-                  this.listeners[event].splice(this.listeners[event].indexOf(listener), 1);                  
-                }
-              }.bind(this);
+            }.bind(this);
           },
 
           /**
-           * @param {string} event
+           * Add listener that will be invoked on each update of the model
+           * @param {string} id
+           * @param {Function} listener
+           * @returns {Function} unregister listener
            */
-          invokeListeners: function (event) {
-            if (this.listenersEnabled && this.listeners[event]) {
-              this.listeners[event].forEach(function (listener) {
-                listener();
-              });
+          addModelUpdateListener: function (id, listener) {
+            if (!this.modelUpdateListeners[id]) {
+              this.modelUpdateListeners[id] = [];
+            }
+            this.modelUpdateListeners[id].push(listener);
+
+            return function () {
+              if (this.modelUpdateListeners[id]) {
+                this.modelUpdateListeners[id].splice(this.modelUpdateListeners[id].indexOf(listener), 1);
+              }
+            }.bind(this);
+          },
+
+          /**
+           * @param [string] optional id
+           */
+          invokeModelUpdateListeners: function (id) {
+            if (this.modelUpdateListenersEnabled) {
+              if (id) {
+                if (this.modelUpdateListeners[id]) {
+                  this.modelUpdateListeners[id].forEach(function (listener) {
+                    listener();
+                  });
+                }
+              } else {
+                Object.keys(this.modelUpdateListeners).forEach(function (id) {
+                  this.modelUpdateListeners[id].forEach(function (listener) {
+                    listener();
+                  });
+                }.bind(this));
+              }
             }
           },
 
-          disableListeners: function () {
-            this.listenersEnabled = false;
+          invokeNewModelListeners: function () {
+            Object.keys(this.newModelListeners).forEach(function (id) {
+              this.newModelListeners[id].forEach(function (listener) {
+                listener();
+              });
+            }.bind(this));
           },
 
-          enableListeners: function () {
-            this.listenersEnabled = true;
+          disableModelUpdateListeners: function () {
+            this.modelUpdateListenersEnabled = false;
+          },
+
+          enableModelUpdateListeners: function () {
+            this.modelUpdateListenersEnabled = true;
           },
 
           removeAllListeners: function () {
-            for (var event in this.listeners) {
-              delete this.listeners[event];
+            var id;
+            for (id in this.modelUpdateListeners) {
+              delete this.modelUpdateListeners[id];
             }
+            for (id in this.newModelListeners) {
+              delete this.newModelListeners[id];
+            }
+          },
+
+          removeModelUpdateListeners: function (id) {
+            delete this.modelUpdateListeners[id];
+          },
+
+          removeNewModelListeners: function (id) {
+            delete this.newModelListeners[id];
           },
 
           /**

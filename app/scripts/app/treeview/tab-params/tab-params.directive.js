@@ -82,7 +82,7 @@ angular.module('editorApp')
           try {
             $scope.items.forEach(function (item) {
               var instance = kEditor.getModel().findByPath(item.path);
-              kEditor.disableListeners();
+              kEditor.disableModelUpdateListeners();
               kInstance.initDictionaries(instance);
               $scope.dictionary.forEach(function (attr) {
                 var val = instance.dictionary.findValuesByID(attr.name);
@@ -92,8 +92,8 @@ angular.module('editorApp')
                 val.value = attr.value;
               });
             });
-            kEditor.enableListeners();
-            kEditor.invokeListeners('modelUpdate');
+            kEditor.enableModelUpdateListeners();
+            kEditor.invokeModelUpdateListeners('treeview');
             $scope.dictionary.forEach(function (attr) {
               attr.value = null;
             });

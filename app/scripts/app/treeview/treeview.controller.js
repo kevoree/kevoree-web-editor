@@ -102,8 +102,8 @@ angular.module('editorApp')
     $scope.filterComparator = false;
     $scope.treeReverse = false;
 
-    var unregister = kEditor.addListener('newModel', processModel);
-    var unregister2 = kEditor.addListener('modelUpdate', processModel);
+    var unregister = kEditor.addNewModelListener('treeview', processModel);
+    var unregister2 = kEditor.addModelUpdateListener('treeview', processModel);
 
     var ctrlKey = false;
     function onKeyDown(evt) {

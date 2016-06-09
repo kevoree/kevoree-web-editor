@@ -30,7 +30,7 @@ angular.module('editorApp')
         $scope.addTag = function () {
           if ($scope.tag.trim().length > 0 && $scope.tag.indexOf(',') === -1) {
             $scope.tag = $scope.tag.trim();
-            kEditor.disableListeners();
+            kEditor.disableModelUpdateListeners();
             $scope.items.forEach(function (item) {
               var instance = kEditor.getModel().findByPath(item.path);
               var tagMeta = instance.findMetaDataByID(KWE_TAG);
@@ -50,8 +50,8 @@ angular.module('editorApp')
               tagMeta.value = tags.join(',');
             });
             $scope.tag = '';
-            kEditor.enableListeners();
-            kEditor.invokeListeners('modelUpdate');
+            kEditor.enableModelUpdateListeners();
+            kEditor.invokeModelUpdateListeners('treeview');
           }
         };
 

@@ -43,8 +43,8 @@ angular.module('editorApp')
         }
 
         process();
-        var unregister = kEditor.addListener('newModel', process);
-        var unregister2 = kEditor.addListener('modelUpdate', process);
+        var unregister = kEditor.addNewModelListener('treeview', process);
+        var unregister2 = kEditor.addModelUpdateListener('treeview', process);
         scope.$on('$destroy', function () {
           unregister();
           unregister2();
@@ -52,7 +52,7 @@ angular.module('editorApp')
 
         scope.create = function () {
           var model = kEditor.getModel();
-          kEditor.disableListeners();
+          kEditor.disableModelUpdateListeners();
           for (var i=0; i < scope.instancesCount; i++) {
             var name = $filter('namingPattern')(scope.namePattern, {
               index: i,
@@ -104,8 +104,8 @@ angular.module('editorApp')
                 break;
             }
           }
-          kEditor.enableListeners();
-          kEditor.invokeListeners('modelUpdate');
+          kEditor.enableModelUpdateListeners();
+          kEditor.invokeModelUpdateListeners('treeview');
         };
 
         scope.onTypeChange = function () {
