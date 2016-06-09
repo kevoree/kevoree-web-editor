@@ -121,16 +121,24 @@ angular.module('editorApp')
       var oldVal = item.selected;
       if (!ctrlKey) {
         $scope.clearSelected();
+      } else {
+        if (oldVal) {
+          $scope.selectedItems.splice($scope.selectedItems.indexOf(item), 1);
+        }
       }
       item.selected = !oldVal;
       $scope.items.forEach(function (i) {
         if (i.selected) {
-          $scope.selectedItems.push(i);
+          if ($scope.selectedItems.indexOf(i) === -1) {
+            $scope.selectedItems.push(i);
+          }
         }
         if (i.children) {
           i.children.forEach(function (i) {
             if (i.selected) {
-              $scope.selectedItems.push(i);
+              if ($scope.selectedItems.indexOf(i) === -1) {
+                $scope.selectedItems.push(i);
+              }
             }
           });
         }
