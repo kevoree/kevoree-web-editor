@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('kModelHelper', function (kFactory, KWE_POSITION, KWE_TAG) {
+    .factory('kModelHelper', function (kFactory, KWE_POSITION, KWE_TAG, KWE_SELECTED, KWE_FOLDED) {
 
         function getOnlyReleases(tdefs) {
             return tdefs.filter(function (tdef) {
@@ -446,6 +446,56 @@ angular.module('editorApp')
                 }.bind(this));
 
                 return Object.keys(nodes).length > 1;
+            },
+
+            isSelected: function (instance) {
+              if (instance) {
+                var meta = instance.findMetaDataByID(KWE_SELECTED);
+                if (meta) {
+                  return this.isTruish(meta.value);
+                }
+              }
+              return false;
+            },
+
+            isFolded: function (instance) {
+              if (instance) {
+                var meta = instance.findMetaDataByID(KWE_FOLDED);
+                if (meta) {
+                  return this.isTruish(meta.value);
+                }
+              }
+              return false;
+            },
+
+            setSelected: function (instance, selected) {
+              if (instance) {
+                var meta = instance.findMetaDataByID(KWE_SELECTED);
+                if (!meta) {
+                  meta = kFactory.createValue();
+                  meta.name = KWE_SELECTED;
+                  instance.addMetaData(meta);
+                }
+                meta.value = selected;
+              }
+            },
+
+            setFolded: function (instance, folded) {
+              if (instance) {
+                var meta = instance.findMetaDataByID(KWE_FOLDED);
+                if (!meta) {
+                  meta = kFactory.createValue();
+                  meta.name = KWE_FOLDED;
+                  instance.addMetaData(meta);
+                }
+                meta.value = folded;
+              }
+            },
+
+            getSelection: function (model) {
+              return model.select('**/metaData[name='+KWE_SELECTED+',value=true]').array.map(function (meta) {
+                return meta.eContainer();
+              });
             },
 
             /**

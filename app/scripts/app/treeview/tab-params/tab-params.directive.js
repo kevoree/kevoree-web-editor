@@ -37,14 +37,13 @@ angular.module('editorApp')
           $scope.max = {};
           $scope.each = {};
           $scope.toggleEachFlag = false;
-          var model = kEditor.getModel();
 
           if ($scope.items.length > 1) {
-            var first = model.findByPath($scope.items[0].path);
+            var first = $scope.items[0];
             $scope.types = [ first.name + ': ' + kModelHelper.getFqn(first.typeDefinition) ];
             for (var i=1; i < $scope.items.length; i++) {
-              var prev = model.findByPath($scope.items[i-1].path),
-                  curr = model.findByPath($scope.items[i].path);
+              var prev = $scope.items[i-1],
+                  curr = $scope.items[i];
               if (kModelHelper.getFqn(prev.typeDefinition) !== kModelHelper.getFqn(curr.typeDefinition)) {
                 $scope.types.push(curr.name + ': ' + kModelHelper.getFqn(curr.typeDefinition));
                 $scope.error = true;
@@ -55,7 +54,7 @@ angular.module('editorApp')
 
           $scope.kModelHelper = kModelHelper;
           $scope.util = util;
-          $scope.instance = model.findByPath($scope.items[0].path);
+          $scope.instance = $scope.items[0];
           $scope.type = $scope.instance.typeDefinition;
           $scope.dictionary = [];
           if ($scope.type.dictionaryType) {
@@ -80,8 +79,7 @@ angular.module('editorApp')
       controller: function ($scope) {
         $scope.applyToAllInstances = function () {
           try {
-            $scope.items.forEach(function (item) {
-              var instance = kEditor.getModel().findByPath(item.path);
+            $scope.items.forEach(function (instance) {
               kEditor.disableModelUpdateListeners();
               kInstance.initDictionaries(instance);
               $scope.dictionary.forEach(function (attr) {

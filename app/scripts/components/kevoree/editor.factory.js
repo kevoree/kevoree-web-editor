@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('kEditor', function (kFactory, kModelHelper, kInstance, ui, Notification, KWE_POSITION, KWE_FOLD, KWE_TAG, CHANNEL_RADIUS, GROUP_RADIUS) {
+    .factory('kEditor', function (kFactory, kModelHelper, kInstance, ui, Notification, KWE_POSITION, KWE_FOLDED, KWE_SELECTED, KWE_TAG, CHANNEL_RADIUS, GROUP_RADIUS) {
 
       function modelReactor(editor) {
         /**
@@ -45,6 +45,7 @@ angular.module('editorApp')
                           if (ui.editor) {
                             ui.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
                           }
+                          editor.invokeModelUpdateListeners('selected');
                       } else if (trace.elementAttributeName === 'mBindings') {
                           if (ui.editor) {
                             ui.deleteBinding(trace.previous_value); // jshint ignore:line
@@ -56,6 +57,7 @@ angular.module('editorApp')
                           if (ui.editor) {
                             ui.deleteInstance(trace.source, trace.previous_value); // jshint ignore:line
                           }
+                          editor.invokeModelUpdateListeners('selected');
 
                       } else if (trace.elementAttributeName === 'groups') {
                           // means detaching a node from a group
@@ -233,7 +235,7 @@ angular.module('editorApp')
                               break;
 
                           case 'metaData':
-                              if (trace.value.name === KWE_FOLD && trace.source.getRefInParent() === 'nodes') {
+                              if (trace.value.name === KWE_FOLDED && trace.source.getRefInParent() === 'nodes') {
                                   if (ui.editor) { ui.toggleFold(trace.source, kModelHelper.isTruish(trace.value.value)); }
                               }
                               break;
@@ -287,13 +289,19 @@ angular.module('editorApp')
                                       if (ui.editor) { ui.createBinding(binding); }
                                   });
                               }
-                          } else if (trace.source.getRefInParent() === 'metaData' && trace.source.name === KWE_FOLD) {
+                          } else if (trace.source.getRefInParent() === 'metaData' && trace.source.name === KWE_FOLDED) {
                               // fold/unfold
                               if (trace.source.eContainer().getRefInParent() === 'nodes') {
-                                  if (ui.editor) { ui.toggleFold(trace.source.eContainer(), kModelHelper.isTruish(trace.source.value)); }
+                                  if (ui.editor) {
+                                    ui.toggleFold(trace.source.eContainer(), kModelHelper.isTruish(trace.source.value));
+                                  }
                               }
                           } else if (trace.source.eContainer().getRefInParent() === 'dictionary') {
-                              if (ui.editor) { ui.updateValidity(trace.source.eContainer().eContainer()); }
+                              if (ui.editor) {
+                                ui.updateValidity(trace.source.eContainer().eContainer());
+                              }
+                          } else if (trace.source.getRefInParent() === 'metaData' && trace.source.name === KWE_SELECTED) {
+                            editor.invokeModelUpdateListeners('selected');
                           }
                           break;
 
@@ -407,43 +415,45 @@ angular.module('editorApp')
            * Add listener that will be invoked on each update of the model
            * @param {string} id
            * @param {Function} listener
+           * @param {boolean} strict optional flag that will prevent this
+           *                  listener to be called unless the invoke method
+           *                  is called using this precise id as event name
            * @returns {Function} unregister listener
            */
-          addModelUpdateListener: function (id, listener) {
+          addModelUpdateListener: function (id, listener, strict) {
             if (!this.modelUpdateListeners[id]) {
               this.modelUpdateListeners[id] = [];
             }
-            this.modelUpdateListeners[id].push(listener);
+            var item = { strict: strict, listener: listener };
+            this.modelUpdateListeners[id].push(item);
 
             return function () {
               if (this.modelUpdateListeners[id]) {
-                this.modelUpdateListeners[id].splice(this.modelUpdateListeners[id].indexOf(listener), 1);
+                this.modelUpdateListeners[id].splice(this.modelUpdateListeners[id].indexOf(item), 1);
               }
             }.bind(this);
           },
 
           /**
-           * @param [string] optional id
+           * @param [string] optional event
            */
-          invokeModelUpdateListeners: function (id) {
+          invokeModelUpdateListeners: function (event) {
             if (this.modelUpdateListenersEnabled) {
-              if (id) {
-                if (this.modelUpdateListeners[id]) {
-                  this.modelUpdateListeners[id].forEach(function (listener) {
-                    listener();
-                  });
-                }
-              } else {
-                Object.keys(this.modelUpdateListeners).forEach(function (id) {
-                  this.modelUpdateListeners[id].forEach(function (listener) {
-                    listener();
-                  });
-                }.bind(this));
-              }
+              Object.keys(this.modelUpdateListeners).forEach(function (id) {
+                this.modelUpdateListeners[id].forEach(function (item) {
+                  if (item.strict) {
+                    if (id === event) {
+                      item.listener();
+                    }
+                  } else {
+                    item.listener();
+                  }
+                });
+              }.bind(this));
             }
           },
 
-          invokeNewModelListeners: function () {
+          invokeNewModelListeners: function (event) {
             Object.keys(this.newModelListeners).forEach(function (id) {
               this.newModelListeners[id].forEach(function (listener) {
                 listener();

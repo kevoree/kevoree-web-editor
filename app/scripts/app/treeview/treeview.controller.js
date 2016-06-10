@@ -8,7 +8,7 @@
  * Controller of the editorApp treeview page
  */
 angular.module('editorApp')
-  .controller('TreeViewCtrl', function ($scope, $filter, kEditor, kModelHelper) {
+  .controller('TreeViewCtrl', function ($scope, $filter, kEditor, kModelHelper, KWE_TAG) {
     function transformModelToTree(model) {
       function transformComponentToTreeItem(instance) {
         return {
@@ -19,7 +19,9 @@ angular.module('editorApp')
           version: instance.typeDefinition.version,
           platforms: kModelHelper.getPlatforms(instance.typeDefinition),
           tags: kModelHelper.getInstanceTags(instance),
-          path: instance.path()
+          path: instance.path(),
+          folded: kModelHelper.isFolded(instance),
+          selected: kModelHelper.isSelected(instance)
         };
       }
 
@@ -32,6 +34,8 @@ angular.module('editorApp')
           platforms: kModelHelper.getPlatforms(instance.typeDefinition),
           tags: kModelHelper.getInstanceTags(instance),
           path: instance.path(),
+          folded: kModelHelper.isFolded(instance),
+          selected: kModelHelper.isSelected(instance),
           children: instance.components.array.map(transformComponentToTreeItem)
         };
       }
@@ -44,7 +48,9 @@ angular.module('editorApp')
           version: instance.typeDefinition.version,
           platforms: kModelHelper.getPlatforms(instance.typeDefinition),
           tags: kModelHelper.getInstanceTags(instance),
-          path: instance.path()
+          path: instance.path(),
+          folded: kModelHelper.isFolded(instance),
+          selected: kModelHelper.isSelected(instance)
         };
       }
 
@@ -56,7 +62,9 @@ angular.module('editorApp')
           version: instance.typeDefinition.version,
           platforms: kModelHelper.getPlatforms(instance.typeDefinition),
           tags: kModelHelper.getInstanceTags(instance),
-          path: instance.path()
+          path: instance.path(),
+          folded: kModelHelper.isFolded(instance),
+          selected: kModelHelper.isSelected(instance)
         };
       }
 
@@ -66,35 +74,15 @@ angular.module('editorApp')
     }
 
     function processModel() {
-      var oldItems = $scope.items;
       $scope.items = transformModelToTree(kEditor.getModel());
-      $scope.selectedItems = [];
-      oldItems.forEach(function (oldItem) {
-        $scope.items.forEach(function (item) {
-          if (oldItem.path === item.path) {
-            item.selected = oldItem.selected;
-            item.expanded = oldItem.expanded;
-            if (oldItem.children && item.children) {
-              oldItem.children.forEach(function (oldChild) {
-                item.children.forEach(function (child) {
-                  if (oldChild.path === child.path) {
-                    child.selected = oldChild.selected;
-                    child.expanded = oldChild.expanded;
-                  }
-                });
-              });
-            }
-          }
-        });
-      });
-      $scope.selectedItems = $scope.getSelection();
+      $scope.selectedItems = kModelHelper.getSelection(kEditor.getModel());
       $scope.nbInstances = kModelHelper.getNbInstances(kEditor.getModel());
     }
 
     $scope.items = transformModelToTree(kEditor.getModel());
     $scope.nbInstances = kModelHelper.getNbInstances(kEditor.getModel());
     $scope.showTags = true;
-    $scope.selectedItems = [];
+    $scope.selectedItems = kModelHelper.getSelection(kEditor.getModel());
     $scope.expandedItems = [];
     $scope.treeOptions = { multiSelection: true };
     $scope.treeOrderBy = 'name';
@@ -118,135 +106,129 @@ angular.module('editorApp')
     document.addEventListener('keyup', onKeyUp);
 
     $scope.onClick = function (item) {
-      var oldVal = item.selected;
       if (!ctrlKey) {
         $scope.clearSelected();
-      } else {
-        if (oldVal) {
-          $scope.selectedItems.splice($scope.selectedItems.indexOf(item), 1);
-        }
       }
-      item.selected = !oldVal;
-      $scope.items.forEach(function (i) {
-        if (i.selected) {
-          if ($scope.selectedItems.indexOf(i) === -1) {
-            $scope.selectedItems.push(i);
-          }
-        }
-        if (i.children) {
-          i.children.forEach(function (i) {
-            if (i.selected) {
-              if ($scope.selectedItems.indexOf(i) === -1) {
-                $scope.selectedItems.push(i);
-              }
-            }
-          });
-        }
-      });
+      var instance = kEditor.getModel().findByPath(item.path);
+      kModelHelper.setSelected(instance, !item.selected);
     };
 
-    $scope.getSelection = function () {
-      var selection = [];
-      $scope.items.forEach(function (item) {
-        if (item.selected) {
-          selection.push(item);
-        }
-        if (item.children) {
-          item.children.forEach(function (item) {
-            if (item.selected) {
-              selection.push(item);
-            }
-          });
-        }
-      });
-      return selection;
+    $scope.onExpand = function (item) {
+      kModelHelper.setFolded(kEditor.getModel().findByPath(item.path), item.folded);
     };
 
     $scope.collapse = function () {
+      kEditor.disableModelUpdateListeners();
       $scope.items.forEach(function (item) {
-        item.expanded = false;
+        if (item.type === 'node') {
+          kModelHelper.setFolded(kEditor.getModel().findByPath(item.path), true);
+        }
       });
+      kEditor.enableModelUpdateListeners();
+      kEditor.invokeModelUpdateListeners();
     };
 
     $scope.expand = function () {
+      kEditor.disableModelUpdateListeners();
       $scope.items.forEach(function (item) {
-        item.expanded = true;
+        if (item.type === 'node') {
+          kModelHelper.setFolded(kEditor.getModel().findByPath(item.path), false);
+        }
       });
+      kEditor.enableModelUpdateListeners();
+      kEditor.invokeModelUpdateListeners();
     };
 
     $scope.selectAll = function () {
-      $scope.selectedItems.length = 0;
+      kEditor.disableModelUpdateListeners();
       $scope.items.forEach(function (item) {
-        item.selected = true;
-        $scope.selectedItems.push(item);
+        kModelHelper.setSelected(kEditor.getModel().findByPath(item.path), true);
         if (item.children) {
           item.children.forEach(function (child) {
-            child.selected = true;
-            $scope.selectedItems.push(child);
+            kModelHelper.setSelected(kEditor.getModel().findByPath(child.path), true);
           });
         }
       });
+      kEditor.enableModelUpdateListeners();
+      kEditor.invokeModelUpdateListeners();
     };
 
     $scope.selectNodes = function () {
+      kEditor.disableModelUpdateListeners();
       if (!ctrlKey) {
-        $scope.clearSelected();
+        kModelHelper.getSelection(kEditor.getModel()).forEach(function (instance) {
+          kModelHelper.setSelected(instance, false);
+        });
       }
-      $scope.selectedItems = $filter('filter')($scope.items.filter(function (item) {
-        return item.type === 'node';
-      }), $scope.filterExpr, $scope.filterComparator).map(function (item) {
-        item.selected = true;
-        return item;
+
+      kEditor.getModel().select('/nodes[]')
+          .array.forEach(function (instance) {
+        kModelHelper.setSelected(instance, true);
       });
+
+      kEditor.enableModelUpdateListeners();
+      kEditor.invokeModelUpdateListeners();
     };
 
     $scope.selectGroups = function () {
+      kEditor.disableModelUpdateListeners();
       if (!ctrlKey) {
-        $scope.clearSelected();
+        kModelHelper.getSelection(kEditor.getModel()).forEach(function (instance) {
+          kModelHelper.setSelected(instance, false);
+        });
       }
-      $scope.selectedItems = $filter('filter')($scope.items.filter(function (item) {
-        return item.type === 'group';
-      }), $scope.filterExpr, $scope.filterComparator).map(function (item) {
-        item.selected = true;
-        return item;
+
+      kEditor.getModel().select('/groups[]')
+          .array.forEach(function (instance) {
+        kModelHelper.setSelected(instance, true);
       });
+
+      kEditor.enableModelUpdateListeners();
+      kEditor.invokeModelUpdateListeners();
     };
 
     $scope.selectChannels = function () {
+      kEditor.disableModelUpdateListeners();
       if (!ctrlKey) {
-        $scope.clearSelected();
+        kModelHelper.getSelection(kEditor.getModel()).forEach(function (instance) {
+          kModelHelper.setSelected(instance, false);
+        });
       }
-      $scope.selectedItems = $filter('filter')($scope.items.filter(function (item) {
-        return item.type === 'channel';
-      }), $scope.filterExpr, $scope.filterComparator).map(function (item) {
-        item.selected = true;
-        return item;
+
+      kEditor.getModel().select('/hubs[]')
+          .array.forEach(function (instance) {
+        kModelHelper.setSelected(instance, true);
       });
+
+      kEditor.enableModelUpdateListeners();
+      kEditor.invokeModelUpdateListeners();
     };
 
     $scope.selectComponents = function () {
+      kEditor.disableModelUpdateListeners();
       if (!ctrlKey) {
-        $scope.clearSelected();
+        kModelHelper.getSelection(kEditor.getModel()).forEach(function (instance) {
+          kModelHelper.setSelected(instance, false);
+        });
       }
-      $scope.items.forEach(function (item) {
-        if (item.type === 'node') {
-          $scope.selectedItems = $filter('filter')(item.children, $scope.filterExpr, $scope.filterComparator).map(function (child) {
-            item.expanded = true;
-            child.selected = true;
-            return child;
-          });
-        }
+
+      kEditor.getModel().select('/nodes[]/components[]')
+          .array.forEach(function (instance) {
+        kModelHelper.setFolded(instance.eContainer(), false);
+        kModelHelper.setSelected(instance, true);
       });
+
+      kEditor.enableModelUpdateListeners();
+      kEditor.invokeModelUpdateListeners();
     };
 
     $scope.clearSelected = function () {
-      $scope.selectedItems.length = 0;
-      $scope.items.forEach(function unselect(item) {
-        item.selected = false;
-        if (item.children) {
-          item.children.forEach(unselect);
-        }
+      kEditor.disableModelUpdateListeners();
+      kModelHelper.getSelection(kEditor.getModel()).forEach(function (instance) {
+        kModelHelper.setSelected(instance, false);
       });
+      kEditor.enableModelUpdateListeners();
+      kEditor.invokeModelUpdateListeners();
     };
 
     $scope.toggleTags = function () {
@@ -257,25 +239,22 @@ angular.module('editorApp')
       $scope.treeReverse = !$scope.treeReverse;
     };
 
-    $scope.selectByTag = function (tag) {
+    $scope.selectByTag = function (instances) {
+      kEditor.disableModelUpdateListeners();
       if (!ctrlKey) {
-        $scope.clearSelected();
+        kModelHelper.getSelection(kEditor.getModel()).forEach(function (instance) {
+          kModelHelper.setSelected(instance, false);
+        });
       }
-      $scope.items.forEach(function (item) {
-        if (item.tags.indexOf(tag) !== -1) {
-          item.selected = true;
-          $scope.selectedItems.push(item);
-        }
-        if (item.children) {
-          item.children.forEach(function (child) {
-            if (child.tags.indexOf(tag) !== -1) {
-              item.expanded = true;
-              child.selected = true;
-              $scope.selectedItems.push(child);
-            }
-          });
+
+      instances.forEach(function (instance) {
+        kModelHelper.setSelected(instance, true);
+        if (instance.metaClassName() === 'org.kevoree.ComponentInstance') {
+          kModelHelper.setFolded(instance.eContainer(), false);
         }
       });
+      kEditor.enableModelUpdateListeners();
+      kEditor.invokeModelUpdateListeners();
     };
 
     $scope.$on('$destroy', function () {

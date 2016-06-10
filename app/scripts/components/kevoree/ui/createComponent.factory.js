@@ -18,7 +18,7 @@ angular.module('editorApp')
                     fillOpacity: util.isTruish(instance.started) ? 1 : 0.65,
                     stroke: 'white',
                     strokeWidth: 1.5,
-                    'class': 'bg'
+                    'class': kModelHelper.isSelected(instance) ? 'bg selected':'bg'
                 });
 
             var nameText = ui.editor
@@ -465,7 +465,7 @@ angular.module('editorApp')
                 requiredDy += COMP_HEIGHT;
             });
 
-            comp.selectable()
+            comp.selectable(instance)
                 .draggable()
                 .dragStart(function() {
                     var container = document.getElementById('editor-container');

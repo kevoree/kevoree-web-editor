@@ -20,7 +20,7 @@ angular.module('editorApp')
                     fillOpacity: 0.1,
                     stroke: 'white',
                     strokeWidth: 2,
-                    'class': 'bg'
+                    class: kModelHelper.isSelected(instance) ? 'bg selected':'bg'
                 });
 
             var nameText = ui.editor
@@ -49,7 +49,7 @@ angular.module('editorApp')
                 .append(bg)
                 .append(nameText)
                 .append(tdefText)
-                .selectable()
+                .selectable(instance)
                 .draggable()
                 .dragStart(function() {
                     var container = document.getElementById('editor-container');

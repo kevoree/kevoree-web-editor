@@ -14,8 +14,8 @@ angular.module('editorApp')
 
         function processTags() {
           $scope.tags = [];
-          $scope.items.forEach(function (item) {
-            item.tags.forEach(function (tag) {
+          $scope.items.forEach(function (instance) {
+            kModelHelper.getInstanceTags(instance).forEach(function (tag) {
               if ($scope.tags.indexOf(tag) === -1) {
                 $scope.tags.push(tag);
               }
@@ -24,15 +24,14 @@ angular.module('editorApp')
         }
 
         processTags();
-        var unwatchItems = $scope.$watchCollection('items', processTags);
+        var unwatchItems = $scope.$watchCollection('items', processTags, true);
         $scope.$on('$destroy', unwatchItems);
 
         $scope.addTag = function () {
           if ($scope.tag.trim().length > 0 && $scope.tag.indexOf(',') === -1) {
             $scope.tag = $scope.tag.trim();
             kEditor.disableModelUpdateListeners();
-            $scope.items.forEach(function (item) {
-              var instance = kEditor.getModel().findByPath(item.path);
+            $scope.items.forEach(function (instance) {
               var tagMeta = instance.findMetaDataByID(KWE_TAG);
               if (!tagMeta) {
                 tagMeta = kFactory.createValue();
@@ -46,12 +45,12 @@ angular.module('editorApp')
               if (tags.indexOf($scope.tag) === -1) {
                 tags.push($scope.tag);
               }
-              item.tags = tags;
               tagMeta.value = tags.join(',');
             });
             $scope.tag = '';
             kEditor.enableModelUpdateListeners();
-            kEditor.invokeModelUpdateListeners('treeview');
+            kEditor.invokeModelUpdateListeners();
+            processTags();
           }
         };
 
@@ -64,17 +63,14 @@ angular.module('editorApp')
         };
 
         $scope.removeTag = function (tag) {
-          $scope.items.forEach(function (item) {
-            var instance = kEditor.getModel().findByPath(item.path);
+          $scope.items.forEach(function (instance) {
             var tagMeta = instance.findMetaDataByID(KWE_TAG);
             if (tagMeta) {
               var tags = tagMeta.value.split(',');
               var i = tags.indexOf(tag);
               if (i !== -1) {
                 tags.splice(i, 1);
-                item.tags = tags;
                 tagMeta.value = tags.join(',');
-                processTags();
               }
             }
           });

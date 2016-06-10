@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('uiCreateChannel', function(uiUtils, util, CHANNEL_RADIUS) {
+    .factory('uiCreateChannel', function(kModelHelper, uiUtils, util, CHANNEL_RADIUS) {
         return function(ui, instance) {
             ui.removeUIElem(instance.path());
             uiUtils.updateSVGDefs(ui.model);
@@ -12,8 +12,7 @@ angular.module('editorApp')
                     fill: '#DB661D',
                     stroke: util.isTruish(instance.started) ? '#fff' : '#000',
                     strokeWidth: 2,
-                    // strokeDasharray: '5 3',
-                    'class': 'bg',
+                    class: kModelHelper.isSelected(instance) ? 'bg selected':'bg',
                     opacity: 0.75,
                     title: instance.name + ': ' + instance.typeDefinition.name
                 });
@@ -44,7 +43,7 @@ angular.module('editorApp')
                 .append(bg)
                 // .append(nameText)
                 // .append(tdefText)
-                .selectable()
+                .selectable(instance)
                 .draggable()
                 .dragMove(function() {
                     var args = arguments;

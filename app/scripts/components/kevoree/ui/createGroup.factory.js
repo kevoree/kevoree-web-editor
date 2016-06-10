@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('uiCreateGroup', function (uiUtils, util, GROUP_RADIUS, GROUP_PLUG_RADIUS) {
+    .factory('uiCreateGroup', function (kModelHelper, uiUtils, util, GROUP_RADIUS, GROUP_PLUG_RADIUS) {
         return function (ui, instance) {
             ui.removeUIElem(instance.path());
             uiUtils.updateSVGDefs(ui.model);
@@ -12,7 +12,7 @@ angular.module('editorApp')
                     fill: 'green',
                     stroke: '#000',
                     strokeWidth: 3,
-                    'class': 'bg',
+                    'class': kModelHelper.isSelected(instance) ? 'bg selected':'bg',
                     opacity: 0.75
                 });
 
@@ -137,7 +137,7 @@ angular.module('editorApp')
                 .append(nameText)
                 .append(tdefText)
                 .append(plug)
-                .selectable()
+                .selectable(instance)
                 .draggable()
                 .dragMove(function() {
                     var args = arguments;

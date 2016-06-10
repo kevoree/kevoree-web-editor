@@ -42,7 +42,7 @@
           <a href="" class="treeview-action" ng-click="clearSelected()" title="Clear selection">
             <i class="fa fa-square-o"></i>
           </a>
-          <span class="pull-right" title="selection / nb instances">{{ getSelection().length + '/' + nbInstances }} </span>
+          <span class="pull-right" title="selection / nb instances">{{ selectedItems.length + '/' + nbInstances }} </span>
         </div>
       </div>
       <div class="fit-y">
@@ -53,13 +53,13 @@
               <li
                   class="item"
                   ng-repeat="item in items | filter:filterExpr:filterComparator | orderBy:'name':treeReverse"
-                  ng-class="{ selected: item.selected, expanded: item.expanded }">
+                  ng-class="{ selected: item.selected, expanded: !item.folded }">
                 <span class="icon {{ item.type }}">
                   <i
                       class="expand-handle fa"
-                      ng-class="item.expanded ? 'fa-minus':'fa-plus'"
+                      ng-class="!item.folded ? 'fa-minus':'fa-plus'"
                       ng-if="item.children && item.children.length > 0"
-                      ng-click="item.expanded = !item.expanded"></i>
+                      ng-click="onExpand(item)"></i>
                 </span>
                 <div
                     class="name"
@@ -81,7 +81,7 @@
                       tooltip-placement="right"
                       tooltip-append-to-body="true">...</span>
                 </div>
-                <ul class="list-unstyled tree" ng-if="item.expanded">
+                <ul class="list-unstyled tree" ng-if="!item.folded">
                   <li
                       class="item"
                       ng-repeat="child in item.children | filter:filterExpr:filterComparator | orderBy:'name':treeReverse"
@@ -141,11 +141,6 @@
       <tab index="4" heading="KevScript" select="$broadcast('treeview:tab:kevs')" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-kevs items="selectedItems"></tab-kevs>
-        </div>
-      </tab>
-      <tab index="5" heading="JSON" ng-if="selectedItems.length">
-        <div class="tab-pane-container well">
-          <tab-json items="selectedItems"></tab-json>
         </div>
       </tab>
     </tabset>

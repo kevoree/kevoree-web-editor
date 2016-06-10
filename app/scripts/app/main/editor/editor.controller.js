@@ -8,7 +8,7 @@
  * Controller of the editorApp editor
  */
 angular.module('editorApp')
-    .controller('EditorCtrl', function($scope, kEditor, ui, uiUtils, kModelHelper, kFactory, kInstance, hotkeys, Notification, KWE_POSITION, KWE_FOLD) {
+    .controller('EditorCtrl', function($scope, kEditor, ui, uiUtils, kModelHelper, kFactory, kInstance, hotkeys, Notification, KWE_POSITION, KWE_FOLDED) {
         // init the UI kFactory
         ui.init();
 
@@ -192,10 +192,10 @@ angular.module('editorApp')
                         if (path) {
                             var elem = kEditor.getModel().findByPath(path);
                             if (kModelHelper.getTypeDefinitionType(elem.typeDefinition) === 'node') {
-                                var foldMeta = elem.findMetaDataByID(KWE_FOLD);
+                                var foldMeta = elem.findMetaDataByID(KWE_FOLDED);
                                 if (!foldMeta) {
                                     foldMeta = kFactory.createValue();
-                                    foldMeta.name = KWE_FOLD;
+                                    foldMeta.name = KWE_FOLDED;
                                     foldMeta.value = true;
                                     elem.addMetaData(foldMeta);
                                 } else {

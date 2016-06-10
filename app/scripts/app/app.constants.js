@@ -9,9 +9,11 @@ angular.module('editorApp')
 
 .constant('KWE_POSITION', 'kwe_position')
 
-.constant('KWE_FOLD', 'kwe_fold')
+.constant('KWE_FOLDED', 'kwe_folded')
 
 .constant('KWE_TAG', 'kwe_tag')
+
+.constant('KWE_SELECTED', 'kwe_selected')
 
 .constant('KEVOREE_REGISTRY_URL', 'http://registry.kevoree.org/')
 

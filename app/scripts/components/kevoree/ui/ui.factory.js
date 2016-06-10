@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-    .factory('ui', function(util, uiUtils, uiCreateGroup, uiCreateGroupWire, uiCreateNode, uiCreateComponent, uiCreateBinding, uiCreateChannel, kModelHelper, kFactory, Notification, KWE_POSITION, KWE_FOLD, NODE_WIDTH, NODE_HEIGHT, INVALID_RADIUS, GROUP_RADIUS, CHANNEL_RADIUS) {
+    .factory('ui', function(util, uiUtils, uiCreateGroup, uiCreateGroupWire, uiCreateNode, uiCreateComponent, uiCreateBinding, uiCreateChannel, kModelHelper, kFactory, Notification, KWE_POSITION, NODE_WIDTH, NODE_HEIGHT, INVALID_RADIUS, GROUP_RADIUS, CHANNEL_RADIUS) {
 
         var ui = {
             /**
@@ -22,7 +22,10 @@ angular.module('editorApp')
             /**
              * Mouse position holder
              */
-            mousePos: { x: 0, y: 0 },
+            mousePos: {
+                x: 0,
+                y: 0
+            },
 
             /**
              * Must be called before any other methods
@@ -38,12 +41,15 @@ angular.module('editorApp')
                 editor.mousedown(function(evt) {
                     if (evt.which === 1) {
                         // remove all selected state
-                        editor.selectAll('.selected').forEach(function(elem) {
-                            elem.removeClass('selected');
-                        });
-                        if (ui.listener) {
-                            ui.listener();
-                        }
+                        editor.selectAll('.selected')
+                            .forEach(function(elem) {
+                                elem.removeClass('selected');
+                                var path = elem.parent().attr('data-path');
+                                if (path && path.length > 0) {
+                                  var instance = ui.model.findByPath(path);
+                                  kModelHelper.setSelected(instance, false);
+                                }
+                            });
                     }
                 });
                 uiUtils.updateSVGDefs(this.model);
@@ -52,7 +58,8 @@ angular.module('editorApp')
                 var observer = new MutationObserver(function(mutations) {
                     mutations.forEach(function(mutation) {
                         if (mutation.attributeName === 'transform') {
-                            var matrix = zpdEditor.transform().localMatrix;
+                            var matrix = zpdEditor.transform()
+                                .localMatrix;
                             editor
                                 .select('#coord-text')
                                 .attr({
@@ -85,72 +92,75 @@ angular.module('editorApp')
                     .transform('t-5,-5');
             },
 
-            createGroup: function (instance) {
+            createGroup: function(instance) {
                 uiCreateGroup(this, instance);
             },
 
-            createGroupWire: function (group, node) {
+            createGroupWire: function(group, node) {
                 uiCreateGroupWire(this, group, node);
             },
 
-            createNode: function (instance) {
+            createNode: function(instance) {
                 uiCreateNode(this, instance);
             },
 
-            createComponent: function (instance) {
+            createComponent: function(instance) {
                 return uiCreateComponent(this, instance);
             },
 
-            createBinding: function (instance) {
+            createBinding: function(instance) {
                 uiCreateBinding(this, instance);
             },
 
-            createChannel: function (instance) {
+            createChannel: function(instance) {
                 uiCreateChannel(this, instance);
             },
 
             updateValidity: function(instance) {
                 if (this.editor) {
-                  var elem = this.editor.select('.instance[data-path="' + instance.path() + '"]');
-                  var icon = this.editor.select('.instance[data-path="' + instance.path() + '"] > .invalid-icon');
-                  if (kModelHelper.isValid(instance)) {
-                      if (icon) {
-                          icon.remove();
-                      }
-                  } else {
-                      if (icon) {
-                          icon.remove();
-                      }
-                      icon = this.editor
-                          .circle(0, 0, INVALID_RADIUS)
-                          .attr({
-                              'class': 'invalid-icon',
-                              fill: 'red',
-                              stroke: 'black',
-                              title: 'Invalid dictionary attributes'
-                          });
-                      var matrix = icon.transform().localMatrix;
-                      switch (kModelHelper.getTypeDefinitionType(instance.typeDefinition)) {
-                          case 'node':
-                              matrix.e = elem.getBBox().width - (INVALID_RADIUS * 2);
-                              matrix.f = INVALID_RADIUS * 2;
-                              break;
+                    var elem = this.editor.select('.instance[data-path="' + instance.path() + '"]');
+                    var icon = this.editor.select('.instance[data-path="' + instance.path() + '"] > .invalid-icon');
+                    if (kModelHelper.isValid(instance)) {
+                        if (icon) {
+                            icon.remove();
+                        }
+                    } else {
+                        if (icon) {
+                            icon.remove();
+                        }
+                        icon = this.editor
+                            .circle(0, 0, INVALID_RADIUS)
+                            .attr({
+                                'class': 'invalid-icon',
+                                fill: 'red',
+                                stroke: 'black',
+                                title: 'Invalid dictionary attributes'
+                            });
+                        var matrix = icon.transform()
+                            .localMatrix;
+                        switch (kModelHelper.getTypeDefinitionType(instance.typeDefinition)) {
+                            case 'node':
+                                matrix.e = elem.getBBox()
+                                    .width - (INVALID_RADIUS * 2);
+                                matrix.f = INVALID_RADIUS * 2;
+                                break;
 
-                          case 'group':
-                              matrix.f = -GROUP_RADIUS + (INVALID_RADIUS * 2);
-                              break;
+                            case 'group':
+                                matrix.f = -GROUP_RADIUS + (INVALID_RADIUS * 2);
+                                break;
 
-                          case 'channel':
-                              matrix.f = -CHANNEL_RADIUS + (INVALID_RADIUS * 2);
-                              break;
+                            case 'channel':
+                                matrix.f = -CHANNEL_RADIUS + (INVALID_RADIUS * 2);
+                                break;
 
-                          case 'component':
-                              matrix.e = elem.getBBox().width;
-                              break;
-                      }
-                      icon.transform(matrix);
-                      elem.append(icon);
-                  }
+                            case 'component':
+                                matrix.e = elem.getBBox()
+                                    .width;
+                                break;
+                        }
+                        icon.transform(matrix);
+                        elem.append(icon);
+                    }
                 }
             },
 
@@ -163,7 +173,8 @@ angular.module('editorApp')
                             // append it to the editor
                             this.editor.append(elem);
                         } else {
-                            this.editor.selectAll('.group-wire[data-to="' + path + '"]').remove();
+                            this.editor.selectAll('.group-wire[data-to="' + path + '"]')
+                                .remove();
                             elem.remove();
                         }
 
@@ -217,7 +228,6 @@ angular.module('editorApp')
                         elem.remove();
                     }
                 }
-                ui.invokeListener();
             },
 
             deleteGroupWire: function(groupPath, nodePath) {
@@ -249,7 +259,7 @@ angular.module('editorApp')
                             if (readOnly) {
                                 Notification.warning({
                                     title: 'Delete instance',
-                                    message: 'Cannot delete read-only instance "'+instance.name+'"',
+                                    message: 'Cannot delete read-only instance "' + instance.name + '"',
                                     delay: 3000
                                 });
                             } else {
@@ -287,39 +297,46 @@ angular.module('editorApp')
             },
 
             deleteNodes: function() {
-                this.editor.selectAll('.node').remove();
-                this.editor.selectAll('.group-wire').remove();
-                ui.invokeListener();
+                this.editor.selectAll('.node')
+                    .remove();
+                this.editor.selectAll('.group-wire')
+                    .remove();
             },
 
             deleteGroups: function() {
-                this.editor.selectAll('.group').remove();
-                this.editor.selectAll('.group-wire').remove();
-                ui.invokeListener();
+                this.editor.selectAll('.group')
+                    .remove();
+                this.editor.selectAll('.group-wire')
+                    .remove();
             },
 
             deleteChannels: function() {
-                this.editor.selectAll('.chan').remove();
-                ui.invokeListener();
+                this.editor.selectAll('.chan')
+                    .remove();
             },
 
             deleteBindings: function() {
-                this.editor.selectAll('.binding').remove();
-                ui.invokeListener();
+                this.editor.selectAll('.binding')
+                    .remove();
             },
 
             updateInstance: function(previousPath, instance) {
                 var elem = this.editor.select('.instance[data-path="' + previousPath + '"]');
                 if (elem) {
                     // update data-path and name
-                    elem.attr({ 'data-path': instance.path() });
+                    elem.attr({
+                        'data-path': instance.path()
+                    });
                     var name = elem.select('text.name');
                     if (name) {
-                      name.attr({ text: instance.name });
+                        name.attr({
+                            text: instance.name
+                        });
                     }
 
                     // update location only if not a child of someone
-                    if (!elem.parent().hasClass('node')) {
+                    if (!elem.parent()
+                        .hasClass('node')) {
                         elem.relocate(instance);
                     }
 
@@ -329,7 +346,8 @@ angular.module('editorApp')
                             var compElem = elem.select('.instance[data-path="' + previousPath + '/components[' + comp.name + ']"]');
                             if (compElem) {
                                 compElem.attr({
-                                    'data-path': comp.path().replace(previousPath, instance.path())
+                                    'data-path': comp.path()
+                                        .replace(previousPath, instance.path())
                                 });
                             }
                         });
@@ -343,7 +361,9 @@ angular.module('editorApp')
                             });
                     } else {
                         if (name) {
-                          name.attr({ fill: util.isTruish(instance.started) ? '#fff' : '#000' });
+                            name.attr({
+                                fill: util.isTruish(instance.started) ? '#fff' : '#000'
+                            });
                         }
                     }
 
@@ -369,115 +389,71 @@ angular.module('editorApp')
             updatePosition: function(instance) {
                 var elem = this.editor.select('.instance[data-path="' + instance.path() + '"]');
                 if (elem) {
-                    if (!elem.parent().hasClass('node')) {
+                    if (!elem.parent()
+                        .hasClass('node')) {
                         elem.relocate(instance);
                     }
                 }
             },
 
             updateCompTypeDefinition: function(comp, oldTypeDef) {
-              oldTypeDef.required.array.forEach(function (oldPortType) {
-                var found = false;
-                comp.typeDefinition.required.array.forEach(function (portType) {
-                  if (portType.name === oldPortType.name) {
-                    found = true;
-                    // port still exists in new typeDef
-                    var port = comp.findRequiredByID(portType.name);
-                    if (port) {
-                      port.portTypeRef = portType;
-                    }
-                  }
-                });
-                if (!found) {
-                  var port = comp.findRequiredByID(oldPortType.name);
-                  if (port) {
-                    port.bindings.array.forEach(function (binding) {
-                      binding.delete();
+                oldTypeDef.required.array.forEach(function(oldPortType) {
+                    var found = false;
+                    comp.typeDefinition.required.array.forEach(function(portType) {
+                        if (portType.name === oldPortType.name) {
+                            found = true;
+                            // port still exists in new typeDef
+                            var port = comp.findRequiredByID(portType.name);
+                            if (port) {
+                                port.portTypeRef = portType;
+                            }
+                        }
                     });
-                    port.delete();
-                  }
-                }
-              });
-
-              oldTypeDef.provided.array.forEach(function (oldPortType) {
-                var found = false;
-                comp.typeDefinition.provided.array.forEach(function (portType) {
-                  if (portType.name === oldPortType.name) {
-                    found = true;
-                    // port still exists in new typeDef
-                    var port = comp.findProvidedByID(oldPortType.name);
-                    if (port) {
-                      port.portTypeRef = portType;
+                    if (!found) {
+                        var port = comp.findRequiredByID(oldPortType.name);
+                        if (port) {
+                            port.bindings.array.forEach(function(binding) {
+                                binding.delete();
+                            });
+                            port.delete();
+                        }
                     }
-                  }
                 });
-                if (!found) {
-                  var port = comp.findProvidedByID(oldPortType.name);
-                  if (port) {
-                    port.bindings.array.forEach(function (binding) {
-                      binding.delete();
-                    });
-                    port.delete();
-                  }
-                }
-              });
 
-              // recreate the new component
-              var compUi = ui.createComponent(comp);
-              compUi.select('.bg').addClass('selected');
-              this.refreshNode(comp.eContainer().path());
+                oldTypeDef.provided.array.forEach(function(oldPortType) {
+                    var found = false;
+                    comp.typeDefinition.provided.array.forEach(function(portType) {
+                        if (portType.name === oldPortType.name) {
+                            found = true;
+                            // port still exists in new typeDef
+                            var port = comp.findProvidedByID(oldPortType.name);
+                            if (port) {
+                                port.portTypeRef = portType;
+                            }
+                        }
+                    });
+                    if (!found) {
+                        var port = comp.findProvidedByID(oldPortType.name);
+                        if (port) {
+                            port.bindings.array.forEach(function(binding) {
+                                binding.delete();
+                            });
+                            port.delete();
+                        }
+                    }
+                });
+
+                // recreate the new component
+                var compUi = ui.createComponent(comp);
+                compUi.select('.bg')
+                    .addClass('selected');
+                this.refreshNode(comp.eContainer()
+                    .path());
             },
 
-            toggleFold: function (node, isFolded) {
-                function toggleSubNodes(node) {
-                    node.components.array.forEach(toggleComp);
-                    node.hosts.array.forEach(toggleSubNodes);
-
-                    var uiNode = ui.editor.select('.node[data-path="'+node.path()+'"]');
-                    if (uiNode) {
-                        if (isFolded) {
-                            uiNode.addClass('hide');
-                        } else {
-                            uiNode.removeClass('hide');
-                        }
-                    }
-                }
-
-                function toggleComp(comp) {
-                    comp.provided.array.forEach(togglePort);
-                    comp.required.array.forEach(togglePort);
-
-                    var uiComp = ui.editor.select('.comp[data-path="'+comp.path()+'"]');
-                    if (uiComp) {
-                        if (isFolded) {
-                            uiComp.addClass('hide');
-                        } else {
-                            uiComp.removeClass('hide');
-                        }
-                    }
-                }
-
-                function togglePort(port) {
-                    port.bindings.array.forEach(toggleBinding);
-                }
-
-                function toggleBinding(binding) {
-                    if (binding.hub) {
-                        toggleChannel(binding.hub);
-                    }
-
-                    var uiBinding = ui.editor.select('.binding[data-path="'+binding.path()+'"]');
-                    if (uiBinding) {
-                        if (isFolded) {
-                            uiBinding.addClass('hide');
-                        } else {
-                            uiBinding.removeClass('hide');
-                        }
-                    }
-                }
-
+            toggleFold: function(node, isFolded) {
                 function toggleChannel(chan) {
-                    var uiChan = ui.editor.select('.chan[data-path="'+chan.path()+'"]');
+                    var uiChan = ui.editor.select('.chan[data-path="' + chan.path() + '"]');
                     if (uiChan) {
                         if (kModelHelper.isChannelDistributed(chan)) {
                             if (isFolded) {
@@ -499,21 +475,70 @@ angular.module('editorApp')
                     }
                 }
 
+                function toggleBinding(binding) {
+                    if (binding.hub) {
+                        toggleChannel(binding.hub);
+                    }
+
+                    var uiBinding = ui.editor.select('.binding[data-path="' + binding.path() + '"]');
+                    if (uiBinding) {
+                        if (isFolded) {
+                            uiBinding.addClass('hide');
+                        } else {
+                            uiBinding.removeClass('hide');
+                        }
+                    }
+                }
+
+                function togglePort(port) {
+                    port.bindings.array.forEach(toggleBinding);
+                }
+
+                function toggleComp(comp) {
+                    comp.provided.array.forEach(togglePort);
+                    comp.required.array.forEach(togglePort);
+
+                    var uiComp = ui.editor.select('.comp[data-path="' + comp.path() + '"]');
+                    if (uiComp) {
+                        if (isFolded) {
+                            uiComp.addClass('hide');
+                        } else {
+                            uiComp.removeClass('hide');
+                        }
+                    }
+                }
+
+                function toggleSubNodes(node) {
+                    node.components.array.forEach(toggleComp);
+                    node.hosts.array.forEach(toggleSubNodes);
+
+                    var uiNode = ui.editor.select('.node[data-path="' + node.path() + '"]');
+                    if (uiNode) {
+                        if (isFolded) {
+                            uiNode.addClass('hide');
+                        } else {
+                            uiNode.removeClass('hide');
+                        }
+                    }
+                }
+
                 node.components.array.forEach(toggleComp);
                 node.hosts.array.forEach(toggleSubNodes);
 
-                var uiNode = ui.editor.select('.node[data-path="'+node.path()+'"]');
+                var uiNode = ui.editor.select('.node[data-path="' + node.path() + '"]');
                 if (uiNode) {
                     if (isFolded) {
-                        uiNode.select('.bg').attr({
-                            height: NODE_HEIGHT,
-                            strokeDasharray: '5 3'
-                        });
+                        uiNode.select('.bg')
+                            .attr({
+                                height: NODE_HEIGHT,
+                                strokeDasharray: '5 3'
+                            });
                     } else {
-                        uiNode.select('.bg').attr({
-                            height: uiUtils.getNodeUIHeight(node),
-                            strokeDasharray: ''
-                        });
+                        uiNode.select('.bg')
+                            .attr({
+                                height: uiUtils.getNodeUIHeight(node),
+                                strokeDasharray: ''
+                            });
                     }
                 }
             },
@@ -534,10 +559,11 @@ angular.module('editorApp')
 
                     node.relocate(instance);
 
-                    node.select('.bg').attr({
-                        width: computedWidth,
-                        height: uiUtils.getNodeUIHeight(instance)
-                    });
+                    node.select('.bg')
+                        .attr({
+                            width: computedWidth,
+                            height: uiUtils.getNodeUIHeight(instance)
+                        });
 
                     ui.editor
                         .selectAll('.node[data-path="' + path + '"] > text')
@@ -555,24 +581,27 @@ angular.module('editorApp')
                     });
 
                     // apply dx,dy transformation of level-1 children
-                    var children = ui.editor.selectAll('.node[data-path="' + instance.path() + '"] > .instance').items;
+                    var children = ui.editor.selectAll('.node[data-path="' + instance.path() + '"] > .instance')
+                        .items;
                     var dy = NODE_HEIGHT;
                     children.forEach(function(child) {
-                        child.transform('t' + ((computedWidth - child.select('.bg').asPX('width')) / 2) + ',' + dy);
-                        dy += child.select('.bg').asPX('height') + 10;
+                        child.transform('t' + ((computedWidth - child.select('.bg')
+                            .asPX('width')) / 2) + ',' + dy);
+                        dy += child.select('.bg')
+                            .asPX('height') + 10;
                     });
 
                     instance.components.array.forEach(function(comp) {
-                      comp.provided.array.forEach(function (port) {
-                        port.bindings.array.forEach(function (binding) {
-                          ui.createBinding(binding);
+                        comp.provided.array.forEach(function(port) {
+                            port.bindings.array.forEach(function(binding) {
+                                ui.createBinding(binding);
+                            });
                         });
-                      });
-                      comp.required.array.forEach(function (port) {
-                        port.bindings.array.forEach(function (binding) {
-                          ui.createBinding(binding);
+                        comp.required.array.forEach(function(port) {
+                            port.bindings.array.forEach(function(binding) {
+                                ui.createBinding(binding);
+                            });
                         });
-                      });
                     });
 
                     this.updateValidity(instance);
@@ -587,14 +616,17 @@ angular.module('editorApp')
                 var instance = ui.model.findByPath(path);
                 if (instance) {
                     var comp = ui.editor.select('.comp[data-path="' + path + '"]');
-                    var host = ui.editor.select('.node[data-path="' + instance.eContainer().path() + '"]');
+                    var host = ui.editor.select('.node[data-path="' + instance.eContainer()
+                        .path() + '"]');
                     var treeHeight = kModelHelper.getNodeTreeHeight(instance.eContainer());
-                    var computedWidth = host.select('.bg').asPX('width') - 20;
+                    var computedWidth = host.select('.bg')
+                        .asPX('width') - 20;
 
                     if (comp && host) {
-                        comp.select('.bg').attr({
-                            width: computedWidth
-                        });
+                        comp.select('.bg')
+                            .attr({
+                                width: computedWidth
+                            });
                         ui.editor
                             .selectAll('.comp[data-path="' + path + '"] > text')
                             .attr({
@@ -605,7 +637,8 @@ angular.module('editorApp')
                         var PORT_X_PADDING = 3;
                         instance.typeDefinition.required.array.forEach(function(portType) {
                             var port = comp.select('.required[data-name="' + portType.name + '"]');
-                            port.transform('t' + (computedWidth - PORT_X_PADDING) + ',' + port.transform().localMatrix.f);
+                            port.transform('t' + (computedWidth - PORT_X_PADDING) + ',' + port.transform()
+                                .localMatrix.f);
                         });
 
                         this.updateValidity(instance);
@@ -617,7 +650,8 @@ angular.module('editorApp')
 
             getSelected: function() {
                 return this.editor
-                    .selectAll('.selected').items
+                    .selectAll('.selected')
+                    .items
                     .map(function(elem) {
                         // all selected element are in groups so we need to return the parent
                         return elem.parent();
@@ -625,14 +659,16 @@ angular.module('editorApp')
             },
 
             getSelectedPaths: function() {
-                return this.getSelected().map(function(elem) {
-                    return elem.attr('data-path');
-                });
+                return this.getSelected()
+                    .map(function(elem) {
+                        return elem.attr('data-path');
+                    });
             },
 
             getSelectedNodes: function() {
                 return this.editor
-                    .selectAll('.node > .selected').items
+                    .selectAll('.node > .selected')
+                    .items
                     .map(function(bg) {
                         return bg.parent();
                     });
@@ -652,20 +688,18 @@ angular.module('editorApp')
                 return document.getElementById('editor-container');
             },
 
-            setSelectedListener: function(listener) {
-                this.listener = listener;
-            },
-
             selectAll: function() {
-                this.editor.selectAll('.bg').items.forEach(function(elem) {
-                    elem.addClass('selected');
-                });
+                this.editor.selectAll('.bg')
+                    .items.forEach(function(elem) {
+                        elem.addClass('selected');
+                    });
             },
 
             isSelected: function(path) {
                 var elem = this.editor.select('.instance[data-path="' + path + '"]');
                 if (elem) {
-                    if (elem.select('.bg').hasClass('selected')) {
+                    if (elem.select('.bg')
+                        .hasClass('selected')) {
                         return true;
                     }
                 }
@@ -687,14 +721,15 @@ angular.module('editorApp')
                     uiUtils.updateSVGDefs(model);
 
                     this.editor.clear();
-                    ui.invokeListener();
                 }
             },
 
             getHoveredNode: function(x, y, bannedPath) {
-                var m = this.editor.transform().localMatrix;
+                var m = this.editor.transform()
+                    .localMatrix;
                 return this.editor
-                    .selectAll('.node').items
+                    .selectAll('.node')
+                    .items
                     .filter(function(node) {
                         if (bannedPath) {
                             return node.attr('data-path') !== bannedPath &&
@@ -704,13 +739,16 @@ angular.module('editorApp')
                         }
                     })
                     .sort(function(a, b) {
-                        return a.getBBox().width - b.getBBox().width;
+                        return a.getBBox()
+                            .width - b.getBBox()
+                            .width;
                     })[0];
             },
 
             getHoveredChan: function(x, y) {
                 var chans = this.editor
-                    .selectAll('.chan').items;
+                    .selectAll('.chan')
+                    .items;
                 for (var i = 0; i < chans.length; i++) {
                     if (Snap.path.isPointInsideBBox(chans[i].getBBox(), x, y)) {
                         return chans[i];
@@ -719,40 +757,29 @@ angular.module('editorApp')
                 return null;
             },
 
-            getHoveredPort: function (x, y) {
+            getHoveredPort: function(x, y) {
                 var ports = this.editor
-                    .selectAll('.port').items;
+                    .selectAll('.port')
+                    .items;
                 for (var i = 0; i < ports.length; i++) {
-                    if (uiUtils.isPointInsideElem(ports[i], x, y, this.editor.transform().localMatrix)) {
+                    if (uiUtils.isPointInsideElem(ports[i], x, y, this.editor.transform()
+                            .localMatrix)) {
                         return ports[i];
                     }
                 }
                 return null;
             },
 
-            invokeListener: function(selected) {
-                if (this.listener) {
-                    if (selected) {
-                        this.listener(selected);
-                    } else {
-                        selected = this.editor.select('.selected');
-                        if (selected) {
-                            this.listener(selected.parent().attr('data-path'));
-                        } else {
-                            this.listener(null);
-                        }
-                    }
-                }
+            hasErrors: function() {
+                return this.editor.selectAll('.invalid-icon')
+                    .length > 0;
             },
 
-            hasErrors: function () {
-                return this.editor.selectAll('.invalid-icon').length > 0;
-            },
-
-            order: function () {
-                this.editor.selectAll('.binding').forEach(function (binding) {
-                    binding.node.parentNode.appendChild(binding.node);
-                });
+            order: function() {
+                this.editor.selectAll('.binding')
+                    .forEach(function(binding) {
+                        binding.node.parentNode.appendChild(binding.node);
+                    });
             }
         };
 
@@ -761,9 +788,11 @@ angular.module('editorApp')
          */
         Snap.plugin(function(Snap, Element) {
             var dragStart = function(x, y, evt) {
-                if (!this.parent().hasClass('instance')) {
-                    var instances = angular.element(ui.editor.node).find('> .instance');
-                    this.node.parentNode.insertBefore(this.node, instances[instances.length-1].nextSibling);
+                if (!this.parent()
+                    .hasClass('instance')) {
+                    var instances = angular.element(ui.editor.node)
+                        .find('> .instance');
+                    this.node.parentNode.insertBefore(this.node, instances[instances.length - 1].nextSibling);
                 }
 
                 this.data('dragStartX', x);
@@ -782,7 +811,8 @@ angular.module('editorApp')
                     var bbox = uiUtils.getAbsoluteBBox(this);
                     this.data('ot', 't' + bbox.x + ',' + bbox.y);
                 } else {
-                    this.data('ot', this.transform().local);
+                    this.data('ot', this.transform()
+                        .local);
                 }
 
                 this.data('hasMoved', false);
@@ -834,7 +864,8 @@ angular.module('editorApp')
                             pos.name = KWE_POSITION;
                             instance.addMetaData(pos);
                         }
-                        var matrix = this.transform().localMatrix;
+                        var matrix = this.transform()
+                            .localMatrix;
                         pos.value = JSON.stringify({
                             x: matrix.e,
                             y: matrix.f
@@ -858,15 +889,15 @@ angular.module('editorApp')
             };
 
             Element.prototype.draggable = function() {
-                return this.drag(function (dx, dy, x, y, evt) {
+                return this.drag(function(dx, dy, x, y, evt) {
                     if (evt.which === 1) {
                         dragMove.apply(this, arguments);
                     }
-                }, function (x, y, evt) {
+                }, function(x, y, evt) {
                     if (evt.which === 1) {
                         dragStart.apply(this, arguments);
                     }
-                }, function (evt) {
+                }, function(evt) {
                     if (evt.which === 1) {
                         dragEnd.apply(this, arguments);
                     }
@@ -905,29 +936,36 @@ angular.module('editorApp')
                 return this.data('firstDragMove', handlers);
             };
 
-            Element.prototype.selectable = function() {
-                var selectable = function (evt) {
+            Element.prototype.selectable = function(instance) {
+                var selectable = function(evt) {
                     if (evt.which === 1) {
                         evt.cancelBubble = true;
 
                         if (!evt.ctrlKey && !evt.shiftKey) {
-                            ui.editor.selectAll('.selected').forEach(function(elem) {
-                                elem.removeClass('selected');
-                            });
+                            ui.editor.selectAll('.selected')
+                                .forEach(function(elem) {
+                                    elem.removeClass('selected');
+                                    var path = elem.parent().attr('data-path');
+                                    if (path && path.length > 0) {
+                                      var instance = ui.model.findByPath(path);
+                                      kModelHelper.setSelected(instance, false);
+                                    }
+                                });
                         }
                         if (evt.ctrlKey || evt.shiftKey) {
-                            this.select('.bg').toggleClass('selected');
+                            this.select('.bg')
+                                .toggleClass('selected');
+                            if (this.select('.bg')
+                                .hasClass('selected')) {
+                                kModelHelper.setSelected(instance, true);
+                            } else {
+                                kModelHelper.setSelected(instance, false);
+                            }
 
                         } else {
-                            this.select('.bg').addClass('selected');
-                        }
-                        if (ui.listener) {
-                            var selected = ui.editor.selectAll('.selected').items;
-                            if (selected.length === 1) {
-                                ui.listener(selected[0].parent().attr('data-path'));
-                            } else {
-                                ui.listener();
-                            }
+                            this.select('.bg')
+                                .addClass('selected');
+                            kModelHelper.setSelected(instance, true);
                         }
                     }
                 };
