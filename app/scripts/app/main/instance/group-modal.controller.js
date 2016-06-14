@@ -8,7 +8,7 @@ angular.module('editorApp')
             path: '/'
         };
     })
-    .controller('GroupModalCtrl', function($scope, $modalInstance, $timeout, ui, group, kEditor, kWs, groupModalHolder) {
+    .controller('GroupModalCtrl', function($scope, $modalInstance, $timeout, group, kEditor, kWs, groupModalHolder) {
         $scope.type = 'push to';
         $scope.action = 'push';
         $scope.group = group;
@@ -16,28 +16,28 @@ angular.module('editorApp')
         $scope.selectedPort = groupModalHolder.port;
         $scope.selectedPath = groupModalHolder.path;
         $scope.processing = false;
-        $scope.modelHasErrors = ui.hasErrors();
+        $scope.modelHasErrors = kEditor.modelHasErrors();
 
         $scope.hosts = {
-            '127.0.0.1': 'default'
+          '127.0.0.1': 'default'
         };
 
         $scope.ports = {
-            '9000': 'default'
+          '9000': 'default'
         };
 
         $scope.paths = {
-            '/': 'default'
+          '/': 'default'
         };
 
         $scope.changeHost = function() {
-            groupModalHolder.host = $scope.selectedHost;
+          groupModalHolder.host = $scope.selectedHost;
         };
         $scope.changePort = function() {
-            groupModalHolder.port = $scope.selectedPort;
+          groupModalHolder.port = $scope.selectedPort;
         };
         $scope.changePath = function() {
-            groupModalHolder.path = $scope.selectedPath;
+          groupModalHolder.path = $scope.selectedPath;
         };
 
         if (group.dictionary) {
@@ -83,68 +83,68 @@ angular.module('editorApp')
         });
 
         $scope.closeError = function() {
-            $scope.error = null;
+          $scope.error = null;
         };
 
         $scope.closeModelHasErrorsWarning = function () {
-            $scope.modelHasErrors = null;
+          $scope.modelHasErrors = null;
         };
 
         $scope.closeSuccess = function() {
-            $scope.success = null;
+          $scope.success = null;
         };
 
         var ws;
         $scope.push = function() {
-            $scope.action = 'pushed to';
-            $scope.error = null;
-            $scope.processing = true;
-            $timeout(function() {
-                ws = kWs.pushModel(
-                    kEditor.getModel(),
-                    $scope.selectedHost,
-                    $scope.selectedPort,
-                    $scope.selectedPath,
-                    function(err) {
-                        $timeout(function() {
-                            if (err) {
-                                $scope.processing = false;
-                                $scope.error = err.message;
-                            } else {
-                                $scope.processing = false;
-                                $scope.success = true;
-                            }
-                        });
-                    });
-            });
+          $scope.action = 'pushed to';
+          $scope.error = null;
+          $scope.processing = true;
+          $timeout(function() {
+            ws = kWs.pushModel(
+              kEditor.getModel(),
+              $scope.selectedHost,
+              $scope.selectedPort,
+              $scope.selectedPath,
+              function(err) {
+                $timeout(function() {
+                  if (err) {
+                    $scope.processing = false;
+                    $scope.error = err.message;
+                  } else {
+                    $scope.processing = false;
+                    $scope.success = true;
+                  }
+                });
+              });
+          });
         };
 
         $scope.pull = function() {
-            $scope.action = 'pulled from';
-            $scope.error = null;
-            $scope.processing = true;
-            ws = kWs.getModel(
-                $scope.selectedHost,
-                $scope.selectedPort,
-                $scope.selectedPath,
-                function(err, model) {
-                    $timeout(function() {
-                        if (err) {
-                            $scope.processing = false;
-                            $scope.error = err.message;
-                        } else {
-                            $scope.processing = false;
-                            $scope.success = true;
-                            kEditor.setModel(model);
-                        }
-                    });
-                });
+          $scope.action = 'pulled from';
+          $scope.error = null;
+          $scope.processing = true;
+          ws = kWs.getModel(
+            $scope.selectedHost,
+            $scope.selectedPort,
+            $scope.selectedPath,
+            function(err, model) {
+              $timeout(function() {
+                if (err) {
+                  $scope.processing = false;
+                  $scope.error = err.message;
+                } else {
+                  $scope.processing = false;
+                  $scope.success = true;
+                  kEditor.setModel(model);
+                }
+              });
+            });
         };
 
         $scope.close = function() {
-            if (ws) {
-                ws.close();
-            }
-            $modalInstance.close();
+          if (ws) {
+              ws.close();
+          }
+          $modalInstance.close();
         };
     });

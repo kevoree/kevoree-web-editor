@@ -1,11 +1,12 @@
 'use strict';
 
 angular.module('editorApp')
-  .directive('tabCreate', function ($filter, kFactory, kEditor, kInstance, kModelHelper, util, KWE_TAG) {
+  .directive('tabCreate', function ($timeout, $filter, kFactory, kEditor, kInstance, kModelHelper, util, KWE_TAG) {
     return {
       restrict: 'AE',
       scope: {
-        updateTree: '='
+        onCreate: '=',
+        items: '='
       },
       templateUrl: 'scripts/app/treeview/tab-create/tab-create.html',
       link: function (scope) {
@@ -14,6 +15,67 @@ angular.module('editorApp')
         function createTdefItem(tdef) {
           return { name: kModelHelper.getFqn(tdef), tdef: tdef };
         }
+
+        scope.verifyName = function () {
+          var i, name;
+          switch (scope.selectedType) {
+            case 'node':
+              for (i=0; i < scope.instancesCount; i++) {
+                name = $filter('namingPattern')(scope.namePattern, { index: i, metatype: scope.selectedType });
+                if (kEditor.getModel().findNodesByID(name)) {
+                  scope.message = {
+                    type: 'danger',
+                    content: 'There is already a node named "'+name+'"'
+                  };
+                  return;
+                }
+              }
+              break;
+
+            case 'group':
+              for (i=0; i < scope.instancesCount; i++) {
+                name = $filter('namingPattern')(scope.namePattern, { index: i, metatype: scope.selectedType });
+                if (kEditor.getModel().findGroupsByID(name)) {
+                  scope.message = {
+                    type: 'danger',
+                    content: 'There is already a group named "'+name+'"'
+                  };
+                  return;
+                }
+              }
+              break;
+
+            case 'channel':
+              for (i=0; i < scope.instancesCount; i++) {
+                name = $filter('namingPattern')(scope.namePattern, { index: i, metatype: scope.selectedType });
+                if (kEditor.getModel().findHubsByID(name)) {
+                  scope.message = {
+                    type: 'danger',
+                    content: 'There is already a channel named "'+name+'"'
+                  };
+                  return;
+                }
+              }
+              break;
+
+            case 'component':
+              if (scope.selectedNode) {
+                for (i=0; i < scope.instancesCount; i++) {
+                  name = $filter('namingPattern')(scope.namePattern, { index: i, metatype: scope.selectedType });
+                  if (kEditor.getModel().findNodesByID(scope.selectedNode.name).findComponentsByID(name)) {
+                    scope.message = {
+                      type: 'danger',
+                      content: 'There is already a component named "'+name+'" in node "'+scope.selectedNode.name+'"'
+                    };
+                    return;
+                  }
+                }
+              }
+              break;
+          }
+
+          scope.message = null;
+        };
 
         function process() {
           var model = kEditor.getModel();
@@ -29,30 +91,25 @@ angular.module('editorApp')
           if (scope.instanceTypes[scope.selectedType].length > 0) {
             scope.selectedInstanceType = scope.instanceTypes[scope.selectedType][0];
           }
-          scope.availableNodes = model.nodes.array.map(function (node) {
-            return {
-              name: node.name + ': ' + kModelHelper.getFqn(node.typeDefinition),
-              instance: node
-            };
+          scope.availableNodes = scope.items.filter(function (item) {
+            return item.type === 'node';
           });
           scope.selectedNode = scope.availableNodes[0];
           scope.instancesCount = 1;
-          scope.randomNumber = util.randomNumber();
-          scope.randomStr = util.randomString();
           scope.tags = '';
+          scope.verifyName();
         }
 
         process();
         var unregister = kEditor.addNewModelListener('treeview', process);
-        var unregister2 = kEditor.addModelUpdateListener('treeview', process);
+        var unwatchItems = scope.$watchCollection('items', process);
         scope.$on('$destroy', function () {
           unregister();
-          unregister2();
+          unwatchItems();
         });
 
         scope.create = function () {
           var model = kEditor.getModel();
-          kEditor.disableModelUpdateListeners();
           for (var i=0; i < scope.instancesCount; i++) {
             var name = $filter('namingPattern')(scope.namePattern, {
               index: i,
@@ -92,20 +149,23 @@ angular.module('editorApp')
             switch (scope.selectedType) {
               case 'node':
                 model.addNodes(instance);
+                scope.onCreate(scope.selectedType, instance);
                 break;
               case 'group':
                 model.addGroups(instance);
+                scope.onCreate(scope.selectedType, instance);
                 break;
               case 'channel':
                 model.addHubs(instance);
+                scope.onCreate(scope.selectedType, instance);
                 break;
               case 'component':
-                scope.selectedNode.instance.addComponents(instance);
+                var node = model.findNodesByID(scope.selectedNode.name);
+                node.addComponents(instance);
+                scope.onCreate(scope.selectedType, instance, node);
                 break;
             }
           }
-          kEditor.enableModelUpdateListeners();
-          kEditor.invokeModelUpdateListeners('treeview');
         };
 
         scope.onTypeChange = function () {
@@ -113,8 +173,9 @@ angular.module('editorApp')
             scope.selectedInstanceType = $filter('isCompatible')(
               scope.instanceTypes[scope.selectedType],
               scope.selectedType,
-              scope.selectedNode.instance
+              (scope.selectedNode) ? scope.selectedNode.name : null
             )[0];
+            scope.verifyName();
           }
         };
 
@@ -123,25 +184,31 @@ angular.module('editorApp')
           scope.selectedInstanceType = $filter('isCompatible')(
             scope.instanceTypes[scope.selectedType],
             scope.selectedType,
-            scope.selectedNode.instance
+            (scope.selectedNode) ? scope.selectedNode.name : null
           )[0];
+          scope.verifyName();
         };
 
-        scope.transform = function (namePattern, index) {
-          return namePattern
-              .replace(/\{metatype\}/g, scope.selectedType)
-              .replace(/\{index\}/g, index+'')
-              .replace(/\{randomInt\}/g, util.randomNumber())
-              .replace(/\{randomStr\}/g, util.randomString());
+        scope.areInstanceTypesValid = function () {
+          if (scope.selectedType === 'component') {
+            if (scope.availableNodes.length > 0) {
+              return scope.instanceTypes[scope.selectedType].length > 0;
+            } else {
+              return false;
+            }
+          } else {
+            return scope.instanceTypes[scope.selectedType].length > 0;
+          }
         };
 
         scope.isValid = function () {
           if (scope.selectedType === 'component') {
-            if (scope.availableNodes.length === 0) {
+            if (!scope.selectedNode) {
               return false;
             }
           }
-          return scope.namePattern.trim().length > 0 &&
+          return !scope.message &&
+                 scope.namePattern.trim().length > 0 &&
                  scope.selectedType.length > 0 &&
                  scope.instancesCount > 0 &&
                  scope.selectedInstanceType !== null;

@@ -168,7 +168,7 @@ angular.module('editorApp')
              * @param instance
              * @returns {array}
              */
-            getInstanceTags: function (instance) {
+            getTags: function (instance) {
               var tags = [];
               var meta = instance.findMetaDataByID(KWE_TAG);
               if (meta && meta.value.length > 0) {
@@ -322,28 +322,29 @@ angular.module('editorApp')
              * @param node
              */
             isCompatible: function (tdef, node) {
-                if (tdef.select('metaData[name=virtual]').array.length > 0) {
-                    // tdef is virtual, so it is compatible
-                    return true;
+                if (tdef && node) {
+                  if (tdef.select('metaData[name=virtual]').array.length > 0) {
+                      // tdef is virtual, so it is compatible
+                      return true;
 
-                } else {
-                    var nodePlatforms = [];
-                    node.typeDefinition.deployUnits.array
-                        .forEach(function (du) {
-                            var filter = du.findFiltersByID('platform');
-                            if (filter) {
-                                nodePlatforms.push(filter.value);
-                            }
-                        });
+                  } else {
+                      var nodePlatforms = [];
+                      node.typeDefinition.deployUnits.array
+                          .forEach(function (du) {
+                              var filter = du.findFiltersByID('platform');
+                              if (filter) {
+                                  nodePlatforms.push(filter.value);
+                              }
+                          });
 
-                    for (var i=0; i < nodePlatforms.length; i++) {
-                        if (tdef.select('deployUnits[name=*]/filters[name=platform,value='+nodePlatforms[i]+']').array.length > 0) {
-                            return true;
-                        }
-                    }
-
-                    return false;
+                      for (var i=0; i < nodePlatforms.length; i++) {
+                          if (tdef.select('deployUnits[name=*]/filters[name=platform,value='+nodePlatforms[i]+']').array.length > 0) {
+                              return true;
+                          }
+                      }
+                  }
                 }
+                return false;
             },
 
             /**

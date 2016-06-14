@@ -15,15 +15,15 @@
     "bootstrap": "^3.2.0",
     "codemirror": "^4.8",
     "fontawesome": "~4.3.0",
-    "kevoree-kevscript": "^3.1.0",
     "kevoree-library": "^5.0.9",
+    "kevoree-kevscript": "^3.1.0",
     "semver": "~4.3.4",
     "snap.svg": "~0.4.1",
     "snap.svg.zpd": "~0.0.10",
     "ui-router": "~0.2.13",
     "highlightjs": "^9.4.0",
     "angular-highlightjs": "^0.6.1",
-    "angular-chart.js": "^0.10.2"
+    "ngInfiniteScroll": "^1.2.2"
   },
   "devDependencies": {
     "angular-mocks": "1.4.5"

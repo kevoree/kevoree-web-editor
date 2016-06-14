@@ -14,8 +14,10 @@ angular.module('editorApp')
 
         function processTags() {
           $scope.tags = [];
-          $scope.items.forEach(function (instance) {
-            kModelHelper.getInstanceTags(instance).forEach(function (tag) {
+
+          $scope.items.forEach(function (item) {
+            var instance = kEditor.getModel().findByPath(item.path);
+            kModelHelper.getTags(instance).forEach(function (tag) {
               if ($scope.tags.indexOf(tag) === -1) {
                 $scope.tags.push(tag);
               }
@@ -24,14 +26,14 @@ angular.module('editorApp')
         }
 
         processTags();
-        var unwatchItems = $scope.$watchCollection('items', processTags, true);
-        $scope.$on('$destroy', unwatchItems);
+        // var unwatchItems = $scope.$watchCollection('items', processTags, true);
+        // $scope.$on('$destroy', unwatchItems);
 
         $scope.addTag = function () {
           if ($scope.tag.trim().length > 0 && $scope.tag.indexOf(',') === -1) {
             $scope.tag = $scope.tag.trim();
-            kEditor.disableModelUpdateListeners();
-            $scope.items.forEach(function (instance) {
+            $scope.items.forEach(function (item) {
+              var instance = kEditor.getModel().findByPath(item.path);
               var tagMeta = instance.findMetaDataByID(KWE_TAG);
               if (!tagMeta) {
                 tagMeta = kFactory.createValue();
@@ -39,18 +41,20 @@ angular.module('editorApp')
                 tagMeta.value = '';
                 instance.addMetaData(tagMeta);
               }
-              var tags = tagMeta.value.split(',').filter(function (tag) {
-                return tag.trim().length > 0;
-              });
+              var tags = kModelHelper.getTags(instance);
               if (tags.indexOf($scope.tag) === -1) {
+                // add tag to instance in model
                 tags.push($scope.tag);
+                // add tag in view
+                item.tags.push($scope.tag);
+              }
+              if ($scope.tags.indexOf($scope.tag) === -1) {
+                // add tag in tag list in view
+                $scope.tags.push($scope.tag);
               }
               tagMeta.value = tags.join(',');
             });
             $scope.tag = '';
-            kEditor.enableModelUpdateListeners();
-            kEditor.invokeModelUpdateListeners();
-            processTags();
           }
         };
 

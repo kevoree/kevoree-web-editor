@@ -74,6 +74,14 @@ body {
     width: 200px;
     margin-left: 25px;
 }
+.breath {
+  display: block;
+  padding: 15px 0;
+}
+.breath-sm {
+  display: block;
+  padding: 5px 0;
+}
 .checkbox-sm {
   margin: 0;
   font-size: 11px;
@@ -200,11 +208,6 @@ body {
     background-color: #222;
     color: #999;
     border: 1px solid #000;
-}
-.dropdown-toggle:hover {
-    background-color: #111;
-    color: #999;
-    border-color: #000;
 }
 .menu-btn button:hover, .menu-btn button:focus, .menu-btn button:active {
     border: 1px solid #000;
@@ -450,10 +453,10 @@ body {
 @media (min-width: 992px) {
     .tab-container {
         position: absolute;
-        top: 65px;
-        left: 15px;
-        right: 15px;
-        bottom: 15px;
+        top: 85px;
+        left: 0;
+        right: 0;
+        bottom: 10px;
         overflow: hidden;
     }
     #libraries-inner-container {
@@ -515,7 +518,7 @@ body {
       position: absolute;
       top: 0;
       right: 15px;
-      left: 15px;
+      left: 0;
       bottom: 0;
     }
     .tab-content {
@@ -542,6 +545,9 @@ body {
     }
     .tab-container .loading-content {
         padding: 10px;
+    }
+    .tab-container {
+      margin-top: 20px;
     }
     .treeview-rightpanel {
       margin: 15px 0;
@@ -668,6 +674,9 @@ pre {
 }
 .text-bold {
     font-weight: bold;
+}
+.text-justify {
+  text-align: justify;
 }
 .spinner {
     margin: 0 auto;

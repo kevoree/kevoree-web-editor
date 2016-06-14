@@ -1,0 +1,63 @@
+'use strict';
+
+angular.module('editorApp')
+  .directive('tabActions', function ($filter, $modal, kEditor) {
+    return {
+      restrict: 'AE',
+      scope: {
+        items: '=',
+        onTagClicked: '='
+      },
+      templateUrl: 'scripts/app/treeview/tab-actions/tab-actions.html',
+      link: function ($scope) {
+        function processData() {
+          var model = kEditor.getModel();
+          $scope.groups = model.groups.array;
+          $scope.selectedGroup = $filter('orderBy')($scope.groups, 'name')[0];
+        }
+
+        function processTags() {
+          $scope.tags = {};
+          $scope.items.forEach(function processTag(item) {
+            item.tags.forEach(function (tag) {
+              if (!$scope.tags[tag]) {
+                $scope.tags[tag] = [];
+              }
+              $scope.tags[tag].push(item);
+            });
+            if (item.children) {
+              item.children.forEach(processTag);
+            }
+          });
+        }
+
+        function modelHandler() {
+          processData();
+          processTags();
+        }
+
+        modelHandler();
+        var unwatchItems = $scope.$watchCollection('items', modelHandler);
+        var unwatchTags = $scope.$watch('items', function () {
+          processTags();
+        }, true);
+        $scope.$on('$destroy', function () {
+          unwatchItems();
+          unwatchTags();
+        });
+
+        $scope.openGroupModal = function () {
+          $modal.open({
+            templateUrl: 'scripts/app/main/instance/group.modal.html',
+            size: 'md',
+            resolve: {
+              group: function() {
+                return $scope.selectedGroup;
+              }
+            },
+            controller: 'GroupModalCtrl'
+          });
+        };
+      }
+    };
+  });

@@ -21,7 +21,7 @@
       <div class="input-group" ng-class="error ? 'has-error has-feedback':''">
         <input type="text" class="form-control" ng-model="tag" placeholder="Tag name" ui-keypress="{13: 'addTag()'}" ng-change="validate()"/>
         <span class="input-group-btn">
-          <button class="btn btn-default" type="button" ng-click="addTag()" ng-disabled="tag.length === 0">Add</button>
+          <button class="btn btn-default" type="button" ng-click="addTag()" ng-disabled="error || tag.length === 0">Add</button>
         </span>
       </div>
       <span class="text-danger" ng-if="error">{{ error }}</span>

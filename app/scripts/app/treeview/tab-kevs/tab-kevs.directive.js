@@ -51,11 +51,11 @@ angular.module('editorApp')
           }, 100);
         });
 
-        var unwatch = $scope.$watchCollection('items', transform);
+        // var unwatch = $scope.$watchCollection('items', transform);
 
         $scope.$on('$destroy', function () {
           unregister();
-          unwatch();
+          // unwatch();
         });
 
         $scope.inOnLoad = function (e) {

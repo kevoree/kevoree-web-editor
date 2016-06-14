@@ -1,9 +1,52 @@
+<div class="menubar">
+  <div class="menu-btn">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      File&nbsp;<span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li>
+        <a data-ng-click="open($event)">
+          <span class="name">Open</span>
+          <span class="shortcut">Ctrl+O</span>
+        </a>
+      </li>
+      <li>
+        <a data-ng-click="merge($event)">
+          <span class="name">Merge</span>
+          <span class="shortcut">Ctrl+M</span>
+        </a>
+      </li>
+      <li>
+        <a data-ng-click="openFromNode($event)">
+          <span class="name">Open from node</span>
+          <span class="shortcut">Ctrl+Shift+O</span>
+        </a>
+      </li>
+      <li>
+        <a data-ng-click="mergeFromNode($event)">
+          <span class="name">Merge from node</span>
+          <span class="shortcut">Ctrl+Shift+M</span>
+        </a>
+      </li>
+      <li class="divider"></li>
+      <li>
+        <a data-ng-click="save($event)">
+          <span class="name">Save</span>
+          <span class="shortcut">Ctrl+S</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="menu-btn">
+      <button type="button" class="btn btn-default" data-ng-click="toggleShortcutHelp()">Help</button>
+  </div>
+</div>
 <div class="tab-container" ng-cloak>
   <div class="col-md-4 col-lg-3 fit-y">
     <div class="well fit-y">
       <div class="row clearfix">
         <div class="col-xs-12">
-          <div class="input-group input-group-sm">
+          <div class="input-group input-group-sm" style="z-index: 1">
             <input type="text" class="form-control" placeholder="Filter by name, tag, type, version" ng-model="filterExpr">
             <span class="input-group-btn">
               <button class="btn btn-default" type="button" ng-click="filterExpr = ''" title="Clear filter" ng-disabled="!filterExpr.length">
@@ -42,17 +85,21 @@
           <a href="" class="treeview-action" ng-click="clearSelected()" title="Clear selection">
             <i class="fa fa-square-o"></i>
           </a>
-          <span class="pull-right" title="selection / nb instances">{{ selectedItems.length + '/' + nbInstances }} </span>
+          <span class="pull-right" title="selection / total">{{ selectedItems.length }} / {{ nbInstances }} </span>
         </div>
       </div>
       <div class="fit-y">
         <div class="treecontrol-container">
-          <div class="treecontrol-inner-container">
+          <div id="treecontrol-scroll-container" class="treecontrol-inner-container">
             <em data-ng-if="items.length === 0">No instance in current model</em>
-            <ul class="list-unstyled tree">
+            <ul
+                class="list-unstyled tree"
+                infinite-scroll="loadMore()"
+                infinite-scroll-distance="0"
+                infinite-scroll-container="'#treecontrol-scroll-container'">
               <li
                   class="item"
-                  ng-repeat="item in items | filter:filterExpr:filterComparator | orderBy:'name':treeReverse"
+                  ng-repeat="item in items | filter:filterExpr:filterComparator | orderBy:'name':treeReverse | limitTo:limit track by item.path"
                   ng-class="{ selected: item.selected, expanded: !item.folded }">
                 <span class="icon {{ item.type }}">
                   <i
@@ -84,7 +131,7 @@
                 <ul class="list-unstyled tree" ng-if="!item.folded">
                   <li
                       class="item"
-                      ng-repeat="child in item.children | filter:filterExpr:filterComparator | orderBy:'name':treeReverse"
+                      ng-repeat="child in item.children | filter:filterExpr:filterComparator | orderBy:'name':treeReverse track by child.path"
                       ng-class="child.selected ? 'selected':''">
                     <span class="icon {{ child.type }}"></span>
                     <div
@@ -118,27 +165,32 @@
   </div>
   <div class="treeview-rightpanel col-md-8 col-lg-9 fit-y">
     <tabset class="tab-set" active="0">
-      <tab index="0" heading="Model">
+      <tab index="0" heading="Actions">
         <div class="tab-pane-container well">
-          <tab-model items="items" on-tag-clicked="selectByTag"></tab-model>
+          <tab-actions items="items" on-tag-clicked="selectByTag"></tab-actions>
         </div>
       </tab>
       <tab index="1" heading="Create">
         <div class="tab-pane-container well">
-          <tab-create></tab-create>
+          <tab-create items="items" on-create="createItem"></tab-create>
         </div>
       </tab>
-      <tab index="2" heading="Params" ng-if="selectedItems.length">
+      <tab index="2" heading="JSON">
+        <div class="tab-pane-container well">
+          <tab-json></tab-json>
+        </div>
+      </tab>
+      <tab index="3" heading="Params" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-params items="selectedItems"></tab-params>
         </div>
       </tab>
-      <tab index="3" heading="Tags" ng-if="selectedItems.length">
+      <tab index="4" heading="Tags" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-tags items="selectedItems"></tab-tags>
         </div>
       </tab>
-      <tab index="4" heading="KevScript" select="$broadcast('treeview:tab:kevs')" ng-if="selectedItems.length">
+      <tab index="5" heading="KevScript" select="$broadcast('treeview:tab:kevs')" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-kevs items="selectedItems"></tab-kevs>
         </div>
@@ -146,3 +198,4 @@
     </tabset>
   </div>
 </div>
+<input id="file" type="file" data-on-data="onFileLoaded($name, $data)" class="hide">

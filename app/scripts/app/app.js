@@ -21,7 +21,7 @@ angular
         'ngDragDrop',
         'semverSort',
         'hljs',
-        'chart.js'
+        'infinite-scroll'
     ])
     .run(function($rootScope, $stateParams, kEditor, kRegistry, kWs, Notification, VERSION, KEVOREE_REGISTRY_URL) {
         $rootScope.VERSION = VERSION;

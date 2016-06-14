@@ -9,7 +9,7 @@ angular.module('editorApp')
           * @param trace
           */
         return function (trace) {
-          var fragDic, selected, highestNode;
+          var fragDic, highestNode;
           editor.invokeModelUpdateListeners();
 
           function processRefreshRecursively(node) {
@@ -215,28 +215,18 @@ angular.module('editorApp')
                           case 'subNodes':
                               //console.log('ADD .subNodes', trace);
                               kInstance.initFragmentDictionaries(trace.source);
-                              if (ui.editor) {
-                                selected = ui.getSelected();
-                                if (selected.length === 1 && (selected[0].attr('data-path') === trace.source.path())) {
-                                    if (ui.editor) { ui.invokeListener(trace.source.path()); }
-                                }
-                              }
+                              editor.invokeModelUpdateListeners('selected');
                               break;
 
                           case 'bindings':
-                              if (trace.source.getRefInParent() === 'hubs') {
-                                  if (ui.editor) {
-                                    selected = ui.getSelected();
-                                    if (selected.length === 1 && (selected[0].attr('data-path') === trace.source.path())) {
-                                        if (ui.editor) { ui.invokeListener(trace.source.path()); }
-                                    }
-                                  }
-                              }
+                              editor.invokeModelUpdateListeners('selected');
                               break;
 
                           case 'metaData':
                               if (trace.value.name === KWE_FOLDED && trace.source.getRefInParent() === 'nodes') {
-                                  if (ui.editor) { ui.toggleFold(trace.source, kModelHelper.isTruish(trace.value.value)); }
+                                  if (ui.editor) {
+                                    ui.toggleFold(trace.source, kModelHelper.isTruish(trace.value.value));
+                                  }
                               }
                               break;
                       }
@@ -453,7 +443,7 @@ angular.module('editorApp')
             }
           },
 
-          invokeNewModelListeners: function (event) {
+          invokeNewModelListeners: function () {
             Object.keys(this.newModelListeners).forEach(function (id) {
               this.newModelListeners[id].forEach(function (listener) {
                 listener();
@@ -560,7 +550,18 @@ angular.module('editorApp')
               });
 
               ui.order();
+              this.model.select('**/metaData[name='+KWE_FOLDED+']').array.forEach(function (meta) {
+                ui.toggleFold(meta.eContainer(), kModelHelper.isFolded(meta.eContainer()));
+              });
             }
+          },
+
+          /**
+           * @returns {boolean} true if model has errors
+           */
+          modelHasErrors: function () {
+            // TODO
+            return false;
           }
       };
 

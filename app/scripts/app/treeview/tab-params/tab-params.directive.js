@@ -29,7 +29,6 @@ angular.module('editorApp')
         function process() {
           $scope.message = null;
           $scope.error = false;
-          // $scope.started = null;
           $scope.length = {};
           $scope.prepend = {};
           $scope.append = {};
@@ -38,12 +37,13 @@ angular.module('editorApp')
           $scope.each = {};
           $scope.toggleEachFlag = false;
 
+          var model = kEditor.getModel();
           if ($scope.items.length > 1) {
-            var first = $scope.items[0];
+            var first = model.findByPath($scope.items[0].path);
             $scope.types = [ first.name + ': ' + kModelHelper.getFqn(first.typeDefinition) ];
             for (var i=1; i < $scope.items.length; i++) {
-              var prev = $scope.items[i-1],
-                  curr = $scope.items[i];
+              var prev = model.findByPath($scope.items[i-1].path),
+                  curr = model.findByPath($scope.items[i].path);
               if (kModelHelper.getFqn(prev.typeDefinition) !== kModelHelper.getFqn(curr.typeDefinition)) {
                 $scope.types.push(curr.name + ': ' + kModelHelper.getFqn(curr.typeDefinition));
                 $scope.error = true;
@@ -54,19 +54,37 @@ angular.module('editorApp')
 
           $scope.kModelHelper = kModelHelper;
           $scope.util = util;
-          $scope.instance = $scope.items[0];
+          $scope.instance = model.findByPath($scope.items[0].path);
           $scope.type = $scope.instance.typeDefinition;
           $scope.dictionary = [];
           if ($scope.type.dictionaryType) {
             $scope.dictionary = $scope.type.dictionaryType
                 .select('attributes[fragmentDependant=false]').array
                 .map(function (attr) {
+                  var type = convertType(attr.datatype.name());
+                  var value;
+                  if ($scope.items.length === 1 && $scope.instance.dictionary) {
+                    var val = $scope.instance.dictionary.findValuesByID(attr.name);
+                    if (val) {
+                      switch (type) {
+                        case 'number':
+                          value = +val.value;
+                          break;
+                        case 'text':
+                          value = val.value;
+                          break;
+                        case 'boolean':
+                          value = kModelHelper.isTruish(val.value);
+                          break;
+                      }
+                    }
+                  }
                   var newAttr = {
                     name: attr.name,
                     optional: kModelHelper.isTruish(attr.optional),
                     defaultValue: attr.defaultValue,
-                    type: convertType(attr.datatype.name()),
-                    value: undefined
+                    type: type,
+                    value: value
                   };
                   return newAttr;
                 });
@@ -75,11 +93,11 @@ angular.module('editorApp')
 
         var unwatchItems = $scope.$watchCollection('items', process);
         $scope.$on('$destroy', unwatchItems);
-      },
-      controller: function ($scope) {
+
         $scope.applyToAllInstances = function () {
           try {
-            $scope.items.forEach(function (instance) {
+            $scope.items.forEach(function (item) {
+              var instance = kEditor.getModel().findByPath(item.path);
               kEditor.disableModelUpdateListeners();
               kInstance.initDictionaries(instance);
               $scope.dictionary.forEach(function (attr) {
@@ -95,6 +113,7 @@ angular.module('editorApp')
             $scope.dictionary.forEach(function (attr) {
               attr.value = null;
             });
+            process();
             $scope.message = { type: 'success', content: 'Success' };
           } catch (err) {
             $scope.message = { type: 'danger', content: 'Error (check console for more information)' };
