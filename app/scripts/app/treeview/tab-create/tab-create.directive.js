@@ -11,6 +11,7 @@ angular.module('editorApp')
       templateUrl: 'scripts/app/treeview/tab-create/tab-create.html',
       link: function (scope) {
         scope.namePattern = '{metatype}{index}';
+        scope.started = true;
 
         function createTdefItem(tdef) {
           return { name: kModelHelper.getFqn(tdef), tdef: tdef };
@@ -132,7 +133,7 @@ angular.module('editorApp')
             }
             instance.name = name;
             instance.typeDefinition = scope.selectedInstanceType.tdef;
-            instance.started = 'true';
+            instance.started = scope.started;
             kInstance.initDictionaries(instance);
             var tags = scope.tags.split(',')
                 .map(function (tag) {
@@ -211,7 +212,7 @@ angular.module('editorApp')
                  scope.namePattern.trim().length > 0 &&
                  scope.selectedType.length > 0 &&
                  scope.instancesCount > 0 &&
-                 scope.selectedInstanceType !== null;
+                 scope.selectedInstanceType;
         };
       }
     };

@@ -103,7 +103,6 @@ angular.module('editorApp')
     $scope.treeReverse = false;
 
     var unregister = kEditor.addNewModelListener('treeview', processModel);
-    // var unregister2 = kEditor.addModelUpdateListener('treeview', processModel);
     processModel();
 
     var ctrlKey = false;
@@ -141,6 +140,8 @@ angular.module('editorApp')
       item.selected = !selected;
       if (item.selected) {
         $scope.selectedItems.push(item);
+      } else {
+        $scope.selectedItems.splice($scope.selectedItems.indexOf(item), 1);
       }
     };
 
@@ -536,7 +537,6 @@ angular.module('editorApp')
 
     $scope.$on('$destroy', function () {
       unregister();
-      // unregister2();
       document.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('keyup', onKeyUp);
     });

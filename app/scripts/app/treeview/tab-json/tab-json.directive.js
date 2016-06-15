@@ -41,9 +41,9 @@ angular.module('editorApp')
           });
         };
 
-        // var unwatchItems = $scope.$watchCollection('items', $scope.onPathChanged);
+        var unregister = kEditor.addNewModelListener('treeview', $scope.onPathChanged);
         $scope.$on('$destroy', function () {
-          // unwatchItems();
+          unregister();
           $timeout.cancel(pathId);
         });
       }

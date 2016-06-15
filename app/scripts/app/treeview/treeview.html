@@ -164,33 +164,33 @@
     </div>
   </div>
   <div class="treeview-rightpanel col-md-8 col-lg-9 fit-y">
-    <tabset class="tab-set" active="0">
-      <tab index="0" heading="Actions">
+    <tabset class="tab-set">
+      <tab heading="Actions">
         <div class="tab-pane-container well">
           <tab-actions items="items" on-tag-clicked="selectByTag"></tab-actions>
         </div>
       </tab>
-      <tab index="1" heading="Create">
+      <tab heading="Create">
         <div class="tab-pane-container well">
           <tab-create items="items" on-create="createItem"></tab-create>
         </div>
       </tab>
-      <tab index="2" heading="JSON">
+      <tab heading="JSON">
         <div class="tab-pane-container well">
           <tab-json></tab-json>
         </div>
       </tab>
-      <tab index="3" heading="Params" ng-if="selectedItems.length">
+      <tab heading="Params" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-params items="selectedItems"></tab-params>
         </div>
       </tab>
-      <tab index="4" heading="Tags" ng-if="selectedItems.length">
+      <tab heading="Tags" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-tags items="selectedItems"></tab-tags>
         </div>
       </tab>
-      <tab index="5" heading="KevScript" select="$broadcast('treeview:tab:kevs')" ng-if="selectedItems.length">
+      <tab heading="KevScript" select="$broadcast('treeview:tab:kevs')" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-kevs items="selectedItems"></tab-kevs>
         </div>

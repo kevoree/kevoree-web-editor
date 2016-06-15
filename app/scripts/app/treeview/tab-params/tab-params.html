@@ -11,7 +11,18 @@
 </div>
 <div data-ng-if="!error">
   <fieldset>
-    <legend>{{ kModelHelper.getFqn(type) }}</legend>
+    <legend>{{ typeName }}</legend>
+    <div class="form-group form-group-sm">
+      <label class="control-label" for="instanceState">state *</label>
+      <div class="row-fluid clearfix">
+        <div class="col-md-4">
+          <div class="btn-group btn-group-block clearfix">
+            <label class="btn btn-sm btn-default" ng-model="state" btn-radio="true">Started</label>
+            <label class="btn btn-sm btn-default" ng-model="state" btn-radio="false">Stopped</label>
+          </div>
+        </div>
+      </div>
+    </div>
     <div ng-repeat="attr in dictionary">
       <div ng-switch="attr.type">
         <div ng-switch-when="text">
@@ -93,14 +104,13 @@
         </div>
       </div>
     </div>
-    <div class="col-xs-12" ng-if="dictionary.length > 0">
-      <button class="btn btn-default" ng-click="applyToAllInstances()">Apply to selection</button>
+    <div class="col-xs-12">
+      <button class="btn btn-default" ng-click="applyToAllInstances(state)">Apply to selection</button>
       <span ng-show="message" class="text-{{message.type}}">{{ message.content }}</span>
       <div class="pull-right">
         <button class="btn btn-default" ng-click="allRandom()">All random</button>
         <button class="btn btn-default" ng-click="toggleEach()">Toggle each</button>
       </div>
     </div>
-    <em ng-if="dictionary.length === 0">This type does not have attribute in its dictionary</em>
   </fieldset>
 </div>

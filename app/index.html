@@ -71,6 +71,12 @@
           top: 50% ;
         }
 
+        .skip {
+          position: absolute;
+          bottom: 5px;
+          right: 5px;
+        }
+
         .bootstrap-loading h1 {
           font-size: 20px ;
           line-height: 35px ;
@@ -88,6 +94,9 @@
           <div class="messaging">
             <h1>Kevoree Web Editor</h1>
             <p>is loading...</p>
+          </div>
+          <div class="skip">
+            <a href="" ng-click="start()">Skip registry fetching</a>
           </div>
         </div>
       </div>
