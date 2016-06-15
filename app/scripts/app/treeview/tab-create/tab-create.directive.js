@@ -11,7 +11,9 @@ angular.module('editorApp')
       templateUrl: 'scripts/app/treeview/tab-create/tab-create.html',
       link: function (scope) {
         scope.namePattern = '{metatype}{index}';
-        scope.started = true;
+        scope.state = {
+          started: true
+        };
 
         function createTdefItem(tdef) {
           return { name: kModelHelper.getFqn(tdef), tdef: tdef };
@@ -133,7 +135,7 @@ angular.module('editorApp')
             }
             instance.name = name;
             instance.typeDefinition = scope.selectedInstanceType.tdef;
-            instance.started = scope.started;
+            instance.started = scope.state.started;
             kInstance.initDictionaries(instance);
             var tags = scope.tags.split(',')
                 .map(function (tag) {

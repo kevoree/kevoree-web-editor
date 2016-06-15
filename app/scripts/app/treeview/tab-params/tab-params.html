@@ -2,7 +2,7 @@
   <div class="alert alert-warning" data-ng-if="error">
     <strong>Warning</strong>
     <p>
-      Selected instances must be of <strong>same type &amp; version</strong> in order to set parameters, those two differs:
+      Selected instances must be of <strong>same type &amp; version</strong> in order to set parameters, those two differ:
       <ul>
         <li ng-repeat="type in types">{{ type }}</li>
       </ul>
@@ -17,8 +17,8 @@
       <div class="row-fluid clearfix">
         <div class="col-md-4">
           <div class="btn-group btn-group-block clearfix">
-            <label class="btn btn-sm btn-default" ng-model="state" btn-radio="true">Started</label>
-            <label class="btn btn-sm btn-default" ng-model="state" btn-radio="false">Stopped</label>
+            <label class="btn btn-sm btn-default" ng-model="state.started" btn-radio="true">Started</label>
+            <label class="btn btn-sm btn-default" ng-model="state.started" btn-radio="false">Stopped</label>
           </div>
         </div>
       </div>
@@ -105,7 +105,7 @@
       </div>
     </div>
     <div class="col-xs-12">
-      <button class="btn btn-default" ng-click="applyToAllInstances(state)">Apply to selection</button>
+      <button class="btn btn-default" ng-click="applyToAllInstances()">Apply to selection</button>
       <span ng-show="message" class="text-{{message.type}}">{{ message.content }}</span>
       <div class="pull-right">
         <button class="btn btn-default" ng-click="allRandom()">All random</button>

@@ -36,7 +36,9 @@ angular.module('editorApp')
           $scope.max = {};
           $scope.each = {};
           $scope.toggleEachFlag = false;
-          $scope.state = null;
+          $scope.state = {
+            started: null
+          };
 
           var model = kEditor.getModel();
           if ($scope.items.length > 1) {
@@ -57,9 +59,9 @@ angular.module('editorApp')
           $scope.util = util;
           $scope.instance = model.findByPath($scope.items[0].path);
           if ($scope.items.length === 1) {
-            $scope.state = $scope.instance.started;
+            $scope.state.started = $scope.instance.started;
           } else {
-            $scope.state = null;
+            $scope.state.started = null;
           }
           $scope.type = $scope.instance.typeDefinition;
           $scope.typeName = kModelHelper.getFqn($scope.type);
@@ -99,11 +101,11 @@ angular.module('editorApp')
         var unwatchItems = $scope.$watchCollection('items', process);
         $scope.$on('$destroy', unwatchItems);
 
-        $scope.applyToAllInstances = function (state) {
+        $scope.applyToAllInstances = function () {
           try {
             $scope.items.forEach(function (item) {
               var instance = kEditor.getModel().findByPath(item.path);
-              instance.started = state;
+              instance.started = $scope.state.started;
               $scope.dictionary.forEach(function (attr) {
                 var val = instance.dictionary.findValuesByID(attr.name);
                 if ($scope.each[attr.name]) {
