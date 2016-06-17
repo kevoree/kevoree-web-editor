@@ -167,12 +167,12 @@
     <tabset class="tab-set">
       <tab heading="Actions">
         <div class="tab-pane-container well">
-          <tab-actions items="items" on-tag-clicked="selectByTag"></tab-actions>
+          <tab-actions></tab-actions>
         </div>
       </tab>
       <tab heading="Create">
         <div class="tab-pane-container well">
-          <tab-create items="items" on-create="createItem"></tab-create>
+          <tab-create></tab-create>
         </div>
       </tab>
       <tab heading="JSON">
@@ -182,17 +182,17 @@
       </tab>
       <tab heading="Params" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
-          <tab-params items="selectedItems"></tab-params>
+          <tab-params></tab-params>
         </div>
       </tab>
       <tab heading="Tags" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
-          <tab-tags items="selectedItems"></tab-tags>
+          <tab-tags></tab-tags>
         </div>
       </tab>
       <tab heading="KevScript" select="$broadcast('treeview:tab:kevs')" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
-          <tab-kevs items="selectedItems"></tab-kevs>
+          <tab-kevs></tab-kevs>
         </div>
       </tab>
     </tabset>

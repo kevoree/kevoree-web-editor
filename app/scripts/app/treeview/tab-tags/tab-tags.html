@@ -1,10 +1,13 @@
 <div class="row">
   <div class="col-md-8">
     <fieldset>
-      <legend>List of tags ({{ tags.length }})</legend>
+      <legend>List of tags</legend>
       <p class="text-muted" style="text-align: justify">
         Tags allow you to create arbitrary set of instances. You can remove a
         previously added tag by clicking on the cross next to its name.
+      </p>
+      <p ng-if="tags.length === 0">
+        <em>There is no tag for the current selection</em>
       </p>
       <span class="tag badge" ng-repeat="tag in tags">
         <span>{{ tag }}</span>

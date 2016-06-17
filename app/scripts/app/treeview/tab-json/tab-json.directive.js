@@ -3,7 +3,8 @@
 angular.module('editorApp')
   .directive('tabJson', function ($timeout, kFactory, kEditor) {
     return {
-      restrict: 'AE',
+      restrict: 'E',
+      scope: true,
       templateUrl: 'scripts/app/treeview/tab-json/tab-json.html',
       link: function ($scope) {
         var pathId;
@@ -11,37 +12,39 @@ angular.module('editorApp')
 
         $scope.path = '';
         $scope.elems = [];
+        $scope.collapsed = {};
+
+        function process() {
+          var elems = kEditor.getModel().select($scope.path);
+          if (elems) {
+            $scope.elems = elems.array.map(function (elem) {
+              if (!$scope.collapsed.hasOwnProperty(elem.path())) {
+                $scope.collapsed[elem.path()] = true;
+              }
+              return {
+                path: elem.path(),
+                content: JSON.stringify(JSON.parse(serializer.serialize(elem)), null, 2)
+              };
+            });
+          } else {
+            $scope.elems.length = 0;
+          }
+        }
+
         $scope.onPathChanged = function () {
           $timeout.cancel(pathId);
           pathId = $timeout(function () {
-            var elems = kEditor.getModel().select($scope.path);
-            if (elems) {
-              $scope.elems = elems.array.map(function (elem) {
-                return {
-                  path: elem.path(),
-                  content: JSON.stringify(JSON.parse(serializer.serialize(elem)), null, 2),
-                  isCollapsed: true
-                };
-              });
-            } else {
-              $scope.elems.length = 0;
-            }
+            process();
           }, 500);
         };
-        $scope.onPathChanged($scope.path);
+        process();
 
         $scope.setPath = function (path) {
           $scope.path = path;
-          $scope.elems = kEditor.getModel().select(path).array.map(function (elem) {
-            return {
-              path: elem.path(),
-              content: JSON.stringify(JSON.parse(serializer.serialize(elem)), null, 2),
-              isCollapsed: true
-            };
-          });
+          process();
         };
 
-        var unregister = kEditor.addNewModelListener('treeview', $scope.onPathChanged);
+        var unregister = kEditor.addNewModelListener('treeview', process);
         $scope.$on('$destroy', function () {
           unregister();
           $timeout.cancel(pathId);

@@ -3,10 +3,8 @@
 angular.module('editorApp')
   .directive('tabTags', function () {
     return {
-      restrict: 'AE',
-      scope: {
-        items: '='
-      },
+      restrict: 'E',
+      scope: true,
       templateUrl: 'scripts/app/treeview/tab-tags/tab-tags.html',
       controller: function ($scope, kEditor, kFactory, kModelHelper, KWE_TAG) {
         $scope.tag = '';
@@ -15,7 +13,7 @@ angular.module('editorApp')
         function processTags() {
           $scope.tags = [];
 
-          $scope.items.forEach(function (item) {
+          $scope.selectedItems.forEach(function (item) {
             var instance = kEditor.getModel().findByPath(item.path);
             kModelHelper.getTags(instance).forEach(function (tag) {
               if ($scope.tags.indexOf(tag) === -1) {
@@ -25,14 +23,26 @@ angular.module('editorApp')
           });
         }
 
+        /**
+         * This does not mutate the given str
+         */
+        function removeTagFromStr(tag, str) {
+          var tags = str.split(',');
+          var i = tags.indexOf(tag);
+          if (i !== -1) {
+            tags.splice(i, 1);
+          }
+          return tags;
+        }
+
         processTags();
-        // var unwatchItems = $scope.$watchCollection('items', processTags, true);
-        // $scope.$on('$destroy', unwatchItems);
+        var unwatchItems = $scope.$watchCollection('selectedItems', processTags);
+        $scope.$on('$destroy', unwatchItems);
 
         $scope.addTag = function () {
           if ($scope.tag.trim().length > 0 && $scope.tag.indexOf(',') === -1) {
             $scope.tag = $scope.tag.trim();
-            $scope.items.forEach(function (item) {
+            $scope.selectedItems.forEach(function (item) {
               var instance = kEditor.getModel().findByPath(item.path);
               var tagMeta = instance.findMetaDataByID(KWE_TAG);
               if (!tagMeta) {
@@ -67,15 +77,14 @@ angular.module('editorApp')
         };
 
         $scope.removeTag = function (tag) {
-          $scope.items.forEach(function (instance) {
+          $scope.tags.splice($scope.tags.indexOf(tag), 1);
+          $scope.selectedItems.forEach(function (item) {
+            var instance = kEditor.getModel().findByPath(item.path);
             var tagMeta = instance.findMetaDataByID(KWE_TAG);
             if (tagMeta) {
-              var tags = tagMeta.value.split(',');
-              var i = tags.indexOf(tag);
-              if (i !== -1) {
-                tags.splice(i, 1);
-                tagMeta.value = tags.join(',');
-              }
+              var newTags = removeTagFromStr(tag, tagMeta.value);
+              tagMeta.value = newTags.join(',');
+              item.tags = newTags;
             }
           });
         };

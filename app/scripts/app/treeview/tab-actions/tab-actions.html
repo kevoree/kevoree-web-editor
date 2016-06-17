@@ -2,11 +2,11 @@
   <div class="col-md-8 col-sm-6">
     <fieldset>
       <legend>Select instances by tags</legend>
-      <div ng-if="tags.length === 0">
+      <div ng-if="tagsCount === 0">
         <p>There is no tag in the model.</p>
         <p><em>To add tags, select instances in the left panel and go to the <strong>Tags</strong> tab.</em></p>
       </div>
-      <a href="" ng-click="onTagClicked(items)" ng-repeat="(tag, items) in tags" style="text-decoration: none;">
+      <a href="" ng-click="selectByTag(items)" ng-repeat="(tag, items) in tags" style="text-decoration: none;">
         <span class="tag badge">
           <span>{{ tag }}</span>
         </span>

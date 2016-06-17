@@ -6,7 +6,7 @@
     "angular-animate": "1.4.5",
     "angular-bootstrap": "~0.13.4",
     "angular-dragdrop": "~1.0.11",
-    "angular-hotkeys": "chieffancypants/angular-hotkeys#~1.4.5",
+    "angular-hotkeys": "chieffancypants/angular-hotkeys#^1.7.0",
     "angular-semver-sort": "~0.2.3",
     "angular-touch": "1.4.5",
     "angular-ui-codemirror": "^0.3",
@@ -32,6 +32,7 @@
   "moduleName": "editorApp",
   "resolutions": {
     "angular": "1.4.5",
-    "codemirror": "^5.0"
+    "codemirror": "^5.0",
+    "angular-hotkeys": "^1.7.0"
   }
 }

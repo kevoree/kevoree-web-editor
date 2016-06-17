@@ -3,11 +3,8 @@
 angular.module('editorApp')
   .directive('tabActions', function ($filter, $modal, kEditor) {
     return {
-      restrict: 'AE',
-      scope: {
-        items: '=',
-        onTagClicked: '='
-      },
+      restrict: 'E',
+      scope: true,
       templateUrl: 'scripts/app/treeview/tab-actions/tab-actions.html',
       link: function ($scope) {
         function processData() {
@@ -29,6 +26,7 @@ angular.module('editorApp')
               item.children.forEach(processTag);
             }
           });
+          $scope.tagsCount = Object.keys($scope.tags).length;
         }
 
         function modelHandler() {

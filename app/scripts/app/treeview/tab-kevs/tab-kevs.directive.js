@@ -3,10 +3,8 @@
 angular.module('editorApp')
   .directive('tabKevs', function () {
     return {
-      restrict: 'AE',
-      scope: {
-        items: '='
-      },
+      restrict: 'E',
+      scope: true,
       templateUrl: 'scripts/app/treeview/tab-kevs/tab-kevs.html',
       controller: function ($scope, $timeout, kEditor, kScript) {
         var changeId;
@@ -30,7 +28,7 @@ angular.module('editorApp')
           var outKevs = [];
           inLines.forEach(function (line) {
             if (line.indexOf('*') !== -1) {
-              $scope.items.forEach(function (item) {
+              $scope.selectedItems.forEach(function (item) {
                 if (item.type === 'component') {
                   outKevs.push(line.replace('*', item.kevsName));
                 } else {

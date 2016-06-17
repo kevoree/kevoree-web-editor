@@ -13,16 +13,16 @@
     </div>
     <ul class="nav navbar-left navbar-nav navbar-collapse collapse" data-collapse="isCollapsed">
       <li data-ng-class="{active: $state.includes('main')}">
-        <a data-ui-sref="main" data-ng-click="!isCollapsed ? (isCollapsed = !isCollapsed):''">Model Editor</a>
+        <a data-ui-sref="main" data-ng-click="!isCollapsed ? (isCollapsed = !isCollapsed):''">Model View</a>
+      </li>
+      <li data-ng-class="{active: $state.includes('treeview')}">
+        <a data-ui-sref="treeview" data-ng-click="!isCollapsed ? (isCollapsed = !isCollapsed):''">Tree View</a>
       </li>
       <li data-ng-class="{active: $state.includes('libraries')}">
         <a data-ui-sref="libraries" data-ng-click="!isCollapsed ? (isCollapsed = !isCollapsed):''">Registry Libraries</a>
       </li>
       <li data-ng-class="{active: $state.includes('kevscript')}">
         <a data-ui-sref="kevscript" data-ng-click="!isCollapsed ? (isCollapsed = !isCollapsed):''">KevScript Editor</a>
-      </li>
-      <li data-ng-class="{active: $state.includes('treeview')}">
-        <a data-ui-sref="treeview" data-ng-click="!isCollapsed ? (isCollapsed = !isCollapsed):''">TreeView</a>
       </li>
     </ul>
     <ul class="nav navbar-right navbar-nav navbar-collapse collapse" data-collapse="isCollapsed">

@@ -3,10 +3,8 @@
 angular.module('editorApp')
   .directive('tabParams', function ($timeout, kEditor, kModelHelper, kInstance, util) {
     return {
-      restrict: 'AE',
-      scope: {
-        items: '='
-      },
+      restrict: 'E',
+      scope: true,
       templateUrl: 'scripts/app/treeview/tab-params/tab-params.html',
       link: function ($scope) {
         function convertType(type) {
@@ -39,15 +37,15 @@ angular.module('editorApp')
           $scope.state = {
             started: null
           };
+          $scope.nets = [];
 
           var model = kEditor.getModel();
-          if ($scope.items.length > 1) {
-            var first = model.findByPath($scope.items[0].path);
+          if ($scope.selectedItems.length > 1) {
+            var first = model.findByPath($scope.selectedItems[0].path);
             $scope.types = [ first.name + ': ' + kModelHelper.getFqn(first.typeDefinition) ];
-            for (var i=1; i < $scope.items.length; i++) {
-              var prev = model.findByPath($scope.items[i-1].path),
-                  curr = model.findByPath($scope.items[i].path);
-                  kInstance.initDictionaries(prev);
+            for (var i=1; i < $scope.selectedItems.length; i++) {
+              var prev = model.findByPath($scope.selectedItems[i-1].path),
+                  curr = model.findByPath($scope.selectedItems[i].path);
               if (kModelHelper.getFqn(prev.typeDefinition) !== kModelHelper.getFqn(curr.typeDefinition)) {
                 $scope.types.push(curr.name + ': ' + kModelHelper.getFqn(curr.typeDefinition));
                 $scope.error = true;
@@ -56,9 +54,14 @@ angular.module('editorApp')
             }
           }
 
+          $scope.selectedItems.forEach(function (item) {
+            var instance = kEditor.getModel().findByPath(item.path);
+            kInstance.initDictionaries(instance);
+          });
+
           $scope.util = util;
-          $scope.instance = model.findByPath($scope.items[0].path);
-          if ($scope.items.length === 1) {
+          $scope.instance = model.findByPath($scope.selectedItems[0].path);
+          if ($scope.selectedItems.length === 1) {
             $scope.state.started = $scope.instance.started;
           } else {
             $scope.state.started = null;
@@ -72,7 +75,7 @@ angular.module('editorApp')
                 .map(function (attr) {
                   var type = convertType(attr.datatype.name());
                   var value;
-                  if ($scope.items.length === 1 && $scope.instance.dictionary) {
+                  if ($scope.selectedItems.length === 1 && $scope.instance.dictionary) {
                     var val = $scope.instance.dictionary.findValuesByID(attr.name);
                     if (val) {
                       switch (type) {
@@ -95,15 +98,26 @@ angular.module('editorApp')
                   return newAttr;
                 });
           }
+
+          if ($scope.instance.networkInformation) {
+            $scope.instance.networkInformation.array.forEach(function (net) {
+              $scope.nets.push({
+                name: net.name,
+                values: net.values.array.map(function (val) {
+                  return { name: val.name, value: val.value };
+                })
+              });
+            });
+          }
         }
 
         process();
-        var unwatchItems = $scope.$watchCollection('items', process);
+        var unwatchItems = $scope.$watchCollection('selectedItems', process);
         $scope.$on('$destroy', unwatchItems);
 
         $scope.applyToAllInstances = function () {
           try {
-            $scope.items.forEach(function (item) {
+            $scope.selectedItems.forEach(function (item) {
               var instance = kEditor.getModel().findByPath(item.path);
               instance.started = $scope.state.started;
               $scope.dictionary.forEach(function (attr) {

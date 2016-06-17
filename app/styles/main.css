@@ -187,7 +187,7 @@ body {
 }
 .menubar {
     position: fixed;
-    z-index: 2;
+    z-index: 3;
     top: 51px;
     left: 0;
     right: 0;
@@ -435,20 +435,39 @@ body {
 .treecontrol-inner-container {
   border: 1px solid #ccc;
   padding: 3px;
+  overflow-y: scroll;
 }
-
 .tab-set .nav > li > a {
   background-color: #ccc;
   color: #777;
   padding: 4px 12px;
+  border-radius: 0;
+  height: 30px;
 }
 .tab-set .nav-tabs > li.active > a,
-.tab-set .nav-tabs > li.active > a:hover,
-.tab-set .nav-tabs > li.active > a:focus {
-  margin-right: 2px;
+.tab-set .nav-tabs > li.active > a:focus,
+.tab-set .nav-tabs > li.active > a:hover {
   color: #555;
   cursor: default;
+  z-index: 2;
+  margin-right: 2px;
   background-color: #fff;
+}
+.tab-set .nav-tabs > li > a:hover,
+.tab-set .nav-tabs > li > a:focus {
+  background-color: #e6e6e6;
+  color: #666;
+}
+.tab-content {
+  box-shadow: 0px -1px 5px #888;
+  z-index: 0;
+}
+.param-options {
+  line-height: 65px;
+}
+.param-options > div {
+  margin-bottom: 10px;
+  vertical-align: bottom;
 }
 @media (min-width: 992px) {
     .tab-container {
@@ -512,7 +531,6 @@ body {
     }
     .treecontrol-inner-container {
       height: 100%;
-      overflow-y: scroll;
     }
     .tab-set {
       position: absolute;
@@ -551,6 +569,20 @@ body {
     }
     .treeview-rightpanel {
       margin: 15px 0;
+    }
+    .treecontrol-inner-container {
+      max-height: 400px;
+    }
+    .tab-set .nav-tabs > li {
+      float: none;
+    }
+    .tab-set .nav-tabs > li > a,
+    .tab-set .nav-tabs > li > a:hover,
+    .tab-set .nav-tabs > li > a:focus,
+    .tab-set .nav-tabs > li.active > a,
+    .tab-set .nav-tabs > li.active > a:hover,
+    .tab-set .nav-tabs > li.active > a:focus {
+      margin: 0;
     }
 }
 @media (min-width: 768px) {

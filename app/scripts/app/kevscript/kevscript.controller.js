@@ -8,7 +8,7 @@
  * Controller of the editorApp kevscript editor page
  */
 angular.module('editorApp')
-  .controller('KevScriptCtrl', function($scope, $modal, $timeout, $state, kEditor, kScript, saveFile, Notification) {
+  .controller('KevScriptCtrl', function($scope, $modal, $timeout, $state, kEditor, kScript, saveFile, storage, Notification, AUTOLOAD_KEVS) {
     var editor = null;
 
     function saveToFile() {
@@ -63,18 +63,20 @@ angular.module('editorApp')
 
     $scope.editorLoaded = function(_editor) {
       editor = _editor;
-      try {
-        var modelStr = kScript.parseModel(kEditor.getModel());
-        editor.setValue(modelStr);
-      } catch (err) {
-        console.warn('[kevscript.controller.editorLoaded()] Error creating Kevscript from model');
-        console.error(err.stack);
-        Notification.error({
-          startTop: 65,
-          title: 'KevScript parser',
-          message: 'Unable to convert current model to KevScript',
-          delay: 5000
-        });
+      if (storage.get(AUTOLOAD_KEVS, true)) {
+        try {
+          var modelStr = kScript.parseModel(kEditor.getModel());
+          editor.setValue(modelStr);
+        } catch (err) {
+          console.warn('[kevscript.controller.editorLoaded()] Error creating Kevscript from model');
+          console.error(err.stack);
+          Notification.error({
+            startTop: 65,
+            title: 'KevScript parser',
+            message: 'Unable to convert current model to KevScript',
+            delay: 5000
+          });
+        }
       }
       editor.focus();
     };

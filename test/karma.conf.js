@@ -25,7 +25,7 @@ module.exports = function(config) {
       'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
       'bower_components/jquery-ui/jquery-ui.js',
       'bower_components/angular-dragdrop/src/angular-dragdrop.js',
-      'bower_components/angular-hotkeys/build/hotkeys.min.js',
+      'bower_components/angular-hotkeys/build/hotkeys.js',
       'bower_components/angular-semver-sort/angular-semver-sort.js',
       'bower_components/angular-touch/angular-touch.js',
       'bower_components/codemirror/lib/codemirror.js',

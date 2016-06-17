@@ -3,17 +3,15 @@
 angular.module('editorApp')
   .directive('tabCreate', function ($timeout, $filter, kFactory, kEditor, kInstance, kModelHelper, util, KWE_TAG) {
     return {
-      restrict: 'AE',
-      scope: {
-        onCreate: '=',
-        items: '='
-      },
+      restrict: 'E',
+      scope: true,
       templateUrl: 'scripts/app/treeview/tab-create/tab-create.html',
       link: function (scope) {
         scope.namePattern = '{metatype}{index}';
         scope.state = {
           started: true
         };
+        scope.tags = '';
 
         function createTdefItem(tdef) {
           return { name: kModelHelper.getFqn(tdef), tdef: tdef };
@@ -82,6 +80,7 @@ angular.module('editorApp')
 
         function process() {
           var model = kEditor.getModel();
+          scope.tags = '';
           scope.name = '';
           scope.types = [ 'node', 'group', 'channel', 'component' ];
           scope.instanceTypes = {
@@ -99,7 +98,6 @@ angular.module('editorApp')
           });
           scope.selectedNode = scope.availableNodes[0];
           scope.instancesCount = 1;
-          scope.tags = '';
           scope.verifyName();
         }
 
@@ -138,12 +136,9 @@ angular.module('editorApp')
             instance.started = scope.state.started;
             kInstance.initDictionaries(instance);
             var tags = scope.tags.split(',')
-                .map(function (tag) {
-                  return tag.trim();
-                })
-                .filter(function (tag) {
-                  return tag.length > 0;
-                }).join(',');
+                .map(function (tag) { return tag.trim(); })
+                .filter(function (tag) { return tag.length > 0; })
+                .join(',');
             var tagsMeta = kFactory.createValue();
             tagsMeta.name = KWE_TAG;
             tagsMeta.value = tags;
@@ -152,20 +147,20 @@ angular.module('editorApp')
             switch (scope.selectedType) {
               case 'node':
                 model.addNodes(instance);
-                scope.onCreate(scope.selectedType, instance);
+                scope.createItem(scope.selectedType, instance);
                 break;
               case 'group':
                 model.addGroups(instance);
-                scope.onCreate(scope.selectedType, instance);
+                scope.createItem(scope.selectedType, instance);
                 break;
               case 'channel':
                 model.addHubs(instance);
-                scope.onCreate(scope.selectedType, instance);
+                scope.createItem(scope.selectedType, instance);
                 break;
               case 'component':
                 var node = model.findNodesByID(scope.selectedNode.name);
                 node.addComponents(instance);
-                scope.onCreate(scope.selectedType, instance, node);
+                scope.createItem(scope.selectedType, instance, node);
                 break;
             }
           }

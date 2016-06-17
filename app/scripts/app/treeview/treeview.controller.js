@@ -87,6 +87,19 @@ angular.module('editorApp')
         .concat(model.hubs.array.map(transformChannelToTreeItem));
     }
 
+    function expandItemByPath(path) {
+      for (var i=0; i < $scope.items.length; i++) {
+        if ($scope.items[i].path === path) {
+          if ($scope.items[i].folded) {
+            $scope.items[i].folded = false;
+            kModelHelper.setFolded(
+              kEditor.getModel().findByPath($scope.items[i].path), false);
+          }
+          return;
+        }
+      }
+    }
+
     function processModel() {
       $scope.nbInstances = 0;
       $scope.selectedItems = [];
@@ -105,13 +118,13 @@ angular.module('editorApp')
     var unregister = kEditor.addNewModelListener('treeview', processModel);
     processModel();
 
-    var ctrlKey = false;
+    var ctrlPressed = false;
     function onKeyDown(evt) {
-      ctrlKey = evt.ctrlKey;
+      ctrlPressed = evt.ctrlKey;
     }
 
     function onKeyUp(evt) {
-      ctrlKey = evt.ctrlKey;
+      ctrlPressed = evt.ctrlKey;
     }
 
     document.addEventListener('keydown', onKeyDown);
@@ -125,7 +138,13 @@ angular.module('editorApp')
 
     $scope.onClick = function (item) {
       var selected = item.selected;
-      if (!ctrlKey) {
+      if (!ctrlPressed) {
+        if (selected &&
+            $scope.selectedItems.length > 1 &&
+            $scope.selectedItems.indexOf(item) !== -1) {
+              console.log('wesh');
+          selected = !selected;
+        }
         $scope.selectedItems.forEach(function (item) {
           kModelHelper.setSelected(
             kEditor.getModel().findByPath(item.path), false);
@@ -188,7 +207,7 @@ angular.module('editorApp')
     };
 
     function selectByType(type) {
-      if (!ctrlKey) {
+      if (!ctrlPressed) {
         $scope.clearSelected();
       }
 
@@ -214,7 +233,7 @@ angular.module('editorApp')
     };
 
     $scope.selectComponents = function () {
-      if (!ctrlKey) {
+      if (!ctrlPressed) {
         $scope.clearSelected();
       }
 
@@ -226,7 +245,7 @@ angular.module('editorApp')
               child.selected = true;
               kModelHelper.setFolded(kEditor.getModel().findByPath(item.path), false);
               kModelHelper.setSelected(kEditor.getModel().findByPath(child.path), true);
-              $scope.selectedItems.push(item);
+              $scope.selectedItems.push(child);
             });
           }
         }
@@ -234,14 +253,18 @@ angular.module('editorApp')
     };
 
     $scope.selectByTag = function (items) {
-      if (!ctrlKey) {
+      if (!ctrlPressed) {
         $scope.clearSelected();
       }
 
       items.forEach(function (item) {
         item.selected = true;
         $scope.selectedItems.push(item);
-        kModelHelper.setSelected(kEditor.getModel().findByPath(item.path), true);
+        var instance = kEditor.getModel().findByPath(item.path);
+        kModelHelper.setSelected(instance, true);
+        if (item.type === 'component') {
+          expandItemByPath(instance.eContainer().path());
+        }
       });
     };
 

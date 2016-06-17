@@ -407,6 +407,7 @@ module.exports = function (grunt) {
           APP_NAME: 'Kevoree Web Editor',
           VERSION: '<%= pkg.version %>',
           NPM_REGISTRY_URL: 'http://registry.npmjs.org/{name}/-/{name}-{version}.tgz',
+          AUTOLOAD_KEVS: 'autoload_kevs',
           KWE_POSITION: 'kwe_position',
           KWE_FOLDED: 'kwe_folded',
           KWE_TAG: 'kwe_tag',
