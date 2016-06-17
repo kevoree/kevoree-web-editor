@@ -42,7 +42,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-8 text-right">
+          <div class="col-xs-12 col-md-8 text-right">
             <div class="form-group form-group-sm">
               <label class="control-label"></label>
               <div class="form-inline">
@@ -75,15 +75,20 @@
               </div>
             </div>
           </div>
-          <div class="col-md-8 form-inline text-right">
-            <input type="number" class="form-control" placeholder="Min value" ng-model="min[attr.name]" ng-init="min[attr.name] = 0" style="width: 80px"/>
-            <input type="number" class="form-control" placeholder="Max value" ng-model="max[attr.name]" ng-init="max[attr.name] = 65535" style="width: 80px"/>
-            <button class="btn btn-sm btn-default" ng-click="random(attr)" ng-disabled="each[attr.name]">Generate</button>
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" ng-model="each[attr.name]" ng-init="each[attr.name] = false" />&nbsp;
-                <span class="help-text" tooltip="Generate a new value for each instance" tooltip-placement="left">Each</span>
-              </label>
+          <div class="col-xs-12 col-md-8 text-right">
+            <div class="form-group form-group-sm">
+              <label class="control-label"></label>
+              <div class="form-inline">
+                <input type="number" class="form-control" placeholder="Min value" ng-model="min[attr.name]" ng-init="min[attr.name] = 0" style="width: 80px"/>
+                <input type="number" class="form-control" placeholder="Max value" ng-model="max[attr.name]" ng-init="max[attr.name] = 65535" style="width: 80px"/>
+                <button class="btn btn-sm btn-default" ng-click="random(attr)" ng-disabled="each[attr.name]">Generate</button>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" ng-model="each[attr.name]" ng-init="each[attr.name] = false" />&nbsp;
+                    <span class="help-text" tooltip="Generate a new value for each instance" tooltip-placement="left">Each</span>
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -99,13 +104,18 @@
               </div>
             </div>
           </div>
-          <div class="col-md-8 form-inline text-right">
-            <button class="btn btn-sm btn-default" ng-click="random(attr)" ng-disabled="each[attr.name]">Generate</button>
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" ng-model="each[attr.name]" ng-init="each[attr.name] = false" />&nbsp;
-                <span class="help-text" tooltip="Generate a new value for each instance" tooltip-placement="left">Each</span>
-              </label>
+          <div class="col-xs-12 col-md-8 text-right">
+            <div class="form-group form-group-sm">
+              <label class="control-label"></label>
+              <div class="form-inline">
+                <button class="btn btn-sm btn-default" ng-click="random(attr)" ng-disabled="each[attr.name]">Generate</button>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" ng-model="each[attr.name]" ng-init="each[attr.name] = false" />&nbsp;
+                    <span class="help-text" tooltip="Generate a new value for each instance" tooltip-placement="left">Each</span>
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
         </div>
