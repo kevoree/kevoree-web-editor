@@ -18,9 +18,7 @@ angular.module('editorApp')
           theme: 'kevscript',
           lineWrapping: true,
           lineNumbers: true,
-          styleActiveLine: true,
-          gutters: [ 'CodeMirror-lint-markers' ],
-          lint: true
+          styleActiveLine: true
         };
 
         function transform() {
@@ -49,11 +47,10 @@ angular.module('editorApp')
           }, 100);
         });
 
-        // var unwatch = $scope.$watchCollection('items', transform);
-
+        var unwatch = $scope.$watchCollection('selectedItems', transform);
         $scope.$on('$destroy', function () {
           unregister();
-          // unwatch();
+          unwatch();
         });
 
         $scope.inOnLoad = function (e) {
