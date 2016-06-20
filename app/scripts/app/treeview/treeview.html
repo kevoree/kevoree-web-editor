@@ -5,32 +5,32 @@
     </button>
     <ul class="dropdown-menu" role="menu">
       <li>
-        <a data-ng-click="open($event)">
+        <a ng-click="open($event)">
           <span class="name">Open</span>
           <span class="shortcut">Ctrl+O</span>
         </a>
       </li>
       <li>
-        <a data-ng-click="merge($event)">
+        <a ng-click="merge($event)">
           <span class="name">Merge</span>
           <span class="shortcut">Ctrl+M</span>
         </a>
       </li>
       <li>
-        <a data-ng-click="openFromNode($event)">
+        <a ng-click="openFromNode($event)">
           <span class="name">Open from node</span>
           <span class="shortcut">Ctrl+Shift+O</span>
         </a>
       </li>
       <li>
-        <a data-ng-click="mergeFromNode($event)">
+        <a ng-click="mergeFromNode($event)">
           <span class="name">Merge from node</span>
           <span class="shortcut">Ctrl+Shift+M</span>
         </a>
       </li>
       <li class="divider"></li>
       <li>
-        <a data-ng-click="save($event)">
+        <a ng-click="save($event)">
           <span class="name">Save</span>
           <span class="shortcut">Ctrl+S</span>
         </a>
@@ -38,7 +38,32 @@
     </ul>
   </div>
   <div class="menu-btn">
-      <button type="button" class="btn btn-default" data-ng-click="toggleShortcutHelp()">Help</button>
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+          Edit&nbsp;<span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+          <li>
+              <a ng-click="deleteAll($event)">
+                  <span class="name">Delete all</span>
+                  <span class="shortcut">Alt+Shift+D</span>
+              </a>
+          </li>
+          <li>
+              <a ng-click="deleteInstances($event)">
+                  <span class="name">Delete instances</span>
+                  <span class="shortcut">Alt+Shift+I</span>
+              </a>
+          </li>
+          <li>
+              <a ng-click="deleteSelected($event)">
+                  <span class="name">Delete selected</span>
+                  <span class="shortcut">Del</span>
+              </a>
+          </li>
+      </ul>
+  </div>
+  <div class="menu-btn">
+      <button type="button" class="btn btn-default" ng-click="toggleShortcutHelp()">Help</button>
   </div>
 </div>
 <div class="tab-container" ng-cloak>
@@ -91,7 +116,7 @@
       <div class="fit-y">
         <div class="treecontrol-container">
           <div id="treecontrol-scroll-container" class="treecontrol-inner-container">
-            <em data-ng-if="items.length === 0">No instance in current model</em>
+            <em ng-if="items.length === 0">No instance in current model</em>
             <ul
                 class="list-unstyled tree"
                 infinite-scroll="loadMore()"
@@ -175,11 +200,11 @@
           <tab-create></tab-create>
         </div>
       </tab>
-      <tab heading="JSON">
+      <!-- <tab heading="JSON">
         <div class="tab-pane-container well">
           <tab-json></tab-json>
         </div>
-      </tab>
+      </tab> -->
       <tab heading="Params" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-params></tab-params>
@@ -198,4 +223,4 @@
     </tabset>
   </div>
 </div>
-<input id="file" type="file" data-on-data="onFileLoaded($name, $data)" class="hide">
+<input id="file" type="file" on-data="onFileLoaded($name, $data)" class="hide">

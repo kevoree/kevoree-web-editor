@@ -166,7 +166,7 @@ angular.module('editorApp')
 
     $scope.onExpand = function (item) {
       item.folded = !item.folded;
-      kModelHelper.setFolded(kEditor.getModel().findByPath(item.path), !item.folded);
+      kModelHelper.setFolded(kEditor.getModel().findByPath(item.path), item.folded);
     };
 
     $scope.collapse = function () {
@@ -488,6 +488,39 @@ angular.module('editorApp')
       }
     };
 
+    $scope.deleteAll = function(evt) {
+      evt.preventDefault();
+      $scope.deleteInstances(evt);
+      kEditor.getModel().removeAllPackages();
+    };
+
+    $scope.deleteInstances = function(evt) {
+      evt.preventDefault();
+      var model = kEditor.getModel();
+      model.removeAllNodes();
+      model.removeAllGroups();
+      model.removeAllHubs();
+      model.removeAllMBindings();
+      model.removeAllRepositories();
+      processModel();
+    };
+
+    $scope.deleteSelection = function(evt) {
+      evt.preventDefault();
+      var selection = kModelHelper.getSelection(kEditor.getModel());
+      if (selection.length === 0) {
+        Notification.warning({
+          title: 'Delete selection',
+          message: 'Nothing selected'
+        });
+      } else {
+        selection.forEach(function (instance) {
+          instance.delete();
+        });
+        processModel();
+      }
+    };
+
     $scope.toggleShortcutHelp = function() {
       hotkeys.toggleCheatSheet();
     };
@@ -555,6 +588,33 @@ angular.module('editorApp')
               };
             }
           });
+      }
+    });
+
+    hotkeys.bindTo($scope).add({
+      combo: 'alt+shift+d',
+      description: 'Delete everything in the current model',
+      callback: $scope.deleteAll
+    });
+
+    hotkeys.bindTo($scope).add({
+      combo: 'alt+shift+i',
+      description: 'Delete instances in the current model',
+      callback: $scope.deleteInstances
+    });
+
+    hotkeys.bindTo($scope).add({
+      combo: 'del',
+      description: 'Delete selected instances in the current model',
+      callback: $scope.deleteSelection
+    });
+
+    hotkeys.bindTo($scope).add({
+      combo: 'ctrl+a',
+      description: 'Select all instances',
+      callback: function(evt) {
+        evt.preventDefault();
+        $scope.selectAll();
       }
     });
 

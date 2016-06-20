@@ -391,7 +391,7 @@ angular.module('editorApp')
       model.removeAllRepositories();
     };
 
-    $scope.deleteSelected = function(evt) {
+    $scope.deleteSelection = function(evt) {
       evt.preventDefault();
       var deletions = ui.deleteSelected();
       if (deletions === 0) {
@@ -512,7 +512,7 @@ angular.module('editorApp')
     hotkeys.bindTo($scope).add({
       combo: 'del',
       description: 'Delete selected instances in the current model',
-      callback: $scope.deleteSelected
+      callback: $scope.deleteSelection
     });
 
     hotkeys.bindTo($scope).add({
