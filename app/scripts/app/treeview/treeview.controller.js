@@ -142,7 +142,6 @@ angular.module('editorApp')
         if (selected &&
             $scope.selectedItems.length > 1 &&
             $scope.selectedItems.indexOf(item) !== -1) {
-              console.log('wesh');
           selected = !selected;
         }
         $scope.selectedItems.forEach(function (item) {

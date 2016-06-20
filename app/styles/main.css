@@ -398,11 +398,12 @@ body {
   background: url('../images/group.png') top left repeat;
 }
 .tree .item .expand-handle {
-  padding-left: 2px;
   color: white;
   font-size: x-small;
   vertical-align: middle;
   line-height: inherit;
+  display: block;
+  text-align: center;
 }
 .tree > .item > .name:hover {
   background-color: #eee;
@@ -814,9 +815,4 @@ pre {
 }
 .pull-right {
     float: right;
-}
-
-/* Angular-ui ui-bootstrap CSS trick http://angular-ui.github.io/bootstrap/#/getting_started  */
-.nav, .pagination, .carousel, .panel-title a {
-    cursor: pointer;
 }
