@@ -344,6 +344,34 @@ angular.module('editorApp')
       angular.element('input#file').click();
     };
 
+    $scope.dndLoad = function(filename, data) {
+      $timeout(function() {
+        $scope.loading = true;
+        $timeout(function() {
+          var oldModel = kEditor.getModel();
+          try {
+            var loader = kFactory.createJSONLoader();
+            var model = loader.loadModelFromString(data).get(0);
+            kEditor.setModel(model);
+            Notification.success({
+              title: 'Open from file (dnd)',
+              message: 'Model loaded from <strong>' + filename + '</strong>'
+            });
+          } catch (err) {
+            console.warn('[treeview.controller.dndLoad()] Error loading model file');
+            console.error(err.stack);
+            Notification.error({
+              title: 'Open from file (dnd)',
+              message: 'Unable to load a model from <strong>' + filename + '</strong>'
+            });
+            kEditor.setModel(oldModel);
+          } finally {
+            $scope.loading = false;
+          }
+        });
+      });
+    };
+
     $scope.merge = function(evt) {
       evt.preventDefault();
       $scope.onFileLoaded = function mergeModel(filename, data) {

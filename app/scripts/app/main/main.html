@@ -1,5 +1,5 @@
-<div data-ng-cloak>
-    <div id="loading" data-ng-if="loading">
+<div ng-cloak>
+    <div id="loading" ng-if="loading">
         <div class="loading-content">
             <h2>Loading</h2>
             <div class="spinner inverse">
@@ -12,37 +12,37 @@
     </div>
     <div class="menubar">
         <div class="menu-btn">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            <button type="button" class="btn btn-default dropdown-toggle" toggle="dropdown">
                 File&nbsp;<span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
                 <li>
-                    <a data-ng-click="open($event)">
+                    <a ng-click="open($event)">
                         <span class="name">Open</span>
                         <span class="shortcut">Ctrl+O</span>
                     </a>
                 </li>
                 <li>
-                    <a data-ng-click="merge($event)">
+                    <a ng-click="merge($event)">
                         <span class="name">Merge</span>
                         <span class="shortcut">Ctrl+M</span>
                     </a>
                 </li>
                 <li>
-                    <a data-ng-click="openFromNode($event)">
+                    <a ng-click="openFromNode($event)">
                         <span class="name">Open from node</span>
                         <span class="shortcut">Ctrl+Shift+O</span>
                     </a>
                 </li>
                 <li>
-                    <a data-ng-click="mergeFromNode($event)">
+                    <a ng-click="mergeFromNode($event)">
                         <span class="name">Merge from node</span>
                         <span class="shortcut">Ctrl+Shift+M</span>
                     </a>
                 </li>
                 <li class="divider"></li>
                 <li>
-                    <a data-ng-click="save($event)">
+                    <a ng-click="save($event)">
                         <span class="name">Save</span>
                         <span class="shortcut">Ctrl+S</span>
                     </a>
@@ -50,44 +50,44 @@
             </ul>
         </div>
         <div class="menu-btn">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            <button type="button" class="btn btn-default dropdown-toggle" toggle="dropdown">
                 Edit&nbsp;<span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
                 <li>
-                    <a data-ng-click="copy()">
+                    <a ng-click="copy()">
                         <span class="name">Copy selected instance(s)</span>
                         <span class="shortcut">Ctrl+C</span>
                     </a>
                 </li>
                 <li>
-                    <a data-ng-click="paste()">
+                    <a ng-click="paste()">
                         <span class="name">Paste selected instance(s)</span>
                         <span class="shortcut">Ctrl+V</span>
                     </a>
                 </li>
                 <li class="divider"></li>
                 <li>
-                    <a data-ng-click="fixOverlapping($event)">
+                    <a ng-click="fixOverlapping($event)">
                         <span class="name">Fix overlapping</span>
                         <span class="shortcut">Alt+O</span>
                     </a>
                 </li>
                 <li class="divider"></li>
                 <li>
-                    <a data-ng-click="deleteAll($event)">
+                    <a ng-click="deleteAll($event)">
                         <span class="name">Delete all</span>
                         <span class="shortcut">Alt+Shift+D</span>
                     </a>
                 </li>
                 <li>
-                    <a data-ng-click="deleteInstances($event)">
+                    <a ng-click="deleteInstances($event)">
                         <span class="name">Delete instances</span>
                         <span class="shortcut">Alt+Shift+I</span>
                     </a>
                 </li>
                 <li>
-                    <a data-ng-click="deleteSelection($event)">
+                    <a ng-click="deleteSelection($event)">
                         <span class="name">Delete selection</span>
                         <span class="shortcut">Del</span>
                     </a>
@@ -95,19 +95,19 @@
             </ul>
         </div>
         <div class="menu-btn">
-            <button type="button" class="btn btn-default" data-ng-click="toggleShortcutHelp()">Help</button>
+            <button type="button" class="btn btn-default" ng-click="toggleShortcutHelp()">Help</button>
         </div>
-        <div class="menu-btn pull-right" data-ng-switch data-on="synced">
-            <button type="button" class="btn btn-default" data-ng-click="connectSync($event)" data-ng-switch-when="false">Connect</button>
-            <span data-ng-switch-when="true" style="color: green">{{url}}</span>
-            <button type="button" class="btn btn-default" data-ng-click="disconnectSync($event)" data-ng-switch-when="true">Disconnect</button>
+        <div class="menu-btn pull-right" ng-switch on="synced">
+            <button type="button" class="btn btn-default" ng-click="connectSync($event)" ng-switch-when="false">Connect</button>
+            <span ng-switch-when="true" style="color: green">{{url}}</span>
+            <button type="button" class="btn btn-default" ng-click="disconnectSync($event)" ng-switch-when="true">Disconnect</button>
         </div>
     </div>
-    <div id="tdef-drag-panel" data-drop-target="dndLoad($name, $data)">
-        <div data-ui-view="typedefs"></div>
-        <div data-ui-view="editor"></div>
+    <div id="tdef-drag-panel" drop-target="dndLoad($name, $data)">
+        <div ui-view="typedefs"></div>
+        <div ui-view="editor"></div>
+        <div ui-view="instance"></div>
     </div>
-    <div data-ui-view="instance"></div>
 </div>
 
-<input id="file" type="file" data-on-data="onFileLoaded($name, $data)" class="hide">
+<input id="file" type="file" on-data="onFileLoaded($name, $data)" class="hide">

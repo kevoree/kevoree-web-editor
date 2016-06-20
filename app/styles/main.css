@@ -42,6 +42,28 @@ body {
 .kevscript-editor.extended .CodeMirror {
   height: 200px;
 }
+.droppable {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  opacity: .7;
+  background-color: black;
+}
+.center-message {
+  color: #fff;
+  font-family: monospace;
+  font-size: 45px;
+  left: 0;
+  margin-top: -37px;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: 50%;
+  background-color: black;
+}
 #tree-container {
   margin-top: 15px;
 }
@@ -473,11 +495,12 @@ body {
 @media (min-width: 992px) {
     .tab-container {
         position: absolute;
-        top: 85px;
+        top: 76px;
         left: 0;
         right: 0;
-        bottom: 10px;
+        bottom: 0;
         overflow: hidden;
+        padding: 10px 0 10px 0;
     }
     #libraries-inner-container {
         position: absolute;
