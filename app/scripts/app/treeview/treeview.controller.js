@@ -9,7 +9,7 @@
  */
 angular.module('editorApp')
   .controller('TreeViewCtrl', function ($scope, $timeout, $filter, $modal,
-      kEditor, kModelHelper, kFactory, kWs, saveFile, hotkeys, Notification) {
+      kEditor, kModelHelper, kFactory, kWs, kFilterParser, saveFile, hotkeys, Notification) {
     function transformComponentToTreeItem(instance) {
       $scope.nbInstances += 1;
       var item = {
@@ -111,9 +111,11 @@ angular.module('editorApp')
     $scope.nbInstances = 0;
     $scope.showTags = true;
     $scope.selectedItems = [];
+    $scope.filter = { showPopover: false };
     $scope.filterExpr = '';
     $scope.filterComparator = false;
     $scope.treeReverse = false;
+    $scope.query = null;
 
     var unregister = kEditor.addNewModelListener('treeview', processModel);
     processModel();
@@ -308,6 +310,38 @@ angular.module('editorApp')
             }
           }
           break;
+      }
+    };
+
+    $scope.clearFilter = function () {
+      $scope.filterExpr = '';
+      $scope.filterError = null;
+      $scope.filter.showPopover = false;
+    };
+
+    var filterTimeout;
+    $scope.onFilterExprChanged = function () {
+      $timeout.cancel(filterTimeout);
+      filterTimeout = $timeout(function () {
+        $scope.parseFilterExpr();
+      }, 300);
+    };
+
+    $scope.parseFilterExpr = function () {
+      if ($scope.filterExpr.length === 0) {
+        $scope.query = null;
+        $scope.filterError = null;
+        $scope.filter.showPopover = false;
+      } else {
+        try {
+          $scope.query = kFilterParser.parse($scope.filterExpr);
+          $scope.filterError = null;
+          $scope.filter.showPopover = false;
+        } catch (err) {
+          $scope.query = null;
+          $scope.filterError = err.name + ': "' + err.found + '" at col.'+err.location.start.column;
+          $scope.filter.showPopover = true;
+        }
       }
     };
 
@@ -649,5 +683,6 @@ angular.module('editorApp')
       unregister();
       document.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('keyup', onKeyUp);
+      $timeout.cancel(filterTimeout);
     });
   });

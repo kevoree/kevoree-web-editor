@@ -71,22 +71,25 @@
     <div class="well fit-y">
       <div class="row clearfix">
         <div class="col-xs-12">
-          <div class="input-group input-group-sm" style="z-index: 1">
-            <input type="text" class="form-control" placeholder="Filter by name, tag, type, version" ng-model="filterExpr">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="button" ng-click="filterExpr = ''" title="Clear filter" ng-disabled="!filterExpr.length">
-                <i class="fa fa-times"></i>
-              </button>
-            </span>
-          </div>
-          <div class="checkbox checkbox-sm">
-            <label>
-              <input type="checkbox" ng-model="filterComparator"> Strict matching
-            </label>
+          <div class="form-group form-group-filter" ng-class="{'has-error':filterError}">
+            <div class="input-group input-group-sm">
+              <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Filter by name:*, tag:*, is:*, vers:*"
+                  ng-model="filterExpr"
+                  ng-change="onFilterExprChanged()">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" ng-click="clearFilter()" title="Clear filter" ng-disabled="!filterExpr.length">
+                  <i class="fa fa-times"></i>
+                </button>
+              </span>
+            </div>
+            <span class="help-block filter-error">{{ filterError }}</span>
           </div>
         </div>
       </div>
-      <div class="treeview-actions row clearfix">
+      <div class="treeview-actions row">
         <div class="col-xs-12">
           <a href="" class="treeview-action" ng-click="collapse()" title="Collapse">
             <i class="fa fa-compress"></i>
@@ -113,77 +116,75 @@
           <span class="pull-right" title="selection / total">{{ selectedItems.length }} / {{ nbInstances }} </span>
         </div>
       </div>
-      <div class="fit-y">
-        <div class="treecontrol-container">
-          <div id="treecontrol-scroll-container" class="treecontrol-inner-container">
-            <em ng-if="items.length === 0">No instance in current model</em>
-            <ul
-                class="list-unstyled tree"
-                infinite-scroll="loadMore()"
-                infinite-scroll-distance="0"
-                infinite-scroll-container="'#treecontrol-scroll-container'">
-              <li
-                  class="item"
-                  ng-repeat="item in items | filter:filterExpr:filterComparator | orderBy:'name':treeReverse | limitTo:limit track by item.path"
-                  ng-class="{ selected: item.selected, expanded: !item.folded }">
-                <span class="icon {{ item.type }}">
-                  <i
-                      class="expand-handle fa"
-                      ng-class="!item.folded ? 'fa-minus':'fa-plus'"
-                      ng-if="item.children && item.children.length > 0"
-                      ng-click="onExpand(item)"></i>
-                </span>
-                <div
-                    class="name"
-                    ng-click="onClick(item)"
-                    ng-mouseenter="item.hovered = true"
-                    ng-mouseleave="item.hovered = false">
-                  <span>{{ item.name }}</span>
-                  <em
-                      class="text-muted"
-                      ng-class="{ hide: !item.hovered }">{{ item.typeName + '/' + item.version }}</em>
-                  <span
-                      class="tag badge pull-right"
-                      ng-repeat="tag in item.tags"
-                      ng-if="showTags && item.tags.length < 3">{{ tag }}</span>
-                  <span
-                      class="tag badge pull-right"
-                      ng-if="showTags && item.tags.length >= 3"
-                      tooltip="tags: {{ item.tags.join(', ') }}"
-                      tooltip-placement="right"
-                      tooltip-append-to-body="true">...</span>
-                </div>
-                <ul class="list-unstyled tree" ng-if="!item.folded">
-                  <li
-                      class="item"
-                      ng-repeat="child in item.children | filter:filterExpr:filterComparator | orderBy:'name':treeReverse track by child.path"
-                      ng-class="child.selected ? 'selected':''">
-                    <span class="icon {{ child.type }}"></span>
-                    <div
-                        class="name"
-                        ng-click="onClick(child)"
-                        ng-mouseenter="child.hovered = true"
-                        ng-mouseleave="child.hovered = false">
-                      <span>{{ child.name }}</span>
-                      <em
-                          class="text-muted"
-                          ng-class="{ hide: !child.hovered }">{{ child.typeName + '/' + child.version }}</em>
-                      <span
-                          class="tag badge pull-right"
-                          ng-repeat="tag in child.tags"
-                          ng-if="showTags && child.tags.length < 3">{{ tag }}</span>
-                      <span
-                          class="tag badge pull-right"
-                          ng-if="showTags && child.tags.length >= 3"
-                          tooltip="tags: {{ child.tags.join(', ') }}"
-                          tooltip-placement="right"
-                          tooltip-append-to-body="true">...</span>
-                    </div>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </div>
+      <div class="treecontrol-container">
+        <div id="treecontrol-scroll-container" class="treecontrol-inner-container">
+          <em ng-if="items.length === 0">No instance in current model</em>
+          <ul
+              class="list-unstyled tree"
+              infinite-scroll="loadMore()"
+              infinite-scroll-distance="0"
+              infinite-scroll-container="'#treecontrol-scroll-container'">
+            <li
+                class="item"
+                ng-repeat="item in items | doFilter:query | orderBy:'name':treeReverse | limitTo:limit track by item.path"
+                ng-class="{ selected: item.selected, expanded: !item.folded }">
+              <span class="icon {{ item.type }}">
+                <i
+                    class="expand-handle fa"
+                    ng-class="!item.folded ? 'fa-minus':'fa-plus'"
+                    ng-if="item.children && item.children.length > 0"
+                    ng-click="onExpand(item)"></i>
+              </span>
+              <div
+                  class="name"
+                  ng-click="onClick(item)"
+                  ng-mouseenter="item.hovered = true"
+                  ng-mouseleave="item.hovered = false">
+                <span>{{ item.name }}</span>
+                <em
+                    class="text-muted"
+                    ng-class="{ hide: !item.hovered }">{{ item.typeName + '/' + item.version }}</em>
+                <span
+                    class="tag badge pull-right"
+                    ng-repeat="tag in item.tags"
+                    ng-if="showTags && item.tags.length < 3">{{ tag }}</span>
+                <span
+                    class="tag badge pull-right"
+                    ng-if="showTags && item.tags.length >= 3"
+                    tooltip="tags: {{ item.tags.join(', ') }}"
+                    tooltip-placement="right"
+                    tooltip-append-to-body="true">...</span>
+              </div>
+              <ul class="list-unstyled tree" ng-if="!item.folded">
+                <li
+                    class="item"
+                    ng-repeat="child in item.children | doFilter:query | orderBy:'name':treeReverse track by child.path"
+                    ng-class="child.selected ? 'selected':''">
+                  <span class="icon {{ child.type }}"></span>
+                  <div
+                      class="name"
+                      ng-click="onClick(child)"
+                      ng-mouseenter="child.hovered = true"
+                      ng-mouseleave="child.hovered = false">
+                    <span>{{ child.name }}</span>
+                    <em
+                        class="text-muted"
+                        ng-class="{ hide: !child.hovered }">{{ child.typeName + '/' + child.version }}</em>
+                    <span
+                        class="tag badge pull-right"
+                        ng-repeat="tag in child.tags"
+                        ng-if="showTags && child.tags.length < 3">{{ tag }}</span>
+                    <span
+                        class="tag badge pull-right"
+                        ng-if="showTags && child.tags.length >= 3"
+                        tooltip="tags: {{ child.tags.join(', ') }}"
+                        tooltip-placement="right"
+                        tooltip-append-to-body="true">...</span>
+                  </div>
+                </li>
+              </ul>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
