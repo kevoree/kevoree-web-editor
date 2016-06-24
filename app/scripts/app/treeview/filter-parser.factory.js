@@ -1,5 +1,5 @@
 'use strict';
-
+/* jshint ignore:start */
 angular.module('editorApp')
   .factory('kFilterParser', function () {
     /*
@@ -7,7 +7,6 @@ angular.module('editorApp')
      *
      * http://pegjs.org/
      */
-
     function peg$subclass(child, parent) {
       function ctor() { this.constructor = child; }
       ctor.prototype = parent.prototype;
@@ -1323,3 +1322,4 @@ angular.module('editorApp')
       parse:       peg$parse
     };
   });
+  /* jshint ignore:end */

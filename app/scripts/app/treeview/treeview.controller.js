@@ -111,7 +111,6 @@ angular.module('editorApp')
     $scope.nbInstances = 0;
     $scope.showTags = true;
     $scope.selectedItems = [];
-    $scope.filter = { showPopover: false };
     $scope.filterExpr = '';
     $scope.filterComparator = false;
     $scope.treeReverse = false;
@@ -314,9 +313,9 @@ angular.module('editorApp')
     };
 
     $scope.clearFilter = function () {
+      $scope.query = null;
       $scope.filterExpr = '';
       $scope.filterError = null;
-      $scope.filter.showPopover = false;
     };
 
     var filterTimeout;
@@ -331,16 +330,13 @@ angular.module('editorApp')
       if ($scope.filterExpr.length === 0) {
         $scope.query = null;
         $scope.filterError = null;
-        $scope.filter.showPopover = false;
       } else {
         try {
           $scope.query = kFilterParser.parse($scope.filterExpr);
           $scope.filterError = null;
-          $scope.filter.showPopover = false;
         } catch (err) {
           $scope.query = null;
           $scope.filterError = err.name + ': "' + err.found + '" at col.'+err.location.start.column;
-          $scope.filter.showPopover = true;
         }
       }
     };
@@ -376,34 +372,6 @@ angular.module('editorApp')
         });
       };
       angular.element('input#file').click();
-    };
-
-    $scope.dndLoad = function(filename, data) {
-      $timeout(function() {
-        $scope.loading = true;
-        $timeout(function() {
-          var oldModel = kEditor.getModel();
-          try {
-            var loader = kFactory.createJSONLoader();
-            var model = loader.loadModelFromString(data).get(0);
-            kEditor.setModel(model);
-            Notification.success({
-              title: 'Open from file (dnd)',
-              message: 'Model loaded from <strong>' + filename + '</strong>'
-            });
-          } catch (err) {
-            console.warn('[treeview.controller.dndLoad()] Error loading model file');
-            console.error(err.stack);
-            Notification.error({
-              title: 'Open from file (dnd)',
-              message: 'Unable to load a model from <strong>' + filename + '</strong>'
-            });
-            kEditor.setModel(oldModel);
-          } finally {
-            $scope.loading = false;
-          }
-        });
-      });
     };
 
     $scope.merge = function(evt) {

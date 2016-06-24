@@ -8,10 +8,14 @@ angular.module('editorApp')
       link: function (scope, element, attrs) {
         var fn = $parse(attrs.dropTarget);
         var counter = 0;
+        var id = 'id_' + Math.floor((Math.random()*10000)+1);
 
         function dropHandler(event) {
           event.preventDefault();
           event.stopPropagation();
+          counter = 0;
+          angular.element('#'+id).remove();
+          
           if (event.dataTransfer) {
             if (event.dataTransfer.files.length) {
               var file = event.dataTransfer.files[0],
@@ -29,9 +33,6 @@ angular.module('editorApp')
               reader.readAsText(file);
             }
           }
-
-          counter = 0;
-          element.find('.droppable').remove();
         }
 
         function dragOverHandler(event) {
@@ -45,7 +46,7 @@ angular.module('editorApp')
           counter++;
           if (counter === 1) {
             element.append(
-              angular.element('<div>', { class: 'droppable' }).append(
+              angular.element('<div>', { id: id, class: 'overlay' }).append(
                 angular.element('<p>', { class: 'center-message' })
                     .html('Drop to load the model')));
           }
@@ -56,7 +57,7 @@ angular.module('editorApp')
           event.stopPropagation();
           counter--;
           if (counter === 0) {
-            element.find('.droppable').remove();
+            element.find('#'+id).remove();
           }
         }
 

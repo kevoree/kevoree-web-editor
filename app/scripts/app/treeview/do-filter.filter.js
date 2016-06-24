@@ -13,7 +13,13 @@ angular.module('editorApp')
     }
 
     function atomicName(item, expr) {
-      return test(item.name, expr.content);
+      var match = test(item.name, expr.content);
+      if (!match && item.children) {
+        return item.children.some(function (child) {
+          return test(child.name, expr.content);
+        });
+      }
+      return match;
     }
 
     function name(items, expr) {
@@ -23,31 +29,46 @@ angular.module('editorApp')
     }
 
     function atomicIs(item, expr) {
+      var match;
       switch (expr.content) {
         case 'node':
-          return item.type === 'node';
+          match = item.type === 'node';
+          break;
 
         case 'chan':
         case 'channel':
-          return item.type === 'channel';
+          match = item.type === 'channel';
+          break;
 
         case 'comp':
         case 'component':
-          return item.type === 'component';
+          match = item.type === 'component';
+          break;
 
         case 'group':
         case 'grp':
-          return item.type === 'group';
+          match = item.type === 'group';
+          break;
 
         case 'selected':
-          return item.selected;
+          match = item.selected;
+          break;
 
         case 'folded':
-          return item.folded;
+          match = item.folded;
+          break;
 
         default:
-          return true;
+          match = false;
+          break;
       }
+
+      if (!match && item.children) {
+        return item.children.some(function (child) {
+          return atomicIs(child, expr);
+        });
+      }
+      return match;
     }
 
     function is(items, expr) {
@@ -57,9 +78,16 @@ angular.module('editorApp')
     }
 
     function atomicTag(item, expr) {
-      return item.tags.some(function (tag) {
+      var match = item.tags.some(function (tag) {
         return test(tag, expr.content);
       });
+
+      if (!match && item.children) {
+        return item.children.some(function (child) {
+          return atomicTag(child, expr);
+        });
+      }
+      return match;
     }
 
     function tag(items, expr) {
@@ -69,7 +97,14 @@ angular.module('editorApp')
     }
 
     function atomicVers(item, expr) {
-      return test(item.version, expr.content);
+      var match = test(item.version, expr.content);
+
+      if (!match && item.children) {
+        return item.children.some(function (child) {
+          return atomicVers(child, expr);
+        });
+      }
+      return match;
     }
 
     function vers(items, expr) {
@@ -77,8 +112,6 @@ angular.module('editorApp')
         return atomicVers(item, expr);
       });
     }
-
-
 
     function and(items, expr) {
       var filtered = items;
@@ -104,34 +137,6 @@ angular.module('editorApp')
         filtered = filtered.concat(toAdd);
       });
       return filtered;
-
-      // return items.filter(function (item) {
-      //   var isFilter = false, nameFilter = false, tagFilter = false,
-      //       versFilter = false, andFilter = false, orFilter = false;
-      //
-      //   expr.content.forEach(function (expr) {
-      //     switch (expr.type) {
-      //       case 'is':
-      //         isFilter = atomicIs(item, expr);
-      //         break;
-      //
-      //       case 'name':
-      //         nameFilter = atomicName(item, expr);
-      //         break;
-      //
-      //       case 'vers':
-      //         versFilter = atomicVers(item, expr);
-      //         break;
-      //
-      //       case 'tag':
-      //         tagFilter = atomicTag(item, expr);
-      //         break;
-      //     }
-      //   });
-      //
-      //   return isFilter || nameFilter || tagFilter || versFilter ||
-      //          andFilter || orFilter;
-      // });
     }
 
     query = function (items, expr) {

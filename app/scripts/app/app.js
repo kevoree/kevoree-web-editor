@@ -23,7 +23,7 @@ angular
         'hljs',
         'infinite-scroll'
     ])
-    .run(function($rootScope, $stateParams, kEditor, kRegistry, kWs, Notification, VERSION, KEVOREE_REGISTRY_URL) {
+    .run(function($rootScope, $stateParams, kEditor, kFactory, kRegistry, kWs, Notification, VERSION, KEVOREE_REGISTRY_URL) {
         $rootScope.VERSION = VERSION;
         $rootScope.KEVOREE_REGISTRY_URL = KEVOREE_REGISTRY_URL;
 
@@ -48,6 +48,28 @@ angular
                     });
                 }
             });
+        };
+
+        $rootScope.dndLoad = function(filename, data) {
+          var oldModel = kEditor.getModel();
+          try {
+            var loader = kFactory.createJSONLoader();
+            var model = loader.loadModelFromString(data).get(0);
+            kEditor.setModel(model, function () {
+              Notification.success({
+                title: 'Open from file (dnd)',
+                message: 'Model loaded from <strong>' + filename + '</strong>'
+              });
+            });
+          } catch (err) {
+            console.warn('Error loading model from file');
+            console.warn(err.stack);
+            Notification.error({
+              title: 'Open from file (dnd)',
+              message: 'Unable to load a model from <strong>' + filename + '</strong>'
+            });
+            kEditor.setModel(oldModel);
+          }
         };
 
         kRegistry.init()

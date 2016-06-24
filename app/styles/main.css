@@ -11,7 +11,7 @@ body {
   padding: 8px 15px 0;
 }
 #container {
-  margin-top: 65px;
+  margin-top: 51px;
 }
 #loading {
   z-index: 1002;
@@ -42,7 +42,7 @@ body {
 .kevscript-editor.extended .CodeMirror {
   height: 200px;
 }
-.droppable {
+.overlay {
   position: absolute;
   top: 0;
   right: 0;
@@ -51,18 +51,17 @@ body {
   z-index: 1000;
   opacity: .7;
   background-color: black;
+  display: table;
+  width: 100%;
+  height: 100%;
 }
 .center-message {
   color: #fff;
   font-family: monospace;
   font-size: 45px;
-  left: 0;
-  margin-top: -37px;
-  position: absolute;
-  right: 0;
   text-align: center;
-  top: 50%;
-  background-color: black;
+  vertical-align: middle;
+  display: table-cell;
 }
 #tree-container {
   margin-top: 15px;
@@ -498,13 +497,25 @@ body {
   margin-bottom: 10px;
   vertical-align: bottom;
 }
+.kevs-container {
+  margin-top: 10px;
+}
 @media (min-width: 992px) {
-  .tab-container {
+  .libs-container {
     position: absolute;
-    top: 76px;
-    left: 0;
+    top: 61px;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    overflow: hidden;
+    padding: 10px 0 10px 0;
+  }
+  .tree-container {
+    position: absolute;
+    top: 75px;
     right: 0;
     bottom: 0;
+    left: 0;
     overflow: hidden;
     padding: 10px 0 10px 0;
   }
@@ -591,11 +602,14 @@ body {
   .libraries-selected-tdef {
     padding-bottom: 10px;
   }
-  .tab-container .loading-content {
+  .libs-container .loading-content {
     padding: 10px;
   }
-  .tab-container {
-    margin-top: 20px;
+  .tree-container {
+    margin-top: 25px;
+  }
+  .tree-container > * {
+    padding: 0;
   }
   .treeview-rightpanel {
     margin: 15px 0;
@@ -608,6 +622,11 @@ body {
   }
   .tab-set .nav-tabs> li> a, .tab-set .nav-tabs> li> a:hover, .tab-set .nav-tabs> li> a:focus, .tab-set .nav-tabs> li.active> a, .tab-set .nav-tabs> li.active> a:hover, .tab-set .nav-tabs> li.active> a:focus {
     margin: 0;
+  }
+}
+@media (max-width: 767px) {
+  .kevs-container {
+    margin-top: 0;
   }
 }
 @media (min-width: 768px) {
@@ -697,9 +716,6 @@ body {
   padding: 5px 10px;
 }
 @media (max-width: 767px) {
-  .navbar {
-    margin-bottom: 10px;
-  }
   .sidebar {
     display: none;
   }

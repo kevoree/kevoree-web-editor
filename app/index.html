@@ -26,15 +26,19 @@
     <link rel="stylesheet" href="styles/cm-kevscript.css">
     <!-- endbuild -->
   </head>
-  <body data-ng-app="editorApp">
+  <body ng-app="editorApp">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <div data-ui-view="navbar"></div>
+    <div ui-view="navbar"></div>
     <div id="container" class="container-fluid">
-
-      <div data-ui-view="content" class="row"></div>
+      <div
+          ui-view="content"
+          class="row"
+          loading-overlay
+          drop-target="dndLoad($name, $data)">
+      </div>
     </div>
 
     <div id="bootstrap-container">
@@ -181,6 +185,7 @@
     <script src="scripts/components/kevoree/stringToNumber.directive.js"></script>
     <script src="scripts/components/kevoree/instanceName.directive.js"></script>
     <script src="scripts/components/kevoree/kevoree.factory.js"></script>
+    <script src="scripts/components/kevoree/loading-overlay.directive.js"></script>
     <script src="scripts/components/kevoree/ui/ui.factory.js"></script>
     <script src="scripts/components/kevoree/ui/ui.constant.js"></script>
     <script src="scripts/components/kevoree/ui/createBinding.factory.js"></script>

@@ -42,6 +42,24 @@ angular.module('editorApp')
         });
     }
 
+    function updateEditor() {
+      if (storage.get(AUTOLOAD_KEVS, true) && editor) {
+        try {
+          var modelStr = kScript.parseModel(kEditor.getModel());
+          editor.setValue(modelStr);
+        } catch (err) {
+          console.warn('[kevscript.controller.editorLoaded()] Error creating Kevscript from model');
+          console.error(err.stack);
+          Notification.error({
+            startTop: 65,
+            title: 'KevScript parser',
+            message: 'Unable to convert current model to KevScript',
+            delay: 5000
+          });
+        }
+      }
+    }
+
     $scope.kevscript = '';
     $scope.processing = false;
     $scope.message = null;
@@ -63,21 +81,7 @@ angular.module('editorApp')
 
     $scope.editorLoaded = function(_editor) {
       editor = _editor;
-      if (storage.get(AUTOLOAD_KEVS, true)) {
-        try {
-          var modelStr = kScript.parseModel(kEditor.getModel());
-          editor.setValue(modelStr);
-        } catch (err) {
-          console.warn('[kevscript.controller.editorLoaded()] Error creating Kevscript from model');
-          console.error(err.stack);
-          Notification.error({
-            startTop: 65,
-            title: 'KevScript parser',
-            message: 'Unable to convert current model to KevScript',
-            delay: 5000
-          });
-        }
-      }
+      updateEditor();
       editor.focus();
     };
 
@@ -122,4 +126,9 @@ angular.module('editorApp')
     };
 
     $scope.save = saveToFile;
+
+    var unregister = kEditor.addNewModelListener('kevscript', updateEditor);
+    $scope.$on('$destroy', function () {
+      unregister();
+    });
   });

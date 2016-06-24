@@ -14,7 +14,6 @@ angular.module('editorApp')
     }
     var unregister = kEditor.addNewModelListener('main', onModelHandler);
 
-    $scope.loading = false;
     $scope.synced = false;
     var syncWS;
 
@@ -24,93 +23,58 @@ angular.module('editorApp')
       evt.preventDefault();
 
       $scope.onFileLoaded = function(filename, data) {
-        $timeout(function() {
-          $scope.loading = true;
-          $timeout(function() {
-            var oldModel = kEditor.getModel();
-            try {
-              var loader = kFactory.createJSONLoader();
-              var model = loader.loadModelFromString(data).get(0);
-              kEditor.setModel(model);
-              Notification.success({
-                title: 'Open from file',
-                message: 'Model loaded from <strong>' + filename + '</strong>'
-              });
-            } catch (err) {
-              console.warn('[main.controller.open()] Error loading model file');
-              console.error(err.stack);
-              Notification.error({
-                title: 'Open from file',
-                message: 'Unable to load a model from <strong>' + filename + '</strong>'
-              });
-              kEditor.setModel(oldModel);
-            } finally {
-              $scope.loading = false;
-            }
-          });
-        });
-      };
-      angular.element('input#file').click();
-    };
-
-    $scope.dndLoad = function(filename, data) {
-      $timeout(function() {
-        $scope.loading = true;
-        $timeout(function() {
-          var oldModel = kEditor.getModel();
-          try {
-            var loader = kFactory.createJSONLoader();
-            var model = loader.loadModelFromString(data).get(0);
-            kEditor.setModel(model);
+        var oldModel = kEditor.getModel();
+        try {
+          var loader = kFactory.createJSONLoader();
+          var model = loader.loadModelFromString(data)
+            .get(0);
+          kEditor.setModel(model, function() {
             Notification.success({
-              title: 'Open from file (dnd)',
+              title: 'Open from file',
               message: 'Model loaded from <strong>' + filename + '</strong>'
             });
-          } catch (err) {
-            console.warn('[main.controller.dndLoad()] Error loading model file');
-            console.error(err.stack);
-            Notification.error({
-              title: 'Open from file (dnd)',
-              message: 'Unable to load a model from <strong>' + filename + '</strong>'
-            });
-            kEditor.setModel(oldModel);
-          } finally {
-            $scope.loading = false;
-          }
-        });
-      });
+          });
+        } catch (err) {
+          console.warn('[main.controller.open()] Error loading model file');
+          console.error(err.stack);
+          Notification.error({
+            title: 'Open from file',
+            message: 'Unable to load a model from <strong>' + filename + '</strong>'
+          });
+          kEditor.setModel(oldModel);
+        }
+      };
+      angular.element('input#file')
+        .click();
     };
 
     $scope.merge = function(evt) {
       evt.preventDefault();
       $scope.onFileLoaded = function mergeModel(filename, data) {
-        $timeout(function() {
-          $scope.loading = true;
-          $timeout(function() {
-            try {
-              var loader = kFactory.createJSONLoader();
-              var compare = kFactory.createModelCompare();
-              var model = loader.loadModelFromString(data).get(0);
-              compare.merge(model, kEditor.getModel()).applyOn(model);
-              kEditor.setModel(model);
-              Notification.success({
-                title: 'Merge from file',
-                message: 'Model merged with <strong>' + filename + '</strong>'
-              });
-            } catch (err) {
-              console.warn('[main.controller.merge()] Error loading model file');
-              console.error(err.stack);
-              Notification.error({
-                title: 'Merge from file',
-                message: 'Unable to merge the model with <strong>' + filename + '</strong>'
-              });
-            } finally {
-              $scope.loading = false;
-            }
+        try {
+          var loader = kFactory.createJSONLoader();
+          var compare = kFactory.createModelCompare();
+          var model = loader.loadModelFromString(data)
+            .get(0);
+          compare.merge(model, kEditor.getModel())
+            .applyOn(model);
+          kEditor.setModel(model, function() {
+            Notification.success({
+              title: 'Merge from file',
+              message: 'Model merged with <strong>' + filename + '</strong>'
+            });
           });
-        });
+        } catch (err) {
+          console.warn('[main.controller.merge()] Error loading model file');
+          console.error(err.stack);
+          Notification.error({
+            title: 'Merge from file',
+            message: 'Unable to merge the model with <strong>' + filename + '</strong>'
+          });
+        }
       };
-      angular.element('input#file').click();
+      angular.element('input#file')
+        .click();
     };
 
     $scope.openFromNode = function(evt) {
@@ -128,7 +92,8 @@ angular.module('editorApp')
 
           $modalInstance.rendered.then(function() {
             $timeout(function() {
-              angular.element('#host').focus();
+              angular.element('#host')
+                .focus();
             }, 250);
           });
 
@@ -141,12 +106,13 @@ angular.module('editorApp')
                   $scope.error = err.message;
                 });
               } else {
-                kEditor.setModel(model);
-                Notification.success({
-                  title: $scope.title,
-                  message: 'Model loaded from <strong>' + url + '</strong>'
-                });
                 $modalInstance.close();
+                kEditor.setModel(model, function() {
+                  Notification.success({
+                    title: $scope.title,
+                    message: 'Model loaded from <strong>' + url + '</strong>'
+                  });
+                });
               }
             });
           };
@@ -173,7 +139,8 @@ angular.module('editorApp')
 
           $modalInstance.rendered.then(function() {
             $timeout(function() {
-              angular.element('#host').focus();
+              angular.element('#host')
+                .focus();
             }, 250);
           });
 
@@ -186,14 +153,16 @@ angular.module('editorApp')
                   $scope.error = err.message;
                 });
               } else {
-                var compare = kFactory.createModelCompare();
-                compare.merge(model, kEditor.getModel()).applyOn(model);
-                kEditor.setModel(model);
-                Notification.success({
-                  title: $scope.title,
-                  message: 'Model merged with <strong>' + url + '</strong>'
-                });
                 $modalInstance.close();
+                var compare = kFactory.createModelCompare();
+                compare.merge(model, kEditor.getModel())
+                  .applyOn(model);
+                kEditor.setModel(model, function() {
+                  Notification.success({
+                    title: $scope.title,
+                    message: 'Model merged with <strong>' + url + '</strong>'
+                  });
+                });
               }
             });
           };
@@ -269,11 +238,13 @@ angular.module('editorApp')
 
                 var loader = kFactory.createJSONLoader();
                 try {
-                  var model = loader.loadModelFromString(data).get(0);
-                  kEditor.setModel(model);
-                  Notification.success({
-                    title: $scope.title,
-                    message: 'Model updated from sync with <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong>'
+                  var model = loader.loadModelFromString(data)
+                    .get(0);
+                  kEditor.setModel(model, function() {
+                    Notification.success({
+                      title: $scope.title,
+                      message: 'Model updated from sync with <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong>'
+                    });
                   });
                 } catch (err) {
                   Notification.error({
@@ -335,39 +306,41 @@ angular.module('editorApp')
 
     // copy/paste logic
     var clipboard = [];
-    $scope.copy = function () {
-        clipboard = ui.getSelectedPaths().filter(function (elem) {
-            return typeof elem === 'string';
+    $scope.copy = function() {
+      clipboard = ui.getSelectedPaths()
+        .filter(function(elem) {
+          return typeof elem === 'string';
         });
     };
-    $scope.paste = function () {
-        clipboard.forEach(function (path) {
-            var model = kEditor.getModel();
-            var instance = model.findByPath(path);
-            if (instance) {
-                var clone = kModelHelper.clone(instance);
-                switch (kModelHelper.getTypeDefinitionType(instance.typeDefinition)) {
-                    case 'node':
-                        model.addNodes(clone);
-                        if (instance.host) {
-                            instance.host.addHosts(clone);
-                        }
-                        break;
-                    case 'group':
-                        model.addGroups(clone);
-                        break;
-                    case 'channel':
-                        model.addHubs(clone);
-                        break;
-                    case 'component':
-                        instance.eContainer().addComponents(clone);
-                        break;
-                }
-            }
-        });
-        if (clipboard.length > 0) {
-            kEditor.drawModel();
+    $scope.paste = function() {
+      clipboard.forEach(function(path) {
+        var model = kEditor.getModel();
+        var instance = model.findByPath(path);
+        if (instance) {
+          var clone = kModelHelper.clone(instance);
+          switch (kModelHelper.getTypeDefinitionType(instance.typeDefinition)) {
+            case 'node':
+              model.addNodes(clone);
+              if (instance.host) {
+                instance.host.addHosts(clone);
+              }
+              break;
+            case 'group':
+              model.addGroups(clone);
+              break;
+            case 'channel':
+              model.addHubs(clone);
+              break;
+            case 'component':
+              instance.eContainer()
+                .addComponents(clone);
+              break;
+          }
         }
+      });
+      if (clipboard.length > 0) {
+        kEditor.drawModel();
+      }
     };
 
     $scope.fixOverlapping = function(evt) {
@@ -378,7 +351,8 @@ angular.module('editorApp')
     $scope.deleteAll = function(evt) {
       evt.preventDefault();
       $scope.deleteInstances(evt);
-      kEditor.getModel().removeAllPackages();
+      kEditor.getModel()
+        .removeAllPackages();
     };
 
     $scope.deleteInstances = function(evt) {
@@ -425,116 +399,130 @@ angular.module('editorApp')
     //    });
     //};
 
-    hotkeys.bindTo($scope).add({
-      combo: 'ctrl+o',
-      description: 'Open a model from a file',
-      callback: $scope.open
-    });
+    hotkeys.bindTo($scope)
+      .add({
+        combo: 'ctrl+o',
+        description: 'Open a model from a file',
+        callback: $scope.open
+      });
 
-    hotkeys.bindTo($scope).add({
-      combo: 'ctrl+m',
-      description: 'Merge a model from a file with current model in editor',
-      callback: $scope.merge
-    });
+    hotkeys.bindTo($scope)
+      .add({
+        combo: 'ctrl+m',
+        description: 'Merge a model from a file with current model in editor',
+        callback: $scope.merge
+      });
 
-    hotkeys.bindTo($scope).add({
-      combo: 'ctrl+shift+o',
-      description: 'Open a model from a node',
-      callback: $scope.openFromNode
-    });
+    hotkeys.bindTo($scope)
+      .add({
+        combo: 'ctrl+shift+o',
+        description: 'Open a model from a node',
+        callback: $scope.openFromNode
+      });
 
-    hotkeys.bindTo($scope).add({
-      combo: 'ctrl+shift+m',
-      description: 'Merge a model from a node with current model in editor',
-      callback: $scope.mergeFromNode
-    });
+    hotkeys.bindTo($scope)
+      .add({
+        combo: 'ctrl+shift+m',
+        description: 'Merge a model from a node with current model in editor',
+        callback: $scope.mergeFromNode
+      });
 
-    hotkeys.bindTo($scope).add({
-      combo: 'ctrl+shift+g',
-      description: 'Connect to a Web Socket server and stay synced with it',
-      callback: $scope.connectSync
-    });
+    hotkeys.bindTo($scope)
+      .add({
+        combo: 'ctrl+shift+g',
+        description: 'Connect to a Web Socket server and stay synced with it',
+        callback: $scope.connectSync
+      });
 
-    hotkeys.bindTo($scope).add({
-      combo: 'ctrl+s',
-      description: 'Save the current model into a JSON file',
-      callback: function(evt) {
-        evt.preventDefault();
-        var saveFile = $scope.save;
-        $modal
-          .open({
-            templateUrl: 'scripts/components/util/filename.modal.html',
-            size: 'sm',
-            controller: function($scope, $modalInstance) {
-              $scope.title = 'Save model';
-              $scope.body = 'Would you like to save your current model to a file?';
-              $scope.filename = 'model' + (Math.floor(Math.random() * (1000 - 100)) + 100);
-              $modalInstance.rendered.then(function() {
-                $timeout(function() {
-                  angular.element('#filename').focus();
-                }, 250);
-              });
+    hotkeys.bindTo($scope)
+      .add({
+        combo: 'ctrl+s',
+        description: 'Save the current model into a JSON file',
+        callback: function(evt) {
+          evt.preventDefault();
+          var saveFile = $scope.save;
+          $modal
+            .open({
+              templateUrl: 'scripts/components/util/filename.modal.html',
+              size: 'sm',
+              controller: function($scope, $modalInstance) {
+                $scope.title = 'Save model';
+                $scope.body = 'Would you like to save your current model to a file?';
+                $scope.filename = 'model' + (Math.floor(Math.random() * (1000 - 100)) + 100);
+                $modalInstance.rendered.then(function() {
+                  $timeout(function() {
+                    angular.element('#filename')
+                      .focus();
+                  }, 250);
+                });
 
-              $scope.save = function() {
-                function endsWith(str, suffix) {
-                  return str.indexOf(suffix, str.length - suffix.length) !== -1;
-                }
-                var suffix = '.json';
-                if (endsWith($scope.filename, suffix)) {
-                  $scope.filename = $scope.filename.substr(0, $scope.filename.length - suffix.length);
-                }
-                saveFile(evt, $scope.filename);
-                $modalInstance.close();
-              };
-            }
-          });
-      }
-    });
+                $scope.save = function() {
+                  function endsWith(str, suffix) {
+                    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+                  }
+                  var suffix = '.json';
+                  if (endsWith($scope.filename, suffix)) {
+                    $scope.filename = $scope.filename.substr(0, $scope.filename.length - suffix.length);
+                  }
+                  saveFile(evt, $scope.filename);
+                  $modalInstance.close();
+                };
+              }
+            });
+        }
+      });
 
-    hotkeys.bindTo($scope).add({
-      combo: 'alt+o',
-      description: 'Fix overlapping',
-      callback: $scope.fixOverlapping
-    });
+    hotkeys.bindTo($scope)
+      .add({
+        combo: 'alt+o',
+        description: 'Fix overlapping',
+        callback: $scope.fixOverlapping
+      });
 
-    hotkeys.bindTo($scope).add({
-      combo: 'alt+shift+d',
-      description: 'Delete everything in the current model',
-      callback: $scope.deleteAll
-    });
+    hotkeys.bindTo($scope)
+      .add({
+        combo: 'alt+shift+d',
+        description: 'Delete everything in the current model',
+        callback: $scope.deleteAll
+      });
 
-    hotkeys.bindTo($scope).add({
-      combo: 'alt+shift+i',
-      description: 'Delete instances in the current model',
-      callback: $scope.deleteInstances
-    });
+    hotkeys.bindTo($scope)
+      .add({
+        combo: 'alt+shift+i',
+        description: 'Delete instances in the current model',
+        callback: $scope.deleteInstances
+      });
 
-    hotkeys.bindTo($scope).add({
-      combo: 'del',
-      description: 'Delete selected instances in the current model',
-      callback: $scope.deleteSelection
-    });
+    hotkeys.bindTo($scope)
+      .add({
+        combo: 'del',
+        description: 'Delete selected instances in the current model',
+        callback: $scope.deleteSelection
+      });
 
-    hotkeys.bindTo($scope).add({
-      combo: 'ctrl+a',
-      description: 'Select all instances',
-      callback: function(evt) {
-        evt.preventDefault();
-        ui.selectAll();
-      }
-    });
+    hotkeys.bindTo($scope)
+      .add({
+        combo: 'ctrl+a',
+        description: 'Select all instances',
+        callback: function(evt) {
+          evt.preventDefault();
+          ui.selectAll();
+        }
+      });
 
-    hotkeys.bindTo($scope).add({
+    hotkeys.bindTo($scope)
+      .add({
         combo: 'ctrl+c',
         description: 'Copy the selected instance(s)',
         callback: $scope.copy
-    });
+      });
 
-    hotkeys.bindTo($scope).add({
+    hotkeys.bindTo($scope)
+      .add({
         combo: 'ctrl+v',
         description: 'Paste the selected instance(s)',
         callback: $scope.paste
-    });
+      });
 
     //hotkeys.bindTo($scope).add({
     //    combo: 'ctrl+z',
@@ -548,7 +536,7 @@ angular.module('editorApp')
     //    callback: $scope.redo
     //});
 
-    $scope.$on('$destroy', function () {
+    $scope.$on('$destroy', function() {
       unregister();
     });
   });
