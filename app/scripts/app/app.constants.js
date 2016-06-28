@@ -17,6 +17,6 @@ angular.module('editorApp')
 
 .constant('KWE_SELECTED', 'kwe_selected')
 
-.constant('KEVOREE_REGISTRY_URL', 'http://registry.kevoree.org/')
+.constant('KEVOREE_REGISTRY_URL', 'http://registry.kevoree.org')
 
 ;
