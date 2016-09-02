@@ -9,7 +9,7 @@ angular.module('editorApp')
              */
             initDictionaries: function (instance) {
                 // create dictionary values if none set
-                instance.dictionary = instance.dictionary || kFactory.createDictionary();
+                instance.dictionary = instance.dictionary || kFactory.createDictionary().withGenerated_KMF_ID('0');
                 if (instance.typeDefinition.dictionaryType) {
                     instance.typeDefinition.dictionaryType.attributes
                         .array.forEach(function (attr) {

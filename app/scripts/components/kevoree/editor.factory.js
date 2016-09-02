@@ -2,6 +2,8 @@
 
 angular.module('editorApp')
   .factory('kEditor', function($timeout, kFactory, kModelHelper, kInstance, ui, Notification, KWE_POSITION, KWE_FOLDED, KWE_SELECTED, KWE_TAG, CHANNEL_RADIUS, GROUP_RADIUS) {
+    var KevoreeLibrary = require('kevoree-library');
+    var modelValidator = require('kevoree-validator');
 
     function modelReactor(editor) {
       /**
@@ -393,7 +395,7 @@ angular.module('editorApp')
     }
 
     function KevoreeEditor() {
-      this.model = kFactory.createContainerRoot();
+      this.model = kFactory.createContainerRoot().withGenerated_KMF_ID(0);
       kFactory.root(this.model);
       this.preSetModelHandler = [];
       this.postSetModelHandler = [];
@@ -404,7 +406,6 @@ angular.module('editorApp')
         elementChanged: modelReactor(this)
       };
       ui.setModel(this.model);
-      window.EDITOR = this;
     }
 
     KevoreeEditor.prototype = {
@@ -423,6 +424,17 @@ angular.module('editorApp')
       setModel: function(model, callback) {
         this.preSetModelHandler.forEach(function(handler) { handler(); });
         setTimeout(function () {
+          try {
+            modelValidator(model);
+          } catch (err) {
+            Notification.error({
+              title: 'ModelValidationError',
+              message: 'Unable to set model ('+err.message+')'
+            });
+            console.log(err.stack);
+            callback(err);
+            return;
+          }
           this.model = model;
           kFactory.root(this.model);
 
@@ -445,8 +457,7 @@ angular.module('editorApp')
       merge: function(model) {
         this.model.removeModelTreeListener(this.modelListener);
         var compare = kFactory.createModelCompare();
-        compare.merge(this.model, model)
-          .applyOn(this.model);
+        compare.merge(this.model, model).applyOn(this.model);
         kFactory.root(this.model);
         this.model.addModelTreeListener(this.modelListener);
         ui.setModel(this.model);

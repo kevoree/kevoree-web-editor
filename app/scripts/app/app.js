@@ -19,36 +19,12 @@ angular
         'ui-notification',
         'cfp.hotkeys',
         'ngDragDrop',
-        'semverSort',
         'hljs',
         'infinite-scroll'
     ])
     .run(function($rootScope, $stateParams, kEditor, kFactory, kRegistry, kWs, Notification, VERSION, KEVOREE_REGISTRY_URL) {
         $rootScope.VERSION = VERSION;
         $rootScope.KEVOREE_REGISTRY_URL = KEVOREE_REGISTRY_URL;
-
-        $rootScope.start = function() {
-            // fade out the loading container when bootstrap is done
-            angular.element('#bootstrap-container').fadeOut(function() {
-                this.remove();
-                if ($stateParams.host) {
-                    kWs.getModel($stateParams.host, $stateParams.port || 9000, $stateParams.path || '', function(err, model, url) {
-                        if (err) {
-                            Notification.error({
-                                title: 'Open from node',
-                                message: 'Unable to load model from <strong>' + url + '</strong>'
-                            });
-                        } else {
-                            kEditor.setModel(model);
-                            Notification.success({
-                                title: 'Open from node',
-                                message: 'Model loaded from <strong>' + url + '</strong>'
-                            });
-                        }
-                    });
-                }
-            });
-        };
 
         $rootScope.dndLoad = function(filename, data) {
           var oldModel = kEditor.getModel();
@@ -72,15 +48,49 @@ angular
           }
         };
 
-        kRegistry.init()
-            .catch(function(err) {
-                Notification.error({
-                    title: 'Kevoree Registry',
-                    message: err.message,
-                    delay: 10000
+        $rootScope.keys = function (obj) {
+          if (angular.isObject(obj)) {
+            return Object.keys(obj);
+          }
+          return false;
+        };
+
+        var url = new URL(kRegistry.getUrl());
+        var port;
+        if (url.port.length > 0) {
+          port = parseInt(url.port);
+        } else {
+          if (url.protocol === 'http:') {
+            port = 80;
+          } else {
+            port = 443;
+          }
+        }
+        var conf = require('tiny-conf');
+        conf.set('registry.host', url.hostname);
+        conf.set('registry.port', port);
+        conf.set('registry.ssl', url.protocol === 'https:');
+
+        // fade out the loading container when bootstrap is done
+        angular.element('#bootstrap-container').fadeOut(function() {
+            this.remove();
+            if ($stateParams.host) {
+                kWs.getModel($stateParams.host, $stateParams.port || 9000, $stateParams.path || '', function(err, model, url) {
+                    if (err) {
+                        Notification.error({
+                            title: 'Open from node',
+                            message: 'Unable to load model from <strong>' + url + '</strong>'
+                        });
+                    } else {
+                        kEditor.setModel(model);
+                        Notification.success({
+                            title: 'Open from node',
+                            message: 'Model loaded from <strong>' + url + '</strong>'
+                        });
+                    }
                 });
-            })
-            .finally($rootScope.start);
+            }
+        });
     })
     .config(function($stateProvider, $urlRouterProvider, hotkeysProvider, hljsServiceProvider, NotificationProvider) {
         $urlRouterProvider.otherwise('/');

@@ -1,30 +1,108 @@
+<div class="menubar">
+  <div class="menu-btn">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      File&nbsp;<span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li>
+        <a ng-click="open($event)">
+          <span class="name">Open</span>
+          <span class="shortcut">Ctrl+O</span>
+        </a>
+      </li>
+      <li class="divider"></li>
+      <li>
+        <a ng-click="save($event)">
+          <span class="name">Save</span>
+          <span class="shortcut">Ctrl+S</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="menu-btn">
+    <button type="button" class="btn btn-default" ng-click="toggleShortcutHelp()">Help</button>
+  </div>
+</div>
 <div class="kevs-container">
-  <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 well">
-    <div class="row-fluid clearfix">
-      <div class="col-xs-6">
-        <h5>Write some <strong>KevScript</strong>:</h5>
-      </div>
-      <div class="col-xs-offset-8">
-        <button class="btn btn-default pull-right" ng-click="uploadKevscript()">Upload a KevScript &nbsp;<i class="fa fa-upload"></i></button>
-      </div>
+  <div class="col-md-3 clearfix">
+    <div class="col-xs-12 well">
+      <fieldset>
+        <legend class="legend-sm">Context variables</legend>
+        <table class="table table-condensed table-striped no-margin well well-sm">
+          <thead>
+            <tr>
+              <th class="col-xs-1">
+                <a href ng-click="clearCtxVars()" title="Clear values" ng-if="keys(ctxVars).length > 0">
+                  <i class="fa fa-trash-o"></i>
+                </a>
+              </th>
+              <th class="col-xs-5">Key</th>
+              <th class="col-xs-6">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="(key, value) in ctxVars">
+              <th>
+                <a href ng-click="removeCtxVar(key)" title="Remove '{{ key }}'">
+                  <i class="fa fa-trash"></i>
+                </a>
+              </th>
+              <td><code>{{ key }}</code></td>
+              <td><code>{{ value }}</code></td>
+            </tr>
+            <tr>
+              <th style="vertical-align: middle;">
+                <a href ng-click="addCtxVar(newVal)" title="Add">
+                  <i class="fa fa-plus"></i>
+                </a>
+              </th>
+              <td>
+                <input type="text" class="form-control input-xs" ng-model="newVal.key" placeholder="key" ui-keypress="{13: 'addCtxVar(newVal)'}" />
+              </td>
+              <td>
+                <input type="text" class="form-control input-xs" ng-model="newVal.value" placeholder="value" ui-keypress="{13: 'addCtxVar(newVal)'}" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </fieldset>
     </div>
-    <div ng-if="message">
-      <span class="breath"></span>
-      <div class="alert alert-{{ message.type }}">
-        <button type="button" class="close" ng-click="closeMessage()">
-          <span>&times;</span>
-        </button>
-        {{ message.content }}
-      </div>
-    </div>
-    <div class="row-fluid">
-      <div class="kevscript-editor" ui-codemirror="{onLoad: editorLoaded}" ui-codemirror-opts="editorOptions" ng-model="kevscript"></div>
-    </div>
-    <div class="clearfix">
-      <div class="pull-right">
-        <button class="btn btn-default" ng-click="save()" ng-disabled="kevscript.trim().length === 0">Save</button>
-        <button class="btn btn-default" ng-click="merge()" ng-disabled="processing || kevscript.trim().length === 0">{{ processing ? 'Merging' : 'Merge' }}</button>
-      </div>
+  </div>
+  <div class="col-md-9 fit-y">
+    <div class="kevscript-editor-container well fit-y">
+      <fieldset class="fit-y">
+        <legend>KevScript</legend>
+        <div class="kevscript-editor" ui-codemirror="{onLoad: editorLoaded}" ui-codemirror-opts="editorOptions" ng-model="kevscript"></div>
+        <div class="kevscript-editor-buttons">
+          <button class="btn btn-default" ng-click="merge()" ng-disabled="!isMergeable()">{{ processing ? 'Merging' : 'Merge' }}</button>
+        </div>
+        <div class="kevscript-editor-logs">
+          <div ng-if="lintErrors">
+            <div class="text-muted" ng-if="linting">
+              <i class="fa fa-hourglass-half"></i> Linting...
+            </div>
+            <div class="text-success" ng-if="!linting && !error">
+              <i class="fa fa-check"></i> No errors
+            </div>
+            <div class="text-danger" ng-if="!linting && error">
+              <i class="fa fa-times"></i> <strong>Error</strong>: {{ error.message }}
+            </div>
+          </div>
+          <div ng-if="!lintErrors">
+            <div class="text-muted">
+              <i class="fa fa-question-circle"></i> No linting done
+            </div>
+          </div>
+          <div ng-if="lintWarnings">
+            <div class="text-success" ng-if="!linting && lintWarnings.length === 0">
+              <i class="fa fa-check"></i> No warnings
+            </div>
+            <div class="text-warning" ng-if="!linting && lintWarnings.length > 0">
+              <i class="fa fa-warning"></i> {{ lintWarnings.length + ' warning' + (lintWarnings.length > 1 ? 's':'') }}
+            </div>
+          </div>
+        </div>
+      </fieldset>
     </div>
   </div>
 </div>

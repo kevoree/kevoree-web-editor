@@ -8,100 +8,226 @@
  * Controller of the editorApp registry libraries page
  */
 angular.module('editorApp')
-	.controller('LibrariesCtrl', function($scope, $timeout, kRegistry, kModelHelper, kFactory, kEditor) {
-		$scope.loading = true;
+  .controller('LibrariesCtrl', function ($scope, $timeout, kRegistry2, kModelHelper, kFactory, kEditor) {
+    $scope.loading = true;
 
-		kRegistry
-			.init()
-			.then(function(tdefs) {
-				$scope.tdefs = tdefs;
-				$timeout(function() {
-					angular.element('#filter-by-tdef').focus();
-				});
-			})
-			.catch(function(err) {
-				$scope.error = err.message;
-			})
-			.finally(function() {
-				$scope.loading = false;
-			});
+    $scope.groups = [];
+    $scope.nodes = [];
+    $scope.channels = [];
+    $scope.components = [];
 
-		$scope.select = function(evt, tdef) {
-			evt.preventDefault();
+    $scope.selection = [];
 
-			if (!evt.ctrlKey) {
-				$scope.tdefs.getAll().forEach(function(item) {
-					item.selected = false;
-				});
-			}
+    kRegistry2
+      .getAll()
+      .then(function (tdefs) {
+        $scope.url = kRegistry2.getUrl();
+        tdefs.forEach(function (tdef) {
+          if (tdef.type === 'org.kevoree.GroupType') {
+            $scope.groups.push(tdef);
+          } else if (tdef.type === 'org.kevoree.NodeType') {
+            $scope.nodes.push(tdef);
+          } else if (tdef.type === 'org.kevoree.ChannelType') {
+            $scope.channels.push(tdef);
+          } else if (tdef.type === 'org.kevoree.ComponentType') {
+            $scope.components.push(tdef);
+          }
+        });
+        $timeout(function () {
+          angular.element('#filter-by-tdef').focus();
+        });
+      })
+      .catch(function (err) {
+        $scope.error = err.message;
+      })
+      .finally(function () {
+        $scope.loading = false;
+      });
 
-			tdef.selected = !tdef.selected;
-			tdef.uiOpen = tdef.selected;
-		};
+    $scope.select = function (evt, tdef) {
+      evt.preventDefault();
 
-		$scope.changeVersion = function() {
-			$scope.closeError();
-		};
+      if (!angular.isDefined(tdef.open)) {
+        tdef.open = true;
+      }
 
-		$scope.merge = function(tdef) {
-			kRegistry.get(kModelHelper.fqnToPath(tdef.package) + '/typeDefinitions[name=' + tdef.name + ',version=' + tdef.version + ']')
-				.then(function(tdefModel) {
-					try {
-						kEditor.merge(tdefModel);
-						$scope.success = true;
-					} catch (err) {
-						$scope.error = err.message;
-					}
-				})
-				.catch(function(err) {
-					$scope.error = err.message;
-				});
-		};
+      var selected = Boolean(tdef.selected);
+      var selection = $scope.selection.length;
 
-		$scope.mergeAll = function() {
-			$scope.tdefs.getAll()
-				.forEach(function(item) {
-					if (item.selected && item.version) {
-						$scope.merge(item);
-					}
-				});
-		};
+      if (evt.ctrlKey) {
+        if (selected) {
+          // remove it
+          tdef.selected = false;
+        } else {
+          // add it
+          tdef.selected = true;
+        }
+      } else {
+        // unselect all
+        $scope.selection.length = 0;
+        $scope.groups
+          .concat($scope.nodes)
+          .concat($scope.channels)
+          .concat($scope.components).forEach(function (tdef) {
+            tdef.selected = false;
+          });
 
-		$scope.isMergeable = function(tdef) {
-			var mergeable = false;
 
-			if (tdef.version) {
-				mergeable = !kEditor.getModel().findByPath(kModelHelper.pkgFqnToPath(tdef.package) + '/typeDefinitions[name=' + tdef.name + ',version=' + tdef.version + ']');
-			}
+        if (selected && (selection > 1)) {
+          // unselect all but this item
+          tdef.selected = true;
+        } else {
+          // toggle tdef
+          tdef.selected = !selected;
+        }
+      }
 
-			return mergeable;
-		};
+      if (tdef.selected) {
+        if ($scope.selection.indexOf(tdef) === -1) {
+          tdef.selectedVersion = tdef.versions[tdef.versions.length - 1];
+          kRegistry2.addDeployUnits(tdef.namespace.name, tdef.name, tdef.selectedVersion.version, tdef.selectedVersion);
+          $scope.selection.push(tdef);
+        }
+      } else {
+        $scope.selection.splice($scope.selection.indexOf(tdef), 1);
+      }
+    };
 
-		$scope.areMergeable = function() {
-			var tdefs = $scope.tdefs.getAll();
+    $scope.getTdefInModel = function (tdef) {
+      var model = kEditor.getModel();
+      var pkgPath = kModelHelper.pkgFqnToPath(tdef.namespace.name);
+      var tdefPath = '/' + pkgPath + '/typeDefinitions[name=' + tdef.name + ',version=' + tdef.selectedVersion.version + ']';
 
-			for (var i = 0; i < tdefs.length; i++) {
-				if (tdefs[i].selected && tdefs[i].version) {
-					if ($scope.isMergeable(tdefs[i])) {
-						return true;
-					}
-				}
-			}
+      return model.findByPath(tdefPath);
+    };
 
-			return false;
-		};
+    $scope.changeVersion = function (tdef) {
+      kRegistry2.addDeployUnits(tdef.namespace.name, tdef.name, tdef.selectedVersion.version, tdef.selectedVersion);
+      $scope.closeError();
+    };
 
-		$scope.closeError = function() {
-			$scope.error = null;
-		};
+    function createModel(tdef, releases) {
+      var tdefInModel = $scope.getTdefInModel(tdef);
+      if (tdefInModel) {
+        tdefInModel.deployUnits.array.forEach(function (du) {
+          du.delete();
+        });
+        tdefInModel.removeAllDeployUnits();
+      }
 
-		function beforeUnload() {
-			kRegistry.save();
-		}
+      var deeperPkg;
+      var model = kFactory.createContainerRoot().withGenerated_KMF_ID(0);
+      kFactory.root(model);
 
-		window.addEventListener('beforeunload', beforeUnload);
+      function processDeployUnits(dus) {
+        var compare = kFactory.createModelCompare();
+        dus.forEach(function (du) {
+          compare.merge(model, du.model).applyOn(model);
+          var path = deeperPkg.path() + '/deployUnits[name=' + du.name + ',version=' + du.version + ']';
+          model.select(path).array.forEach(function (duInModel) {
+            tdef.selectedVersion.model.addDeployUnits(duInModel);
+          });
+        });
+      }
 
-		$scope.$on('$destroy', function() {
-			window.removeEventListener('beforeunload', beforeUnload);
-		});
-	});
+      var pkg;
+      tdef.namespace.name.split('.').forEach(function (name, index, names) {
+        var newPkg = kFactory.createPackage();
+        newPkg.name = name;
+        if (pkg) {
+          pkg.addPackages(newPkg);
+        } else {
+          model.addPackages(newPkg);
+        }
+        pkg = newPkg;
+        if (index+1 === names.length) {
+          deeperPkg = pkg;
+        }
+      });
+      deeperPkg.addTypeDefinitions(tdef.selectedVersion.model);
+
+      if (releases) {
+        processDeployUnits(tdef.selectedVersion.releaseDus);
+      } else {
+        processDeployUnits(tdef.selectedVersion.latestDus);
+      }
+
+      return model;
+    }
+
+    $scope.useLatest = function (tdef) {
+      try {
+        kEditor.merge(createModel(tdef, false));
+        $scope.success = true;
+      } catch (err) {
+        $scope.error = err.message;
+      }
+    };
+
+    $scope.useReleases = function (tdef) {
+      try {
+        kEditor.merge(createModel(tdef, true));
+        $scope.success = true;
+      } catch (err) {
+        $scope.error = err.message;
+      }
+    };
+
+    $scope.useAllLatest = function () {
+      $scope.selection.forEach(function (tdef) {
+        if (!$scope.isAlreadyInModel(tdef, false)) {
+          $scope.useLatest(tdef);
+        }
+      });
+    };
+
+    $scope.useAllReleases = function () {
+      $scope.selection.forEach(function (tdef) {
+        if (!$scope.isAlreadyInModel(tdef, true)) {
+          $scope.useReleases(tdef);
+        }
+      });
+    };
+
+    $scope.isAlreadyInModel = function (tdef, releases) {
+      var tdefFound = $scope.getTdefInModel(tdef);
+
+      if (tdefFound) {
+        var dus;
+        if (releases) {
+          dus = tdef.selectedVersion.releaseDus || [];
+        } else {
+          dus = tdef.selectedVersion.latestDus || [];
+        }
+        for (var i=0; i < dus.length; i++) {
+          var duPath = 'deployUnits[name='+dus[i].name+',version='+dus[i].version+']';
+          if (tdefFound.eContainer().select(duPath).array.length !== 1) {
+            return false;
+          }
+        }
+      }
+      return tdefFound;
+    };
+
+    $scope.areAlreadyInModel = function (releases) {
+      return $scope.selection.every(function (tdef) {
+        return $scope.isAlreadyInModel(tdef, releases);
+      });
+    };
+
+    $scope.hasReleases = function () {
+      return $scope.selection.some(function (tdef) {
+        return tdef.selectedVersion.releaseDus && tdef.selectedVersion.releaseDus.length;
+      });
+    };
+
+    $scope.hasLatest = function () {
+      return $scope.selection.some(function (tdef) {
+        return tdef.selectedVersion.latestDus && tdef.selectedVersion.latestDus.length;
+      });
+    };
+
+    $scope.closeError = function () {
+      $scope.error = null;
+    };
+  });

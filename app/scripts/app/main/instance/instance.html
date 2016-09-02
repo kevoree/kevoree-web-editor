@@ -34,11 +34,17 @@
                 <select
                         id="version"
                         class="form-control input-sm"
-                        data-ng-model="selectedVersion"
-                        data-ng-change="changeVersion(selectedVersion)"
-                        data-ng-disabled="isReadOnly()">
-                    <option value="{{ version }}" data-ng-repeat="(index, version) in versions | semverReverseSort" data-ng-selected="version === selectedVersion">{{ version }}</option>
+                        ng-model="instance.selectedVersion"
+                        ng-options="version for version in versions"
+                        ng-change="changeVersion(instance.selectedVersion)"
+                        ng-disabled="isReadOnly()">
                 </select>
+            </div>
+            <div class="form-group clearfix">
+                <label>DeployUnits</label>
+                <div ng-repeat="du in instance.typeDefinition.deployUnits.array | orderBy:'name'">
+                  <abbr title="hashcode={{ du.hashcode }}">{{ du.name }} - {{ du.version }} - {{ du.findFiltersByID('platform').value }}</abbr>
+                </div>
             </div>
             <div class="form-group clearfix">
                 <label>State</label>
@@ -49,7 +55,7 @@
             </div>
         </form>
     </div>
-    <div data-ng-if="description">
+    <div>
         <div data-ng-class="type+'-right-bg'">
             <h5 class="sidebar-header sidebar-header-right point-cursor" data-ng-click="descCollapsed = !descCollapsed">
                 <i class="fa" data-ng-class="descCollapsed ? 'fa-plus':'fa-minus'"></i>
@@ -57,8 +63,7 @@
             </h5>
         </div>
         <div class="instance-form" data-collapse="descCollapsed">
-            <p class="text-justify" data-ng-bind-html="description | truncate:descLength | trustHtml"></p>
-            <a class="point-cursor" data-ng-if="showMore" data-ng-click="toggleShowMore()">{{ showMoreAction }}</a>
+          <truncate content="description" length="200" />
         </div>
     </div>
     <div data-ng-switch="processing">

@@ -2,15 +2,18 @@
 
 /* Color scheme */
 
-.cm-s-kevscript .cm-statement { color: #cda869; }
-.cm-s-kevscript .cm-instancepath, .cm-s-kevscript .cm-instancelist { color: #ffb795; }
-/*.cm-s-kevscript .cm-instancelist { color: #eed1b3; }*/
+.cm-s-kevscript .cm-statement { color: #c678dd; }
+.cm-s-kevscript .cm-instancepath { color: #d19a66; }
 .cm-s-kevscript .cm-comment { color: #888; font-style:italic; }
-.cm-s-kevscript .cm-string1 { color: #D2A8A1; }
-.cm-s-kevscript .cm-string2 { color: #9999cc; }
-.cm-s-kevscript .cm-typedef { color: #78CF8A; }
-.cm-s-kevscript .cm-version { color: #24C2C7; }
-.cm-s-kevscript .cm-escapedstring { color: #FF9D00; }
+.cm-s-kevscript .cm-string { color: #8f9d6a; }
+.cm-s-kevscript .cm-typedef { color: #56b6c2; }
+.cm-s-kevscript .cm-namespace { color: #98c379; }
+.cm-s-kevscript .cm-wildcard { color: #24C2C7; }
+.cm-s-kevscript .cm-version { color: #d19a66; }
+.cm-s-kevscript .cm-constant { color: #c678dd; }
+.cm-s-kevscript .cm-escaped { color: #56b6c2; }
+.cm-s-kevscript .cm-ctxvarbracket { color: #e06c75; }
+.cm-s-kevscript .cm-ctxvar { color: #eed1b3; }
 .cm-s-kevscript .cm-error {
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/qH1jAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QUXCToH00Y1UgAAACFJREFUCNdjPMDBUc/AwNDAAAFMTAwMDA0OP34wQgX/AQBYgwYEx4f9lQAAAABJRU5ErkJggg==) repeat-x bottom left;
 }
@@ -20,20 +23,17 @@
 .cm-s-kevscript .cm-searching {
     background: rgba(255, 255, 255, 0.1);
 }
-
-.cm-s-kevscript .cm-atom { color: #CF7EA9; }
+/*.cm-s-kevscript .cm-atom { color: #CF7EA9; }
 .cm-s-kevscript .cm-def { color: #aac6e3; }
 .cm-s-kevscript .cm-property { color: #eed1b3; }
 .cm-s-kevscript .cm-operator {color: #fa8d6a;}
-.cm-s-kevscript .cm-string { color: #8f9d6a; }
-.cm-s-kevscript .cm-string-2 { color: #9d937c; }
 .cm-s-kevscript .cm-qualifier { color: yellow; }
 .cm-s-kevscript .cm-bracket { color: #24C2C7; }
 .cm-s-kevscript .cm-tag { color: #fee4ff }
 .cm-s-kevscript .cm-attribute {  color: #9B859D; }
 .cm-s-kevscript .cm-header {color: blue;}
 .cm-s-kevscript .cm-hr { color: pink; }
-.cm-s-kevscript .cm-link { color: #F4C20B; }
+.cm-s-kevscript .cm-link { color: #F4C20B; }*/
 
 .cm-s-kevscript .CodeMirror-matchingbracket { color: #0f0; }
 .cm-s-kevscript .CodeMirror-nonmatchingbracket { color: #f22; }

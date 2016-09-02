@@ -63,11 +63,15 @@ angular.module('editorApp')
     $scope.kevscript = '';
     $scope.processing = false;
     $scope.message = null;
-
+    $scope.ctxVars = {};
+    $scope.lintErrors = null;
+    $scope.lintWarnings = null;
+    $scope.linting = false;
     $scope.editorOptions = {
+      mode: 'kevscript',
+      theme: 'kevscript',
       lineWrapping: true,
       lineNumbers: true,
-      mode: 'kevscript',
       styleActiveLine: true,
       extraKeys: {
         'Tab': false,
@@ -75,14 +79,35 @@ angular.module('editorApp')
         'Ctrl-S': saveToFile
       },
       gutters: ['CodeMirror-lint-markers'],
-      theme: 'kevscript',
-      lint: true
+      lint: {
+        getAnnotations: CodeMirror.lint.kevscript($scope.ctxVars),
+        async: true,
+        model: kEditor.getModel()
+      }
     };
 
     $scope.editorLoaded = function(_editor) {
       editor = _editor;
+      editor.on('lintStart', function () {
+        $timeout(function () {
+          $scope.linting = true;
+          $scope.lintErrors = $scope.lintWarnings = [];
+        });
+      });
+      editor.on('lintDone', function (error, lintErrors, model) {
+        $timeout(function () {
+          $scope.model = model;
+          $scope.error = error || lintErrors.filter(function (err) { return err.severity === 'error'; })[0];
+          $scope.lintWarnings = lintErrors
+            .filter(function (error) {
+              return error.severity === 'warning';
+            });
+          $scope.linting = false;
+        });
+      });
       updateEditor();
       editor.focus();
+      CodeMirror.signal(editor, 'change', editor);
     };
 
     $scope.uploadKevscript = function() {
@@ -101,25 +126,40 @@ angular.module('editorApp')
       $scope.message = null;
     };
 
+    $scope.isMergeable = function () {
+      return !$scope.processing &&
+             $scope.kevscript.trim().length > 0 &&
+             $scope.lintErrors &&
+             $scope.lintErrors.length === 0;
+    };
+
+    $scope.clearCtxVars = function () {
+      Object.keys($scope.ctxVars).forEach(function (key) {
+        delete $scope.ctxVars[key];
+      });
+      CodeMirror.signal(editor, 'change', editor);
+    };
+
+    $scope.addCtxVar = function (ctxVar) {
+      if (ctxVar.key && ctxVar.value) {
+        $scope.ctxVars[ctxVar.key] = ctxVar.value;
+        ctxVar.key = '';
+        ctxVar.value = '';
+        CodeMirror.signal(editor, 'change', editor);
+      }
+    };
+
+    $scope.removeCtxVar = function (key) {
+      delete $scope.ctxVars[key];
+      CodeMirror.signal(editor, 'change', editor);
+    };
+
     $scope.merge = function() {
       if (!$scope.processing) {
         $scope.processing = true;
-        kScript.parse($scope.kevscript, kEditor.getModel(), function(err, model) {
-          $timeout(function () {
+        $timeout(function () {
+          kEditor.setModel($scope.model, function () {
             $scope.processing = false;
-            if (err) {
-              console.log('KevScript parse error:', err.message);
-              $scope.message = {
-                type: 'danger',
-                content: err.message
-              };
-            } else {
-              $scope.message = {
-                type: 'success',
-                content: 'KevScript successfully applied to current model'
-              };
-              kEditor.setModel(model);
-            }
           });
         });
       }

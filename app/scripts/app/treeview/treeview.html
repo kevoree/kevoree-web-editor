@@ -201,11 +201,6 @@
           <tab-create></tab-create>
         </div>
       </tab>
-      <!-- <tab heading="JSON">
-        <div class="tab-pane-container well">
-          <tab-json></tab-json>
-        </div>
-      </tab> -->
       <tab heading="Params" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-params></tab-params>
@@ -214,11 +209,6 @@
       <tab heading="Tags" ng-if="selectedItems.length">
         <div class="tab-pane-container well">
           <tab-tags></tab-tags>
-        </div>
-      </tab>
-      <tab heading="KevScript" select="$broadcast('treeview:tab:kevs')" ng-if="selectedItems.length">
-        <div class="tab-pane-container well">
-          <tab-kevs></tab-kevs>
         </div>
       </tab>
     </tabset>

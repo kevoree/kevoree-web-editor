@@ -25,6 +25,7 @@
     "angular": false,
     "CodeMirror": false,
     "KevoreeLibrary": false,
+    "KevoreeCommons": false,
     "KevoreeKevscript": false
   }
 }

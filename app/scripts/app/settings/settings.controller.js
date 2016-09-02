@@ -34,14 +34,6 @@ angular.module('editorApp')
               $scope.registryUrl !== kRegistry.getUrl();
       };
 
-      $scope.isKevSCacheEmpty = function () {
-          return kScript.getCacheManager().getAll().length === 0;
-      };
-
-      $scope.clearKevSCache = function () {
-          kScript.getCacheManager().clear();
-      };
-
       $scope.isLibrariesCacheEmpty = function () {
           return !kRegistry.isInit();
       };
