@@ -762,6 +762,9 @@ input.form-control.input-xs {
     overflow-y: auto;
     /* Scrollable contents if viewport is shorter than content. */
   }
+  .settings-container {
+    margin-top: 10px;
+  }
   .sidebar-right {
     left: auto;
     right: 0;

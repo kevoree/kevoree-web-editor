@@ -8,7 +8,7 @@
  * Controller of the editorApp registry libraries page
  */
 angular.module('editorApp')
-  .controller('LibrariesCtrl', function ($scope, $timeout, kRegistry2, kModelHelper, kFactory, kEditor) {
+  .controller('LibrariesCtrl', function ($scope, $timeout, kRegistry, kModelHelper, kFactory, kEditor) {
     $scope.loading = true;
 
     $scope.groups = [];
@@ -18,10 +18,14 @@ angular.module('editorApp')
 
     $scope.selection = [];
 
-    kRegistry2
+    $scope.getUrl = function () {
+      return kRegistry.getUrl();
+    };
+
+    kRegistry
       .getAll()
       .then(function (tdefs) {
-        $scope.url = kRegistry2.getUrl();
+        $scope.url = kRegistry.getUrl();
         tdefs.forEach(function (tdef) {
           if (tdef.type === 'org.kevoree.GroupType') {
             $scope.groups.push(tdef);
@@ -38,7 +42,13 @@ angular.module('editorApp')
         });
       })
       .catch(function (err) {
-        $scope.error = err.message;
+        $timeout(function () {
+          if (err.status >= 300) {
+            $scope.error = err.config.method + ' ' + err.config.url + ' failed (' + err.status + ' ' + err.statusText + ')';
+          } else {
+            $scope.error = 'Unable to reach ' + $scope.getUrl();
+          }
+        });
       })
       .finally(function () {
         $scope.loading = false;
@@ -85,7 +95,7 @@ angular.module('editorApp')
       if (tdef.selected) {
         if ($scope.selection.indexOf(tdef) === -1) {
           tdef.selectedVersion = tdef.versions[tdef.versions.length - 1];
-          kRegistry2.addDeployUnits(tdef.namespace.name, tdef.name, tdef.selectedVersion.version, tdef.selectedVersion);
+          kRegistry.addDeployUnits(tdef.namespace.name, tdef.name, tdef.selectedVersion.version, tdef.selectedVersion);
           $scope.selection.push(tdef);
         }
       } else {
@@ -102,7 +112,7 @@ angular.module('editorApp')
     };
 
     $scope.changeVersion = function (tdef) {
-      kRegistry2.addDeployUnits(tdef.namespace.name, tdef.name, tdef.selectedVersion.version, tdef.selectedVersion);
+      kRegistry.addDeployUnits(tdef.namespace.name, tdef.name, tdef.selectedVersion.version, tdef.selectedVersion);
       $scope.closeError();
     };
 

@@ -8,10 +8,14 @@
  * Controller of the editorApp kevscript editor page
  */
 angular.module('editorApp')
-  .controller('KevScriptCtrl', function($scope, $modal, $timeout, $state, kEditor, kScript, saveFile, storage, Notification, AUTOLOAD_KEVS) {
+  .controller('KevScriptCtrl', function($rootScope, $scope, $modal, $timeout, $state, hotkeys, kEditor, kScript, saveFile, storage, Notification) {
     var editor = null;
 
-    function saveToFile() {
+    function saveToFile(event) {
+      if (event) {
+        console.log(event);
+        event.preventDefault();
+      }
       $modal
         .open({
           templateUrl: 'scripts/components/util/filename.modal.html',
@@ -20,7 +24,7 @@ angular.module('editorApp')
           controller: function($scope, $modalInstance) {
             $scope.title = 'Save Kevscript';
             $scope.body = 'Would you like to save your current KevScript to a file?';
-            $scope.filename = 'model' + (Math.floor(Math.random() * (1000 - 100)) + 100);
+            $scope.filename = 'script' + (Math.floor(Math.random() * (1000 - 100)) + 100);
 
             $scope.save = function() {
               function endsWith(str, suffix) {
@@ -42,31 +46,22 @@ angular.module('editorApp')
         });
     }
 
-    function updateEditor() {
-      if (storage.get(AUTOLOAD_KEVS, true) && editor) {
-        try {
-          var modelStr = kScript.parseModel(kEditor.getModel());
-          editor.setValue(modelStr);
-        } catch (err) {
-          console.warn('[kevscript.controller.editorLoaded()] Error creating Kevscript from model');
-          console.error(err.stack);
-          Notification.error({
-            startTop: 65,
-            title: 'KevScript parser',
-            message: 'Unable to convert current model to KevScript',
-            delay: 5000
-          });
-        }
+    function openFromFile(event) {
+      if (event) {
+        event.preventDefault();
       }
+      angular.element('input#kevscript-upload').click();
     }
 
     $scope.kevscript = '';
     $scope.processing = false;
     $scope.message = null;
     $scope.ctxVars = {};
-    $scope.lintErrors = null;
-    $scope.lintWarnings = null;
+    $scope.error = null;
+    $scope.lintWarnings = [];
     $scope.linting = false;
+    $scope.typing = false;
+    $scope.editorState = 'idle';
     $scope.editorOptions = {
       mode: 'kevscript',
       theme: 'kevscript',
@@ -76,7 +71,12 @@ angular.module('editorApp')
       extraKeys: {
         'Tab': false,
         'Ctrl-Space': 'autocomplete',
-        'Ctrl-S': saveToFile
+        'Ctrl-S': function () {
+          saveToFile();
+        },
+        'Ctrl-O': function () {
+          openFromFile();
+        }
       },
       gutters: ['CodeMirror-lint-markers'],
       lint: {
@@ -86,16 +86,32 @@ angular.module('editorApp')
       }
     };
 
+    $scope.dndLoad = function (filename, data) {
+      if (filename.endsWith('.kevs')) {
+        $scope.kevscript = data;
+      } else {
+        $scope.kevscript = '';
+        $rootScope.dndLoad(filename, data);
+      }
+    };
+
     $scope.editorLoaded = function(_editor) {
       editor = _editor;
+      editor.on('beforeChange', function () {
+        $timeout(function () {
+          $scope.editorState = 'typing';
+          $scope.error = null;
+          $scope.lintWarnings = [];
+        });
+      });
       editor.on('lintStart', function () {
         $timeout(function () {
-          $scope.linting = true;
-          $scope.lintErrors = $scope.lintWarnings = [];
+          $scope.editorState = 'linting';
         });
       });
       editor.on('lintDone', function (error, lintErrors, model) {
         $timeout(function () {
+          $scope.editorState = 'idle';
           $scope.model = model;
           $scope.error = error || lintErrors.filter(function (err) { return err.severity === 'error'; })[0];
           $scope.lintWarnings = lintErrors
@@ -105,7 +121,6 @@ angular.module('editorApp')
           $scope.linting = false;
         });
       });
-      updateEditor();
       editor.focus();
       CodeMirror.signal(editor, 'change', editor);
     };
@@ -127,10 +142,10 @@ angular.module('editorApp')
     };
 
     $scope.isMergeable = function () {
-      return !$scope.processing &&
-             $scope.kevscript.trim().length > 0 &&
-             $scope.lintErrors &&
-             $scope.lintErrors.length === 0;
+      return $scope.editorState === 'idle' &&
+             !$scope.processing &&
+             !$scope.error &&
+             $scope.kevscript.trim().length > 0;
     };
 
     $scope.clearCtxVars = function () {
@@ -149,6 +164,10 @@ angular.module('editorApp')
       }
     };
 
+    $scope.onFileLoaded = function (filename, data) {
+      $scope.kevscript = data;
+    };
+
     $scope.removeCtxVar = function (key) {
       delete $scope.ctxVars[key];
       CodeMirror.signal(editor, 'change', editor);
@@ -165,10 +184,40 @@ angular.module('editorApp')
       }
     };
 
-    $scope.save = saveToFile;
+    $scope.model2kevs = function () {
+      try {
+        var modelStr = kScript.parseModel(kEditor.getModel());
+        editor.setValue(modelStr);
+      } catch (err) {
+        console.warn('[kevscript.controller.model2kevs()] Error creating Kevscript from model');
+        console.error(err.stack);
+        Notification.error({
+          startTop: 65,
+          title: 'KevScript parser',
+          message: 'Unable to convert current model to KevScript',
+          delay: 5000
+        });
+      }
+    };
 
-    var unregister = kEditor.addNewModelListener('kevscript', updateEditor);
-    $scope.$on('$destroy', function () {
-      unregister();
-    });
+    $scope.save = saveToFile;
+    $scope.open = openFromFile;
+
+    hotkeys.bindTo($scope)
+      .add({
+        combo: 'ctrl+o',
+        description: 'Open a KevScript from a file',
+        callback: $scope.open
+      });
+
+    hotkeys.bindTo($scope)
+      .add({
+        combo: 'ctrl+s',
+        description: 'Save current KevScript to a file',
+        callback: $scope.save
+      });
+
+    $scope.toggleShortcutHelp = function () {
+      hotkeys.toggleCheatSheet();
+    };
   });

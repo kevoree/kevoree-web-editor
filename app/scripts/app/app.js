@@ -22,30 +22,40 @@ angular
         'hljs',
         'infinite-scroll'
     ])
-    .run(function($rootScope, $stateParams, kEditor, kFactory, kRegistry, kWs, Notification, VERSION, KEVOREE_REGISTRY_URL) {
+    .run(function($rootScope, $stateParams, kEditor, kFactory, kRegistry, kWs, Notification, VERSION) {
         $rootScope.VERSION = VERSION;
-        $rootScope.KEVOREE_REGISTRY_URL = KEVOREE_REGISTRY_URL;
 
         $rootScope.dndLoad = function(filename, data) {
           var oldModel = kEditor.getModel();
+          var loader = kFactory.createJSONLoader();
+          var model;
           try {
-            var loader = kFactory.createJSONLoader();
-            var model = loader.loadModelFromString(data).get(0);
-            kEditor.setModel(model, function () {
-              Notification.success({
-                title: 'Open from file (dnd)',
-                message: 'Model loaded from <strong>' + filename + '</strong>'
-              });
-            });
+            model = loader.loadModelFromString(data).get(0);
           } catch (err) {
-            console.warn('Error loading model from file');
-            console.warn(err.stack);
+            console.error('[app.dndLoad()] Error loading model file');
+            console.error(err.stack);
             Notification.error({
               title: 'Open from file (dnd)',
               message: 'Unable to load a model from <strong>' + filename + '</strong>'
             });
             kEditor.setModel(oldModel);
+            return;
           }
+
+          kEditor.setModel(model, function (err) {
+            if (err) {
+              Notification.error({
+                title: 'Open from file (dnd)',
+                message: 'Unable to load model from <strong>' + filename + '</strong><br/>' + err.message,
+                delay: 15000
+              });
+            } else {
+              Notification.success({
+                title: 'Open from file (dnd)',
+                message: 'Model loaded from <strong>' + filename + '</strong>'
+              });
+            }
+          });
         };
 
         $rootScope.keys = function (obj) {
@@ -54,22 +64,6 @@ angular
           }
           return false;
         };
-
-        var url = new URL(kRegistry.getUrl());
-        var port;
-        if (url.port.length > 0) {
-          port = parseInt(url.port);
-        } else {
-          if (url.protocol === 'http:') {
-            port = 80;
-          } else {
-            port = 443;
-          }
-        }
-        var conf = require('tiny-conf');
-        conf.set('registry.host', url.hostname);
-        conf.set('registry.port', port);
-        conf.set('registry.ssl', url.protocol === 'https:');
 
         // fade out the loading container when bootstrap is done
         angular.element('#bootstrap-container').fadeOut(function() {

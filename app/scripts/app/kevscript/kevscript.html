@@ -71,34 +71,34 @@
   <div class="col-md-9 fit-y">
     <div class="kevscript-editor-container well fit-y">
       <fieldset class="fit-y">
-        <legend>KevScript</legend>
+        <legend>
+          <span>KevScript</span>
+        </legend>
         <div class="kevscript-editor" ui-codemirror="{onLoad: editorLoaded}" ui-codemirror-opts="editorOptions" ng-model="kevscript"></div>
         <div class="kevscript-editor-buttons">
           <button class="btn btn-default" ng-click="merge()" ng-disabled="!isMergeable()">{{ processing ? 'Merging' : 'Merge' }}</button>
         </div>
         <div class="kevscript-editor-logs">
-          <div ng-if="lintErrors">
-            <div class="text-muted" ng-if="linting">
+          <div ng-switch="editorState">
+            <div class="text-muted" ng-switch-when="typing">
+              <i class="fa fa-keyboard-o"></i> Typing...
+            </div>
+            <div class="text-muted" ng-switch-when="linting">
               <i class="fa fa-hourglass-half"></i> Linting...
             </div>
-            <div class="text-success" ng-if="!linting && !error">
-              <i class="fa fa-check"></i> No errors
-            </div>
-            <div class="text-danger" ng-if="!linting && error">
-              <i class="fa fa-times"></i> <strong>Error</strong>: {{ error.message }}
-            </div>
-          </div>
-          <div ng-if="!lintErrors">
-            <div class="text-muted">
-              <i class="fa fa-question-circle"></i> No linting done
-            </div>
-          </div>
-          <div ng-if="lintWarnings">
-            <div class="text-success" ng-if="!linting && lintWarnings.length === 0">
-              <i class="fa fa-check"></i> No warnings
-            </div>
-            <div class="text-warning" ng-if="!linting && lintWarnings.length > 0">
-              <i class="fa fa-warning"></i> {{ lintWarnings.length + ' warning' + (lintWarnings.length > 1 ? 's':'') }}
+            <div ng-switch-when="idle">
+              <div class="text-success" ng-if="!error">
+                <i class="fa fa-check"></i> No errors
+              </div>
+              <div class="text-danger" ng-if="error">
+                <i class="fa fa-times"></i> <strong>Error</strong>: {{ error.message }}
+              </div>
+              <div class="text-success" ng-if="lintWarnings.length === 0">
+                <i class="fa fa-check"></i> No warnings
+              </div>
+              <div class="text-warning" ng-if="lintWarnings.length > 0">
+                <i class="fa fa-warning"></i> {{ lintWarnings.length + ' warning' + (lintWarnings.length > 1 ? 's':'') }}
+              </div>
             </div>
           </div>
         </div>
@@ -106,4 +106,4 @@
     </div>
   </div>
 </div>
-<input id="kevscript-upload" type="file" class="hide" ng-model="kevscriptFile">
+<input id="kevscript-upload" type="file" class="hide" ng-model="kevscriptFile" on-data="onFileLoaded($name, $data)">

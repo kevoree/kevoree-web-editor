@@ -8,7 +8,7 @@
  * Controller of the editorApp main content div
  */
 angular.module('editorApp')
-  .controller('MainCtrl', function($scope, $timeout, $stateParams, $modal, kEditor, hotkeys, saveFile, ui, kModelHelper, kFactory, kWs, Notification) {
+  .controller('MainCtrl', function ($scope, $timeout, $stateParams, $modal, kEditor, hotkeys, saveFile, ui, kModelHelper, kFactory, kWs, Notification) {
     function onModelHandler() {
       kEditor.drawModel();
     }
@@ -17,193 +17,231 @@ angular.module('editorApp')
     $scope.synced = false;
     var syncWS;
 
-    $scope.onFileLoaded = function() {};
+    $scope.onFileLoaded = function () {};
 
-    $scope.open = function(evt) {
+    $scope.open = function (evt) {
       evt.preventDefault();
 
-      $scope.onFileLoaded = function(filename, data) {
+      $scope.onFileLoaded = function (filename, data) {
         var oldModel = kEditor.getModel();
+        var loader = kFactory.createJSONLoader();
+        var model;
         try {
-          var loader = kFactory.createJSONLoader();
-          var model = loader.loadModelFromString(data)
-            .get(0);
-          kEditor.setModel(model, function() {
-            Notification.success({
-              title: 'Open from file',
-              message: 'Model loaded from <strong>' + filename + '</strong>'
-            });
-          });
+          model = loader.loadModelFromString(data).get(0);
         } catch (err) {
           console.warn('[main.controller.open()] Error loading model file');
           console.error(err.stack);
           Notification.error({
             title: 'Open from file',
-            message: 'Unable to load a model from <strong>' + filename + '</strong>'
+            message: 'Unable to load a model from <strong>' + filename + '</strong>',
+            delay: 15000
           });
           kEditor.setModel(oldModel);
+          return;
         }
+
+        kEditor.setModel(model, function (err) {
+          if (err) {
+            Notification.error({
+              title: 'Open from file',
+              message: 'Unable to open model <strong>' + filename + '</strong><br/>' + err.message,
+              delay: 15000
+            });
+          } else {
+            Notification.success({
+              title: 'Open from file',
+              message: 'Model loaded from <strong>' + filename + '</strong>'
+            });
+          }
+        });
       };
-      angular.element('input#file')
-        .click();
+      angular.element('input#file').click();
     };
 
-    $scope.merge = function(evt) {
+    $scope.merge = function (evt) {
       evt.preventDefault();
       $scope.onFileLoaded = function mergeModel(filename, data) {
+        var loader = kFactory.createJSONLoader();
+        var compare = kFactory.createModelCompare();
+        var cloner = kFactory.createModelCloner();
+        var model;
         try {
-          var loader = kFactory.createJSONLoader();
-          var compare = kFactory.createModelCompare();
-          var model = loader.loadModelFromString(data)
-            .get(0);
-          compare.merge(model, kEditor.getModel())
-            .applyOn(model);
-          kEditor.setModel(model, function() {
-            Notification.success({
-              title: 'Merge from file',
-              message: 'Model merged with <strong>' + filename + '</strong>'
-            });
-          });
+          model = loader.loadModelFromString(data).get(0);
+          var currentModel = cloner.clone(kEditor.getModel());
+          compare.merge(currentModel, model).applyOn(currentModel);
         } catch (err) {
           console.warn('[main.controller.merge()] Error loading model file');
           console.error(err.stack);
           Notification.error({
             title: 'Merge from file',
-            message: 'Unable to merge the model with <strong>' + filename + '</strong>'
+            message: 'Unable to merge the model with <strong>' + filename + '</strong>',
+            delay: 15000
           });
+          return;
         }
+
+        kEditor.setModel(model, function (err) {
+          if (err) {
+            Notification.error({
+              title: 'Merge from file',
+              message: 'Unable to merge model <strong>' + filename + '</strong><br/>' + err.message,
+              delay: 15000
+            });
+          } else {
+            Notification.success({
+              title: 'Merge from file',
+              message: 'Model merged with <strong>' + filename + '</strong>'
+            });
+          }
+        });
       };
-      angular.element('input#file')
-        .click();
+      angular.element('input#file').click();
     };
 
-    $scope.openFromNode = function(evt) {
+    $scope.openFromNode = function (evt) {
       evt.preventDefault();
 
       $modal.open({
         templateUrl: 'scripts/components/util/host-port-path.modal.html',
         size: 'md',
-        controller: function($scope, $modalInstance) {
+        controller: function ($scope, $modalInstance) {
           $scope.title = 'Open from node';
           $scope.action = 'Open';
           $scope.host = '127.0.0.1';
           $scope.port = 9000;
           $scope.path = '/';
 
-          $modalInstance.rendered.then(function() {
-            $timeout(function() {
+          $modalInstance.rendered.then(function () {
+            $timeout(function () {
               angular.element('#host')
                 .focus();
             }, 250);
           });
 
-          $scope.confirm = function() {
+          $scope.confirm = function () {
             $scope.closeError();
 
-            kWs.getModel($scope.host, $scope.port, $scope.path, function(err, model, url) {
+            kWs.getModel($scope.host, $scope.port, $scope.path, function (err, model, url) {
               if (err) {
-                $timeout(function() {
+                $timeout(function () {
                   $scope.error = err.message;
                 });
               } else {
                 $modalInstance.close();
-                kEditor.setModel(model, function() {
-                  Notification.success({
-                    title: $scope.title,
-                    message: 'Model loaded from <strong>' + url + '</strong>'
-                  });
+                kEditor.setModel(model, function (err) {
+                  if (err) {
+                    Notification.error({
+                      title: $scope.title,
+                      message: 'Unable to load model from <strong>' + url + '</strong><br/>' + err.message,
+                      delay: 15000
+                    });
+                  } else {
+                    Notification.success({
+                      title: $scope.title,
+                      message: 'Model loaded from <strong>' + url + '</strong>'
+                    });
+                  }
                 });
               }
             });
           };
 
-          $scope.closeError = function() {
+          $scope.closeError = function () {
             $scope.error = null;
           };
         }
       });
     };
 
-    $scope.mergeFromNode = function(evt) {
+    $scope.mergeFromNode = function (evt) {
       evt.preventDefault();
 
       $modal.open({
         templateUrl: 'scripts/components/util/host-port-path.modal.html',
         size: 'md',
-        controller: function($scope, $modalInstance, kWs) {
+        controller: function ($scope, $modalInstance, kWs) {
           $scope.title = 'Merge from node';
           $scope.action = 'Merge';
           $scope.host = '127.0.0.1';
           $scope.port = 9000;
           $scope.path = '/';
 
-          $modalInstance.rendered.then(function() {
-            $timeout(function() {
+          $modalInstance.rendered.then(function () {
+            $timeout(function () {
               angular.element('#host')
                 .focus();
             }, 250);
           });
 
-          $scope.confirm = function() {
+          $scope.confirm = function () {
             $scope.closeError();
 
-            kWs.getModel($scope.host, $scope.port, $scope.path, function(err, model, url) {
+            kWs.getModel($scope.host, $scope.port, $scope.path, function (err, model, url) {
               if (err) {
-                $timeout(function() {
+                $timeout(function () {
                   $scope.error = err.message;
                 });
               } else {
                 $modalInstance.close();
                 var compare = kFactory.createModelCompare();
-                compare.merge(model, kEditor.getModel())
-                  .applyOn(model);
-                kEditor.setModel(model, function() {
-                  Notification.success({
-                    title: $scope.title,
-                    message: 'Model merged with <strong>' + url + '</strong>'
-                  });
+                var cloner = kFactory.createModelCloner();
+                var currentModel = cloner.clone(kEditor.getModel());
+                compare.merge(currentModel, model).applyOn(currentModel);
+                kEditor.setModel(model, function (err) {
+                  if (err) {
+                    Notification.error({
+                      title: $scope.title,
+                      message: 'Unable to merge model from <strong>' + url + '</strong><br/>' + err.message,
+                      delay: 15000
+                    });
+                  } else {
+                    Notification.success({
+                      title: $scope.title,
+                      message: 'Model merged with <strong>' + url + '</strong>'
+                    });
+                  }
                 });
               }
             });
           };
 
-          $scope.closeError = function() {
+          $scope.closeError = function () {
             $scope.error = null;
           };
         }
       });
     };
 
-    $scope.disconnectSync = function() {
+    $scope.disconnectSync = function () {
       if (syncWS) {
         syncWS.close();
-        $timeout(function() {
+        $timeout(function () {
           $scope.synced = false;
         });
       }
     };
 
-    $scope.connectSync = function(evt) {
+    $scope.connectSync = function (evt) {
       evt.preventDefault();
       if (!$scope.synced) {
         var parentScope = $scope;
         $modal.open({
           templateUrl: 'scripts/components/util/host-port-path.modal.html',
           size: 'md',
-          controller: function($scope, $modalInstance) {
+          controller: function ($scope, $modalInstance) {
             $scope.title = 'Connect sync';
             $scope.action = 'Sync';
             $scope.host = '127.0.0.1';
             $scope.port = 9000;
             $scope.path = '/';
 
-            $modalInstance.rendered.then(function() {
-              $timeout(function() {
+            $modalInstance.rendered.then(function () {
+              $timeout(function () {
                 angular.element('#host').focus();
               }, 250);
             });
 
-            $scope.confirm = function() {
+            $scope.confirm = function () {
               $scope.closeError();
 
               if (!$scope.path) {
@@ -218,8 +256,8 @@ angular.module('editorApp')
 
               syncWS = new WebSocket('ws://' + $scope.host + ':' + $scope.port + $scope.path);
 
-              syncWS.addEventListener('open', function() {
-                $timeout(function() {
+              syncWS.addEventListener('open', function () {
+                $timeout(function () {
                   parentScope.url = $scope.host + (($scope.port === 80) ? '' : ':' + $scope.port) + $scope.path;
                   parentScope.synced = true;
                 });
@@ -230,7 +268,7 @@ angular.module('editorApp')
                 });
               });
 
-              syncWS.addEventListener('message', function(evt) {
+              syncWS.addEventListener('message', function (evt) {
                 var data = evt.data;
                 if (data.substr(0, 'push/'.length) === 'push/') {
                   data = data.substr('push/'.length);
@@ -238,31 +276,40 @@ angular.module('editorApp')
 
                 var loader = kFactory.createJSONLoader();
                 try {
-                  var model = loader.loadModelFromString(data)
-                    .get(0);
-                  kEditor.setModel(model, function() {
-                    Notification.success({
-                      title: $scope.title,
-                      message: 'Model updated from sync with <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong>'
-                    });
+                  var model = loader.loadModelFromString(data).get(0);
+                  kEditor.setModel(model, function (err) {
+                    if (err) {
+                      Notification.error({
+                        title: $scope.title,
+                        message: 'Unable to update synced model from <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong><br/>' + err.message,
+                        delay: 15000
+                      });
+                    } else {
+                      Notification.success({
+                        title: $scope.title,
+                        message: 'Model updated from sync with <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong>'
+                      });
+                    }
                   });
                 } catch (err) {
                   Notification.error({
                     title: $scope.title,
-                    message: 'Error: unable to load received message as a Kevoree JSON model'
+                    message: 'Error: unable to load received message as a Kevoree JSON model',
+                    delay: 15000
                   });
                 }
               });
 
-              syncWS.addEventListener('error', function() {
+              syncWS.addEventListener('error', function () {
                 Notification.error({
                   title: $scope.title,
-                  message: 'Error: unable to sync with <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong>'
+                  message: 'Error: unable to sync with <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong>',
+                  delay: 15000
                 });
               });
 
-              syncWS.addEventListener('close', function() {
-                $timeout(function() {
+              syncWS.addEventListener('close', function () {
+                $timeout(function () {
                   parentScope.synced = false;
                 });
                 Notification.warning({
@@ -272,7 +319,7 @@ angular.module('editorApp')
               });
             };
 
-            $scope.closeError = function() {
+            $scope.closeError = function () {
               $scope.error = null;
             };
           }
@@ -285,7 +332,7 @@ angular.module('editorApp')
       }
     };
 
-    $scope.save = function(evt, filename) {
+    $scope.save = function (evt, filename) {
       evt.preventDefault();
       var serializer = kFactory.createJSONSerializer();
 
@@ -306,14 +353,14 @@ angular.module('editorApp')
 
     // copy/paste logic
     var clipboard = [];
-    $scope.copy = function() {
+    $scope.copy = function () {
       clipboard = ui.getSelectedPaths()
-        .filter(function(elem) {
+        .filter(function (elem) {
           return typeof elem === 'string';
         });
     };
-    $scope.paste = function() {
-      clipboard.forEach(function(path) {
+    $scope.paste = function () {
+      clipboard.forEach(function (path) {
         var model = kEditor.getModel();
         var instance = model.findByPath(path);
         if (instance) {
@@ -343,19 +390,19 @@ angular.module('editorApp')
       }
     };
 
-    $scope.fixOverlapping = function(evt) {
+    $scope.fixOverlapping = function (evt) {
       evt.preventDefault();
       kEditor.fixOverlapping();
     };
 
-    $scope.deleteAll = function(evt) {
+    $scope.deleteAll = function (evt) {
       evt.preventDefault();
       $scope.deleteInstances(evt);
       kEditor.getModel()
         .removeAllPackages();
     };
 
-    $scope.deleteInstances = function(evt) {
+    $scope.deleteInstances = function (evt) {
       evt.preventDefault();
       var model = kEditor.getModel();
       model.removeAllNodes();
@@ -365,7 +412,7 @@ angular.module('editorApp')
       model.removeAllRepositories();
     };
 
-    $scope.deleteSelection = function(evt) {
+    $scope.deleteSelection = function (evt) {
       evt.preventDefault();
       var deletions = ui.deleteSelected();
       if (deletions === 0) {
@@ -376,7 +423,7 @@ angular.module('editorApp')
       }
     };
 
-    $scope.toggleShortcutHelp = function() {
+    $scope.toggleShortcutHelp = function () {
       hotkeys.toggleCheatSheet();
     };
 
@@ -438,25 +485,25 @@ angular.module('editorApp')
       .add({
         combo: 'ctrl+s',
         description: 'Save the current model into a JSON file',
-        callback: function(evt) {
+        callback: function (evt) {
           evt.preventDefault();
           var saveFile = $scope.save;
           $modal
             .open({
               templateUrl: 'scripts/components/util/filename.modal.html',
               size: 'sm',
-              controller: function($scope, $modalInstance) {
+              controller: function ($scope, $modalInstance) {
                 $scope.title = 'Save model';
                 $scope.body = 'Would you like to save your current model to a file?';
                 $scope.filename = 'model' + (Math.floor(Math.random() * (1000 - 100)) + 100);
-                $modalInstance.rendered.then(function() {
-                  $timeout(function() {
+                $modalInstance.rendered.then(function () {
+                  $timeout(function () {
                     angular.element('#filename')
                       .focus();
                   }, 250);
                 });
 
-                $scope.save = function() {
+                $scope.save = function () {
                   function endsWith(str, suffix) {
                     return str.indexOf(suffix, str.length - suffix.length) !== -1;
                   }
@@ -504,7 +551,7 @@ angular.module('editorApp')
       .add({
         combo: 'ctrl+a',
         description: 'Select all instances',
-        callback: function(evt) {
+        callback: function (evt) {
           evt.preventDefault();
           ui.selectAll();
         }
@@ -536,7 +583,7 @@ angular.module('editorApp')
     //    callback: $scope.redo
     //});
 
-    $scope.$on('$destroy', function() {
+    $scope.$on('$destroy', function () {
       unregister();
     });
   });

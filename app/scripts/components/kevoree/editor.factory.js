@@ -424,28 +424,29 @@ angular.module('editorApp')
       setModel: function(model, callback) {
         this.preSetModelHandler.forEach(function(handler) { handler(); });
         setTimeout(function () {
+          var error;
           try {
             modelValidator(model);
+            this.model = model;
+            kFactory.root(this.model);
+
+            this.model.addModelTreeListener(this.modelListener);
+
+            ui.setModel(model);
+
+            this.invokeNewModelListeners();
           } catch (err) {
-            Notification.error({
-              title: 'ModelValidationError',
-              message: 'Unable to set model ('+err.message+')'
-            });
-            console.log(err.stack);
-            callback(err);
-            return;
-          }
-          this.model = model;
-          kFactory.root(this.model);
-
-          this.model.addModelTreeListener(this.modelListener);
-
-          ui.setModel(model);
-
-          this.invokeNewModelListeners();
-          this.postSetModelHandler.forEach(function(handler) { handler(); });
-          if (callback) {
-            $timeout(angular.noop, 100).then(callback);
+            error = err;
+          } finally {
+            if (error) {
+              console.error(error.stack);
+            }
+            this.postSetModelHandler.forEach(function(handler) { handler(); });
+            if (callback) {
+              $timeout(angular.noop, 100).then(function () {
+                callback(error);
+              });
+            }
           }
         }.bind(this), 20);
       },

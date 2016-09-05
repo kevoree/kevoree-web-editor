@@ -1,12 +1,14 @@
 <div class="libs-container whitish-bg">
   <div id="libraries-inner-container">
-    <div class="alert alert-danger" ng-if="error">
-      <button type="button" class="close" ng-click="closeError()"><span>&times;</span></button>
-      {{error}}
+    <div class="col-xs-12">
+      <div class="alert alert-danger" ng-if="error">
+        <button type="button" class="close" ng-click="closeError()"><span>&times;</span></button>
+        <strong>Error:</strong> {{ error }}
+      </div>
     </div>
     <div ng-if="loading">
       <div class="loading-content">
-        <h4 class="text-center">Loading libraries from <a href="{{KEVOREE_REGISTRY_URL}}" target="_blank">Kevoree Registry</a></h4>
+        <h4 class="text-center">Loading libraries from <a href="{{ getUrl() }}" target="_blank">Kevoree Registry</a></h4>
         <div class="spinner">
           <div class="rect1"></div>
           <div class="rect2"></div>
