@@ -81,8 +81,7 @@ angular.module('editorApp')
       gutters: ['CodeMirror-lint-markers'],
       lint: {
         getAnnotations: CodeMirror.lint.kevscript($scope.ctxVars),
-        async: true,
-        model: kEditor.getModel()
+        async: true
       }
     };
 

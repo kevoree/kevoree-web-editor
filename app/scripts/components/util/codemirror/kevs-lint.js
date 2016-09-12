@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-  .run(function (kScript) {
+  .run(function (kScript, kEditor) {
     var tokens = ['repoToken', 'includeToken', 'addToken', 'removeToken', 'moveToken',
               'setToken', 'attachToken', 'detachToken', 'networkToken', 'bindToken',
               'unbindToken', 'namespaceToken', 'startToken', 'stopToken',
@@ -45,7 +45,7 @@ angular.module('editorApp')
           return obj;
         });
 
-        kScript.parse(text, options.model, ctxVars, function (err, model, warnings) {
+        kScript.parse(text, kEditor.getModel(), ctxVars, function (err, model, warnings) {
           var error;
           var lintErrors = [];
           if (err) {
@@ -74,7 +74,6 @@ angular.module('editorApp')
                   to: CodeMirror.Pos(line, relativeToLine(err.pos[1], lines))
                 });
               } else {
-                console.log(err);
                 error = err;
               }
             }
@@ -83,7 +82,6 @@ angular.module('editorApp')
           }
 
           warnings.forEach(function (warning) {
-            console.log(warning);
             var line = findLine(warning.pos, lines);
             lintErrors.push({
               severity: 'warning',
