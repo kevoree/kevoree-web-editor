@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-  .run(function (kScript, Notification) {
+  .run(function (kScript) {
     var tokens = ['repoToken', 'includeToken', 'addToken', 'removeToken', 'moveToken',
               'setToken', 'attachToken', 'detachToken', 'networkToken', 'bindToken',
               'unbindToken', 'namespaceToken', 'startToken', 'stopToken',

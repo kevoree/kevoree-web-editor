@@ -10,12 +10,11 @@
 angular.module('editorApp')
   .controller('LibrariesCtrl', function ($scope, $timeout, kRegistry, kModelHelper, kFactory, kEditor) {
     $scope.loading = true;
-
     $scope.groups = [];
     $scope.nodes = [];
     $scope.channels = [];
     $scope.components = [];
-
+    $scope.tdefSearch = { name: '', namespace: '', platform: '' };
     $scope.selection = [];
 
     $scope.getUrl = function () {
@@ -36,9 +35,6 @@ angular.module('editorApp')
           } else if (tdef.type === 'org.kevoree.ComponentType') {
             $scope.components.push(tdef);
           }
-        });
-        $timeout(function () {
-          angular.element('#filter-by-tdef').focus();
         });
       })
       .catch(function (err) {
@@ -115,6 +111,20 @@ angular.module('editorApp')
       kRegistry.addDeployUnits(tdef.namespace.name, tdef.name, tdef.selectedVersion.version, tdef.selectedVersion);
       $scope.closeError();
     };
+
+    // $scope.filterTdefs = function (tdef, index, array) {
+    //   if ($scope.tdefSearch.name.length === 0 &&
+    //       $scope.tdefSearch.namespace.length === 0 &&
+    //       $scope.tdefSearch.platform.length === 0 &&
+    //       $scope.tdefSearch.version.length === 0) {
+    //     return true;
+    //   }
+    //   if (tdef.name === $scope.tdefSearch.name) {
+    //     return true;
+    //   }
+    //
+    //   return false;
+    // };
 
     function createModel(tdef, releases) {
       var tdefInModel = $scope.getTdefInModel(tdef);

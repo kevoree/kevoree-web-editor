@@ -140,7 +140,6 @@ angular.module('editorApp')
                 .concat(getInstances(instance))
                 .concat(getBindings(instance))
                 .filter(function (elem) {
-                  console.log('filter', elem, path);
                   if (path.length === 0) {
                     return elem.type === 'node';
                   } else if (path.length === 1) {
@@ -158,6 +157,32 @@ angular.module('editorApp')
                 createElemData('version')({ name: 'LATEST' }),
                 createElemData('version')({ name: 'RELEASE' })
               ];
+            }
+            break;
+
+          case 'network':
+            if (path.length === 0) {
+              list = cm.options.lint.lintedModel
+                .nodes.array.map(createElemData('node'));
+            } else if (path.length === 1) {
+              list = cm.options.lint.lintedModel
+                .findNodesByID(path[0])
+                .networkInformation.array.map(createElemData('network'));
+            } else if (path.length === 2) {
+              list = cm.options.lint.lintedModel
+                .findNodesByID(path[0])
+                .findNetworkInformationByID(path[1])
+                .values.array.map(createElemData('value'));
+            }
+            break;
+
+          case 'attach':
+          case 'detach':
+            if (path.length === 0) {
+              list = cm.options.lint.lintedModel
+                .nodes.array.map(createElemData('node'))
+                .concat(cm.options.lint.lintedModel
+                  .groups.array.map(createElemData('group')));
             }
             break;
         }

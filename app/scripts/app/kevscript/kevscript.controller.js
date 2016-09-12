@@ -177,8 +177,17 @@ angular.module('editorApp')
       if (!$scope.processing) {
         $scope.processing = true;
         $timeout(function () {
-          kEditor.setModel($scope.model, function () {
+          kEditor.setModel($scope.model, function (err) {
             $scope.processing = false;
+            if (err) {
+              $scope.error = err;
+            } else {
+              editor.setValue('');
+              Notification.success({
+                title: 'KevScript',
+                message: 'Successfully merged'
+              });
+            }
           });
         });
       }
@@ -192,7 +201,6 @@ angular.module('editorApp')
         console.warn('[kevscript.controller.model2kevs()] Error creating Kevscript from model');
         console.error(err.stack);
         Notification.error({
-          startTop: 65,
           title: 'KevScript parser',
           message: 'Unable to convert current model to KevScript',
           delay: 5000

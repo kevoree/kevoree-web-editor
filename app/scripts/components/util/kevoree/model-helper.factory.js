@@ -589,7 +589,7 @@ angular.module('editorApp')
        * @param dic a dictionary
        */
       cloneDictionary: function (dic) {
-        var clone = kFactory.createDictionary().withGenerated_KMF_ID('0');
+        var clone = kFactory.createDictionary().withGenerated_KMF_ID('0.0');
         if (dic) {
           dic.values.array.forEach(function (val) {
             var newVal = kFactory.createValue();

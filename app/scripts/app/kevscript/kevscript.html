@@ -73,6 +73,7 @@
       <fieldset class="fit-y">
         <legend>
           <span>KevScript</span>
+          <button class="btn btn-sm btn-default pull-right" ng-click="model2kevs()">Convert current model to KevScript</button>
         </legend>
         <div class="kevscript-editor" ui-codemirror="{onLoad: editorLoaded}" ui-codemirror-opts="editorOptions" ng-model="kevscript"></div>
         <div class="kevscript-editor-buttons">
