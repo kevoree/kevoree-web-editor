@@ -18,23 +18,29 @@ angular.module('editorApp')
     $scope.selection = [];
 
     $scope.getUrl = function () {
-      return kRegistry.getUrl();
+      var url = kRegistry.getUrl().toString();
+      if (url.endsWith('/')) {
+        return url.substr(0, url.length - 1);
+      }
+      return url;
     };
 
     kRegistry
       .getAll()
       .then(function (tdefs) {
-        $scope.url = kRegistry.getUrl();
-        tdefs.forEach(function (tdef) {
-          if (tdef.type === 'org.kevoree.GroupType') {
-            $scope.groups.push(tdef);
-          } else if (tdef.type === 'org.kevoree.NodeType') {
-            $scope.nodes.push(tdef);
-          } else if (tdef.type === 'org.kevoree.ChannelType') {
-            $scope.channels.push(tdef);
-          } else if (tdef.type === 'org.kevoree.ComponentType') {
-            $scope.components.push(tdef);
-          }
+        $timeout(function () {
+          tdefs.forEach(function (tdef) {
+            if (tdef.type === 'org.kevoree.GroupType') {
+              $scope.groups.push(tdef);
+            } else if (tdef.type === 'org.kevoree.NodeType') {
+              $scope.nodes.push(tdef);
+            } else if (tdef.type === 'org.kevoree.ChannelType') {
+              $scope.channels.push(tdef);
+            } else if (tdef.type === 'org.kevoree.ComponentType') {
+              $scope.components.push(tdef);
+            }
+          });
+          $scope.loading = false;
         });
       })
       .catch(function (err) {
@@ -44,10 +50,8 @@ angular.module('editorApp')
           } else {
             $scope.error = 'Unable to reach ' + $scope.getUrl();
           }
+          $scope.loading = false;
         });
-      })
-      .finally(function () {
-        $scope.loading = false;
       });
 
     $scope.select = function (evt, tdef) {
@@ -78,7 +82,6 @@ angular.module('editorApp')
             tdef.selected = false;
           });
 
-
         if (selected && (selection > 1)) {
           // unselect all but this item
           tdef.selected = true;
@@ -91,8 +94,14 @@ angular.module('editorApp')
       if (tdef.selected) {
         if ($scope.selection.indexOf(tdef) === -1) {
           tdef.selectedVersion = tdef.versions[tdef.versions.length - 1];
-          kRegistry.addDeployUnits(tdef.namespace.name, tdef.name, tdef.selectedVersion.version, tdef.selectedVersion);
           $scope.selection.push(tdef);
+          kRegistry.addDeployUnits(tdef.namespace.name, tdef.name, tdef.selectedVersion.version)
+            .then(function (dus) {
+              $timeout(function () {
+                tdef.selectedVersion.latestDus = dus.latestDus;
+                tdef.selectedVersion.releaseDus = dus.releaseDus;
+              });
+            });
         }
       } else {
         $scope.selection.splice($scope.selection.indexOf(tdef), 1);

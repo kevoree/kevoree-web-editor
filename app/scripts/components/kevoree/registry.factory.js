@@ -2,9 +2,7 @@
 
 angular.module('editorApp')
   .factory('kRegistry', function ($http, kFactory, storage, KEVOREE_REGISTRY_URL) {
-    var conf = require('tiny-conf');
-    var cachedUrl;
-
+    var cachedUrl = null;
     function setUrl(url) {
       var port;
       if (url.port && url.port.length > 0) {
@@ -16,9 +14,9 @@ angular.module('editorApp')
           port = 443;
         }
       }
-      conf.set('registry.host', url.hostname);
-      conf.set('registry.port', port);
-      conf.set('registry.ssl', url.protocol === 'https:');
+      TinyConf.set('registry.host', url.hostname);
+      TinyConf.set('registry.port', port);
+      TinyConf.set('registry.ssl', url.protocol === 'https:');
       cachedUrl = url;
       storage.set('registry', url.toString());
     }
@@ -40,26 +38,15 @@ angular.module('editorApp')
     }
 
     return {
-      hasUrl: function () {
-        return cachedUrl !== undefined;
-      },
-      setUrl: function (url) {
-        setUrl(url);
-      },
       getUrl: function () {
         return cachedUrl;
       },
+      setUrl: setUrl,
       getAll: function () {
-        return $http({
-            method: 'GET',
-            url: cachedUrl.toString() + 'api/tdefs',
-            headers: {
-              'Accept': 'application/json'
-            }
-          })
+        return KevoreeRegistryApi.tdefs()
           .then(function (res) {
             var tdefs = {};
-            res.data.forEach(function (tdef) {
+            res.forEach(function (tdef) {
               tdef.model = kFactory.createJSONLoader().loadModelFromString(tdef.model).get(0);
               var desc = tdef.model.findMetaDataByID('description');
               if (desc) {
@@ -88,32 +75,46 @@ angular.module('editorApp')
             });
           });
       },
-      addDeployUnits: function (namespace, name, version, elem) {
-        $http({
-          method: 'GET',
-          url: cachedUrl.toString() + 'api/namespaces/' + namespace + '/tdefs/' + name + '/' + version + '/latest-dus',
-          headers: {
-            'Accept': 'application/json'
+      addDeployUnits: function (namespace, name, version) {
+        var dus = {};
+        return KevoreeRegistryApi.du({
+          typeDefinition: {
+            name: name,
+            version: version,
+            namespace: {
+              name: namespace
+            }
           }
         })
-        .then(function (res) {
-          elem.latestDus = res.data.map(function (du) {
+        .latest()
+        .then(function (latestDus) {
+          dus.latestDus = latestDus.map(function (du) {
             du.model = kFactory.createJSONLoader().loadModelFromString(du.model).get(0);
             return du;
           });
-          $http({
-            method: 'GET',
-            url: cachedUrl.toString() + 'api/namespaces/' + namespace + '/tdefs/' + name + '/' + version + '/released-dus',
-            headers: {
-              'Accept': 'application/json'
+        })
+        .then(function () {
+          return KevoreeRegistryApi.du({
+            typeDefinition: {
+              name: name,
+              version: version,
+              namespace: {
+                name: namespace
+              }
             }
           })
-          .then(function (res) {
-            elem.releaseDus = res.data.map(function (du) {
+          .release()
+          .then(function (releasedDus) {
+            dus.releaseDus = releasedDus.map(function (du) {
               du.model = kFactory.createJSONLoader().loadModelFromString(du.model).get(0);
               return du;
             });
+          })
+          .catch(function () {
+            dus.releaseDus = [];
           });
+        }).then(function () {
+          return dus;
         });
       }
     };

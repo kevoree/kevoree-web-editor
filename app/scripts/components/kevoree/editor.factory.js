@@ -2,9 +2,6 @@
 
 angular.module('editorApp')
   .factory('kEditor', function($timeout, kFactory, kModelHelper, kInstance, ui, Notification, KWE_POSITION, KWE_FOLDED, KWE_SELECTED, KWE_TAG, CHANNEL_RADIUS, GROUP_RADIUS) {
-    var KevoreeLibrary = require('kevoree-library');
-    var modelValidator = require('kevoree-validator');
-
     function modelReactor(editor) {
       /**
        * Updates UI according to model changes
@@ -426,7 +423,7 @@ angular.module('editorApp')
         setTimeout(function () {
           var error;
           try {
-            modelValidator(model);
+            KevoreeValidator(model); // jshint ignore:line
             this.model = model;
             kFactory.root(this.model);
 
