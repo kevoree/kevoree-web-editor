@@ -184,16 +184,15 @@ angular.module('editorApp')
         var selection = kModelHelper.getSelection(kEditor.getModel());
         if (selection.length === 1) {
           $scope.instance = selection[0];
-          $scope.instance.selectedVersion = $scope.instance.typeDefinition.version;
-          angular.element('.ui-notification').css('right', '260px');
-          // using preName to prevent user from naming two instances with the same name
-          $scope.instance.preName = $scope.instance.name;
-          $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
-          timeout = $timeout(function () {
-            // in a timeout because processTypeDefinition() can be CPU intensive
+          if ($scope.instance) {
+            $scope.instance.selectedVersion = $scope.instance.typeDefinition.version;
+            angular.element('.ui-notification').css('right', '260px');
+            // using preName to prevent user from naming two instances with the same name
+            $scope.instance.preName = $scope.instance.name;
+            $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
             processTypeDefinition();
             $scope.processing = false;
-          });
+          }
         }
       });
     }

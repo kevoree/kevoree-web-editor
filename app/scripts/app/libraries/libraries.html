@@ -144,7 +144,7 @@
           <ul class="list-unstyled tdef-detail">
             <li>
               <span class="name">ID</span>
-              <a href="{{ url + '/#/tdefs/' + tdef.id }}" target="_blank" class="value">{{ tdef.selectedVersion.id }}</a>
+              <a href="{{ getUrl() + '/#/tdefs/' + tdef.selectedVersion.id }}" target="_blank" class="value">{{ tdef.selectedVersion.id }}</a>
             </li>
             <li>
               <span class="name">Version</span>
@@ -174,11 +174,12 @@
             </li>
             <li>
               <span class="name">Available releases</span>
-              <p class="text-right" ng-if="!tdef.selectedVersion.releaseDus"><em>- none -</em></p>
-              <div ng-if="tdef.selectedVersion.releaseDus">
+              <p class="text-right" ng-if="!tdef.selectedVersion.releaseDus"><em>loading...</em></p>
+              <p class="text-right" ng-if="tdef.selectedVersion.releaseDus.length === 0"><em>- none -</em></p>
+              <div ng-if="tdef.selectedVersion.releaseDus.length > 0">
                 <div class="bottom-space">
                   <div class="text-right" ng-repeat="du in tdef.selectedVersion.releaseDus | orderBy:'name'">
-                    <a href="{{ url + '/#/dus/' + du.id }}" target="_blank" title="hashcode={{ du.model.select('**/deployUnits[]').array[0].hashcode }}">{{ du.name }} - {{ du.version }} - {{ du.platform }}</a>
+                    <a href="{{ getUrl() + '/#/dus/' + du.id }}" target="_blank" title="hashcode={{ du.model.select('**/deployUnits[]').array[0].hashcode }}">{{ du.name }} - {{ du.version }} - {{ du.platform }}</a>
                   </div>
                 </div>
                 <button class="btn btn-sm btn-default pull-right" ng-click="useReleases(tdef)" ng-disabled="isAlreadyInModel(tdef, true)">
@@ -187,13 +188,14 @@
                 </button>
               </div>
             </li>
-            <li ng-if="tdef.selectedVersion.latestDus">
+            <li>
               <span class="name">Available latest</span>
-              <p class="text-right" ng-if="!tdef.selectedVersion.latestDus"><em>- none -</em></p>
-              <div ng-if="tdef.selectedVersion.latestDus">
+              <p class="text-right" ng-if="!tdef.selectedVersion.latestDus"><em>loading...</em></p>
+              <p class="text-right" ng-if="tdef.selectedVersion.latestDus.length === 0"><em>- none -</em></p>
+              <div ng-if="tdef.selectedVersion.latestDus.length > 0">
                 <div class="bottom-space">
                   <div class="text-right" ng-repeat="du in tdef.selectedVersion.latestDus | orderBy:'name'">
-                    <a href="{{ url + '/#/dus/' + du.id }}" target="_blank" title="hashcode={{ du.model.select('**/deployUnits[]').array[0].hashcode }}">{{ du.name }} - {{ du.version }} - {{ du.platform }}</a>
+                    <a href="{{ getUrl() + '/#/dus/' + du.id }}" target="_blank" title="hashcode={{ du.model.select('**/deployUnits[]').array[0].hashcode }}">{{ du.name }} - {{ du.version }} - {{ du.platform }}</a>
                   </div>
                 </div>
                 <button class="btn btn-sm btn-default pull-right" ng-click="useLatest(tdef)" ng-disabled="isAlreadyInModel(tdef, false)">

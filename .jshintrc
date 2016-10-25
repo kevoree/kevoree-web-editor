@@ -23,9 +23,12 @@
     "Kotlin": false,
     "semver": false,
     "angular": false,
+    "TinyConf": false,
     "CodeMirror": false,
     "KevoreeLibrary": false,
     "KevoreeCommons": false,
-    "KevoreeKevscript": false
+    "KevoreeValidator": false,
+    "KevoreeKevscript": false,
+    "KevoreeRegistryApi": false
   }
 }

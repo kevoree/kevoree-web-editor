@@ -2,8 +2,6 @@
 
 angular.module('editorApp')
   .factory('kModelHelper', function (kFactory, KWE_POSITION, KWE_TAG, KWE_SELECTED, KWE_FOLDED) {
-    var KevoreeLibrary = require('kevoree-library');
-
     function genNewName(instance, type, count) {
       if (typeof count === 'undefined') {
         count = 0;
@@ -385,14 +383,22 @@ angular.module('editorApp')
       },
 
       isVirtual: function (elem) {
-        if (Kotlin.isType(elem, KevoreeLibrary.org.kevoree.Instance)) {
-          return this.isVirtual(elem.typeDefinition);
-        } else if (Kotlin.isType(elem, KevoreeLibrary.org.kevoree.TypeDefinition)) {
-          var virtual = elem.findMetaDataByID('virtual');
-          return virtual !== null;
-        } else if (Kotlin.isType(elem, KevoreeLibrary.org.kevoree.MBinding)) {
-          if (elem.hub) {
-            return this.isVirtual(elem.hub.typeDefinition);
+        if (elem) {
+          if (elem.metaClassName() === 'org.kevoree.ComponentInstance' ||
+              elem.metaClassName() === 'org.kevoree.ContainerNode' ||
+              elem.metaClassName() === 'org.kevoree.Group' ||
+              elem.metaClassName() === 'org.kevoree.Channel') {
+            return this.isVirtual(elem.typeDefinition);
+          } else if (elem.metaClassName() === 'org.kevoree.ComponentType' ||
+              elem.metaClassName() === 'org.kevoree.NodeType' ||
+              elem.metaClassName() === 'org.kevoree.GroupType' ||
+              elem.metaClassName() === 'org.kevoree.ChannelType') {
+            var virtual = elem.findMetaDataByID('virtual');
+            return virtual !== null;
+          } else if (elem.metaClassName() === 'org.kevoree.MBinding') {
+            if (elem.hub) {
+              return this.isVirtual(elem.hub.typeDefinition);
+            }
           }
         }
         return false;
@@ -417,7 +423,7 @@ angular.module('editorApp')
       },
 
       isSelected: function (instance) {
-        if (instance) {
+        if (instance && instance.findMetaDataByID) {
           var meta = instance.findMetaDataByID(KWE_SELECTED);
           if (meta) {
             return this.isTruish(meta.value);
@@ -427,7 +433,7 @@ angular.module('editorApp')
       },
 
       isFolded: function (instance) {
-        if (instance) {
+        if (instance && instance.findMetaDataByID) {
           var meta = instance.findMetaDataByID(KWE_FOLDED);
           if (meta) {
             return this.isTruish(meta.value);
@@ -437,7 +443,7 @@ angular.module('editorApp')
       },
 
       setSelected: function (instance, selected) {
-        if (instance) {
+        if (instance && instance.findMetaDataByID) {
           var meta = instance.findMetaDataByID(KWE_SELECTED);
           if (!meta) {
             meta = kFactory.createValue();
