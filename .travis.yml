@@ -3,8 +3,7 @@ node_js:
 - '5'
 env:
   global:
-    - secure: ${STOKEN}
-
+  - secure: NB4FCQJuYjVbagCzFMib8AOj/lMRsY2ZftFWI/5HVd7a55Ck/Wq5QF4WVKaajZaefq6eKh7p8FG61JGvtIeqPFTM1hjGTkGfqT9Vj7eCewsmFENZiATSK4lC5j/YK4R38DeKeDHlxVN2OZJokk+AFqxinI0LMzGADq4MNvfYQ40=
 after_success:
 - npm i -g firebase-tools
 - firebase deploy --token=${TOKEN}
