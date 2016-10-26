@@ -4,5 +4,5 @@ node_js:
 env:
   global:
     - LABEL: "4f5ac390543c"
-after_success:
-  - ./deploy.sh
+after_script:
+  - bash deploy.sh
