@@ -1,3 +1,4 @@
+
 {
   "name": "kevoree-web-editor",
   "version": "0.0.0",
@@ -35,7 +36,6 @@
   "resolutions": {
     "angular": "1.4.5",
     "codemirror": "^5.0",
-    "angular-hotkeys": "^1.7.0",
-    "kevoree-kevscript": "^4.0.0-beta.6"
+    "angular-hotkeys": "^1.7.0"
   }
 }
