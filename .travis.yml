@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "5"
+after_success:
+  - "git checkout gh-pages"
+  - "rm -rf !(dist)"
+  - "cp -r dist/* ."
+  - "rm -rf dist"
+  - "git commit -a -m \"new release\""
