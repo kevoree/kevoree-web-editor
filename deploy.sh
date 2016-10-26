@@ -49,15 +49,14 @@ fi
 
 # Commit the "changes", i.e. the new version.
 # The delta will show diffs between new and old versions.
-git add .
-git commit -m "Deploy to GitHub Pages: ${SHA}"
+git commit -a -m "Deploy to GitHub Pages: ${SHA}"
 
 # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
 ENCRYPTED_KEY_VAR="encrypted_${LABEL}_key"
 ENCRYPTED_IV_VAR="encrypted_${LABEL}_iv"
 ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
 ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
-openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in travis.id_rsa.enc -out ~\/.ssh/travis.id_rsa -d
+openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in ../travis.id_rsa.enc -out ~\/.ssh/travis.id_rsa -d
 chmod 600 ~\/.ssh/travis.id_rsa
 eval `ssh-agent -s`
 ssh-add ~\/.ssh/travis.id_rsa
