@@ -7,3 +7,4 @@ after_success:
   - "cp -r dist/* ."
   - "rm -rf dist"
   - "git commit -a -m \"new release\""
+  - "git push origin gh-pages"
