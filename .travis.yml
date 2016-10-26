@@ -3,7 +3,8 @@ node_js:
 - '5'
 env:
   global:
-  - LABEL: 4f5ac390543c
+    - secure: ${STOKEN}
+
 after_success:
-- "npm i -g grunt-cli"
-- "./deploy.sh"
+- npm i -g firebase-tools
+- firebase deploy --token=${TOKEN}
