@@ -5,4 +5,5 @@ env:
   global:
     - LABEL: "4f5ac390543c"
 after_script:
+  - npm i -g grunt-cli
   - bash deploy.sh
