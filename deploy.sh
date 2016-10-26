@@ -5,7 +5,9 @@ SOURCE_BRANCH="wip_new"
 TARGET_BRANCH="gh-pages"
 
 function doCompile {
+  echo "Building app..."
   npm run build
+  echo "Built."
   cp -r dist/* out/
 }
 
@@ -61,4 +63,6 @@ eval `ssh-agent -s`
 ssh-add ~\/.ssh/travis.id_rsa
 
 # Now that we're all set up, we can push.
+echo "Pushing built app to $TARGET_BRANCH..."
 git push $SSH_REPO $TARGET_BRANCH
+echo "All set."
