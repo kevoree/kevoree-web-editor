@@ -3,7 +3,7 @@ node_js:
 - '5'
 env:
   global:
-    - LABEL: "4f5ac390543c"
-after_script:
-  - npm i -g grunt-cli
-  - bash deploy.sh
+  - LABEL: 4f5ac390543c
+after_success:
+- "npm i -g grunt-cli"
+- "./deploy.sh"
