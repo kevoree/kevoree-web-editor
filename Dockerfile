@@ -8,4 +8,5 @@ COPY       ./dist /root/dist
 
 EXPOSE     80
 
-ENTRYPOINT ["hs", "-p", "80", "/root/dist"]
+ENTRYPOINT ["hs", "/root/dist"]
+CMD        ["-p", "80"]
