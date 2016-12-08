@@ -1,0 +1,7 @@
+<div class="row"> <div class="col-md-8 col-sm-6"> <fieldset> <legend>Select instances by tags</legend> <div ng-if="tagsCount === 0"> <p>There is no tag in the model.</p> <p><em>To add tags, select instances in the left panel and go to the <strong>Tags</strong> tab.</em></p> </div> <a href="" ng-click="selectByTag(items)" ng-repeat="(tag, items) in tags" style="text-decoration: none"> <span class="tag badge"> <span>{{ tag }}</span> </span> </a> </fieldset> </div> <div class="col-md-4 col-sm-6"> <span class="hidden-lg breath"></span> <fieldset> <legend>Push/Pull model</legend> <div class="form-group col-xs-12"> <label for="selectGroup">Group</label> <select class="form-control" name="selectGroup" ng-model="selectedGroup" ng-disabled="groups.length === 0" ng-options="group as group.name for group in groups | orderBy:'name'"></select> <span class="help-block" ng-if="selectedGroup.subNodes.array.length === 0">You must attach this group to a node in order to push/pull</span> </div> <div class="col-xs-12"> <button class="btn btn-default" ng-click="openGroupModal()" ng-disabled="!selectedGroup || selectedGroup.subNodes.array.length === 0">Push/Pull model</button> </div> </fieldset> </div> </div> <!-- <div class="row">
+  <div class="col-xs-12">
+    <fieldset>
+      <legend>Contextual actions</legend>
+    </fieldset>
+  </div>
+</div> -->
