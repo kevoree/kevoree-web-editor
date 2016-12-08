@@ -1,4 +1,4 @@
-# Kevoree Web Editor [![Build Status](https://drone.io/github.com/kevoree/kevoree-web-editor/status.png)](https://drone.io/github.com/kevoree/kevoree-web-editor/latest)
+# Kevoree Web Editor [![Build Status](https://travis-ci.org/kevoree/kevoree-web-editor.svg?branch=master)](https://travis-ci.org/kevoree/kevoree-web-editor)
 
 Web app for [Kevoree](http://kevoree.org/) model management  
 You can try it here [http://editor.kevoree.org](http://editor.kevoree.org)
