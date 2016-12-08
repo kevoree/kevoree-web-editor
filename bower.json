@@ -9,12 +9,12 @@
     "angular-dragdrop": "~1.0.11",
     "angular-hotkeys": "chieffancypants/angular-hotkeys#^1.7.0",
     "angular-touch": "1.4.5",
+		"codemirror": "^5",
     "angular-ui-codemirror": "^0.3",
     "angular-ui-notification": "~0.0.5",
     "angular-ui-utils": "~0.2.3",
     "bootstrap": "^3.2.0",
     "components-font-awesome": "^4.6.3",
-    "codemirror": "^5",
     "kevoree-library": "^5.0.10",
     "kevoree-validator": "^0.1.13",
     "tiny-conf": "^1.0.4",
@@ -34,8 +34,6 @@
   "appPath": "app",
   "moduleName": "editorApp",
   "resolutions": {
-    "angular": "1.4.5",
-    "codemirror": "^5.0",
-    "angular-hotkeys": "^1.7.0"
+    "angular": "1.4.5"
   }
 }
