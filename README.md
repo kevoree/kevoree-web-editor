@@ -1,7 +1,8 @@
 # Kevoree Web Editor [![Build Status](https://travis-ci.org/kevoree/kevoree-web-editor.svg?branch=master)](https://travis-ci.org/kevoree/kevoree-web-editor)
 
 Web app for [Kevoree](http://kevoree.org/) model management  
-You can try it here [https://editor.kevoree.org](https://editor.kevoree.org)
+You can try it here [https://editor.kevoree.org](https://editor.kevoree.org)  
+Or on gh-pages [https://kevoree.github.io/kevoree-web-editor](http://kevoree.github.io/kevoree-web-editor)
 
 ## Overview
  - [What is it for ?](README.md#what-is-it-for-)
