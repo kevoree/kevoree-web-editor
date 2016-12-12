@@ -4,6 +4,7 @@
   "dependencies": {},
   "devDependencies": {
     "bower": "^1.7.9",
+    "eslint": "^3.11.1",
     "grunt": "^0.4.5",
     "grunt-autoprefixer": "^2.0.0",
     "grunt-concurrent": "^1.0.0",
@@ -17,6 +18,7 @@
     "grunt-contrib-jshint": "^0.11.0",
     "grunt-contrib-uglify": "^0.7.0",
     "grunt-contrib-watch": "^0.6.1",
+    "grunt-eslint": "^19.0.0",
     "grunt-filerev": "^2.1.2",
     "grunt-google-cdn": "^0.4.3",
     "grunt-newer": "^1.1.0",
@@ -34,8 +36,9 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "install": "bower install",
-    "build": "grunt build",
+    "lint": "eslint app",
+    "install": "bower install && npm run lint",
+    "build": "npm run lint && grunt build",
     "serve": "grunt serve",
     "test": "echo \"no tests yet\""
   },
@@ -55,5 +58,29 @@
   "bugs": {
     "url": "https://github.com/kevoree/kevoree-web-editor/issues"
   },
-  "homepage": "https://github.com/kevoree/kevoree-web-editor#readme"
+  "homepage": "https://github.com/kevoree/kevoree-web-editor#readme",
+  "eslintConfig": {
+    "env": {
+      "browser": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "rules": {
+      "no-control-regex": 0
+    },
+    "globals": {
+      "hljs": true,
+      "mina": true,
+      "Snap": true,
+      "angular": true,
+      "TinyConf": true,
+      "CodeMirror": true,
+      "KevoreeLibrary": true,
+      "KevoreeCommons": true,
+      "KevoreeValidator": true,
+      "KevoreeKevscript": true,
+      "KevoreeRegistryApi": true
+    }
+  }
 }

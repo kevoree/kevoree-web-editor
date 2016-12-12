@@ -13,7 +13,6 @@ angular.module('editorApp')
 
     function saveToFile(event) {
       if (event) {
-        console.log(event);
         event.preventDefault();
       }
       $modal
@@ -197,8 +196,8 @@ angular.module('editorApp')
         var modelStr = kScript.parseModel(kEditor.getModel());
         editor.setValue(modelStr);
       } catch (err) {
-        console.warn('[kevscript.controller.model2kevs()] Error creating Kevscript from model');
-        console.error(err.stack);
+        console.warn('[kevscript.controller.model2kevs()] Error creating Kevscript from model'); // eslint-disable-line
+        console.error(err.stack); // eslint-disable-line
         Notification.error({
           title: 'KevScript parser',
           message: 'Unable to convert current model to KevScript',

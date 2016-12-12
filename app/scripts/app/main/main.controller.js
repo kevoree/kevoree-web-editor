@@ -29,8 +29,8 @@ angular.module('editorApp')
         try {
           model = loader.loadModelFromString(data).get(0);
         } catch (err) {
-          console.warn('[main.controller.open()] Error loading model file');
-          console.error(err.stack);
+          console.warn('[main.controller.open()] Error loading model file'); // eslint-disable-line
+          console.error(err.stack); // eslint-disable-line
           Notification.error({
             title: 'Open from file',
             message: 'Unable to load a model from <strong>' + filename + '</strong>',
@@ -70,8 +70,8 @@ angular.module('editorApp')
           var currentModel = cloner.clone(kEditor.getModel());
           compare.merge(currentModel, model).applyOn(currentModel);
         } catch (err) {
-          console.warn('[main.controller.merge()] Error loading model file');
-          console.error(err.stack);
+          console.warn('[main.controller.merge()] Error loading model file'); // eslint-disable-line
+          console.error(err.stack); // eslint-disable-line
           Notification.error({
             title: 'Merge from file',
             message: 'Unable to merge the model with <strong>' + filename + '</strong>',

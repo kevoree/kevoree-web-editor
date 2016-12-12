@@ -32,8 +32,8 @@ angular
           try {
             model = loader.loadModelFromString(data).get(0);
           } catch (err) {
-            console.error('[app.dndLoad()] Error loading model file');
-            console.error(err.stack);
+            console.error('[app.dndLoad()] Error loading model file'); // eslint-disable-line
+            console.error(err.stack); // eslint-disable-line
             Notification.error({
               title: 'Open from file (dnd)',
               message: 'Unable to load a model from <strong>' + filename + '</strong>'
