@@ -1,7 +1,7 @@
 # Kevoree Web Editor [![Build Status](https://travis-ci.org/kevoree/kevoree-web-editor.svg?branch=master)](https://travis-ci.org/kevoree/kevoree-web-editor)
 
 Web app for [Kevoree](http://kevoree.org/) model management  
-You can try it here [http://editor.kevoree.org](http://editor.kevoree.org)
+You can try it here [https://editor.kevoree.org](https://editor.kevoree.org)
 
 ## Overview
  - [What is it for ?](README.md#what-is-it-for-)
@@ -12,16 +12,18 @@ You can try it here [http://editor.kevoree.org](http://editor.kevoree.org)
 The purpose of Kevoree Web Editor (KWE) is to provide an easy-to-use tool to manage your [Kevoree](http://kevoree.org/) models  & runtimes.  
 It is written in Javascript and has been designed to work as a static standalone Web application.
 
-## How do I use it ?
+## Usage
 
+### Docker
+The editor can also be deployed locally in **Docker**
 ```sh
-# only once :
-npm install # retrieve the dependencies
-bower install
-
-grunt serve
+docker run -p 9090:80 -d kevoree/editor
 ```
 
-### Prerequisites
- - an up-to-date browser because it uses many "new" features: **WebSocket**, **LocalStorage**, **WebSQL**, **SVG**, etc.
- - some [Kevoree-related knowledge](http://kevoree.org/doc/#getting-started)
+Then go to http://localhost:9090
+
+### Manual install
+```sh
+npm install
+grunt serve
+```
