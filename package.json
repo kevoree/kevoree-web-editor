@@ -1,6 +1,6 @@
 {
   "name": "kevoree-web-editor",
-  "version": "5.12.16",
+  "version": "5.12.17",
   "dependencies": {},
   "devDependencies": {
     "bower": "^1.7.9",

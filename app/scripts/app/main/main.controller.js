@@ -80,7 +80,7 @@ angular.module('editorApp')
           return;
         }
 
-        kEditor.setModel(model, function (err) {
+        kEditor.setModel(currentModel, function (err) {
           if (err) {
             Notification.error({
               title: 'Merge from file',
@@ -187,7 +187,7 @@ angular.module('editorApp')
                 var cloner = kFactory.createModelCloner();
                 var currentModel = cloner.clone(kEditor.getModel());
                 compare.merge(currentModel, model).applyOn(currentModel);
-                kEditor.setModel(model, function (err) {
+                kEditor.setModel(currentModel, function (err) {
                   if (err) {
                     Notification.error({
                       title: $scope.title,
