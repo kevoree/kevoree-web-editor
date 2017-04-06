@@ -1,6 +1,6 @@
 {
   "name": "kevoree-web-editor",
-  "version": "5.12.17",
+  "version": "5.13.0",
   "dependencies": {},
   "devDependencies": {
     "bower": "^1.7.9",
@@ -58,29 +58,5 @@
   "bugs": {
     "url": "https://github.com/kevoree/kevoree-web-editor/issues"
   },
-  "homepage": "https://github.com/kevoree/kevoree-web-editor#readme",
-  "eslintConfig": {
-    "env": {
-      "browser": true
-    },
-    "extends": [
-      "eslint:recommended"
-    ],
-    "rules": {
-      "no-control-regex": 0
-    },
-    "globals": {
-      "hljs": true,
-      "mina": true,
-      "Snap": true,
-      "angular": true,
-      "TinyConf": true,
-      "CodeMirror": true,
-      "KevoreeLibrary": true,
-      "KevoreeCommons": true,
-      "KevoreeValidator": true,
-      "KevoreeKevscript": true,
-      "KevoreeRegistryApi": true
-    }
-  }
+  "homepage": "https://github.com/kevoree/kevoree-web-editor#readme"
 }

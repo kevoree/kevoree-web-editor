@@ -1,217 +1,221 @@
 <!doctype html>
 <html class="no-js">
-  <head>
-    <meta charset="utf-8">
-    <title>Kevoree Web Editor</title>
-    <meta name="description" content="Kevoree Web Editor - Manager your Kevoree models directly from your browser">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-    <!-- build:css(.) styles/vendor.css -->
-    <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/angular-hotkeys/build/hotkeys.css" />
-    <link rel="stylesheet" href="bower_components/angular-ui-notification/dist/angular-ui-notification.min.css" />
-    <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
-    <link rel="stylesheet" href="bower_components/highlightjs/styles/default.css" />
-    <!-- endbower -->
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="bower_components/codemirror/lib/codemirror.css" />
-    <link rel="stylesheet" href="bower_components/codemirror/addon/lint/lint.css" />
-    <link rel="stylesheet" href="bower_components/codemirror/addon/hint/show-hint.css" />
-    <link rel="stylesheet" href="bower_components/codemirror/addon/dialog/dialog.css" />
 
-    <!-- endbuild -->
-    <!-- build:css(.tmp) styles/main.css -->
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/editor.css">
-    <link rel="stylesheet" href="styles/cm-kevscript.css">
-    <!-- endbuild -->
-  </head>
-  <body ng-app="editorApp">
-    <!--[if lt IE 7]>
+<head>
+	<meta charset="utf-8">
+	<title>Kevoree Web Editor</title>
+	<meta name="description" content="Kevoree Web Editor - Manager your Kevoree models directly from your browser">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+	<!-- build:css(.) styles/vendor.css -->
+	<!-- bower:css -->
+	<link rel="stylesheet" href="bower_components/angular-hotkeys/build/hotkeys.css" />
+	<link rel="stylesheet" href="bower_components/angular-ui-notification/dist/angular-ui-notification.min.css" />
+	<link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
+	<link rel="stylesheet" href="bower_components/highlightjs/styles/default.css" />
+	<!-- endbower -->
+	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+	<link rel="stylesheet" href="bower_components/codemirror/lib/codemirror.css" />
+	<link rel="stylesheet" href="bower_components/codemirror/addon/lint/lint.css" />
+	<link rel="stylesheet" href="bower_components/codemirror/addon/hint/show-hint.css" />
+	<link rel="stylesheet" href="bower_components/codemirror/addon/dialog/dialog.css" />
+
+	<!-- endbuild -->
+	<!-- build:css(.tmp) styles/main.css -->
+	<link rel="stylesheet" href="styles/main.css">
+	<link rel="stylesheet" href="styles/editor.css">
+	<link rel="stylesheet" href="styles/cm-kevscript.css">
+	<link rel="stylesheet" href="styles/cm-kevscript-hint.css">
+	<!-- endbuild -->
+</head>
+
+<body ng-app="editorApp">
+	<!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <div ui-view="navbar"></div>
-    <div id="container" class="container-fluid">
-      <div
-          ui-view="content"
-          class="row"
-          loading-overlay
-          drop-target="dndLoad($name, $data)">
-      </div>
-    </div>
+	<div ui-view="navbar"></div>
+	<div id="container" class="container-fluid">
+		<div ui-view="content" class="row" loading-overlay drop-target="dndLoad($name, $data)">
+		</div>
+	</div>
 
-    <div id="bootstrap-container">
-      <style type="text/css" scoped="scoped">
-        .bootstrap-loading .loading-message {
-          background-color: #333333 ;
-          bottom: 0;
-          left: 0;
-          opacity: 1.0;
-          position: fixed;
-          right: 0;
-          top: 0;
-          z-index: 999999 ;
-        }
+	<div id="bootstrap-container">
+		<style type="text/css" scoped="scoped">
+			.bootstrap-loading .loading-message {
+				background-color: #333333;
+				bottom: 0;
+				left: 0;
+				opacity: 1.0;
+				position: fixed;
+				right: 0;
+				top: 0;
+				z-index: 999999;
+			}
 
-        .bootstrap-loading .loading-message.ng-leave {
-          opacity: 1.0 ;
-          transition: all linear 200ms ;
-          -webkit-transition: all linear 200ms ;
-        }
+			.bootstrap-loading .loading-message.ng-leave {
+				opacity: 1.0;
+				transition: all linear 200ms;
+				-webkit-transition: all linear 200ms;
+			}
 
-        .bootstrap-loading .loading-message.ng-leave-active {
-          opacity: 0 ;
-        }
+			.bootstrap-loading .loading-message.ng-leave-active {
+				opacity: 0;
+			}
 
-        .bootstrap-loading .messaging {
-          color: #FFFFFF ;
-          font-family: monospace ;
-          left: 0;
-          margin-top: -37px ;
-          position: absolute ;
-          right: 0;
-          text-align: center ;
-          top: 50% ;
-        }
+			.bootstrap-loading .messaging {
+				color: #FFFFFF;
+				font-family: monospace;
+				left: 0;
+				margin-top: -37px;
+				position: absolute;
+				right: 0;
+				text-align: center;
+				top: 50%;
+			}
 
-        .skip {
-          position: absolute;
-          bottom: 5px;
-          right: 5px;
-        }
+			.skip {
+				position: absolute;
+				bottom: 5px;
+				right: 5px;
+			}
 
-        .bootstrap-loading h1 {
-          font-size: 20px ;
-          line-height: 35px ;
-          margin: 0 0 20px 0;
-        }
+			.bootstrap-loading h1 {
+				font-size: 20px;
+				line-height: 35px;
+				margin: 0 0 20px 0;
+			}
 
-        .bootstrap-loading p {
-          font-size: 16px ;
-          line-height: 14px ;
-          margin: 0;
-        }
-      </style>
-      <div class="bootstrap-loading">
-        <div class="loading-message">
-          <div class="messaging">
-            <h1>Kevoree Web Editor</h1>
-            <p>is loading...</p>
-          </div>
-        </div>
-      </div>
-    </div>
+			.bootstrap-loading p {
+				font-size: 16px;
+				line-height: 14px;
+				margin: 0;
+			}
+		</style>
+		<div class="bootstrap-loading">
+			<div class="loading-message">
+				<div class="messaging">
+					<h1>Kevoree Web Editor</h1>
+					<p>is loading...</p>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-     <script>
-       !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
-       (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
-       r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
-       }(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	<!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+	<script>
+		! function(A, n, g, u, l, a, r) {
+			A.GoogleAnalyticsObject = l, A[l] = A[l] || function() {
+					(A[l].q = A[l].q || []).push(arguments)
+				}, A[l].l = +new Date, a = n.createElement(g),
+				r = n.getElementsByTagName(g)[0], a.src = u, r.parentNode.insertBefore(a, r)
+		}(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-       ga('create', 'UA-61834488-1');
-       ga('send', 'pageview');
-    </script>
+		ga('create', 'UA-61834488-1');
+		ga('send', 'pageview');
+	</script>
 
-    <!-- build:js(.) scripts/vendor.js -->
-    <!-- bower:js -->
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/angular-animate/angular-animate.js"></script>
-    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
-    <script src="bower_components/angular-dragdrop/src/angular-dragdrop.js"></script>
-    <script src="bower_components/angular-hotkeys/build/hotkeys.js"></script>
-    <script src="bower_components/angular-touch/angular-touch.js"></script>
-    <script src="bower_components/codemirror/lib/codemirror.js"></script>
-    <script src="bower_components/angular-ui-codemirror/ui-codemirror.js"></script>
-    <script src="bower_components/angular-ui-notification/dist/angular-ui-notification.min.js"></script>
-    <script src="bower_components/angular-ui-utils/ui-utils.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="bower_components/kevoree-library/browser/kevoree-library.js"></script>
-    <script src="bower_components/kevoree-validator/browser/kevoree-validator.js"></script>
-    <script src="bower_components/tiny-conf/dist/tiny-conf.js"></script>
-    <script src="bower_components/kevoree-commons/browser/kevoree-commons.js"></script>
-    <script src="bower_components/kevoree-registry-api/browser/kevoree-registry-api.js"></script>
-    <script src="bower_components/kevoree-kevscript/browser/kevoree-kevscript.js"></script>
-    <script src="bower_components/snap.svg/dist/snap.svg-min.js"></script>
-    <script src="bower_components/snap.svg.zpd/snap.svg.zpd.js"></script>
-    <script src="bower_components/ui-router/release/angular-ui-router.js"></script>
-    <script src="bower_components/highlightjs/highlight.pack.js"></script>
-    <script src="bower_components/angular-highlightjs/build/angular-highlightjs.js"></script>
-    <script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
-    <!-- endbower -->
-    <script src="bower_components/codemirror/addon/lint/lint.js"></script>
-    <script src="bower_components/codemirror/addon/hint/show-hint.js"></script>
-    <script src="bower_components/codemirror/addon/selection/active-line.js"></script>
-    <script src="bower_components/codemirror/addon/search/search.js"></script>
-    <script src="bower_components/codemirror/addon/search/searchcursor.js"></script>
-    <script src="bower_components/codemirror/addon/dialog/dialog.js"></script>
-    <script src="bower_components/codemirror/addon/mode/simple.js"></script>
-    <!-- endbuild -->
+	<!-- build:js(.) scripts/vendor.js -->
+	<!-- bower:js -->
+	<script src="bower_components/jquery/dist/jquery.js"></script>
+	<script src="bower_components/angular/angular.js"></script>
+	<script src="bower_components/angular-animate/angular-animate.js"></script>
+	<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+	<script src="bower_components/jquery-ui/jquery-ui.js"></script>
+	<script src="bower_components/angular-dragdrop/src/angular-dragdrop.js"></script>
+	<script src="bower_components/angular-hotkeys/build/hotkeys.js"></script>
+	<script src="bower_components/angular-touch/angular-touch.js"></script>
+	<script src="bower_components/codemirror/lib/codemirror.js"></script>
+	<script src="bower_components/angular-ui-codemirror/ui-codemirror.js"></script>
+	<script src="bower_components/angular-ui-notification/dist/angular-ui-notification.min.js"></script>
+	<script src="bower_components/angular-ui-utils/ui-utils.js"></script>
+	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+	<script src="bower_components/kevoree-library/browser/kevoree-library.js"></script>
+	<script src="bower_components/kevoree-validator/browser/kevoree-validator.js"></script>
+	<script src="bower_components/tiny-conf/dist/tiny-conf.js"></script>
+	<script src="bower_components/kevoree-commons/browser/kevoree-commons.js"></script>
+	<script src="bower_components/kevoree-registry-api/browser/kevoree-registry-api.js"></script>
+	<script src="bower_components/kevoree-kevscript/browser/kevoree-kevscript.js"></script>
+	<script src="bower_components/snap.svg/dist/snap.svg-min.js"></script>
+	<script src="bower_components/snap.svg.zpd/snap.svg.zpd.js"></script>
+	<script src="bower_components/ui-router/release/angular-ui-router.js"></script>
+	<script src="bower_components/highlightjs/highlight.pack.js"></script>
+	<script src="bower_components/angular-highlightjs/build/angular-highlightjs.js"></script>
+	<script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
+	<script src="bower_components/mustache.js/mustache.js"></script>
+	<!-- endbower -->
+	<script src="bower_components/codemirror/addon/lint/lint.js"></script>
+	<script src="bower_components/codemirror/addon/hint/show-hint.js"></script>
+	<script src="bower_components/codemirror/addon/selection/active-line.js"></script>
+	<script src="bower_components/codemirror/addon/search/search.js"></script>
+	<script src="bower_components/codemirror/addon/search/searchcursor.js"></script>
+	<script src="bower_components/codemirror/addon/dialog/dialog.js"></script>
+	<!-- <script src="bower_components/codemirror/addon/mode/simple.js"></script> -->
+	<!-- endbuild -->
 
-    <!-- build:js({.tmp,app}) scripts/scripts.js -->
-    <script src="scripts/app/app.js"></script>
-    <script src="scripts/app/app.constants.js"></script>
-    <script src="scripts/app/main/main.js"></script>
-    <script src="scripts/app/main/main.controller.js"></script>
-    <script src="scripts/app/main/typedefs/typedefs.controller.js"></script>
-    <script src="scripts/app/main/editor/editor.controller.js"></script>
-    <script src="scripts/app/main/editor/select-chan-modal.controller.js"></script>
-    <script src="scripts/app/main/instance/instance.controller.js"></script>
-    <script src="scripts/app/main/instance/network-modal.controller.js"></script>
-    <script src="scripts/app/main/instance/group-modal.controller.js"></script>
-    <script src="scripts/app/navbar/navbar.controller.js"></script>
-    <script src="scripts/app/settings/settings.js"></script>
-    <script src="scripts/app/settings/settings.controller.js"></script>
-    <script src="scripts/app/kevscript/kevscript.js"></script>
-    <script src="scripts/app/kevscript/kevscript.controller.js"></script>
-    <script src="scripts/app/libraries/libraries.js"></script>
-    <script src="scripts/app/libraries/libraries.controller.js"></script>
-    <script src="scripts/app/treeview/treeview.js"></script>
-    <script src="scripts/app/treeview/treeview.controller.js"></script>
-    <script src="scripts/app/treeview/filter-parser.factory.js"></script>
-    <script src="scripts/app/treeview/do-filter.filter.js"></script>
-    <script src="scripts/app/treeview/tab-actions/tab-actions.directive.js"></script>
-    <script src="scripts/app/treeview/tab-create/tab-create.directive.js"></script>
-    <script src="scripts/app/treeview/tab-params/tab-params.directive.js"></script>
-    <script src="scripts/app/treeview/tab-tags/tab-tags.directive.js"></script>
-    <script src="scripts/app/treeview/tab-json/tab-json.directive.js"></script>
-    <script src="scripts/components/kevoree/editor.factory.js"></script>
-    <script src="scripts/components/kevoree/kevscript.factory.js"></script>
-    <script src="scripts/components/kevoree/dictionary.directive.js"></script>
-    <script src="scripts/components/kevoree/stringToNumber.directive.js"></script>
-    <script src="scripts/components/kevoree/instanceName.directive.js"></script>
-    <script src="scripts/components/kevoree/kevoree.factory.js"></script>
-    <script src="scripts/components/kevoree/loading-overlay.directive.js"></script>
-    <script src="scripts/components/kevoree/ui/ui.factory.js"></script>
-    <script src="scripts/components/kevoree/ui/ui.constant.js"></script>
-    <script src="scripts/components/kevoree/ui/createBinding.factory.js"></script>
-    <script src="scripts/components/kevoree/ui/createChannel.factory.js"></script>
-    <script src="scripts/components/kevoree/ui/createComponent.factory.js"></script>
-    <script src="scripts/components/kevoree/ui/createGroupWire.factory.js"></script>
-    <script src="scripts/components/kevoree/ui/createGroup.factory.js"></script>
-    <script src="scripts/components/kevoree/ui/ui-utils.factory.js"></script>
-    <script src="scripts/components/kevoree/ui/createNode.factory.js"></script>
-    <script src="scripts/components/kevoree/instance.factory.js"></script>
-    <script src="scripts/components/kevoree/ws.factory.js"></script>
-    <script src="scripts/components/kevoree/registry.factory.js"></script>
-    <script src="scripts/components/services/storage.service.js"></script>
-    <script src="scripts/components/util/codemirror/kevs-hint.js"></script>
-    <script src="scripts/components/util/codemirror/kevs-parser.js"></script>
-    <script src="scripts/components/util/codemirror/kevs-lint.js"></script>
-    <script src="scripts/components/util/on-data.directive.js"></script>
-    <script src="scripts/components/util/drop-target.directive.js"></script>
-    <script src="scripts/components/util/focus.directive.js"></script>
-    <script src="scripts/components/util/truncate.directive.js"></script>
-    <script src="scripts/components/util/trust-html.filter.js"></script>
-    <script src="scripts/components/util/save-file.factory.js"></script>
-    <script src="scripts/components/util/util.factory.js"></script>
-    <script src="scripts/components/util/camelize.filter.js"></script>
-    <script src="scripts/components/util/kevoree/model-helper.factory.js"></script>
-    <script src="scripts/components/util/naming-pattern.filter.js"></script>
-    <script src="scripts/components/util/is-compatible.filter.js"></script>
-    <!-- endbuild -->
+	<!-- build:js({.tmp,app}) scripts/scripts.js -->
+	<script src="scripts/app/app.js"></script>
+	<script src="scripts/app/app.config.js"></script>
+	<script src="scripts/app/app.constants.js"></script>
+	<script src="scripts/app/main/main.js"></script>
+	<script src="scripts/app/main/main.controller.js"></script>
+	<script src="scripts/app/main/typedefs/typedefs.controller.js"></script>
+	<script src="scripts/app/main/editor/editor.controller.js"></script>
+	<script src="scripts/app/main/editor/select-chan-modal.controller.js"></script>
+	<script src="scripts/app/main/instance/instance.controller.js"></script>
+	<script src="scripts/app/main/instance/network-modal.controller.js"></script>
+	<script src="scripts/app/main/instance/group-modal.controller.js"></script>
+	<script src="scripts/app/navbar/navbar.controller.js"></script>
+	<script src="scripts/app/settings/settings.js"></script>
+	<script src="scripts/app/settings/settings.controller.js"></script>
+	<script src="scripts/app/kevscript/kevscript.js"></script>
+	<script src="scripts/app/kevscript/kevscript.controller.js"></script>
+	<script src="scripts/app/libraries/libraries.js"></script>
+	<script src="scripts/app/libraries/libraries.controller.js"></script>
+	<script src="scripts/app/treeview/treeview.js"></script>
+	<script src="scripts/app/treeview/treeview.controller.js"></script>
+	<script src="scripts/app/treeview/filter-parser.factory.js"></script>
+	<script src="scripts/app/treeview/do-filter.filter.js"></script>
+	<script src="scripts/app/treeview/tab-actions/tab-actions.directive.js"></script>
+	<script src="scripts/app/treeview/tab-create/tab-create.directive.js"></script>
+	<script src="scripts/app/treeview/tab-params/tab-params.directive.js"></script>
+	<script src="scripts/app/treeview/tab-tags/tab-tags.directive.js"></script>
+	<script src="scripts/app/treeview/tab-json/tab-json.directive.js"></script>
+	<script src="scripts/components/kevoree/editor.factory.js"></script>
+	<script src="scripts/components/kevoree/kevscript.factory.js"></script>
+	<script src="scripts/components/kevoree/dictionary.directive.js"></script>
+	<script src="scripts/components/kevoree/stringToNumber.directive.js"></script>
+	<script src="scripts/components/kevoree/instanceName.directive.js"></script>
+	<script src="scripts/components/kevoree/kevoree.factory.js"></script>
+	<script src="scripts/components/kevoree/loading-overlay.directive.js"></script>
+	<script src="scripts/components/kevoree/ui/ui.factory.js"></script>
+	<script src="scripts/components/kevoree/ui/ui.constant.js"></script>
+	<script src="scripts/components/kevoree/ui/createBinding.factory.js"></script>
+	<script src="scripts/components/kevoree/ui/createChannel.factory.js"></script>
+	<script src="scripts/components/kevoree/ui/createComponent.factory.js"></script>
+	<script src="scripts/components/kevoree/ui/createGroupWire.factory.js"></script>
+	<script src="scripts/components/kevoree/ui/createGroup.factory.js"></script>
+	<script src="scripts/components/kevoree/ui/ui-utils.factory.js"></script>
+	<script src="scripts/components/kevoree/ui/createNode.factory.js"></script>
+	<script src="scripts/components/kevoree/instance.factory.js"></script>
+	<script src="scripts/components/kevoree/ws.factory.js"></script>
+	<script src="scripts/components/kevoree/registry.factory.js"></script>
+	<script src="scripts/components/services/storage.service.js"></script>
+	<script src="scripts/components/cm-kevscript/mode.js"></script>
+	<script src="scripts/components/cm-kevscript/lint.js"></script>
+	<script src="scripts/components/cm-kevscript/hint.js"></script>
+	<script src="scripts/components/util/on-data.directive.js"></script>
+	<script src="scripts/components/util/drop-target.directive.js"></script>
+	<script src="scripts/components/util/focus.directive.js"></script>
+	<script src="scripts/components/util/truncate.directive.js"></script>
+	<script src="scripts/components/util/trust-html.filter.js"></script>
+	<script src="scripts/components/util/save-file.factory.js"></script>
+	<script src="scripts/components/util/util.factory.js"></script>
+	<script src="scripts/components/util/camelize.filter.js"></script>
+	<script src="scripts/components/util/kevoree/model-helper.factory.js"></script>
+	<script src="scripts/components/util/naming-pattern.filter.js"></script>
+	<script src="scripts/components/util/is-compatible.filter.js"></script>
+	<!-- endbuild -->
 </body>
+
 </html>

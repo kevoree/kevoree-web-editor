@@ -1,0 +1,20 @@
+---
+env:
+  browser: true
+extends:
+- eslint:recommended
+rules:
+  no-control-regex: 0
+globals:
+  hljs: true
+  mina: true
+  Snap: true
+  angular: true
+  TinyConf: true
+  Mustache: true
+  CodeMirror: true
+  KevoreeLibrary: true
+  KevoreeCommons: true
+  KevoreeValidator: true
+  KevoreeKevscript: true
+  KevoreeRegistryApi: true

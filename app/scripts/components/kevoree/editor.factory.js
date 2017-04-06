@@ -6,7 +6,7 @@ angular.module('editorApp').factory('kEditor', function($timeout, kFactory, kMod
        * Updates UI according to model changes
        * @param trace
        */
-		return function(trace) {
+		return function (trace) {
 			var fragDic,
 				highestNode;
 			editor.invokeModelUpdateListeners();
