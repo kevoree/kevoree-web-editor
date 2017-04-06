@@ -353,6 +353,7 @@ module.exports = function(grunt) {
 		'wiredep',
 		'ngconstant',
 		'useminPrepare',
+		'eslint',
 		'concurrent:dist',
 		'autoprefixer',
 		'concat',

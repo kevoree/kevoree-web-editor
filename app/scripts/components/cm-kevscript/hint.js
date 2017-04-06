@@ -57,17 +57,6 @@ angular.module('editorApp')
 				return platforms;
 			}
 
-			console.log({
-				state: token.state.state,
-				stmt: token.state.stmt,
-				instancePath: (token.state.instancePath || [])
-					.join('.'),
-				type: token.type,
-				string: token.string,
-				start: token.start,
-				end: token.end
-			});
-
 			if (token.type === 'typedef' || token.state.state === 'typedef') {
 				if (token.type === 'namespace') {
 					tmp = cur;
