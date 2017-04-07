@@ -14,6 +14,14 @@ angular.module('editorApp')
 			var list = [];
 			var tmp;
 
+			// console.log({
+			// 	state: token.state.state,
+			// 	stmt: token.state.stmt,
+			// 	string: token.string,
+			// 	type: token.type,
+			// 	instancePath: token.state.instancePath
+			// });
+
 			function model() {
 				return cm.options.lint.lintedModel;
 			}
@@ -55,6 +63,10 @@ angular.module('editorApp')
 					}
 				});
 				return platforms;
+			}
+
+			function spaceHelper() {
+				cm.doc.replaceSelection(' ');
 			}
 
 			if (token.type === 'typedef' || token.state.state === 'typedef') {
@@ -101,7 +113,8 @@ angular.module('editorApp')
 						});
 				} else {
 					start = (cur === '.') ? token.end : token.start;
-					return KevoreeRegistryApi.tdefs(token.state.namespace)
+					var ns = (cur === '.') ? token.state.namespace : 'kevoree';
+					return KevoreeRegistryApi.tdefs(ns)
 						.then(function (tdefs) {
 							callback({
 								list: tdefs
@@ -213,14 +226,8 @@ angular.module('editorApp')
 				case 'addStmt':
 				case 'bindStmt':
 				case 'unbindStmt':
-					if (cur === 'add' || cur === 'set') {
-						cur = '';
-						start = end;
-						end = end + 1;
-						list = [{
-							type: 'helper',
-							text: ' '
-						}];
+					if (cur === 'add' || cur === 'set' || cur === 'bind' || cur === 'unbind') {
+						spaceHelper();
 					} else {
 						tmp = cur;
 						cur = tmp.trim();
@@ -247,13 +254,7 @@ angular.module('editorApp')
 
 				case 'setStmt':
 					if (cur === 'set') {
-						cur = '';
-						start = end;
-						end = end + 1;
-						list = [{
-							type: 'helper',
-							text: ' '
-						}];
+						spaceHelper();
 					} else {
 						if (token.state.instancePath.length === 3) {
 							// show nodes for fragment
@@ -327,13 +328,7 @@ angular.module('editorApp')
 				case 'attachStmt':
 				case 'detachStmt':
 					if (cur === 'attach' || cur === 'detach') {
-						cur = '';
-						start = end;
-						end = end + 1;
-						list = [{
-							type: 'helper',
-							text: ' '
-						}];
+						spaceHelper();
 					} else {
 						tmp = cur;
 						cur = tmp.trim();
@@ -357,13 +352,7 @@ angular.module('editorApp')
 
 				case 'network':
 					if (cur === 'network') {
-						cur = '';
-						start = end;
-						end = end + 1;
-						list = [{
-							type: 'helper',
-							text: ' '
-						}];
+						spaceHelper();
 					} else {
 						tmp = cur;
 						cur = tmp.trim();

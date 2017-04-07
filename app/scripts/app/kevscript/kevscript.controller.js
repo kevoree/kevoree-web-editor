@@ -72,7 +72,7 @@ angular.module('editorApp')
 					$scope.merge();
 				},
 				'Ctrl-Space': function (cm) {
-					cm.showHint({ hint: CodeMirror.hint.kevscript, completeSingle: false });
+					cm.showHint({ hint: CodeMirror.hint.kevscript, completeSingle: false, alignWithWord: false });
 				},
 				'Ctrl-S': saveToFile,
 				'Ctrl-O': openFromFile

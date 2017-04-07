@@ -10,6 +10,7 @@ angular.module('editorApp')
 						push: 'addStmt',
 						process: function (state) {
 							state.stmt = 'add';
+							state.instancePath = [];
 						}
 					},
 					{
@@ -18,6 +19,7 @@ angular.module('editorApp')
 						push: 'setStmt',
 						process: function (state) {
 							state.stmt = 'set';
+							state.instancePath = [];
 						}
 					},
 					{
@@ -26,6 +28,7 @@ angular.module('editorApp')
 						push: 'attachStmt',
 						process: function (state) {
 							state.stmt = 'attach';
+							state.instancePath = [];
 						}
 					},
 					{
@@ -34,6 +37,7 @@ angular.module('editorApp')
 						push: 'detachStmt',
 						process: function (state) {
 							state.stmt = 'detach';
+							state.instancePath = [];
 						}
 					},
 					{
@@ -42,6 +46,7 @@ angular.module('editorApp')
 						push: 'moveStmt',
 						process: function (state) {
 							state.stmt = 'move';
+							state.instancePath = [];
 						}
 					},
 					{
@@ -50,6 +55,7 @@ angular.module('editorApp')
 						push: 'startStmt',
 						process: function (state) {
 							state.stmt = 'start';
+							state.instancePath = [];
 						}
 					},
 					{
@@ -58,6 +64,7 @@ angular.module('editorApp')
 						push: 'stopStmt',
 						process: function (state) {
 							state.stmt = 'stop';
+							state.instancePath = [];
 						}
 					},
 					{
@@ -66,6 +73,7 @@ angular.module('editorApp')
 						push: 'pauseStmt',
 						process: function (state) {
 							state.stmt = 'pause';
+							state.instancePath = [];
 						}
 					},
 					{
@@ -74,6 +82,7 @@ angular.module('editorApp')
 						push: 'removeStmt',
 						process: function (state) {
 							state.stmt = 'remove';
+							state.instancePath = [];
 						}
 					},
 					{
@@ -82,6 +91,7 @@ angular.module('editorApp')
 						push: 'bindStmt',
 						process: function (state) {
 							state.stmt = 'bind';
+							state.instancePath = [];
 						}
 					},
 					{
@@ -90,6 +100,7 @@ angular.module('editorApp')
 						push: 'unbindStmt',
 						process: function (state) {
 							state.stmt = 'unbind';
+							state.instancePath = [];
 						}
 					},
 					{
@@ -98,6 +109,7 @@ angular.module('editorApp')
 						push: 'repoStmt',
 						process: function (state) {
 							state.stmt = 'repo';
+							state.instancePath = [];
 						}
 					},
 					{
@@ -106,6 +118,7 @@ angular.module('editorApp')
 						push: 'includeStmt',
 						process: function (state) {
 							state.stmt = 'include';
+							state.instancePath = [];
 						}
 					},
 					{
@@ -114,6 +127,7 @@ angular.module('editorApp')
 						push: 'networkStmt',
 						process: function (state) {
 							state.stmt = 'network';
+							state.instancePath = [];
 						}
 					},
 					{
