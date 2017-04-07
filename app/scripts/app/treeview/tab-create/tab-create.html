@@ -12,7 +12,7 @@
       </select>
     </div>
     <div class="form-group col-sm-8 col-lg-10">
-      <label for="instanceType">{{ selectedType | camelize }} types</label>
+      <label for="instanceType">Type</label>
       <select
           name="instanceType"
           class="form-control"
@@ -21,19 +21,6 @@
           ng-options="tdef.name for tdef in instanceTypes[selectedType] | isCompatible:selectedType:selectedNode.name">
       </select>
       <span class="help-block" ng-if="instanceTypes[selectedType].length === 0">No {{ selectedType }} type available in current model. <a ui-sref="libraries">Add some</a></span>
-    </div>
-  </div>
-  <div class="row" ng-if="selectedType === 'component'">
-    <div class="form-group col-xs-12">
-      <label for="hostNode">Where to add the components</label>
-      <select
-          name="hostNode"
-          class="form-control"
-          ng-model="selectedNode"
-          ng-disabled="availableNodes.length === 0"
-          ng-options="node.name for node in availableNodes"
-          ng-change="onSelectedNodeChange(selectedNode)">
-      </select>
     </div>
   </div>
   <div class="row">
@@ -45,6 +32,7 @@
           min="1"
           class="form-control"
           ng-model="instancesCount"
+					ng-disabled="!isValid()"
           ng-change="verifyName()" />
     </div>
   </div>
@@ -57,6 +45,7 @@
             type="text"
             class="form-control"
             ng-model="namePattern"
+						ng-disabled="!isValid()"
             ng-change="verifyName()" />
         <span class="input-group-addon"><em>eg:</em> {{ namePattern | namingPattern:{index: 0, metatype: selectedType} }}</span>
       </div>
@@ -72,8 +61,8 @@
     <div class="form-group form-group-sm col-xs-12">
       <label class="control-label">State</label>
       <div class="btn-group btn-group-block clearfix">
-        <label class="btn btn-sm btn-default" ng-model="state.started" btn-radio="true">Started</label>
-        <label class="btn btn-sm btn-default" ng-model="state.started" btn-radio="false">Stopped</label>
+        <label class="btn btn-sm btn-default" ng-model="state.started" btn-radio="true" ng-disabled="!isValid()">Started</label>
+        <label class="btn btn-sm btn-default" ng-model="state.started" btn-radio="false" ng-disabled="!isValid()">Stopped</label>
       </div>
     </div>
   </div>
@@ -85,6 +74,7 @@
           type="text"
           class="form-control"
           ng-model="tags"
+					ng-disabled="!isValid()"
           placeholder="comma-separated list of tags"/>
     </div>
   </div>

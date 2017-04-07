@@ -3,9 +3,9 @@
 angular.module('editorApp').factory('kEditor', function($timeout, kFactory, kModelHelper, kInstance, ui, Notification, KWE_POSITION, KWE_FOLDED, KWE_SELECTED, KWE_TAG, CHANNEL_RADIUS, GROUP_RADIUS) {
 	function modelReactor(editor) {
 		/**
-       * Updates UI according to model changes
-       * @param trace
-       */
+		 * Updates UI according to model changes
+		 * @param trace
+		 */
 		return function (trace) {
 			var fragDic,
 				highestNode;

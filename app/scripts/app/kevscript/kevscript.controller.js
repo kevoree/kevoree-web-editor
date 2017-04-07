@@ -226,6 +226,17 @@ angular.module('editorApp')
 				callback: $scope.save
 			});
 
+		hotkeys.bindTo($scope)
+			.add({
+				combo: 'shift+enter',
+				description: 'Merges current KevScript to model',
+				callback: function () {
+					if ($scope.isMergeable()) {
+						$scope.merge();
+					}
+				}
+			});
+
 		$scope.toggleShortcutHelp = function () {
 			hotkeys.toggleCheatSheet();
 		};
