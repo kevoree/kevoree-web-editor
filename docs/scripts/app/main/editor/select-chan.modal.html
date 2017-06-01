@@ -1,1 +1,49 @@
-<div class="modal-header"> <h3 class="modal-title">Select a channel</h3> </div> <div class="modal-body"> <div class="clearfix"> <div class="alert alert-warning" data-ng-if="instances.length === 0 && types.length === 0"> <p> <strong>Warning</strong> </p> <p>Unable to find any compatible channel TypeDefinition or instances. You must have at least one channel type (that is compatible with the targetted node platform(s)) in order to connect ports together.</p> </div> <div class="col-sm-5"> <p class="text-justify"> You want to connect 2 <strong>ports</strong> together. <br> In Kevoree this is made by connecting those 2 ports to the same channel instance. <br> Select which channel you want to use in the right panel. </p> </div> <div class="col-sm-7"> <div class="select-chan-panel panel"> <div class="panel-heading">Available instances</div> <div class="list-group"> <div data-ng-if="instances.length === 0" class="list-group-item"> <em>none found</em> </div> <a class="list-group-item point-cursor" data-ng-repeat="chan in instances" data-ng-click="select(chan)" data-ng-class="chan.selected ? 'active':''"> {{ chan.typeDefinition.name }} <span class="pull-right">{{ chan.name }}</span> </a> </div> <div class="panel-heading">or create a new instance</div> <div class="list-group"> <div data-ng-if="types.length === 0" class="list-group-item"> <em>none found</em> </div> <a class="list-group-item point-cursor" data-ng-repeat="type in types" data-ng-click="select(type)" data-ng-class="type.selected ? 'active':''"> {{ type.name }} <span class="pull-right">{{ 'v' + type.version }}</span> </a> </div> </div> </div> </div> </div> <div class="modal-footer"> <button class="btn btn-primary" data-ng-click="confirm()" focus="200" data-ng-disabled="!isValid()">Confirm</button> <button class="btn btn-default" data-ng-click="$close()">Close</button> </div>
+<div class="modal-header">
+    <h3 class="modal-title">Select a channel</h3>
+</div>
+<div class="modal-body">
+    <div class="clearfix">
+        <div class="alert alert-warning" data-ng-if="instances.length === 0 && types.length === 0">
+            <p>
+                <strong>Warning</strong>
+            </p>
+            <p>Unable to find any compatible channel TypeDefinition or instances. You must have at least one channel type (that is compatible with the targetted node platform(s)) in order to connect ports together.</p>
+        </div>
+        <div class="col-sm-5">
+            <p class="text-justify">
+                You want to connect 2
+                <strong>ports</strong> together.
+                <br/> In Kevoree this is made by connecting those 2 ports to the same channel instance.
+                <br/> Select which channel you want to use in the right panel.
+            </p>
+        </div>
+        <div class="col-sm-7">
+            <div class="select-chan-panel panel">
+                <div class="panel-heading">Available instances</div>
+                <div class="list-group">
+                    <div data-ng-if="instances.length === 0" class="list-group-item">
+                        <em>none found</em>
+                    </div>
+                    <a class="list-group-item point-cursor" data-ng-repeat="chan in instances" data-ng-click="select(chan)" data-ng-class="chan.selected ? 'active':''">
+                        {{ chan.typeDefinition.name }}
+                        <span class="pull-right">{{ chan.name }}</span>
+                    </a>
+                </div>
+                <div class="panel-heading">or create a new instance</div>
+                <div class="list-group">
+                    <div data-ng-if="types.length === 0" class="list-group-item">
+                        <em>none found</em>
+                    </div>
+                    <a class="list-group-item point-cursor" data-ng-repeat="type in types" data-ng-click="select(type)" data-ng-class="type.selected ? 'active':''">
+                      {{ type.name }}
+                      <span class="pull-right">{{ 'v' + type.version }}</span>
+                  </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" data-ng-click="confirm()" focus="200" data-ng-disabled="!isValid()">Confirm</button>
+    <button class="btn btn-default" data-ng-click="$close()">Close</button>
+</div>

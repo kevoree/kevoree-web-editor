@@ -1,1 +1,179 @@
-<div class="menubar"> <div class="menu-btn"> <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> <span>File</span> <span>&nbsp;</span> <span class="caret"></span> </button> <ul class="dropdown-menu" role="menu"> <li> <a ng-click="open($event)"> <span class="name">Open</span> <span class="shortcut">Ctrl+O</span> </a> </li> <li> <a ng-click="merge($event)"> <span class="name">Merge</span> <span class="shortcut">Ctrl+M</span> </a> </li> <li> <a ng-click="openFromNode($event)"> <span class="name">Open from node</span> <span class="shortcut">Ctrl+Shift+O</span> </a> </li> <li> <a ng-click="mergeFromNode($event)"> <span class="name">Merge from node</span> <span class="shortcut">Ctrl+Shift+M</span> </a> </li> <li class="divider"></li> <li> <a ng-click="save($event)"> <span class="name">Save</span> <span class="shortcut">Ctrl+S</span> </a> </li> </ul> </div> <div class="menu-btn"> <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> <span>Edit</span> <span>&nbsp;</span> <span class="caret"></span> </button> <ul class="dropdown-menu" role="menu"> <li> <a ng-click="deleteAll($event)"> <span class="name">Delete all</span> <span class="shortcut">Alt+Shift+D</span> </a> </li> <li> <a ng-click="deleteInstances($event)"> <span class="name">Delete instances</span> <span class="shortcut">Alt+Shift+I</span> </a> </li> <li> <a ng-click="deleteSelected($event)"> <span class="name">Delete selected</span> <span class="shortcut">Del</span> </a> </li> </ul> </div> <div class="menu-btn"> <button type="button" class="btn btn-default" ng-click="toggleShortcutHelp()">Help</button> </div> </div> <div class="tree-container"> <div class="col-md-4 col-lg-3 fit-y"> <div class="well fit-y"> <div class="row clearfix"> <div class="col-xs-12"> <div class="form-group form-group-filter" ng-class="{'has-error':filterError}"> <div class="input-group input-group-sm"> <input type="text" class="form-control" placeholder="Filter by name:*, tag:*, is:*, vers:*" ng-model="filterExpr" ng-change="onFilterExprChanged()"> <span class="input-group-btn"> <button class="btn btn-default" type="button" ng-click="clearFilter()" title="Clear filter" ng-disabled="!filterExpr.length"> <i class="fa fa-times"></i> </button> </span> </div> <span class="help-block filter-error">{{ filterError }}</span> </div> </div> </div> <div class="treeview-actions row"> <div class="col-xs-12"> <a href="" class="treeview-action" ng-click="collapse()" title="Collapse"> <i class="fa fa-compress"></i> </a> <a href="" class="treeview-action" ng-click="expand()" title="Expand"> <i class="fa fa-expand"></i> </a> <a href="" class="treeview-action" ng-click="toggleTags()" title="{{ showTags ? 'Hide tags':'Show tags' }}"> <i class="fa" ng-class="showTags ? 'fa-eye-slash':'fa-eye'"></i> </a> <a href="" class="treeview-action" ng-click="reverseSort()" title="{{ showTags ? 'Sort desc':'Sort asc' }}"> <i class="fa" ng-class="treeReverse ? 'fa-sort-alpha-desc':'fa-sort-alpha-asc'"></i> </a> </div> <div class="col-xs-12"> <a href="" class="treeview-action" ng-click="selectAll()" title="Select all">All</a> <a href="" class="treeview-action" ng-click="selectNodes()" title="Select nodes">N</a> <a href="" class="treeview-action" ng-click="selectComponents()" title="Select components">C</a> <a href="" class="treeview-action" ng-click="selectGroups()" title="Select groups">G</a> <a href="" class="treeview-action" ng-click="selectChannels()" title="Select channels">Ch</a> <a href="" class="treeview-action" ng-click="clearSelected()" title="Clear selection"> <i class="fa fa-square-o"></i> </a> <span class="pull-right" title="selection / total">{{ selectedItems.length }} / {{ nbInstances }} </span> </div> </div> <div class="treecontrol-container"> <div id="treecontrol-scroll-container" class="treecontrol-inner-container"> <em ng-if="items.length === 0">No instance in current model</em> <ul class="list-unstyled tree" infinite-scroll="loadMore()" infinite-scroll-distance="0" infinite-scroll-container="'#treecontrol-scroll-container'"> <li class="item" ng-repeat="item in items | doFilter:query | orderBy:'name':treeReverse | limitTo:limit track by item.path" ng-class="{ selected: item.selected, expanded: !item.folded }"> <span class="icon {{ item.type }}"> <i class="expand-handle fa" ng-class="!item.folded ? 'fa-minus':'fa-plus'" ng-if="item.children && item.children.length > 0" ng-click="onExpand(item)"> </i> </span> <div class="name" ng-click="onClick(item)" ng-mouseenter="item.hovered = true" ng-mouseleave="item.hovered = false"> <span>{{ item.name }}</span> <em class="text-muted" ng-class="{ hide: !item.hovered }">{{ item.typeName + '/' + item.version }}</em> <span class="tag badge pull-right" ng-repeat="tag in item.tags" ng-if="showTags && item.tags.length < 3">{{ tag }}</span> <span class="tag badge pull-right" ng-if="showTags && item.tags.length >= 3" tooltip="tags: {{ item.tags.join(', ') }}" tooltip-placement="right" tooltip-append-to-body="true">...</span> </div> <ul class="list-unstyled tree" ng-if="!item.folded"> <li class="item" ng-repeat="child in item.children | doFilter:query | orderBy:'name':treeReverse track by child.path" ng-class="child.selected ? 'selected':''"> <span class="icon {{ child.type }}"></span> <div class="name" ng-click="onClick(child)" ng-mouseenter="child.hovered = true" ng-mouseleave="child.hovered = false"> <span>{{ child.name }}</span> <em class="text-muted" ng-class="{ hide: !child.hovered }">{{ child.typeName + '/' + child.version }}</em> <span class="tag badge pull-right" ng-repeat="tag in child.tags" ng-if="showTags && child.tags.length < 3">{{ tag }}</span> <span class="tag badge pull-right" ng-if="showTags && child.tags.length >= 3" tooltip="tags: {{ child.tags.join(', ') }}" tooltip-placement="right" tooltip-append-to-body="true">...</span> </div> </li> </ul> </li> </ul> </div> </div> </div> </div> <div class="treeview-rightpanel col-md-8 col-lg-9 fit-y"> <tabset class="tab-set"> <tab heading="Actions"> <div class="tab-pane-container well"> <tab-actions></tab-actions> </div> </tab> <tab heading="Create"> <div class="tab-pane-container well"> <tab-create></tab-create> </div> </tab> <tab heading="Params" ng-if="selectedItems.length"> <div class="tab-pane-container well"> <tab-params></tab-params> </div> </tab> <tab heading="Tags" ng-if="selectedItems.length"> <div class="tab-pane-container well"> <tab-tags></tab-tags> </div> </tab> </tabset> </div> </div> <input id="file" type="file" on-data="onFileLoaded($name, $data)" class="hide">
+<div class="menubar">
+	<div class="menu-btn">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			<span>File</span>
+			<span>&nbsp;</span>
+			<span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li>
+				<a ng-click="open($event)">
+					<span class="name">Open</span>
+					<span class="shortcut">Ctrl+O</span>
+				</a>
+			</li>
+			<li>
+				<a ng-click="merge($event)">
+					<span class="name">Merge</span>
+					<span class="shortcut">Ctrl+M</span>
+				</a>
+			</li>
+			<li>
+				<a ng-click="openFromNode($event)">
+					<span class="name">Open from node</span>
+					<span class="shortcut">Ctrl+Shift+O</span>
+				</a>
+			</li>
+			<li>
+				<a ng-click="mergeFromNode($event)">
+					<span class="name">Merge from node</span>
+					<span class="shortcut">Ctrl+Shift+M</span>
+				</a>
+			</li>
+			<li class="divider"></li>
+			<li>
+				<a ng-click="save($event)">
+					<span class="name">Save</span>
+					<span class="shortcut">Ctrl+S</span>
+				</a>
+			</li>
+		</ul>
+	</div>
+	<div class="menu-btn">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			<span>Edit</span>
+			<span>&nbsp;</span>
+			<span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li>
+				<a ng-click="deleteAll($event)">
+					<span class="name">Delete all</span>
+					<span class="shortcut">Alt+Shift+D</span>
+				</a>
+			</li>
+			<li>
+				<a ng-click="deleteInstances($event)">
+					<span class="name">Delete instances</span>
+					<span class="shortcut">Alt+Shift+I</span>
+				</a>
+			</li>
+			<li>
+				<a ng-click="deleteSelected($event)">
+					<span class="name">Delete selected</span>
+					<span class="shortcut">Del</span>
+				</a>
+			</li>
+		</ul>
+	</div>
+	<div class="menu-btn">
+		<button type="button" class="btn btn-default" ng-click="toggleShortcutHelp()">Help</button>
+	</div>
+</div>
+<div class="tree-container">
+	<div class="col-md-4 col-lg-3 fit-y">
+		<div class="well fit-y">
+			<div class="row clearfix">
+				<div class="col-xs-12">
+					<div class="form-group form-group-filter" ng-class="{'has-error':filterError}">
+						<div class="input-group input-group-sm">
+							<input type="text" class="form-control" placeholder="Filter by name:*, tag:*, is:*, vers:*" ng-model="filterExpr" ng-change="onFilterExprChanged()">
+							<span class="input-group-btn">
+								<button class="btn btn-default" type="button" ng-click="clearFilter()" title="Clear filter" ng-disabled="!filterExpr.length">
+									<i class="fa fa-times"></i>
+								</button>
+							</span>
+						</div>
+						<span class="help-block filter-error">{{ filterError }}</span>
+					</div>
+				</div>
+			</div>
+			<div class="treeview-actions row">
+				<div class="col-xs-12">
+					<a href="" class="treeview-action" ng-click="collapse()" title="Collapse">
+						<i class="fa fa-compress"></i>
+					</a>
+					<a href="" class="treeview-action" ng-click="expand()" title="Expand">
+						<i class="fa fa-expand"></i>
+					</a>
+					<a href="" class="treeview-action" ng-click="toggleTags()" title="{{ showTags ? 'Hide tags':'Show tags' }}">
+						<i class="fa" ng-class="showTags ? 'fa-eye-slash':'fa-eye'"></i>
+					</a>
+					<a href="" class="treeview-action" ng-click="reverseSort()" title="{{ showTags ? 'Sort desc':'Sort asc' }}">
+						<i class="fa" ng-class="treeReverse ? 'fa-sort-alpha-desc':'fa-sort-alpha-asc'"></i>
+					</a>
+				</div>
+				<div class="col-xs-12">
+					<a href="" class="treeview-action" ng-click="selectAll()" title="Select all">All</a>
+					<a href="" class="treeview-action" ng-click="selectNodes()" title="Select nodes">N</a>
+					<a href="" class="treeview-action" ng-click="selectComponents()" title="Select components">C</a>
+					<a href="" class="treeview-action" ng-click="selectGroups()" title="Select groups">G</a>
+					<a href="" class="treeview-action" ng-click="selectChannels()" title="Select channels">Ch</a>
+					<a href="" class="treeview-action" ng-click="clearSelected()" title="Clear selection">
+						<i class="fa fa-square-o"></i>
+					</a>
+					<span class="pull-right" title="selection / total">{{ selectedItems.length }} / {{ nbInstances }} </span>
+				</div>
+			</div>
+			<div class="treecontrol-container">
+				<div id="treecontrol-scroll-container" class="treecontrol-inner-container">
+					<em ng-if="items.length === 0">No instance in current model</em>
+					<ul class="list-unstyled tree" infinite-scroll="loadMore()" infinite-scroll-distance="0" infinite-scroll-container="'#treecontrol-scroll-container'">
+						<li class="item" ng-repeat="item in items | doFilter:query | orderBy:'name':treeReverse | limitTo:limit track by item.path" ng-class="{ selected: item.selected, expanded: !item.folded }">
+							<span class="icon {{ item.type }}">
+								<i
+									class="expand-handle fa"
+									ng-class="!item.folded ? 'fa-minus':'fa-plus'"
+									ng-if="item.children && item.children.length > 0"
+									ng-click="onExpand(item)">
+								</i>
+							</span>
+							<div class="name" ng-click="onClick(item)" ng-mouseenter="item.hovered = true" ng-mouseleave="item.hovered = false">
+								<span>{{ item.name }}</span>
+								<em class="text-muted" ng-class="{ hide: !item.hovered }">{{ item.typeName + '/' + item.version }}</em>
+								<span class="tag badge pull-right" ng-repeat="tag in item.tags" ng-if="showTags && item.tags.length < 3">{{ tag }}</span>
+								<span class="tag badge pull-right" ng-if="showTags && item.tags.length >= 3" tooltip="tags: {{ item.tags.join(', ') }}" tooltip-placement="right" tooltip-append-to-body="true">...</span>
+							</div>
+							<ul class="list-unstyled tree" ng-if="!item.folded">
+								<li class="item" ng-repeat="child in item.children | doFilter:query | orderBy:'name':treeReverse track by child.path" ng-class="child.selected ? 'selected':''">
+									<span class="icon {{ child.type }}"></span>
+									<div class="name" ng-click="onClick(child)" ng-mouseenter="child.hovered = true" ng-mouseleave="child.hovered = false">
+										<span>{{ child.name }}</span>
+										<em class="text-muted" ng-class="{ hide: !child.hovered }">{{ child.typeName + '/' + child.version }}</em>
+										<span class="tag badge pull-right" ng-repeat="tag in child.tags" ng-if="showTags && child.tags.length < 3">{{ tag }}</span>
+										<span class="tag badge pull-right" ng-if="showTags && child.tags.length >= 3" tooltip="tags: {{ child.tags.join(', ') }}" tooltip-placement="right" tooltip-append-to-body="true">...</span>
+									</div>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="treeview-rightpanel col-md-8 col-lg-9 fit-y">
+		<tabset class="tab-set">
+			<tab heading="Actions">
+				<div class="tab-pane-container well">
+					<tab-actions></tab-actions>
+				</div>
+			</tab>
+			<tab heading="Create">
+				<div class="tab-pane-container well">
+					<tab-create></tab-create>
+				</div>
+			</tab>
+			<tab heading="Params" ng-if="selectedItems.length">
+				<div class="tab-pane-container well">
+					<tab-params></tab-params>
+				</div>
+			</tab>
+			<tab heading="Tags" ng-if="selectedItems.length">
+				<div class="tab-pane-container well">
+					<tab-tags></tab-tags>
+				</div>
+			</tab>
+		</tabset>
+	</div>
+</div>
+<input id="file" type="file" on-data="onFileLoaded($name, $data)" class="hide">

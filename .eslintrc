@@ -7,6 +7,7 @@ globals:
   hljs: true
   mina: true
   Snap: true
+  jQuery: true
   angular: true
   TinyConf: true
   Mustache: true

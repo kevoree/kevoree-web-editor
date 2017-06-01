@@ -1,0 +1,34 @@
+<div class="klist panel panel-kevoree" ng-disabled="$ctrl.disabled">
+  <div class="panel-heading">
+    <span>{{ $ctrl.title }}</span>
+    <span class="pull-right">
+      <span ng-if="$ctrl.filter">{{ filteredElems.length + '/' + $ctrl.elems.length || '-' }}</span>
+      <span ng-if="!$ctrl.filter">{{ $ctrl.elems.length || '-' }}</span>
+    </span>
+  </div>
+  <div class="panel-body" ng-if="$ctrl.elems.length === 0">
+    <em>No {{ $ctrl.title }} available</em>
+  </div>
+  <div class="panel-body breath-all-sm" ng-if="$ctrl.elems.length > 0">
+    <input type="text" class="form-control input-sm" ng-model="$ctrl.filter" placeholder="{{ $ctrl.placeholder || 'Filter elements' }}" />
+  </div>
+  <div class="panel-body" ng-if="!$ctrl.elems && !$ctrl.disabled">
+    <em>You must select a {{ $ctrl.parent }}</em>
+  </div>
+  <div class="panel-body" ng-if="!$ctrl.elems && $ctrl.disabled">
+    <em>Loading...</em>
+  </div>
+  <div class="list-group">
+    <div
+      ng-repeat="elem in filteredElems = ($ctrl.elems | filter:$ctrl.filter)"
+      class="list-group-item tdef-item-{{ elem.type }} clickable"
+      ng-class="{ active: elem.active }"
+      ng-click="$ctrl.select(elem)">
+        <h4 class="list-group-item-heading" ng-class="{ 'no-margin': ($ctrl.props.length === 0) }">{{ elem.name }}</h4>
+        <p class="list-group-item-text" ng-if="$ctrl.props.length > 0" ng-repeat="prop in $ctrl.props">
+          <span class="capitalize">{{ prop.title || prop }}:</span>
+          <span>{{ elem[prop.prop || prop] }}</span>
+        </p>
+    </div>
+  </div>
+</div>

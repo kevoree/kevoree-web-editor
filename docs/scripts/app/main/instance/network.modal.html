@@ -1,1 +1,78 @@
-<div class="modal-header"> <h3 class="modal-title">Network <strong>{{ node.name + '.' + net.name }}</strong></h3> </div> <div class="modal-body"> <form name="form" class="instance-form"> <!-- Network name --> <div class="form-group" data-ng-class="form.name.$valid ? '':'has-error has-feedback'"> <label for="name">Name</label> <input id="name" name="name" type="text" class="form-control input-sm" placeholder="Network name" data-ng-model="net.name" required focus="200"> <span class="glyphicon glyphicon-remove form-control-feedback" data-ng-hide="form.name.$valid"></span> </div> <!-- Add value form --> <label>Add value</label> <div class="row form-group" data-ng-class="form.newValName.$valid ? '':'has-error has-feedback'"> <div class="col-sm-5 col-xs-11"> <input id="newValName" name="newValName" type="text" class="form-control input-sm" placeholder="ie: lo, eth0" data-ng-model="newVal.name" data-ui-keypress="{13: 'addNewVal()'}" min="1"> </div> <div class="col-sm-6 col-xs-11"> <input name="newValValue" type="text" class="form-control input-sm" placeholder="ie: 127.0.0.1, localhost" data-ng-model="newVal.value" data-ui-keypress="{13: 'addNewVal()'}" min="1"> </div> <div class="col-sm-1 col-xs-1" style="line-height: 30px"> <a class="point-cursor" data-ng-click="addNewVal()" title="Add new value ?"> <i class="fa fa-plus"></i> </a> </div> </div> <!-- Values list --> <label>Values</label> <div data-ng-show="net.values.size() === 0"> <p><em>&lt;no value&gt;</em></p> </div> <div class="row form-group" data-ng-repeat="(index, val) in net.values.array | orderBy:'name'"> <div class="col-sm-5 col-xs-11"> <input name="valName{{index}}" type="text" class="form-control input-sm" placeholder="ie: lo, eth0" data-ng-model="val.name"> </div> <div class="col-sm-6 col-xs-11"> <input name="valValue{{index}}" type="text" class="form-control input-sm" placeholder="ie: 127.0.0.1, localhost" data-ng-model="val.value"> </div> <div class="col-sm-1 col-xs-1" style="line-height: 30px"> <a class="point-cursor" data-ng-click="val.delete()" title="Delete {{ net.eContainer().name + '.' + net.name + '.' + val.name }} ?"> <i class="fa fa-trash"></i> </a> </div> </div> </form> </div> <div class="modal-footer"> <button class="btn btn-warning" data-ng-click="delete()" data-ng-show="node.findNetworkInformationByID(net.name)">Delete</button> <button class="btn btn-primary" data-ng-click="add()" data-ng-hide="node.findNetworkInformationByID(net.name)" data-ng-disabled="!canSave()">Save</button> <button class="btn btn-default" data-ng-click="$close()">Close</button> </div>
+<div class="modal-header">
+    <h3 class="modal-title">Network <strong>{{ node.name + '.' + net.name }}</strong></h3>
+</div>
+<div class="modal-body">
+    <form name="form" class="instance-form">
+        <!-- Network name -->
+        <div class="form-group" data-ng-class="form.name.$valid ? '':'has-error has-feedback'">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" class="form-control input-sm" placeholder="Network name" data-ng-model="net.name" required focus="200">
+            <span class="glyphicon glyphicon-remove form-control-feedback" data-ng-hide="form.name.$valid"></span>
+        </div>
+
+        <!-- Add value form -->
+        <label>Add value</label>
+        <div class="row form-group"  data-ng-class="form.newValName.$valid ? '':'has-error has-feedback'">
+            <div class="col-sm-5 col-xs-11">
+                <input
+                    id="newValName"
+                    name="newValName"
+                    type="text"
+                    class="form-control input-sm"
+                    placeholder="ie: lo, eth0"
+                    data-ng-model="newVal.name"
+                    data-ui-keypress="{13: 'addNewVal()'}"
+                    min="1">
+            </div>
+            <div class="col-sm-6 col-xs-11">
+                <input
+                    name="newValValue"
+                    type="text"
+                    class="form-control input-sm"
+                    placeholder="ie: 127.0.0.1, localhost"
+                    data-ng-model="newVal.value"
+                    data-ui-keypress="{13: 'addNewVal()'}"
+                    min="1">
+            </div>
+            <div class="col-sm-1 col-xs-1" style="line-height: 30px">
+                <a class="point-cursor" data-ng-click="addNewVal()" title="Add new value ?">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Values list -->
+        <label>Values</label>
+        <div data-ng-show="net.values.size() === 0">
+            <p><em>&lt;no value&gt;</em></p>
+        </div>
+        <div class="row form-group" data-ng-repeat="(index, val) in net.values.array | orderBy:'name'">
+            <div class="col-sm-5 col-xs-11">
+                <input
+                        name="valName{{index}}"
+                        type="text"
+                        class="form-control input-sm"
+                        placeholder="ie: lo, eth0"
+                        data-ng-model="val.name">
+            </div>
+            <div class="col-sm-6 col-xs-11">
+                <input
+                        name="valValue{{index}}"
+                        type="text"
+                        class="form-control input-sm"
+                        placeholder="ie: 127.0.0.1, localhost"
+                        data-ng-model="val.value">
+            </div>
+            <div class="col-sm-1 col-xs-1" style="line-height: 30px">
+                <a class="point-cursor" data-ng-click="val.delete()" title="Delete {{ net.eContainer().name + '.' + net.name + '.' + val.name }} ?">
+                    <i class="fa fa-trash"></i>
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" data-ng-click="delete()" data-ng-show="node.findNetworkInformationByID(net.name)">Delete</button>
+    <button class="btn btn-primary" data-ng-click="add()" data-ng-hide="node.findNetworkInformationByID(net.name)" data-ng-disabled="!canSave()">Save</button>
+    <button class="btn btn-default" data-ng-click="$close()">Close</button>
+</div>

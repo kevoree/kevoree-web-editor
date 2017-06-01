@@ -79,10 +79,21 @@ module.exports = function (grunt) {
       }
     },
 
+    uglify: {
+      build: {
+        files: [{
+          expand: true,
+          src: '*.js',
+          dest: 'docs/scripts',
+          cwd: '.tmp/concat/scripts'
+        }]
+      }
+    },
+
     // Make sure code styles are up to par and there are no obvious mistakes
     eslint: {
       options: {
-        configFile: 'package.json'
+        configFile: '.eslintrc'
       },
       target: [
         'Gruntfile.js',
@@ -167,7 +178,7 @@ module.exports = function (grunt) {
           html: {
             steps: {
               js: [
-                'concat', 'uglifyjs'
+                'concat', 'uglify'
               ],
               css: ['cssmin']
             },

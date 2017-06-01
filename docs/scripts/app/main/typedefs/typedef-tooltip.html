@@ -1,1 +1,7 @@
-<h5 style="text-align: left"><strong>Platforms:</strong></h5> <p>{{ tdef.platforms.join(', ') }}</p> <div data-ng-if="tdef.description"> <hr> <h5 style="text-align: left"><strong>Description:</strong></h5> <p class="text-justify" data-ng-bind-html="tdef.description | trustHtml"></p> </div>
+<h5 style="text-align: left"><strong>Platforms:</strong></h5>
+<p>{{ tdef.platforms.join(', ') }}</p>
+<div data-ng-if="tdef.description">
+    <hr/>
+    <h5 style="text-align: left"><strong>Description:</strong></h5>
+    <p class="text-justify" data-ng-bind-html="tdef.description | trustHtml"></p>
+</div>
