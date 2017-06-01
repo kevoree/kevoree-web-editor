@@ -38,7 +38,6 @@ rules:
   - 2
   - SwitchCase: 1
   linebreak-style: 0
-  eol-last: 2
   no-undef:
     - 2
     - typeof: true
