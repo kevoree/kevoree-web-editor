@@ -8,7 +8,7 @@
  * Controller of the editorApp main content div
  */
 angular.module('editorApp')
-  .controller('MainCtrl', function ($scope, $timeout, $stateParams, $modal, kEditor, hotkeys, saveFile, ui, kModelHelper, kFactory, kWs, Notification) {
+  .controller('MainCtrl', function ($scope, $timeout, $stateParams, $uibModal, kEditor, hotkeys, saveFile, ui, kModelHelper, kFactory, kWs, Notification) {
     function onModelHandler() {
       kEditor.drawModel();
     }
@@ -101,17 +101,17 @@ angular.module('editorApp')
     $scope.openFromNode = function (evt) {
       evt.preventDefault();
 
-      $modal.open({
+      $uibModal.open({
         templateUrl: 'scripts/components/util/host-port-path.modal.html',
         size: 'md',
-        controller: function ($scope, $modalInstance) {
+        controller: function ($scope, $uibModalInstance) {
           $scope.title = 'Open from node';
           $scope.action = 'Open';
           $scope.host = '127.0.0.1';
           $scope.port = 9000;
           $scope.path = '/';
 
-          $modalInstance.rendered.then(function () {
+          $uibModalInstance.rendered.then(function () {
             $timeout(function () {
               angular.element('#host')
                 .focus();
@@ -127,7 +127,7 @@ angular.module('editorApp')
                   $scope.error = err.message;
                 });
               } else {
-                $modalInstance.close();
+                $uibModalInstance.close();
                 kEditor.setModel(model, function (err) {
                   if (err) {
                     Notification.error({
@@ -156,17 +156,17 @@ angular.module('editorApp')
     $scope.mergeFromNode = function (evt) {
       evt.preventDefault();
 
-      $modal.open({
+      $uibModal.open({
         templateUrl: 'scripts/components/util/host-port-path.modal.html',
         size: 'md',
-        controller: function ($scope, $modalInstance, kWs) {
+        controller: function ($scope, $uibModalInstance, kWs) {
           $scope.title = 'Merge from node';
           $scope.action = 'Merge';
           $scope.host = '127.0.0.1';
           $scope.port = 9000;
           $scope.path = '/';
 
-          $modalInstance.rendered.then(function () {
+          $uibModalInstance.rendered.then(function () {
             $timeout(function () {
               angular.element('#host')
                 .focus();
@@ -182,7 +182,7 @@ angular.module('editorApp')
                   $scope.error = err.message;
                 });
               } else {
-                $modalInstance.close();
+                $uibModalInstance.close();
                 var compare = kFactory.createModelCompare();
                 var cloner = kFactory.createModelCloner();
                 var currentModel = cloner.clone(kEditor.getModel());
@@ -225,17 +225,17 @@ angular.module('editorApp')
       evt.preventDefault();
       if (!$scope.synced) {
         var parentScope = $scope;
-        $modal.open({
+        $uibModal.open({
           templateUrl: 'scripts/components/util/host-port-path.modal.html',
           size: 'md',
-          controller: function ($scope, $modalInstance) {
+          controller: function ($scope, $uibModalInstance) {
             $scope.title = 'Connect sync';
             $scope.action = 'Sync';
             $scope.host = '127.0.0.1';
             $scope.port = 9000;
             $scope.path = '/';
 
-            $modalInstance.rendered.then(function () {
+            $uibModalInstance.rendered.then(function () {
               $timeout(function () {
                 angular.element('#host').focus();
               }, 250);
@@ -261,7 +261,7 @@ angular.module('editorApp')
                   parentScope.url = $scope.host + (($scope.port === 80) ? '' : ':' + $scope.port) + $scope.path;
                   parentScope.synced = true;
                 });
-                $modalInstance.close();
+                $uibModalInstance.close();
                 Notification.success({
                   title: $scope.title,
                   message: 'Connected to <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong>'
@@ -488,15 +488,15 @@ angular.module('editorApp')
         callback: function (evt) {
           evt.preventDefault();
           var saveFile = $scope.save;
-          $modal
+          $uibModal
             .open({
               templateUrl: 'scripts/components/util/filename.modal.html',
               size: 'sm',
-              controller: function ($scope, $modalInstance) {
+              controller: function ($scope, $uibModalInstance) {
                 $scope.title = 'Save model';
                 $scope.body = 'Would you like to save your current model to a file?';
                 $scope.filename = 'model' + (Math.floor(Math.random() * (1000 - 100)) + 100);
-                $modalInstance.rendered.then(function () {
+                $uibModalInstance.rendered.then(function () {
                   $timeout(function () {
                     angular.element('#filename')
                       .focus();
@@ -512,7 +512,7 @@ angular.module('editorApp')
                     $scope.filename = $scope.filename.substr(0, $scope.filename.length - suffix.length);
                   }
                   saveFile(evt, $scope.filename);
-                  $modalInstance.close();
+                  $uibModalInstance.close();
                 };
               }
             });

@@ -1,59 +1,63 @@
-'use strict';
+(function () {
+  'use strict';
 
-angular.module('editorApp')
-  .directive('truncate', function ($sce) {
-    return {
-      restrict: 'E',
-      scope: {
-        content: '=',
-        length: '='
+  angular.module('editorApp')
+    .component('truncate', {
+      template: '<p class="text-justify" ng-bind-html="$ctrl.trustedHtml"></p><a ng-if="$ctrl.expandable" href ng-click="$ctrl.toggle()">{{ $ctrl.toggleText }}</a>',
+      bindings: {
+        content: '<',
+        length: '<'
       },
-      template: '<p class="text-justify" ng-bind-html="trustedHtml"></p><a ng-if="expandable" href ng-click="toggle()">{{ toggleTxt }}</a>',
-      link: function (scope) {
-        function process() {
-          var expanded = true;
-          var length = 200;
-          if (angular.isNumber(scope.length)) {
-            length = scope.length;
-          }
-          var modifiedContent;
-          scope.expandable = scope.content.length > length;
-          scope.toggleTxt = 'Reduce';
+      controller: TruncateController
+    });
 
-          function reduce() {
-            modifiedContent = scope.content.substr(0, length);
-            if (scope.expandable) {
-              modifiedContent += '...';
-            }
-            expanded = false;
-            scope.toggleTxt = 'Read more';
-            scope.trustedHtml = $sce.trustAsHtml(modifiedContent);
-          }
+  TruncateController.$inject = ['$sce'];
 
-          function expand() {
-            modifiedContent = scope.content;
-            expanded = true;
-            scope.toggleTxt = 'Reduce';
-            scope.trustedHtml = $sce.trustAsHtml(modifiedContent);
-          }
+  function TruncateController($sce) {
+    var ctrl = this;
 
-          scope.toggle = function () {
-            if (expanded) {
-              reduce();
-            } else {
-              expand();
-            }
-          };
+    ctrl.expanded = false;
+    ctrl.expandable = false;
+    ctrl.toggleText = 'Read more';
+    ctrl.$onChanges = $onChanges;
+    ctrl.toggle = toggle;
+    ctrl.expand = expand;
+    ctrl.reduce = reduce;
 
-          reduce();
+    function $onChanges(changes) {
+      if (changes.content.currentValue) {
+        ctrl.expanded = true;
+        if (!angular.isNumber(ctrl.length)) {
+          ctrl.length = 200;
         }
-
-        var unregister = scope.$watch('content', process);
-        var unregister2 = scope.$watch('length', process);
-        scope.$on('$destroy', function () {
-          unregister();
-          unregister2();
-        });
+        ctrl.expandable = ctrl.content.length > ctrl.length;
+        ctrl.toggleText = 'Reduce';
+        reduce();
       }
-    };
-  });
+    }
+
+    function reduce() {
+      var modifiedContent = ctrl.content.substr(0, ctrl.length);
+      if (ctrl.expandable) {
+        modifiedContent += '...';
+      }
+      ctrl.expanded = false;
+      ctrl.toggleText = 'Read more';
+      ctrl.trustedHtml = $sce.trustAsHtml(modifiedContent);
+    }
+
+    function expand() {
+      ctrl.expanded = true;
+      ctrl.toggleText = 'Reduce';
+      ctrl.trustedHtml = $sce.trustAsHtml(ctrl.content);
+    }
+
+    function toggle() {
+      if (ctrl.expanded) {
+        reduce();
+      } else {
+        expand();
+      }
+    }
+  }
+})();

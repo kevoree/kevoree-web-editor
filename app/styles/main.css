@@ -56,6 +56,10 @@ legend.legend-sm {
 .no-margin {
   margin: 0;
 }
+.no-padding {
+  padding: 0;
+}
+
 .overlay {
   position: absolute;
   top: 0;
@@ -76,6 +80,9 @@ legend.legend-sm {
   text-align: center;
   vertical-align: middle;
   display: table-cell;
+}
+.capitalize {
+  text-transform: capitalize;
 }
 #tree-container {
   margin-top: 15px;
@@ -127,6 +134,30 @@ legend.legend-sm {
 .breath-sm {
   display: block;
   padding: 5px 0;
+}
+.breath-vertically {
+  padding: 15px 0;
+}
+.breath-all {
+  padding: 15px;
+}
+.breath-all-sm {
+  padding: 5px;
+}
+.breath-right-sm {
+  padding-right: 5px;
+}
+.breath-left-sm {
+  padding-left: 5px;
+}
+.breath-bottom-sm {
+  padding-bottom: 5px;
+}
+.m-breath-bottom-sm {
+  margin-bottom: 5px;
+}
+.breath-top-sm {
+  padding-top: 5px;
 }
 .checkbox-sm {
   margin: 0;
@@ -521,7 +552,99 @@ input.form-control.input-xs {
   margin-bottom: 10px;
   vertical-align: bottom;
 }
-
+.panel-kevoree {
+  border-color: #666;
+  margin: 0;
+}
+.panel-kevoree .panel-heading {
+  background-color: #222;
+  color: #fff;
+  font-size: 15px;
+  border-color: #666;
+  padding: 5px 10px;
+}
+.panel-kevoree .panel-heading .form-control {
+  height: 21px;
+  line-height: 21px;
+  padding: 0;
+}
+.panel-kevoree .panel-heading .btn {
+  height: 21px;
+  line-height: 21px;
+  padding: 0 5px;
+}
+.panel-kevoree .list-group-item {
+  padding: 5px 12px;
+}
+.panel-kevoree .list-group-item h4 {
+  font-size: 15px;
+  font-weight: bold;
+}
+.panel-kevoree .list-group-item .badge {
+  color: #222;
+}
+.panel-kevoree[disabled="disabled"],
+.panel-kevoree[disabled="disabled"] .list-group-item,
+.panel-kevoree[disabled="disabled"] .list-group-item:hover,
+.panel-kevoree[disabled="disabled"] .list-group-item:active
+.panel-kevoree[disabled="disabled"] .list-group-item.active
+.panel-kevoree[disabled="disabled"] .list-group-item.active:hover,
+.panel-kevoree[disabled="disabled"] .list-group-item.active:active {
+  cursor: progress !important;
+  background-color: #eee !important;
+}
+.deploy-unit {
+  padding: 5px;
+  border-radius: 2px;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.deploy-unit .icon {
+  font-size: 40px;
+  float: left;
+}
+.deploy-unit .name {
+  padding-left: 5px;
+  font-weight: bold;
+}
+.deploy-unit .version {
+  padding-left: 5px;
+}
+.deploy-unit .error {
+  padding-left: 5px;
+}
+.deploy-unit .error > i {
+  color: red;
+}
+.panel-kevoree .list-group-item-text {
+  font-size: 12px;
+}
+.panel-kevoree .list-group-item.active {
+  background-color: #e5e5e5;
+  border-color: #666;
+  color: #333;
+}
+.panel-kevoree .list-group-item.active .list-group-item-text {
+  color: #333;
+}
+.panel-kevoree .list-group-item.active:hover {
+  background-color: #eee;
+  color: #333;
+}
+.panel-kevoree .list-group-item:hover {
+  background-color: #f5f5f5;
+}
+.panel.panel-kevoree > .list-group:last-child .list-group-item:last-child, .panel > .panel-collapse > .list-group:last-child .list-group-item:last-child {
+  border-bottom: 1px solid #ddd;
+}
+.panel.panel-kevoree > .list-group:last-child .list-group-item.active:last-child, .panel > .panel-collapse > .list-group:last-child .list-group-item.active:last-child {
+  border-bottom: 0;
+}
+#libraries-inner-container {
+  margin-top: 10px;
+}
 @media (min-width: 992px) {
   .libs-container {
     position: absolute;
@@ -530,7 +653,7 @@ input.form-control.input-xs {
     bottom: 10px;
     left: 10px;
     overflow: hidden;
-    padding: 10px 0 10px 0;
+    background-color: #f5f5f5;
   }
   .tree-container {
     position: absolute;
@@ -578,10 +701,11 @@ input.form-control.input-xs {
   }
   #libraries-inner-container {
     position: absolute;
-    top: 20px;
+    top: 5px;
     left: 5px;
     right: 5px;
-    bottom: 20px;
+    bottom: 5px;
+    margin: 0;
     overflow: hidden;
   }
   .fit-y {
@@ -595,29 +719,25 @@ input.form-control.input-xs {
     bottom: 0;
     overflow: hidden;
   }
-  .libraries-tdef-list {
-    position: absolute;
-    top: 70px;
-    bottom: 0;
-    left: 15px;
-    right: 15px;
-    overflow: hidden;
-  }
-  .libraries-tdef-list-inner {
+  .klist {
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 0;
-    right: 0;
+    left: 5px;
+    right: 5px;
+    padding: 0;
     overflow: hidden;
   }
-  .libraries-tdef-list-inner:hover {
-    overflow-y: auto;
+  .klist .list-group {
+    position: absolute;
+    top: 82px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-y: hidden;
   }
-  .libraries-selected-tdef {
-    border-left: 1px solid #bbb;
-    height: 100%;
-    overflow: auto;
+  .klist .list-group:hover {
+    overflow-y: auto;
   }
   .treecontrol-container {
     position: absolute;
@@ -658,9 +778,6 @@ input.form-control.input-xs {
   }
   .libraries-selected-tdef {
     padding-bottom: 10px;
-  }
-  .libs-container .loading-content {
-    padding: 10px;
   }
   .tree-container, .kevs-container {
     margin-top: 25px;
@@ -732,27 +849,7 @@ input.form-control.input-xs {
   font-size: 14px;
 }
 .tdef-detail {
-  margin: 0;
-}
-.tdef-detail> li {
-  border-bottom: 1px solid #ccc;
-  padding: 5px 0;
-}
-.tdef-detail> li:last-child {
-  border: none;
-  padding-bottom: 0;
-}
-.tdef-detail> li:after {
-  content: " ";
-  display: block;
-  height: 0;
-  clear: both;
-}
-.tdef-detail .name {
-  font-weight: bold;
-}
-.tdef-detail .value {
-  float: right;
+  padding: 0 5px;
 }
 .select-chan-panel {
   font-size: 13px;

@@ -1,10 +1,8 @@
 ---
+extends:
+  - eslint:recommended
 env:
   browser: true
-extends:
-- eslint:recommended
-rules:
-  no-control-regex: 0
 globals:
   hljs: true
   mina: true
@@ -17,4 +15,30 @@ globals:
   KevoreeCommons: true
   KevoreeValidator: true
   KevoreeKevscript: true
-  KevoreeRegistryApi: true
+  KevoreeRegistryClient: true
+rules:
+  no-control-regex: 0
+  wrap-iife:
+  - 2
+  - inside
+  eqeqeq: 2
+  no-use-before-define:
+  - 2
+  - nofunc
+  no-unused-vars:
+  - 2
+  - vars: local
+  no-multi-str: 2
+  no-irregular-whitespace: 2
+  semi:
+  - 2
+  - always
+  indent:
+  - error
+  - 2
+  - SwitchCase: 1
+  linebreak-style: 0
+  eol-last: 2
+  no-undef:
+    - 2
+    - typeof: true

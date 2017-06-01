@@ -10,9 +10,10 @@
 	<!-- build:css(.) styles/vendor.css -->
 	<!-- bower:css -->
 	<link rel="stylesheet" href="bower_components/angular-hotkeys/build/hotkeys.css" />
-	<link rel="stylesheet" href="bower_components/angular-ui-notification/dist/angular-ui-notification.min.css" />
+	<link rel="stylesheet" href="bower_components/angular-ui-notification/dist/angular-ui-notification.css" />
 	<link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
 	<link rel="stylesheet" href="bower_components/highlightjs/styles/default.css" />
+	<link rel="stylesheet" href="bower_components/devicon/devicon.min.css" />
 	<!-- endbower -->
 	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
 	<link rel="stylesheet" href="bower_components/codemirror/lib/codemirror.css" />
@@ -127,18 +128,16 @@
 	<script src="bower_components/angular-touch/angular-touch.js"></script>
 	<script src="bower_components/codemirror/lib/codemirror.js"></script>
 	<script src="bower_components/angular-ui-codemirror/ui-codemirror.js"></script>
-	<script src="bower_components/angular-ui-notification/dist/angular-ui-notification.min.js"></script>
-	<script src="bower_components/angular-ui-utils/ui-utils.js"></script>
+	<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+	<script src="bower_components/angular-ui-notification/dist/angular-ui-notification.js"></script>
 	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 	<script src="bower_components/kevoree-library/browser/kevoree-library.js"></script>
 	<script src="bower_components/kevoree-validator/browser/kevoree-validator.js"></script>
 	<script src="bower_components/tiny-conf/dist/tiny-conf.js"></script>
-	<script src="bower_components/kevoree-commons/browser/kevoree-commons.js"></script>
-	<script src="bower_components/kevoree-registry-api/browser/kevoree-registry-api.js"></script>
+	<script src="bower_components/kevoree-registry-client/build/browser/kevoree-registry-client.js"></script>
 	<script src="bower_components/kevoree-kevscript/browser/kevoree-kevscript.js"></script>
 	<script src="bower_components/snap.svg/dist/snap.svg-min.js"></script>
 	<script src="bower_components/snap.svg.zpd/snap.svg.zpd.js"></script>
-	<script src="bower_components/ui-router/release/angular-ui-router.js"></script>
 	<script src="bower_components/highlightjs/highlight.pack.js"></script>
 	<script src="bower_components/angular-highlightjs/build/angular-highlightjs.js"></script>
 	<script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
@@ -171,7 +170,11 @@
 	<script src="scripts/app/kevscript/kevscript.js"></script>
 	<script src="scripts/app/kevscript/kevscript.controller.js"></script>
 	<script src="scripts/app/libraries/libraries.js"></script>
-	<script src="scripts/app/libraries/libraries.controller.js"></script>
+  <script src="scripts/app/libraries/libraries.controller.js"></script>
+  <script src="scripts/app/libraries/dus-modal.controller.js"></script>
+  <script src="scripts/app/libraries/klist.component.js"></script>
+  <script src="scripts/app/libraries/tdef-detail.component.js"></script>
+  <script src="scripts/app/libraries/dus-installer.component.js"></script>
 	<script src="scripts/app/treeview/treeview.js"></script>
 	<script src="scripts/app/treeview/treeview.controller.js"></script>
 	<script src="scripts/app/treeview/filter-parser.factory.js"></script>
@@ -200,6 +203,7 @@
 	<script src="scripts/components/kevoree/instance.factory.js"></script>
 	<script src="scripts/components/kevoree/ws.factory.js"></script>
 	<script src="scripts/components/kevoree/registry.factory.js"></script>
+  <script src="scripts/components/deploy-unit/list/dus-list.component.js"></script>
 	<script src="scripts/components/services/storage.service.js"></script>
 	<script src="scripts/components/cm-kevscript/mode.js"></script>
 	<script src="scripts/components/cm-kevscript/lint.js"></script>

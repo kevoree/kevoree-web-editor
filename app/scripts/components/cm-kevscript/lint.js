@@ -3,9 +3,9 @@
 angular.module('editorApp')
   .run(function (kScript, kEditor) {
     var tokens = ['repoToken', 'includeToken', 'addToken', 'removeToken', 'moveToken',
-              'setToken', 'attachToken', 'detachToken', 'networkToken', 'bindToken',
-              'unbindToken', 'namespaceToken', 'startToken', 'stopToken',
-              'pauseToken', 'comment'];
+      'setToken', 'attachToken', 'detachToken', 'networkToken', 'bindToken',
+      'unbindToken', 'namespaceToken', 'startToken', 'stopToken',
+      'pauseToken', 'comment'];
 
     function findLine(pos, lines) {
       var line = -1;

@@ -2,18 +2,18 @@
 
 angular.module('editorApp')
 	.config(function ($stateProvider) {
-		$stateProvider
+  $stateProvider
 			.state('treeview', {
-				parent: 'app',
-				url: '/treeview',
-				views: {
-					'content@': {
-						templateUrl: 'scripts/app/treeview/treeview.html',
-						controller: 'TreeViewCtrl'
-					}
-				},
-				onExit: function (kEditor) {
-					kEditor.removeModelUpdateListeners('treeview');
-				}
-			});
-	});
+  parent: 'app',
+  url: '/treeview',
+  views: {
+    'content@': {
+      templateUrl: 'scripts/app/treeview/treeview.html',
+      controller: 'TreeViewCtrl'
+    }
+  },
+  onExit: function (kEditor) {
+    kEditor.removeModelUpdateListeners('treeview');
+  }
+});
+});

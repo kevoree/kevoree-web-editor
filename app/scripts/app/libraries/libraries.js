@@ -5,11 +5,12 @@ angular.module('editorApp')
     $stateProvider
       .state('libraries', {
         parent: 'app',
-        url: '/libs/{fqn}',
+        url: '/libs',
         views: {
           'content@': {
             templateUrl: 'scripts/app/libraries/libraries.html',
-            controller: 'LibrariesCtrl'
+            controller: 'LibrariesCtrl',
+            controllerAs: 'vm'
           }
         }
       });

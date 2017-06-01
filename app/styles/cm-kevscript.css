@@ -55,6 +55,14 @@
   color: #e06c75;
 }
 
+.cm-s-kevscript .cm-platform {
+  color: #fff;
+}
+
+.cm-s-kevscript .cm-bracket {
+  color: lightgray;
+}
+
 .cm-s-kevscript .cm-ctxvar {
   color: #eed1b3;
 }

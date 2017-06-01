@@ -3,7 +3,7 @@
 angular.module('editorApp')
   .filter('namingPattern', function (util) {
     var rInt = new RegExp('\\{randomInt(:(\\d+):(\\d+))?\\}', 'g'),
-        rStr = new RegExp('\\{randomStr(:(\\d+))?\\}', 'g');
+      rStr = new RegExp('\\{randomStr(:(\\d+))?\\}', 'g');
 
     return function (text, map) {
       if (typeof text === 'string') {

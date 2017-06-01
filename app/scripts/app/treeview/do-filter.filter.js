@@ -162,7 +162,7 @@ angular.module('editorApp')
               return or(items, expr);
 
             default:
-            return items;
+              return items;
           }
         } else {
           return items;

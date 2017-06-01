@@ -8,44 +8,47 @@
  * Controller of the editorApp instance editor
  */
 angular.module('editorApp')
-  .controller('InstanceCtrl', function ($scope, $timeout, $modal, hotkeys, ui, kEditor, kFactory, kInstance, kModelHelper) {
+  .controller('InstanceCtrl', function ($scope, $timeout, $uibModal, hotkeys, ui, kEditor, kFactory, kInstance, kModelHelper) {
+    var vm = this;
+
     var timeout;
-    $scope.instance = null;
-    $scope.type = null;
-    $scope.mainCollapsed = false;
-    $scope.dicCollapsed = false;
-    $scope.netCollapsed = false;
-    $scope.descCollapsed = false;
-    $scope.fragCollapsed = {};
+    vm.instance = null;
+    vm.type = null;
+    vm.mainCollapsed = false;
+    vm.dicCollapsed = false;
+    vm.netCollapsed = false;
+    vm.descCollapsed = false;
+    vm.fragCollapsed = {};
 
     /**
-     * Process $scope.instance TypeDefinition in order to set default values on the dictionaries
+     * Process vm.instance TypeDefinition in order to set default values on the dictionaries
      **/
     function processTypeDefinition() {
-      $scope.versions = $scope.instance.typeDefinition.eContainer()
-        .select('typeDefinitions[name=' + $scope.instance.typeDefinition.name + ']').array
+      vm.versions = vm.instance.typeDefinition.eContainer()
+        .select('typeDefinitions[name=' + vm.instance.typeDefinition.name + ']').array
         .map(function (tdef) {
           return tdef.version;
         });
-      $scope.instance.selectedVersion = $scope.instance.typeDefinition.version;
-      var descMeta = $scope.instance.typeDefinition.findMetaDataByID('description');
+      vm.instance.selectedVersion = vm.instance.typeDefinition.version;
+      vm.dus = vm.instance.typeDefinition.deployUnits.array;
+      var descMeta = vm.instance.typeDefinition.findMetaDataByID('description');
       if (descMeta) {
-        $scope.description = descMeta.value;
+        vm.description = descMeta.value;
       } else {
-        $scope.description = '<em>- none -</em>';
+        vm.description = '<em>- none -</em>';
       }
-      if ($scope.instance.typeDefinition.dictionaryType) {
-        $scope.dicAttrs = $scope.instance.typeDefinition.dictionaryType
+      if (vm.instance.typeDefinition.dictionaryType) {
+        vm.dicAttrs = vm.instance.typeDefinition.dictionaryType
           .select('attributes[fragmentDependant=false]').array;
-        $scope.fragDicAttrs = $scope.instance.typeDefinition.dictionaryType
+        vm.fragDicAttrs = vm.instance.typeDefinition.dictionaryType
           .select('attributes[fragmentDependant=true]').array;
       } else {
-        $scope.dicAttrs = [];
-        $scope.fragDicAttrs = [];
+        vm.dicAttrs = [];
+        vm.fragDicAttrs = [];
       }
 
       // create dictionary values if none set
-      kInstance.initDictionaries($scope.instance);
+      kInstance.initDictionaries(vm.instance);
     }
 
     /**
@@ -60,7 +63,7 @@ angular.module('editorApp')
         dic.values.array.forEach(function (val) {
           var attr = dicType.select('attributes[name=' + val.name + ']').array[0];
           if (attr) {
-            if ($scope.isTruish(attr.fragmentDependant)) {
+            if (vm.isTruish(attr.fragmentDependant)) {
               if (!isFragment) {
                 val.delete();
               }
@@ -76,44 +79,44 @@ angular.module('editorApp')
       }
     }
 
-    $scope.changeName = function (form, name) {
+    vm.changeName = function (form, name) {
       if (form.name.$valid) {
-        $scope.instance.name = name;
+        vm.instance.name = name;
       }
     };
 
-    $scope.changeVersion = function (version) {
+    vm.changeVersion = function (version) {
       if (version) {
-        $scope.instance.typeDefinition = $scope.instance.typeDefinition.eContainer()
-          .select('**/typeDefinitions[name=' + $scope.instance.typeDefinition.name + ',version=' + version + ']').array[0];
-        processDictionary($scope.instance.dictionary, $scope.instance.typeDefinition.dictionaryType, false);
-        $scope.instance.fragmentDictionary.array.forEach(function (fragDic) {
-          processDictionary(fragDic, $scope.instance.typeDefinition.dictionaryType, true);
+        vm.instance.typeDefinition = vm.instance.typeDefinition.eContainer()
+          .select('**/typeDefinitions[name=' + vm.instance.typeDefinition.name + ',version=' + version + ']').array[0];
+        processDictionary(vm.instance.dictionary, vm.instance.typeDefinition.dictionaryType, false);
+        vm.instance.fragmentDictionary.array.forEach(function (fragDic) {
+          processDictionary(fragDic, vm.instance.typeDefinition.dictionaryType, true);
         });
         processTypeDefinition();
       }
     };
 
-    $scope.hasFragmentDictionary = function () {
-      if ($scope.instance && $scope.instance.fragmentDictionary) {
-        return $scope.instance.fragmentDictionary.size() > 0;
+    vm.hasFragmentDictionary = function () {
+      if (vm.instance && vm.instance.fragmentDictionary) {
+        return vm.instance.fragmentDictionary.size() > 0;
       } else {
         return false;
       }
     };
 
-    $scope.hasNetworkInformation = function () {
-      return $scope.instance && (typeof ($scope.instance.networkInformation) !== 'undefined');
+    vm.hasNetworkInformation = function () {
+      return vm.instance && (typeof (vm.instance.networkInformation) !== 'undefined');
     };
 
-    $scope.manageNetwork = function (evt, net) {
+    vm.manageNetwork = function (evt, net) {
       evt.stopPropagation();
-      $modal.open({
+      $uibModal.open({
         templateUrl: 'scripts/app/main/instance/network.modal.html',
         size: 'md',
         resolve: {
           node: function () {
-            return $scope.instance;
+            return vm.instance;
           },
           net: function () {
             return net;
@@ -123,16 +126,16 @@ angular.module('editorApp')
       });
     };
 
-    $scope.addNetwork = function () {
+    vm.addNetwork = function () {
       var net = kFactory.createNetworkInfo();
-      net.name = 'net' + $scope.instance.networkInformation.size();
+      net.name = 'net' + vm.instance.networkInformation.size();
 
-      $modal.open({
+      $uibModal.open({
         templateUrl: 'scripts/app/main/instance/network.modal.html',
         size: 'md',
         resolve: {
           node: function () {
-            return $scope.instance;
+            return vm.instance;
           },
           net: function () {
             return net;
@@ -142,56 +145,57 @@ angular.module('editorApp')
       });
     };
 
-    $scope.openGroupModal = function () {
-      $modal.open({
+    vm.openGroupModal = function () {
+      $uibModal.open({
         templateUrl: 'scripts/app/main/instance/group.modal.html',
         size: 'md',
         resolve: {
           group: function () {
-            return $scope.instance;
+            return vm.instance;
           }
         },
         controller: 'GroupModalCtrl'
       });
     };
 
-    $scope.isTruish = kModelHelper.isTruish;
+    vm.isTruish = kModelHelper.isTruish;
 
-    $scope.isReadOnly = function () {
+    vm.isReadOnly = function () {
       // TODO put that code in kModelHelper
-      if ($scope.instance) {
-        var val = $scope.instance.findMetaDataByID('access_mode');
+      if (vm.instance) {
+        var val = vm.instance.findMetaDataByID('access_mode');
         return val && val.value === 'read-only';
       }
       return false;
     };
 
-    $scope.isVirtual = function () {
-      return kModelHelper.isVirtual($scope.instance);
+    vm.isVirtual = function () {
+      return kModelHelper.isVirtual(vm.instance);
     };
 
     function processSelection() {
       $timeout(function () {
         // do the process in a timeout to be sure it gets $digested
-        $scope.instance = null;
-        $scope.type = null;
-        $scope.versions = [];
-        $scope.description = '<em>- none -</em>';
-        $scope.dicAttrs = [];
-        $scope.fragDicAttrs = [];
-        $scope.processing = true;
+        vm.instance = null;
+        vm.type = null;
+        vm.versions = [];
+        vm.dus = null;
+        vm.description = '<em>- none -</em>';
+        vm.dicAttrs = [];
+        vm.fragDicAttrs = [];
+        vm.processing = true;
 
         var selection = kModelHelper.getSelection(kEditor.getModel());
         if (selection.length === 1) {
-          $scope.instance = selection[0];
-          if ($scope.instance) {
-            $scope.instance.selectedVersion = $scope.instance.typeDefinition.version;
+          vm.instance = selection[0];
+          if (vm.instance) {
+            vm.instance.selectedVersion = vm.instance.typeDefinition.version;
             angular.element('.ui-notification').css('right', '260px');
             // using preName to prevent user from naming two instances with the same name
-            $scope.instance.preName = $scope.instance.name;
-            $scope.type = kModelHelper.getTypeDefinitionType($scope.instance.typeDefinition);
+            vm.instance.preName = vm.instance.name;
+            vm.type = kModelHelper.getTypeDefinitionType(vm.instance.typeDefinition);
             processTypeDefinition();
-            $scope.processing = false;
+            vm.processing = false;
           }
         }
       });

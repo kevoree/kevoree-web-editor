@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('editorApp')
-  .controller('InstanceNetworkModalCtrl', function ($scope, $modalInstance, $timeout, node, net, kFactory) {
+  .controller('InstanceNetworkModalCtrl', function ($scope, $uibModalInstance, $timeout, node, net, kFactory) {
     $scope.node = node;
     $scope.net = net;
     $scope.newVal = {
@@ -23,12 +23,12 @@ angular.module('editorApp')
 
     $scope.add = function () {
       node.addNetworkInformation($scope.net);
-      $modalInstance.close();
+      $uibModalInstance.close();
     };
 
     $scope.delete = function () {
       $scope.net.delete();
-      $modalInstance.close();
+      $uibModalInstance.close();
     };
 
     $scope.canSave = function () {
