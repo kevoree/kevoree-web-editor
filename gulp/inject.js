@@ -30,7 +30,7 @@ function app() {
 
 function css() {
   return gulp.src(config.app + 'index.html')
-    .pipe(inject(gulp.src(config.app + 'styles/**/*.css', { read: false })
+    .pipe(inject(gulp.src(config.app + 'content/css/**/*.css', { read: false })
       .pipe(plumber({ errorHandler: handleErrors }))
       .pipe(naturalSort()), { relative: true }))
     .pipe(gulp.dest(config.app));

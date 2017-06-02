@@ -29,7 +29,6 @@ module.exports = function(config) {
       'src/bower_components/angular-ui-codemirror/ui-codemirror.js',
       'src/bower_components/angular-ui-router/release/angular-ui-router.js',
       'src/bower_components/angular-ui-notification/dist/angular-ui-notification.js',
-      'src/bower_components/bootstrap/dist/js/bootstrap.js',
       'src/bower_components/kevoree-library/browser/kevoree-library.js',
       'src/bower_components/kevoree-validator/browser/kevoree-validator.js',
       'src/bower_components/tiny-conf/dist/tiny-conf.js',

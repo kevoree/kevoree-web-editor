@@ -1,11 +1,11 @@
 <div class="menubar">
-	<div class="menu-btn">
-		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+	<div class="menu-btn" uib-dropdown>
+		<button type="button" class="btn btn-default" uib-dropdown-toggle>
 			<span>File</span>
 			<span>&nbsp;</span>
 			<span class="caret"></span>
 		</button>
-		<ul class="dropdown-menu" role="menu">
+		<ul class="dropdown-menu" uib-dropdown-menu role="menu">
 			<li>
 				<a ng-click="open($event)">
 					<span class="name">Open</span>
@@ -39,13 +39,13 @@
 			</li>
 		</ul>
 	</div>
-	<div class="menu-btn">
-		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+	<div class="menu-btn" uib-dropdown>
+		<button type="button" class="btn btn-default" uib-dropdown-toggle>
 			<span>Edit</span>
 			<span>&nbsp;</span>
 			<span class="caret"></span>
 		</button>
-		<ul class="dropdown-menu" role="menu">
+		<ul class="dropdown-menu" uib-dropdown-toggle role="menu">
 			<li>
 				<a ng-click="deleteAll($event)">
 					<span class="name">Delete all</span>
@@ -152,28 +152,28 @@
 		</div>
 	</div>
 	<div class="treeview-rightpanel col-md-8 col-lg-9 fit-y">
-		<tabset class="tab-set">
-			<tab heading="Actions">
+		<uib-tabset class="tab-set">
+			<uib-tab heading="Actions">
 				<div class="tab-pane-container well">
 					<tab-actions></tab-actions>
 				</div>
-			</tab>
-			<tab heading="Create">
+			</uib-tab>
+			<uib-tab heading="Create">
 				<div class="tab-pane-container well">
 					<tab-create></tab-create>
 				</div>
-			</tab>
-			<tab heading="Params" ng-if="selectedItems.length">
+			</uib-tab>
+			<uib-tab heading="Params" ng-if="selectedItems.length">
 				<div class="tab-pane-container well">
 					<tab-params></tab-params>
 				</div>
-			</tab>
-			<tab heading="Tags" ng-if="selectedItems.length">
+			</uib-tab>
+			<uib-tab heading="Tags" ng-if="selectedItems.length">
 				<div class="tab-pane-container well">
 					<tab-tags></tab-tags>
 				</div>
-			</tab>
-		</tabset>
+			</uib-tab>
+		</uib-tabset>
 	</div>
 </div>
 <input id="file" type="file" on-data="onFileLoaded($name, $data)" class="hide">

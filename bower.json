@@ -1,6 +1,7 @@
 {
   "name": "kevoree-web-editor",
   "version": "0.0.0",
+  "appPath": "src",
   "dependencies": {
     "angular": "1.5.8",
     "angular-animate": "1.5.8",
@@ -30,8 +31,22 @@
   "devDependencies": {
     "angular-mocks": "1.5.8"
   },
-  "appPath": "app",
-  "moduleName": "editorApp",
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "dist/css/bootstrap.css"
+      ]
+    },
+    "codemirror": {
+      "main": [
+        "lib/codemirror.js",
+        "lib/codemirror.css",
+        "addon/lint/lint.css",
+        "addon/hint/show-hint.css",
+        "addon/dialog/dialog.css"
+      ]
+    }
+  },
   "resolutions": {
     "angular": "1.5.8"
   }

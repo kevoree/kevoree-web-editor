@@ -38,12 +38,12 @@ gulp.task('copy:common', copy.common);
 gulp.task('copy:images', copy.images);
 
 gulp.task('images', function () {
-  return gulp.src(config.app + 'images/**')
+  return gulp.src(config.app + 'content/images/**')
     .pipe(plumber({ errorHandler: handleErrors }))
-    .pipe(changed(config.dist + 'images'))
+    .pipe(changed(config.dist + 'content/images'))
     .pipe(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true }))
     .pipe(rev())
-    .pipe(gulp.dest(config.dist + 'images'))
+    .pipe(gulp.dest(config.dist + 'content/images'))
     .pipe(rev.manifest(config.revManifest, {
       base: config.dist,
       merge: true
@@ -52,9 +52,8 @@ gulp.task('images', function () {
     .pipe(browserSync.reload({ stream: true }));
 });
 
-
 gulp.task('styles', [], function () {
-  return gulp.src(config.app + 'styles')
+  return gulp.src(config.app + 'content/css/**')
     .pipe(browserSync.reload({ stream: true }));
 });
 
@@ -81,7 +80,7 @@ gulp.task('html', function () {
     .pipe(htmlmin({ collapseWhitespace: true }))
     .pipe(templateCache({
       module: 'editorApp',
-      root: 'scripts/',
+      root: 'app/',
       moduleSystem: 'IIFE'
     }))
     .pipe(gulp.dest(config.tmp));
@@ -151,8 +150,8 @@ gulp.task('test', function () {
 gulp.task('watch', function () {
   gulp.watch('bower.json', ['install']);
   gulp.watch(['gulpfile.js', 'package.json'], ['ngconstant:dev']);
-  gulp.watch(config.app + 'styles/**/*.css', ['styles', 'inject:css']);
-  gulp.watch(config.app + 'images/**', ['images']);
+  gulp.watch(config.app + 'content/css/**/*.css', ['styles', 'inject:css']);
+  gulp.watch(config.app + 'content/images/**', ['images']);
   gulp.watch(config.app + 'app/**/*.js', ['inject:app']);
   gulp.watch([config.app + '*.html', config.app + 'app/**']).on('change', browserSync.reload);
 });
@@ -162,6 +161,8 @@ gulp.task('install', function () {
 });
 
 gulp.task('serve', ['install'], serve);
+
+gulp.task('b', build);
 
 gulp.task('build', ['clean'], function (cb) {
   runSequence(['copy', 'inject:vendor', 'ngconstant:prod'], 'inject:app', 'inject:css', 'inject:troubleshoot', 'assets:prod', cb);

@@ -8,7 +8,7 @@
  * Controller of the editorApp navigation bar
  */
 angular.module('editorApp')
-  .controller('NavBarCtrl', function ($scope, $state) {
-    $scope.isCollapsed = true;
-    $scope.$state = $state;
+  .controller('NavBarCtrl', function ($state) {
+    this.isCollapsed = true;
+    this.$state = $state;
   });

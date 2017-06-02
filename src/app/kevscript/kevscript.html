@@ -1,9 +1,9 @@
 <div class="menubar">
-	<div class="menu-btn">
-		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+	<div class="menu-btn" uib-dropdown>
+		<button type="button" class="btn btn-default" uib-dropdown-toggle>
       File&nbsp;<span class="caret"></span>
     </button>
-		<ul class="dropdown-menu" role="menu">
+		<ul class="dropdown-menu" uib-dropdown-menu role="menu">
 			<li>
 				<a ng-click="open($event)">
 					<span class="name">Open</span>

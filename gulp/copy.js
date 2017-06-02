@@ -19,39 +19,39 @@ module.exports = {
 
 function fonts() {
   return es.merge(gulp.src(config.bower + 'bootstrap/fonts/*.*')
-		.pipe(plumber({ errorHandler: handleErrors }))
-		.pipe(changed(config.dist + 'fonts/'))
-		.pipe(rev())
-		.pipe(gulp.dest(config.dist + 'fonts/'))
-		.pipe(rev.manifest(config.revManifest, {
-  base: config.dist,
-  merge: true
-}))
-		.pipe(gulp.dest(config.dist)),
-		gulp.src(config.app + '**/*.{woff,woff2,svg,ttf,eot,otf}')
-		.pipe(plumber({ errorHandler: handleErrors }))
-		.pipe(changed(config.dist + 'fonts/'))
-		.pipe(flatten())
-		.pipe(rev())
-		.pipe(gulp.dest(config.dist + 'fonts/'))
-		.pipe(rev.manifest(config.revManifest, {
-  base: config.dist,
-  merge: true
-}))
-		.pipe(gulp.dest(config.dist))
-	);
+    .pipe(plumber({ errorHandler: handleErrors }))
+    .pipe(changed(config.dist + 'content/fonts/'))
+    .pipe(rev())
+    .pipe(gulp.dest(config.dist + 'content/fonts/'))
+    .pipe(rev.manifest(config.revManifest, {
+      base: config.dist,
+      merge: true
+    }))
+    .pipe(gulp.dest(config.dist)),
+    gulp.src(config.app + 'content/**/*.{woff,woff2,svg,ttf,eot,otf}')
+    .pipe(plumber({ errorHandler: handleErrors }))
+    .pipe(changed(config.dist + 'content/fonts/'))
+    .pipe(flatten())
+    .pipe(rev())
+    .pipe(gulp.dest(config.dist + 'content/fonts/'))
+    .pipe(rev.manifest(config.revManifest, {
+      base: config.dist,
+      merge: true
+    }))
+    .pipe(gulp.dest(config.dist))
+  );
 }
 
 function common() {
   return gulp.src([config.app + 'robots.txt', config.app + 'favicon.ico', config.app + '.htaccess'], { dot: true })
-		.pipe(plumber({ errorHandler: handleErrors }))
-		.pipe(changed(config.dist))
-		.pipe(gulp.dest(config.dist));
+    .pipe(plumber({ errorHandler: handleErrors }))
+    .pipe(changed(config.dist))
+    .pipe(gulp.dest(config.dist));
 }
 
 function images() {
   return gulp.src(bowerFiles({ filter: ['**/*.{gif,jpg,png}'] }), { base: config.bower })
-		.pipe(plumber({ errorHandler: handleErrors }))
-		.pipe(changed(config.dist + 'bower_components'))
-		.pipe(gulp.dest(config.dist + 'bower_components'));
+    .pipe(plumber({ errorHandler: handleErrors }))
+    .pipe(changed(config.dist + 'bower_components'))
+    .pipe(gulp.dest(config.dist + 'bower_components'));
 }

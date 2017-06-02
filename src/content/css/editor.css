@@ -1,0 +1,37 @@
+svg#editor * {
+    cursor: pointer;
+}
+
+svg#editor text {
+    font-size: 13px;
+}
+
+svg#editor .port text {
+    font-size: 9px;
+    font-weight: bold;
+    font-family: "Helvetica", sans-serif;
+}
+
+svg#editor .selected {
+    stroke: orange;
+    cursor: move;
+}
+
+svg#editor .hovered {
+    stroke: green;
+}
+
+svg#editor .hovered.error {
+    stroke: red;
+    cursor: not-allowed;
+}
+
+svg#editor text.hovered {
+    stroke: none;
+    fill: green;
+}
+
+svg#editor text.hovered.error {
+    stroke: none;
+    fill: red;
+}

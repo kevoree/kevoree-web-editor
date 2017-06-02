@@ -9,7 +9,8 @@ angular.module('editorApp')
   views: {
     'navbar@': {
       templateUrl: 'app/navbar/navbar.html',
-      controller: 'NavBarCtrl'
+      controller: 'NavBarCtrl',
+      controllerAs: 'vm'
     }
   }
 });
