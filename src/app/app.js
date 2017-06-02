@@ -15,7 +15,6 @@ angular
   'ui.router',
   'ui.bootstrap',
   'ui.codemirror',
-		// 'ui.utils',
   'ui-notification',
   'cfp.hotkeys',
   'ngDragDrop',

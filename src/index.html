@@ -40,9 +40,8 @@
     <![endif]-->
 
   <div ui-view="navbar"></div>
-  <div id="container" class="container-fluid">
-    <div ui-view="content" class="row" loading-overlay drop-target="dndLoad($name, $data)">
-    </div>
+  <div id="container">
+    <div ui-view="content" loading-overlay drop-target="dndLoad($name, $data)"></div>
   </div>
 
   <div id="bootstrap-container">

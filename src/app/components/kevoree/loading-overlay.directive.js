@@ -7,8 +7,8 @@ angular.module('editorApp')
       scope: false,
       link: function (scope, elem) {
         var id = 'id_' + Math.floor((Math.random()*10000)+1);
-        var overlay = angular.element('<div>', { id: id, class: 'overlay' }).append(
-            angular.element('<p>', { class: 'center-message' }).html('Loading model...'));
+        var overlay = jQuery('<div>', { id: id, class: 'overlay' }).append(
+            jQuery('<p>', { class: 'center-message' }).html('Loading model...'));
 
         function preSetModelHandler() {
           elem.append(overlay);

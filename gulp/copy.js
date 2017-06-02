@@ -5,7 +5,6 @@ var gulp = require('gulp'),
   plumber = require('gulp-plumber'),
   es = require('event-stream'),
   flatten = require('gulp-flatten'),
-  replace = require('gulp-replace'),
   bowerFiles = require('main-bower-files'),
   changed = require('gulp-changed');
 
@@ -15,27 +14,26 @@ var config = require('./config');
 module.exports = {
   fonts: fonts,
   common: common,
-  swagger: swagger,
   images: images
 };
 
 function fonts() {
   return es.merge(gulp.src(config.bower + 'bootstrap/fonts/*.*')
 		.pipe(plumber({ errorHandler: handleErrors }))
-		.pipe(changed(config.dist + 'content/fonts/'))
+		.pipe(changed(config.dist + 'fonts/'))
 		.pipe(rev())
-		.pipe(gulp.dest(config.dist + 'content/fonts/'))
+		.pipe(gulp.dest(config.dist + 'fonts/'))
 		.pipe(rev.manifest(config.revManifest, {
   base: config.dist,
   merge: true
 }))
 		.pipe(gulp.dest(config.dist)),
-		gulp.src(config.app + 'content/**/*.{woff,woff2,svg,ttf,eot,otf}')
+		gulp.src(config.app + '**/*.{woff,woff2,svg,ttf,eot,otf}')
 		.pipe(plumber({ errorHandler: handleErrors }))
-		.pipe(changed(config.dist + 'content/fonts/'))
+		.pipe(changed(config.dist + 'fonts/'))
 		.pipe(flatten())
 		.pipe(rev())
-		.pipe(gulp.dest(config.dist + 'content/fonts/'))
+		.pipe(gulp.dest(config.dist + 'fonts/'))
 		.pipe(rev.manifest(config.revManifest, {
   base: config.dist,
   merge: true
@@ -49,28 +47,6 @@ function common() {
 		.pipe(plumber({ errorHandler: handleErrors }))
 		.pipe(changed(config.dist))
 		.pipe(gulp.dest(config.dist));
-}
-
-function swagger() {
-  return es.merge(
-		gulp.src([config.bower + 'swagger-ui/dist/**',
-  '!' + config.bower + 'swagger-ui/dist/index.html',
-  '!' + config.bower + 'swagger-ui/dist/swagger-ui.min.js',
-  '!' + config.bower + 'swagger-ui/dist/swagger-ui.js'])
-		.pipe(plumber({ errorHandler: handleErrors }))
-		.pipe(changed(config.swaggerDist))
-		.pipe(gulp.dest(config.swaggerDist)),
-		gulp.src(config.app + 'swagger-ui/index.html')
-		.pipe(plumber({ errorHandler: handleErrors }))
-		.pipe(changed(config.swaggerDist))
-		.pipe(replace('../bower_components/swagger-ui/dist/', ''))
-		.pipe(replace('swagger-ui.js', 'lib/swagger-ui.min.js'))
-		.pipe(gulp.dest(config.swaggerDist)),
-		gulp.src(config.bower + 'swagger-ui/dist/swagger-ui.min.js')
-		.pipe(plumber({ errorHandler: handleErrors }))
-		.pipe(changed(config.swaggerDist + 'lib/'))
-		.pipe(gulp.dest(config.swaggerDist + 'lib/'))
-	);
 }
 
 function images() {

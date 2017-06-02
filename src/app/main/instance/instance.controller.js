@@ -190,7 +190,7 @@ angular.module('editorApp')
           vm.instance = selection[0];
           if (vm.instance) {
             vm.instance.selectedVersion = vm.instance.typeDefinition.version;
-            angular.element('.ui-notification').css('right', '260px');
+            jQuery('.ui-notification').css('right', '260px');
             // using preName to prevent user from naming two instances with the same name
             vm.instance.preName = vm.instance.name;
             vm.type = kModelHelper.getTypeDefinitionType(vm.instance.typeDefinition);

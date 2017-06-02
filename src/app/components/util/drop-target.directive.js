@@ -2,27 +2,38 @@
 
 angular.module('editorApp')
   .directive('dropTarget', function ($parse) {
+    var DND_CLASS = 'dnd-overlay';
+
     return {
       restrict: 'A',
       scope: false,
       link: function (scope, element, attrs) {
+        var tid;
         var fn = $parse(attrs.dropTarget);
-        var counter = 0;
-        var id = 'id_' + Math.floor((Math.random()*10000)+1);
+        var elem = jQuery(element[0]);
+        var overlay = jQuery('<div class="'+DND_CLASS+'" style="display: none;"><p class="center-message">Drop to load the model</p></div>');
+
+        elem.append(overlay);
+
+        elem.on('dragleave', dragLeaveHandler);
+        elem.on('dragover', dragOverHandler);
+        elem.on('drop', dropHandler);
+
+        scope.$on('$destroy', function() {
+          elem.off('dragleave', dragLeaveHandler);
+          elem.off('dragover', dragOverHandler);
+          elem.off('drop', dropHandler);
+        });
 
         function dropHandler(event) {
-          event.preventDefault();
-          event.stopPropagation();
-          counter = 0;
-          jQuery('#'+id).remove();
-          
-          if (event.dataTransfer) {
-            if (event.dataTransfer.files.length) {
-              var file = event.dataTransfer.files[0],
-                reader = new FileReader();
+          var dataTransfer = event.originalEvent.dataTransfer;
+          if (dataTransfer) {
+            if (dataTransfer.files.length) {
+              var file = dataTransfer.files[0];
+              var reader = new FileReader();
 
-              reader.onloadend = function(event) {
-                scope.$apply(function() {
+              reader.onloadend = function (event) {
+                scope.$apply(function () {
                   fn(scope, {
                     $event: event,
                     $data: event.target.result,
@@ -30,48 +41,29 @@ angular.module('editorApp')
                   });
                 });
               };
+
               reader.readAsText(file);
             }
           }
+
+          event.stopPropagation();
+          event.preventDefault();
+          overlay.hide();
         }
 
         function dragOverHandler(event) {
-          event.preventDefault();
+          clearTimeout(tid);
           event.stopPropagation();
-        }
-
-        function dragEnterHandler(event) {
           event.preventDefault();
-          event.stopPropagation();
-          counter++;
-          if (counter === 1) {
-            element.append(
-              angular.element('<div>', { id: id, class: 'overlay' }).append(
-                angular.element('<p>', { class: 'center-message' })
-                    .html('Drop to load the model')));
-          }
+          overlay.show();
         }
 
         function dragLeaveHandler(event) {
-          event.preventDefault();
-          event.stopPropagation();
-          counter--;
-          if (counter === 0) {
-            element.find('#'+id).remove();
-          }
+          tid = setTimeout(function () {
+            event.stopPropagation();
+            overlay.hide();
+          }, 200);
         }
-
-        element[0].addEventListener('dragenter', dragEnterHandler, false);
-        element[0].addEventListener('dragleave', dragLeaveHandler, false);
-        element[0].addEventListener('dragover', dragOverHandler, false);
-        element[0].addEventListener('drop', dropHandler, false);
-
-        scope.$on('$destroy', function() {
-          element[0].removeEventListener('dragenter', dragEnterHandler);
-          element[0].removeEventListener('dragleave', dragLeaveHandler);
-          element[0].removeEventListener('dragover', dragOverHandler);
-          element[0].removeEventListener('drop', dropHandler);
-        });
       }
     };
   });

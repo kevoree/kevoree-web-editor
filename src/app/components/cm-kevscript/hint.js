@@ -100,9 +100,9 @@ angular.module('editorApp')
                       text: data.bufferText,
                       className: 'cm-kevs-hint-elem',
                       render: function (elem) {
-                        elem = angular.element(elem);
+                        elem = jQuery(elem);
                         var renderedTpl = Mustache.render(HINT_TPL, data);
-                        var child = angular.element(renderedTpl);
+                        var child = jQuery(renderedTpl);
                         elem.append(child);
                       }
                     };
@@ -146,9 +146,9 @@ angular.module('editorApp')
                       text: data.bufferText,
                       className: 'cm-kevs-hint-elem',
                       render: function (elem) {
-                        elem = angular.element(elem);
+                        elem = jQuery(elem);
                         var renderedTpl = Mustache.render(HINT_TPL, data);
-                        var child = angular.element(renderedTpl);
+                        var child = jQuery(renderedTpl);
                         elem.append(child);
                       },
                       from: data.from,
@@ -656,9 +656,9 @@ angular.module('editorApp')
               text: data.bufferText,
               className: 'cm-kevs-hint-elem',
               render: function (elem) {
-                elem = angular.element(elem);
+                elem = jQuery(elem);
                 var renderedTpl = Mustache.render(HINT_TPL, data);
-                var child = angular.element(renderedTpl);
+                var child = jQuery(renderedTpl);
                 elem.append(child);
               },
               from: data.from,

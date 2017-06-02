@@ -790,7 +790,7 @@ angular.module('editorApp')
       var dragStart = function (x, y, evt) {
         if (!this.parent()
           .hasClass('instance')) {
-          var instances = angular.element(ui.editor.node)
+          var instances = jQuery(ui.editor.node)
             .find('> .instance');
           this.node.parentNode.insertBefore(this.node, instances[instances.length - 1].nextSibling);
         }

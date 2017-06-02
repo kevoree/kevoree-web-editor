@@ -60,7 +60,7 @@ legend.legend-sm {
   padding: 0;
 }
 
-.overlay {
+.dnd-overlay {
   position: absolute;
   top: 0;
   right: 0;

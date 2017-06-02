@@ -44,8 +44,8 @@ angular.module('editorApp')
 		 * @param obj
 		 */
   $scope.onDrop = function (evt, obj) {
-    var pkgPath = obj.draggable.scope().tdef.pkgPath;
-    var tdefName = obj.draggable.scope().tdef.name;
+    var pkgPath = angular.element(obj.draggable).scope().tdef.pkgPath;
+    var tdefName = angular.element(obj.draggable).scope().tdef.name;
     var tdefs = kEditor.getModel().select(pkgPath + '/typeDefinitions[name=' + tdefName + ']');
     var tdef = kModelHelper.findBestVersion(tdefs.array);
     var type = kModelHelper.getTypeDefinitionType(tdef);
