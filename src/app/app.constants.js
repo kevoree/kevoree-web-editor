@@ -7,5 +7,5 @@ angular
 		.constant('KWE_FOLDED', "kwe_folded")
 		.constant('KWE_TAG', "kwe_tag")
 		.constant('KWE_SELECTED', "kwe_selected")
-		.constant('KEVOREE_REGISTRY_URL', "https://new-registry.kevoree.org")
+		.constant('KEVOREE_REGISTRY_URL', "https://registry.kevoree.org")
 ;

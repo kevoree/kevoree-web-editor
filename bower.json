@@ -37,6 +37,12 @@
         "dist/css/bootstrap.css"
       ]
     },
+    "devicon": {
+      "main": [
+        "devicon.css",
+        "devicon-colors.css"
+      ]
+    },
     "codemirror": {
       "main": [
         "lib/codemirror.js",

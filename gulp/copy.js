@@ -18,7 +18,7 @@ module.exports = {
 };
 
 function fonts() {
-  return es.merge(gulp.src(config.bower + 'bootstrap/fonts/*.*')
+  return es.merge(gulp.src([config.bower + 'bootstrap/fonts/*.*', config.bower + 'devicon/fonts/*.*'])
     .pipe(plumber({ errorHandler: handleErrors }))
     .pipe(changed(config.dist + 'content/fonts/'))
     .pipe(rev())
