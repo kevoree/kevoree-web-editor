@@ -18,27 +18,40 @@ module.exports = {
 };
 
 function fonts() {
-  return es.merge(gulp.src([config.bower + 'bootstrap/fonts/*.*', config.bower + 'devicon/fonts/*.*'])
-    .pipe(plumber({ errorHandler: handleErrors }))
-    .pipe(changed(config.dist + 'content/fonts/'))
-    .pipe(rev())
-    .pipe(gulp.dest(config.dist + 'content/fonts/'))
-    .pipe(rev.manifest(config.revManifest, {
-      base: config.dist,
-      merge: true
-    }))
-    .pipe(gulp.dest(config.dist)),
-    gulp.src(config.app + 'content/**/*.{woff,woff2,svg,ttf,eot,otf}')
-    .pipe(plumber({ errorHandler: handleErrors }))
-    .pipe(changed(config.dist + 'content/fonts/'))
-    .pipe(flatten())
-    .pipe(rev())
-    .pipe(gulp.dest(config.dist + 'content/fonts/'))
-    .pipe(rev.manifest(config.revManifest, {
-      base: config.dist,
-      merge: true
-    }))
-    .pipe(gulp.dest(config.dist))
+  return es.merge(
+    // bootstrap and font-awesome font-face path is: ../fonts
+    gulp.src([config.bower + 'bootstrap/fonts/*.*', config.bower + 'components-font-awesome/fonts/*.*'])
+      .pipe(plumber({ errorHandler: handleErrors }))
+      .pipe(changed(config.dist + 'content/fonts/'))
+      .pipe(rev())
+      .pipe(gulp.dest(config.dist + 'content/fonts/'))
+      .pipe(rev.manifest(config.revManifest, {
+        base: config.dist,
+        merge: true
+      }))
+      .pipe(gulp.dest(config.dist)),
+      // devicon font-face path is: fonts
+    gulp.src(config.bower + 'devicon/fonts/*.*')
+      .pipe(plumber({ errorHandler: handleErrors }))
+      .pipe(changed(config.dist + 'content/css/fonts/'))
+      .pipe(rev())
+      .pipe(gulp.dest(config.dist + 'content/css/fonts/'))
+      .pipe(rev.manifest(config.revManifest, {
+        base: config.dist,
+        merge: true
+      }))
+      .pipe(gulp.dest(config.dist)),
+    gulp.src(config.app + 'content/fonts/*.{woff,woff2,svg,ttf,eot,otf}')
+      .pipe(plumber({ errorHandler: handleErrors }))
+      .pipe(changed(config.dist + 'content/fonts/'))
+      .pipe(flatten())
+      .pipe(rev())
+      .pipe(gulp.dest(config.dist + 'content/fonts/'))
+      .pipe(rev.manifest(config.revManifest, {
+        base: config.dist,
+        merge: true
+      }))
+      .pipe(gulp.dest(config.dist))
   );
 }
 

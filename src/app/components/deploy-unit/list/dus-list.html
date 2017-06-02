@@ -1,6 +1,6 @@
 <div class="list-group no-margin">
   <div ng-repeat="du in $ctrl.dus" class="deploy-unit list-group-item">
-      <i class="icon devicon-{{ $ctrl.platform(du) }}-plain colored"></i>
+      <i class="icon {{ 'devicon-' + $ctrl.platform(du) + '-plain' }} colored" title="{{$ctrl.platform(du)}}"></i>
       <span class="name">
         <span>{{ du.name }}</span>
         <a href="{{ $ctrl.baseUrl + '#/dus/' + du.id }}" target="_blank" class="value" ng-if="du.id">#{{ du.id }}</a>

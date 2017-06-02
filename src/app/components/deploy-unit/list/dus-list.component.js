@@ -17,22 +17,24 @@
     ctrl.platform = platform;
 
     function platform(du) {
+      var platform;
       if (du.platform) {
         if (du.platform === 'js') {
-          return 'javascript';
+          platform = 'javascript';
         } else {
-          return du.platform;
+          platform = du.platform;
         }
       } else {
         if (du.findFiltersByID) {
-          var platform = du.findFiltersByID('platform').value;
-          if (platform === 'js') {
-            return 'javascript';
+          var p = du.findFiltersByID('platform').value;
+          if (p === 'js') {
+            platform = 'javascript';
           } else {
-            return platform;
+            platform = p;
           }
         }
       }
+      return platform;
     }
   }
 })();
