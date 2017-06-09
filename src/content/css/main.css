@@ -598,6 +598,8 @@ input.form-control.input-xs {
   background-color: #eee !important;
 }
 .deploy-unit {
+  color: #333;
+  text-align: left;
   padding: 5px;
   border-radius: 2px;
   width: 100%;

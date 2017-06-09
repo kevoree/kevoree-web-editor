@@ -16,7 +16,7 @@
     "bootstrap": "^3.2.0",
     "components-font-awesome": "^4.6.3",
     "kevoree-library": "^5.0.10",
-    "kevoree-validator": "^0.1.13",
+    "kevoree-validator": "^0.1.17",
     "tiny-conf": "^1.0.5",
     "kevoree-registry-client": "1.0.0-alpha.9",
     "kevoree-kevscript": "^5.0.0-alpha.2",

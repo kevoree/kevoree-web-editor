@@ -1,6 +1,6 @@
 {
   "name": "kevoree-web-editor",
-  "version": "5.14.0",
+  "version": "5.14.1",
   "dependencies": {},
   "devDependencies": {
     "bower": "1.8.0",
@@ -50,7 +50,7 @@
     "lint": "eslint app",
     "install": "bower install && npm run lint",
     "build": "npm run lint && grunt build",
-    "serve": "grunt serve",
+    "serve": "gulp serve",
     "test": "echo \"no tests yet\""
   },
   "description": "Kevoree Web Editor - http://editor.kevoree.org",

@@ -117,32 +117,34 @@ angular.module('editorApp')
             }, 250);
           });
 
-          $scope.confirm = function () {
-            $scope.closeError();
+          $scope.confirm = function ($event) {
+            if (!$event || ($event && $event.keyCode === 13)) {
+              $scope.closeError();
 
-            kWs.getModel($scope.host, $scope.port, $scope.path, function (err, model, url) {
-              if (err) {
-                $timeout(function () {
-                  $scope.error = err.message;
-                });
-              } else {
-                $uibModalInstance.close();
-                kEditor.setModel(model, function (err) {
-                  if (err) {
-                    Notification.error({
-                      title: $scope.title,
-                      message: 'Unable to load model from <strong>' + url + '</strong><br/>' + err.message,
-                      delay: 15000
-                    });
-                  } else {
-                    Notification.success({
-                      title: $scope.title,
-                      message: 'Model loaded from <strong>' + url + '</strong>'
-                    });
-                  }
-                });
-              }
-            });
+              kWs.getModel($scope.host, $scope.port, $scope.path, function (err, model, url) {
+                if (err) {
+                  $timeout(function () {
+                    $scope.error = err.message;
+                  });
+                } else {
+                  $uibModalInstance.close();
+                  kEditor.setModel(model, function (err) {
+                    if (err) {
+                      Notification.error({
+                        title: $scope.title,
+                        message: 'Unable to load model from <strong>' + url + '</strong><br/>' + err.message,
+                        delay: 15000
+                      });
+                    } else {
+                      Notification.success({
+                        title: $scope.title,
+                        message: 'Model loaded from <strong>' + url + '</strong>'
+                      });
+                    }
+                  });
+                }
+              });
+            }
           };
 
           $scope.closeError = function () {
@@ -172,36 +174,38 @@ angular.module('editorApp')
             }, 250);
           });
 
-          $scope.confirm = function () {
-            $scope.closeError();
+          $scope.confirm = function ($event) {
+            if (!$event || ($event && $event.keyCode === 13)) {
+              $scope.closeError();
 
-            kWs.getModel($scope.host, $scope.port, $scope.path, function (err, model, url) {
-              if (err) {
-                $timeout(function () {
-                  $scope.error = err.message;
-                });
-              } else {
-                $uibModalInstance.close();
-                var compare = kFactory.createModelCompare();
-                var cloner = kFactory.createModelCloner();
-                var currentModel = cloner.clone(kEditor.getModel());
-                compare.merge(currentModel, model).applyOn(currentModel);
-                kEditor.setModel(currentModel, function (err) {
-                  if (err) {
-                    Notification.error({
-                      title: $scope.title,
-                      message: 'Unable to merge model from <strong>' + url + '</strong><br/>' + err.message,
-                      delay: 15000
-                    });
-                  } else {
-                    Notification.success({
-                      title: $scope.title,
-                      message: 'Model merged with <strong>' + url + '</strong>'
-                    });
-                  }
-                });
-              }
-            });
+              kWs.getModel($scope.host, $scope.port, $scope.path, function (err, model, url) {
+                if (err) {
+                  $timeout(function () {
+                    $scope.error = err.message;
+                  });
+                } else {
+                  $uibModalInstance.close();
+                  var compare = kFactory.createModelCompare();
+                  var cloner = kFactory.createModelCloner();
+                  var currentModel = cloner.clone(kEditor.getModel());
+                  compare.merge(currentModel, model).applyOn(currentModel);
+                  kEditor.setModel(currentModel, function (err) {
+                    if (err) {
+                      Notification.error({
+                        title: $scope.title,
+                        message: 'Unable to merge model from <strong>' + url + '</strong><br/>' + err.message,
+                        delay: 15000
+                      });
+                    } else {
+                      Notification.success({
+                        title: $scope.title,
+                        message: 'Model merged with <strong>' + url + '</strong>'
+                      });
+                    }
+                  });
+                }
+              });
+            }
           };
 
           $scope.closeError = function () {
@@ -240,82 +244,84 @@ angular.module('editorApp')
               }, 250);
             });
 
-            $scope.confirm = function () {
-              $scope.closeError();
+            $scope.confirm = function ($event) {
+              if (!$event || ($event && $event.keyCode === 13)) {
+                $scope.closeError();
 
-              if (!$scope.path) {
-                $scope.path = '';
-              } else {
-                if ($scope.path.length === 1 && $scope.path === '/') {
+                if (!$scope.path) {
                   $scope.path = '';
-                } else if ($scope.path.substr(0, 1) !== '/') {
-                  $scope.path = '/' + $scope.path;
-                }
-              }
-
-              syncWS = new WebSocket('ws://' + $scope.host + ':' + $scope.port + $scope.path);
-
-              syncWS.addEventListener('open', function () {
-                $timeout(function () {
-                  parentScope.url = $scope.host + (($scope.port === 80) ? '' : ':' + $scope.port) + $scope.path;
-                  parentScope.synced = true;
-                });
-                $uibModalInstance.close();
-                Notification.success({
-                  title: $scope.title,
-                  message: 'Connected to <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong>'
-                });
-              });
-
-              syncWS.addEventListener('message', function (evt) {
-                var data = evt.data;
-                if (data.substr(0, 'push/'.length) === 'push/') {
-                  data = data.substr('push/'.length);
+                } else {
+                  if ($scope.path.length === 1 && $scope.path === '/') {
+                    $scope.path = '';
+                  } else if ($scope.path.substr(0, 1) !== '/') {
+                    $scope.path = '/' + $scope.path;
+                  }
                 }
 
-                var loader = kFactory.createJSONLoader();
-                try {
-                  var model = loader.loadModelFromString(data).get(0);
-                  kEditor.setModel(model, function (err) {
-                    if (err) {
-                      Notification.error({
-                        title: $scope.title,
-                        message: 'Unable to update synced model from <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong><br/>' + err.message,
-                        delay: 15000
-                      });
-                    } else {
-                      Notification.success({
-                        title: $scope.title,
-                        message: 'Model updated from sync with <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong>'
-                      });
-                    }
+                syncWS = new WebSocket('ws://' + $scope.host + ':' + $scope.port + $scope.path);
+
+                syncWS.addEventListener('open', function () {
+                  $timeout(function () {
+                    parentScope.url = $scope.host + (($scope.port === 80) ? '' : ':' + $scope.port) + $scope.path;
+                    parentScope.synced = true;
                   });
-                } catch (err) {
+                  $uibModalInstance.close();
+                  Notification.success({
+                    title: $scope.title,
+                    message: 'Connected to <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong>'
+                  });
+                });
+
+                syncWS.addEventListener('message', function (evt) {
+                  var data = evt.data;
+                  if (data.substr(0, 'push/'.length) === 'push/') {
+                    data = data.substr('push/'.length);
+                  }
+
+                  var loader = kFactory.createJSONLoader();
+                  try {
+                    var model = loader.loadModelFromString(data).get(0);
+                    kEditor.setModel(model, function (err) {
+                      if (err) {
+                        Notification.error({
+                          title: $scope.title,
+                          message: 'Unable to update synced model from <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong><br/>' + err.message,
+                          delay: 15000
+                        });
+                      } else {
+                        Notification.success({
+                          title: $scope.title,
+                          message: 'Model updated from sync with <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong>'
+                        });
+                      }
+                    });
+                  } catch (err) {
+                    Notification.error({
+                      title: $scope.title,
+                      message: 'Error: unable to load received message as a Kevoree JSON model',
+                      delay: 15000
+                    });
+                  }
+                });
+
+                syncWS.addEventListener('error', function () {
                   Notification.error({
                     title: $scope.title,
-                    message: 'Error: unable to load received message as a Kevoree JSON model',
+                    message: 'Error: unable to sync with <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong>',
                     delay: 15000
                   });
-                }
-              });
+                });
 
-              syncWS.addEventListener('error', function () {
-                Notification.error({
-                  title: $scope.title,
-                  message: 'Error: unable to sync with <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong>',
-                  delay: 15000
+                syncWS.addEventListener('close', function () {
+                  $timeout(function () {
+                    parentScope.synced = false;
+                  });
+                  Notification.warning({
+                    title: $scope.title,
+                    message: 'Connection with <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong> closed'
+                  });
                 });
-              });
-
-              syncWS.addEventListener('close', function () {
-                $timeout(function () {
-                  parentScope.synced = false;
-                });
-                Notification.warning({
-                  title: $scope.title,
-                  message: 'Connection with <strong>ws://' + $scope.host + ':' + $scope.port + $scope.path + '</strong> closed'
-                });
-              });
+              }
             };
 
             $scope.closeError = function () {

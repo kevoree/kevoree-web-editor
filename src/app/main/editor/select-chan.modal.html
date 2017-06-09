@@ -3,7 +3,7 @@
 </div>
 <div class="modal-body">
     <div class="clearfix">
-        <div class="alert alert-warning" data-ng-if="instances.length === 0 && types.length === 0">
+        <div class="alert alert-warning" ng-if="instances.length === 0 && types.length === 0">
             <p>
                 <strong>Warning</strong>
             </p>
@@ -21,20 +21,20 @@
             <div class="select-chan-panel panel">
                 <div class="panel-heading">Available instances</div>
                 <div class="list-group">
-                    <div data-ng-if="instances.length === 0" class="list-group-item">
+                    <div ng-if="instances.length === 0" class="list-group-item">
                         <em>none found</em>
                     </div>
-                    <a class="list-group-item point-cursor" data-ng-repeat="chan in instances" data-ng-click="select(chan)" data-ng-class="chan.selected ? 'active':''">
+                    <a class="list-group-item point-cursor" ng-repeat="chan in instances" ng-click="select(chan)" ng-class="chan.selected ? 'active':''">
                         {{ chan.typeDefinition.name }}
                         <span class="pull-right">{{ chan.name }}</span>
                     </a>
                 </div>
                 <div class="panel-heading">or create a new instance</div>
                 <div class="list-group">
-                    <div data-ng-if="types.length === 0" class="list-group-item">
+                    <div ng-if="types.length === 0" class="list-group-item">
                         <em>none found</em>
                     </div>
-                    <a class="list-group-item point-cursor" data-ng-repeat="type in types" data-ng-click="select(type)" data-ng-class="type.selected ? 'active':''">
+                    <a class="list-group-item point-cursor" ng-repeat="type in types" ng-click="select(type)" ng-class="type.selected ? 'active':''">
                       {{ type.name }}
                       <span class="pull-right">{{ 'v' + type.version }}</span>
                   </a>
@@ -44,6 +44,6 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" data-ng-click="confirm()" focus="200" data-ng-disabled="!isValid()">Confirm</button>
-    <button class="btn btn-default" data-ng-click="$close()">Close</button>
+    <button class="btn btn-primary" ng-click="confirm()" focus="200" ng-disabled="!isValid()">Confirm</button>
+    <button class="btn btn-default" ng-click="$close()">Close</button>
 </div>

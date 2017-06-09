@@ -15,7 +15,7 @@ angular.module('editorApp')
   }
 });
 
-  hotkeysProvider.template = '<div class="editor-shortcuts" ng-include src="\'app/components/util/hotkeys.html\'" data-ng-if="helpVisible"></div>';
+  hotkeysProvider.template = '<div class="editor-shortcuts" ng-include src="\'app/components/util/hotkeys.html\'" ng-if="helpVisible"></div>';
 
   hljsServiceProvider.setOptions({
     tabReplace: '  '

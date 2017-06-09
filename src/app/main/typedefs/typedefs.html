@@ -1,46 +1,38 @@
 <div class="sidebar">
-    <h5 class="sidebar-header">Type Definitions</h5>
+  <h5 class="sidebar-header">Type Definitions</h5>
 
-    <div class="sidebar-helper text-muted text-justify" data-ng-hide="hasPackages()">
-        <p>
-            <em>No TypeDefinition in current model</em>
-        </p>
-        <br/>
-        <p>
-            You can load a <strong>.json</strong> model from a file (Ctrl+O) or from a node somewhere using
-            WebSocket (Ctrl+Shift+O)
-        </p>
-        <br/>
-        <p>
-            You can also create your own model using the <a data-ui-sref="kevscript">KevScript Editor</a>
-            or by adding TypeDefinitions from the <a data-ui-sref="libraries">Registry Libraries</a>
-        </p>
-    </div>
+  <div class="sidebar-helper text-muted text-justify" ng-hide="hasPackages()">
+    <p><em>No TypeDefinition in current model</em></p>
+    <br/>
+    <p>You can load a <strong>.json</strong> model from a file (Ctrl+O) or from a node somewhere using WebSocket (Ctrl+Shift+O)</p>
+    <br/>
+    <p>You can also create your own model using the <a data-ui-sref="kevscript">KevScript Editor</a> or by adding TypeDefinitions from the <a data-ui-sref="libraries">Registry Libraries</a></p>
+  </div>
 
-    <div class="pkg-panel" data-ng-repeat="pkg in packages | orderBy:'name'">
-        <h4 class="pkg-title" data-ng-click="pkg.collapsed = !pkg.collapsed">
-            <i class="fa" data-ng-class="pkg.collapsed ? 'fa-plus' : 'fa-minus'"></i>
-            &nbsp;
-            {{ pkg.name }}
-        </h4>
-        <div data-collapse="pkg.collapsed">
-            <div class="tdef-list">
-                <div
-                        class="tdef-item"
-                        data-ng-repeat="tdef in pkg.tdefs | orderBy:'name'"
-                        data-ng-class="'tdef-item-'+tdef.type"
-                        data-ng-dblclick="addInstance(tdef)"
-                        data-drag="true"
-                        data-jqyoui-draggable="dragDraggable"
-                        data-jqyoui-options="dragOptions"
-                        data-pkg-path="{{ tdef.pkgPath }}"
-                        data-tooltip-template="'app/main/typedefs/typedef-tooltip.html'"
-                        data-tooltip-placement="right"
-                        data-tooltip-popup-delay="1000"
-                        data-tooltip-append-to-body="true">
-                    {{ tdef.name }}
-                </div>
-            </div>
+  <div class="pkg-panel" ng-repeat="pkg in packages | orderBy:'name'">
+    <h4 class="pkg-title" ng-click="pkg.collapsed = !pkg.collapsed">
+      <i class="fa" ng-class="pkg.collapsed ? 'fa-plus' : 'fa-minus'"></i>
+      <span>&nbsp;</span>
+      <span>{{ pkg.name }}</span>
+    </h4>
+    <div uib-collapse="pkg.collapsed">
+      <div class="tdef-list">
+        <div
+          class="tdef-item"
+          ng-repeat="tdef in pkg.tdefs | orderBy:'name'"
+          ng-class="'tdef-item-'+tdef.type"
+          ng-dblclick="addInstance(tdef)"
+          data-drag="true"
+          data-jqyoui-draggable="dragDraggable"
+          data-jqyoui-options="dragOptions"
+          data-pkg-path="{{ tdef.pkgPath }}"
+          uib-tooltip-template="'app/main/typedefs/typedef-tooltip.html'"
+          tooltip-placement="right"
+          tooltip-popup-delay="650"
+          tooltip-append-to-body="true">
+          {{ tdef.name }}
         </div>
+      </div>
     </div>
+  </div>
 </div>
