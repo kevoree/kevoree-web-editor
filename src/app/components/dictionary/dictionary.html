@@ -49,8 +49,8 @@
                 ng-hide="$ctrl[$ctrl.name][attr.name].$valid"></span>
 
           <div ng-if="attr.datatype.name() === 'BOOLEAN'" class="btn-group btn-group-block clearfix">
-              <label class="btn btn-sm btn-default" ng-model="(dictionary.findValuesByID(attr.name)).value" btn-radio="'true'" ng-disabled="$ctrl.readOnly">True</label>
-              <label class="btn btn-sm btn-default" ng-model="(dictionary.findValuesByID(attr.name)).value" btn-radio="'false'" ng-disabled="$ctrl.readOnly">False</label>
+              <label class="btn btn-sm btn-default" ng-model="($ctrl.dictionary.findValuesByID(attr.name)).value" uib-btn-radio="'true'" ng-disabled="$ctrl.readOnly">True</label>
+              <label class="btn btn-sm btn-default" ng-model="($ctrl.dictionary.findValuesByID(attr.name)).value" uib-btn-radio="'false'" ng-disabled="$ctrl.readOnly">False</label>
           </div>
         </div>
       </ng-form>
