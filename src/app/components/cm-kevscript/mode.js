@@ -286,7 +286,10 @@ angular.module('editorApp')
           {
             regex: /([0-9]+)([/])/,
             token: ['version', 'delimiter'],
-            next: 'duversion'
+            next: 'duversion',
+            process: function (state, matches) {
+              state.version = matches[1];
+            }
           },
           {
             regex: /(%)([a-zA-Z0-9_-]+)(%)([/])/,

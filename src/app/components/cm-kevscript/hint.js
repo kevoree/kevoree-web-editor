@@ -76,7 +76,7 @@ angular.module('editorApp')
           start += tmp.length - cur.length;
 
           // show namespace list
-          return KevoreeRegistryClient.ns.all()
+          return KevoreeRegistryClient.namespace.all()
             .then(function (namespaces) {
               callback({
                 list: namespaces
@@ -114,7 +114,7 @@ angular.module('editorApp')
         } else {
           start = (cur === '.') ? token.end : token.start;
           var ns = (cur === '.') ? token.state.namespace : 'kevoree';
-          return KevoreeRegistryClient.tdef.getAllByNamespace(ns)
+          return KevoreeRegistryClient.tdef.getLatestsByNamespace(ns)
             .then(function (tdefs) {
               callback({
                 list: tdefs
@@ -131,13 +131,12 @@ angular.module('editorApp')
                   .map(function (tdef) {
                     var model = JSON.parse(tdef.model);
                     var type = getType(model);
-                    var platforms = getPlatforms(tdef);
                     return {
                       type: type,
                       typeText: type.substr(0, 1),
-                      text: tdef.name + '/' + tdef.version,
+                      text: tdef.name,
                       bufferText: tdef.name,
-                      desc: 'platforms=' + platforms.join(','),
+                      desc: 'latest version: ' + tdef.version,
                       from: CodeMirror.Pos(cursor.line, start)
                     };
                   })
@@ -423,25 +422,105 @@ angular.module('editorApp')
             start = token.end;
             end += 1;
           }
-          list = [
-            {
-              type: 'version',
-              text: 'LATEST',
-              desc: 'the latest available deploy unit',
-            },
-            {
-              type: 'version',
-              text: 'RELEASE',
-              desc: 'the latest available deploy unit (stable)',
-            }
-          ];
-
-          if (cur.length > 0) {
-            list = list.filter(function (item) {
-              return item.text.startsWith(cur);
+          return KevoreeRegistryClient.du.getLatests(
+              token.state.namespace || 'kevoree',
+              token.state.typedef,
+              token.state.version
+            )
+            .then(function (dus) {
+              if (dus.length > 0) {
+                return [{
+                  type: 'version',
+                  bufferText: '{' + dus.map(function (du, i, array) {
+                    var str = ' ' + du.platform + ': \'' + du.version + '\'';
+                    if (i < array - 1) {
+                      str += ' ';
+                    }
+                    return str;
+                  }).join(', ') + '}',
+                  text: dus.map(function (du, i, array) {
+                    var str = du.platform + '=' + du.version;
+                    if (i < array - 1) {
+                      str += ' ';
+                    }
+                    return str;
+                  }).join(', '),
+                  desc: 'current latest deploy units'
+                }];
+              } else {
+                return [];
+              }
+            })
+            .catch(function () {
+              return [];
+            })
+            .then(function (list) {
+              return KevoreeRegistryClient.du.getReleases(
+                token.state.namespace || 'kevoree',
+                token.state.typedef,
+                token.state.version
+              ).then(function (dus) {
+                if (dus.length > 0) {
+                  return list.concat([{
+                    type: 'version',
+                    bufferText: '{' + dus.map(function (du, i, array) {
+                      var str = ' ' + du.platform + ': \'' + du.version + '\'';
+                      if (i < array - 1) {
+                        str += ' ';
+                      }
+                      return str;
+                    }).join(', ') + '}',
+                    text: dus.map(function (du, i, array) {
+                      var str = du.platform + '=' + du.version;
+                      if (i < array - 1) {
+                        str += ' ';
+                      }
+                      return str;
+                    }).join(', '),
+                    desc: 'current latest deploy units (stable)'
+                  }]);
+                } else {
+                  return list;
+                }
+              }).catch(function () {
+                return list;
+              });
+            })
+            .then(function (list) {
+              return list.concat([
+                {
+                  type: 'version',
+                  text: 'LATEST',
+                  desc: 'always get latest deploy units',
+                },
+                {
+                  type: 'version',
+                  text: 'RELEASE',
+                  desc: 'always get latest deploy units (stable)',
+                }
+              ]);
+            })
+            .then(function (list) {
+              callback({
+                list: list.filter(function (item) {
+                  return item.text.startsWith(cur);
+                }).map(function (item) {
+                  item.typeText = item.type.substr(0, 1);
+                  return {
+                    text: item.bufferText,
+                    className: 'cm-kevs-hint-elem',
+                    render: function (elem) {
+                      elem = jQuery(elem);
+                      var renderedTpl = Mustache.render(HINT_TPL, item);
+                      var child = jQuery(renderedTpl);
+                      elem.append(child);
+                    }
+                  };
+                }),
+                from: CodeMirror.Pos(cursor.line, start),
+                to: CodeMirror.Pos(cursor.line, end)
+              });
             });
-          }
-          break;
 
         case 'instancepath':
         case 'instancepathInstancepath':
