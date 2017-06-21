@@ -11,7 +11,7 @@
     <div class="form-group">
       <label for="host" class="col-sm-3 control-label input-sm">Hostname / IP</label>
       <div class="col-sm-9">
-        <input type="text" class="form-control input-sm" id="host" placeholder="Hostname or IP" ng-model="host" ng-keypress="confirm($event)">
+        <input type="text" class="form-control input-sm" id="host" placeholder="Hostname or IP" ng-model="host" ng-keypress="confirm($event)" ng-change="onHostChange(host)">
       </div>
     </div>
     <div class="form-group">

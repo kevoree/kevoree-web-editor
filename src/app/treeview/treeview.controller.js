@@ -401,12 +401,16 @@ angular.module('editorApp').controller('TreeViewCtrl', function($scope, $timeout
     $uibModal.open({
       templateUrl: 'app/components/util/host-port-path.modal.html',
       size: 'md',
-      controller: function($scope, $uibModalInstance) {
+      controller: function($scope, $uibModalInstance, storage) {
         $scope.title = 'Open from node';
         $scope.action = 'Open';
-        $scope.host = '127.0.0.1';
+        $scope.host = storage.get('previous-host', '127.0.0.1');
         $scope.port = 9000;
         $scope.path = '/';
+
+        $scope.onHostChange = function (newVal) {
+          storage.set('previous-host', newVal);
+        };
 
         $uibModalInstance.rendered.then(function() {
           $timeout(function() {
@@ -446,12 +450,16 @@ angular.module('editorApp').controller('TreeViewCtrl', function($scope, $timeout
     $uibModal.open({
       templateUrl: 'app/components/util/host-port-path.modal.html',
       size: 'md',
-      controller: function($scope, $uibModalInstance, kWs) {
+      controller: function($scope, $uibModalInstance, kWs, storage) {
         $scope.title = 'Merge from node';
         $scope.action = 'Merge';
-        $scope.host = '127.0.0.1';
+        $scope.host = storage.get('previous-host', '127.0.0.1');
         $scope.port = 9000;
         $scope.path = '/';
+
+        $scope.onHostChange = function (newVal) {
+          storage.set('previous-host', newVal);
+        };
 
         $uibModalInstance.rendered.then(function() {
           $timeout(function() {
