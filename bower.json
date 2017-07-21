@@ -1,39 +1,62 @@
 {
   "name": "kevoree-web-editor",
   "version": "0.0.0",
+  "appPath": "src",
   "dependencies": {
-    "angular": "1.4.5",
-    "angular-animate": "1.4.5",
-    "angular-bootstrap": "~0.13.4",
-    "angular-dragdrop": "~1.0.11",
+    "angular": "1.5.8",
+    "angular-animate": "1.5.8",
+    "angular-bootstrap": "2.5.0",
+    "angular-dragdrop": "1.0.13",
     "angular-hotkeys": "chieffancypants/angular-hotkeys#^1.7.0",
-    "angular-touch": "1.4.5",
+    "angular-touch": "1.5.8",
     "codemirror": "^5",
-    "angular-ui-codemirror": "^0.3",
-    "angular-ui-notification": "~0.0.5",
-    "angular-ui-utils": "~0.2.3",
+    "angular-ui-codemirror": "0.3.0",
+    "angular-ui-router": "1.0.3",
+    "angular-ui-notification": "0.3.6",
     "bootstrap": "^3.2.0",
     "components-font-awesome": "^4.6.3",
     "kevoree-library": "^5.0.10",
-    "kevoree-validator": "^0.1.13",
-    "tiny-conf": "^1.0.4",
-    "kevoree-commons": "^3.0.0",
-    "kevoree-registry-api": "^1.7.4",
-    "kevoree-kevscript": "4.1.7",
+    "kevoree-validator": "^0.1.17",
+    "tiny-conf": "^1.0.5",
+    "kevoree-registry-client": "1.0.0-alpha.9",
+    "kevoree-kevscript": "^5.0.0-alpha.2",
     "snap.svg": "~0.4.1",
     "snap.svg.zpd": "~0.0.10",
-    "ui-router": "~0.2.13",
     "highlightjs": "^9.4.0",
     "angular-highlightjs": "^0.6.1",
     "ngInfiniteScroll": "^1.2.2",
-    "mustache.js": "mustache#^2.3.0"
+    "mustache.js": "mustache#^2.3.0",
+    "devicon": "*"
   },
   "devDependencies": {
-    "angular-mocks": "1.4.5"
+    "angular-mocks": "1.5.8"
   },
-  "appPath": "app",
-  "moduleName": "editorApp",
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "dist/css/bootstrap.css"
+      ]
+    },
+    "devicon": {
+      "main": [
+        "devicon.css",
+        "devicon-colors.css"
+      ]
+    },
+    "codemirror": {
+      "main": [
+        "lib/codemirror.js",
+        "lib/codemirror.css",
+        "addon/hint/show-hint.js",
+        "addon/hint/show-hint.css",
+        "addon/lint/lint.js",
+        "addon/lint/lint.css",
+        "addon/dialog/dialog.js",
+        "addon/dialog/dialog.css"
+      ]
+    }
+  },
   "resolutions": {
-    "angular": "1.4.5"
+    "angular": "1.5.8"
   }
 }

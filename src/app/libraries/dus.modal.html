@@ -1,0 +1,29 @@
+<div class="modal-header">
+  <button type="button" class="close" aria-hidden="true" ng-click="$dismiss()">&times;</button>
+  <h4 class="modal-title" translate="entity.delete.title">Confirm DeployUnits replacement</h4>
+</div>
+<div class="modal-body">
+  <p>
+    TypeDefinition <strong>{{ vm.tdef.namespace + '.' + vm.tdef.name + '/' + vm.tdef.version }}</strong>
+    already has DeployUnits in the current model:
+  </p>
+  <div class="alert alert-warning m-breath-bottom-sm">
+    <dus-list dus="vm.currentDus" />
+  </div>
+  <p>Do you want to replace them with the following DeployUnits:</p>
+  <div class="alert alert-info no-margin">
+    <dus-list dus="vm.dus" />
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-default" ng-click="$dismiss()">
+    <span class="glyphicon glyphicon-ban-circle"></span>
+    <span>&nbsp;</span>
+    <span>Cancel</span>
+  </button>
+  <button class="btn btn-info" ng-click="$close()">
+    <span class="glyphicon glyphicon-ok"></span>
+    <span>&nbsp;</span>
+    <span>Replace</span>
+  </button>
+</div>

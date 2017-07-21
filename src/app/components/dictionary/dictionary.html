@@ -1,0 +1,58 @@
+<form name="{{ $ctrl.name }}" class="instance-form">
+    <div ng-hide="!$ctrl.fragment || $ctrl.dictionary.values.size() > 0">
+        <p class="text-muted"><em>No value</em> - <a class="point-cursor" ng-click="$ctrl.dictionary.delete()">Delete dictionary?</a></p>
+    </div>
+
+    <div ng-repeat="(index, attr) in $ctrl.attrs | orderBy:'name'">
+      <ng-form name="form">
+        <div class="form-group" ng-class="form[attr.name].$valid ? '':'has-error has-feedback'">
+          <label ng-attr-title="{{$ctrl.isTruish(attr.optional)?'optional':'required'}}">{{ attr.name + ($ctrl.isTruish(attr.optional) ? '':' *') }}</label>
+
+          <input ng-if="attr.datatype.name() === 'BYTE' || attr.datatype.name() === 'CHAR'"
+                 name="{{ attr.name }}"
+                 type="text"
+                 class="form-control input-sm"
+                 ng-model="($ctrl.dictionary.findValuesByID(attr.name)).value"
+                 ng-change="$ctrl.onChange($ctrl[$ctrl.name][attr.name])"
+                 ng-required="!$ctrl.isTruish(attr.optional)"
+                 ng-disabled="$ctrl.readOnly">
+          <span ng-if="attr.datatype.name() === 'BYTE' || attr.datatype.name() === 'CHAR'"
+                class="glyphicon glyphicon-remove form-control-feedback"
+                ng-hide="$ctrl[$ctrl.name][attr.name].$valid"></span>
+
+          <textarea ng-if="attr.datatype.name() === 'STRING'"
+                    rows="1"
+                    name="{{attr.name}}"
+                    class="form-control input-sm"
+                    ng-model="($ctrl.dictionary.findValuesByID(attr.name)).value"
+                    ng-change="$ctrl.onChange($ctrl[$ctrl.name][attr.name])"
+                    ng-required="!$ctrl.isTruish(attr.optional)"
+                    style="resize: vertical;"
+                    ng-disabled="$ctrl.readOnly">
+          </textarea>
+          <span ng-if="attr.datatype.name() === 'STRING'"
+                class="glyphicon glyphicon-remove form-control-feedback"
+                ng-hide="$ctrl[$ctrl.name][attr.name].$valid"></span>
+
+          <input ng-if="attr.datatype.name() === 'LONG' || attr.datatype.name() === 'FLOAT' || attr.datatype.name() === 'DOUBLE' || attr.datatype.name() === 'SHORT' || attr.datatype.name() === 'INT'"
+                 name="{{ attr.name }}"
+                 type="number"
+                 step="any"
+                 class="form-control input-sm"
+                 string-to-number
+                 ng-model="($ctrl.dictionary.findValuesByID(attr.name)).value"
+                 ng-change="$ctrl.onChange($ctrl[$ctrl.name][attr.name])"
+                 ng-required="!$ctrl.isTruish(attr.optional)"
+                 ng-disabled="$ctrl.readOnly">
+          <span ng-if="attr.datatype.name() === 'LONG' || attr.datatype.name() === 'FLOAT' || attr.datatype.name() === 'DOUBLE' || attr.datatype.name() === 'SHORT' || attr.datatype.name() === 'INT'"
+                class="glyphicon glyphicon-remove form-control-feedback"
+                ng-hide="$ctrl[$ctrl.name][attr.name].$valid"></span>
+
+          <div ng-if="attr.datatype.name() === 'BOOLEAN'" class="btn-group btn-group-block clearfix">
+              <label class="btn btn-sm btn-default" ng-model="($ctrl.dictionary.findValuesByID(attr.name)).value" uib-btn-radio="'true'" ng-disabled="$ctrl.readOnly">True</label>
+              <label class="btn btn-sm btn-default" ng-model="($ctrl.dictionary.findValuesByID(attr.name)).value" uib-btn-radio="'false'" ng-disabled="$ctrl.readOnly">False</label>
+          </div>
+        </div>
+      </ng-form>
+    </div>
+</form>

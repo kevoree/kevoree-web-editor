@@ -1,0 +1,205 @@
+<div ng-if="error">
+  <div class="alert alert-warning" ng-if="error">
+    <strong>Warning</strong>
+    <p>
+      Selected instances must be of <strong>same type &amp; version</strong> in order to set parameters, those two differ:
+      <ul>
+        <li ng-repeat="type in types">{{ type }}</li>
+      </ul>
+    </p>
+  </div>
+</div>
+<div ng-if="!error">
+  <fieldset>
+    <legend>{{ typeName }}</legend>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group form-group-sm">
+          <label class="control-label" for="instanceState">state *</label>
+          <div class="row-fluid clearfix">
+            <div class="btn-group btn-group-block clearfix">
+              <label class="btn btn-sm btn-default" ng-model="state.started" uib-btn-radio="true">Started</label>
+              <label class="btn btn-sm btn-default" ng-model="state.started" uib-btn-radio="false">Stopped</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" ng-repeat="attr in dictionary">
+      <div ng-switch="attr.type">
+        <div class="clearfix" ng-switch-when="text">
+          <div class="col-md-4">
+            <div class="form-group form-group-sm">
+              <label class="control-label" for="{{ attr.name }}">{{ attr.name + (attr.optional ? '':' *') }}</label>
+              <div class="row-fluid clearfix">
+                <textarea
+                    name="{{ attr.name }}"
+                    class="form-control"
+                    rows="1"
+                    placeholder="{{ attr.defaultValue ? 'Default: ' + attr.defaultValue : '' }}"
+                    ng-model="attr.value"
+                    ng-disabled="each[attr.name]"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-8 text-right">
+            <div class="form-group form-group-sm">
+              <label class="control-label"></label>
+              <div class="form-inline">
+                <input type="text" class="form-control input-sm" placeholder="Prepend" ng-model="prepend[attr.name]" ng-init="prepend[attr.name] = ''" style="width: 80px"/>
+                <input type="number" class="form-control input-sm" placeholder="Length" ng-model="length[attr.name]" ng-init="length[attr.name] = 5" style="width: 80px"/>
+                <input type="text" class="form-control input-sm" placeholder="Append" ng-model="append[attr.name]" ng-init="append[attr.name] = ''" style="width: 80px"/>
+                <button class="btn btn-sm btn-default input-sm" ng-click="random(attr)" ng-disabled="each[attr.name]">Generate</button>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" ng-model="each[attr.name]" ng-init="each[attr.name] = false" />&nbsp;
+                    <span class="help-text" tooltip="Generate a new value for each instance" tooltip-placement="left">Each</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div ng-switch-when="number">
+          <div class="col-md-4">
+            <div class="form-group form-group-sm">
+              <label class="control-label" for="{{ attr.name }}">{{ attr.name + (attr.optional ? '':' *') }}</label>
+              <div class="row-fluid clearfix">
+                <input
+                    name="{{ attr.name }}"
+                    type="number"
+                    class="form-control"
+                    placeholder="{{ attr.defaultValue ? 'Default: ' + attr.defaultValue : '' }}"
+                    ng-model="attr.value"
+                    ng-disabled="each[attr.name]" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-8 text-right">
+            <div class="form-group form-group-sm">
+              <label class="control-label"></label>
+              <div class="form-inline">
+                <input type="number" class="form-control" placeholder="Min value" ng-model="min[attr.name]" ng-init="min[attr.name] = 0" style="width: 80px"/>
+                <input type="number" class="form-control" placeholder="Max value" ng-model="max[attr.name]" ng-init="max[attr.name] = 65535" style="width: 80px"/>
+                <button class="btn btn-sm btn-default" ng-click="random(attr)" ng-disabled="each[attr.name]">Generate</button>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" ng-model="each[attr.name]" ng-init="each[attr.name] = false" />&nbsp;
+                    <span class="help-text" tooltip="Generate a new value for each instance" tooltip-placement="left">Each</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div ng-switch-when="boolean">
+          <div class="col-md-4">
+            <div class="form-group form-group-sm">
+              <label class="control-label" for="{{ attr.name }}">{{ attr.name + (attr.optional ? '':' *') }}</label>
+              <div class="row-fluid clearfix">
+                <div class="btn-group btn-group-block clearfix" ng-disabled="each[attr.name]">
+                  <label class="btn btn-sm btn-default" ng-model="attr.value" uib-btn-radio="'true'">True</label>
+                  <label class="btn btn-sm btn-default" ng-model="attr.value" uib-btn-radio="'false'">False</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-8 text-right">
+            <div class="form-group form-group-sm">
+              <label class="control-label"></label>
+              <div class="form-inline">
+                <button class="btn btn-sm btn-default" ng-click="random(attr)" ng-disabled="each[attr.name]">Generate</button>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" ng-model="each[attr.name]" ng-init="each[attr.name] = false" />&nbsp;
+                    <span class="help-text" tooltip="Generate a new value for each instance" tooltip-placement="left">Each</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <fieldset ng-if="nets.length > 0" collapsed="networkCollapsed">
+      <legend>
+        Network Information
+        <a ng-click="networkCollapsed = !networkCollapsed">
+          <i class="fa fa-plus"></i>
+        </a>
+      </legend>
+      <div class="col-md-6" ng-repeat="net in nets">
+        <!-- Network name -->
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input name="name" type="text" class="form-control input-sm" placeholder="Network name" ng-model="net.name">
+        </div>
+
+        <!-- Add value form -->
+        <label>Add value</label>
+        <div class="row form-group">
+          <div class="col-sm-5 col-xs-11">
+            <input
+                name="newValName"
+                type="text"
+                class="form-control input-sm"
+                placeholder="ie: lo, eth0"
+                ng-model="newVal.name"
+                ui-keypress="{13: 'addNewVal()'}">
+          </div>
+          <div class="col-sm-6 col-xs-11">
+            <input
+                name="newValValue"
+                type="text"
+                class="form-control input-sm"
+                placeholder="ie: 127.0.0.1, localhost"
+                ng-model="newVal.value"
+                ui-keypress="{13: 'addNewVal()'}">
+          </div>
+          <div class="col-sm-1 col-xs-1" style="line-height: 30px">
+            <a class="point-cursor" ng-click="addNewVal()" title="Add new value ?">
+              <i class="fa fa-plus"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Values list -->
+        <label>Values</label>
+        <div ng-if="net.values.length === 0">
+          <p><em>&lt;no value&gt;</em></p>
+        </div>
+        <div class="row form-group" ng-repeat="(index, val) in net.values | orderBy:'name'">
+          <div class="col-sm-5 col-xs-11">
+            <input
+                name="valName{{index}}"
+                type="text"
+                class="form-control input-sm"
+                placeholder="ie: lo, eth0"
+                ng-model="val.name">
+          </div>
+          <div class="col-sm-6 col-xs-11">
+            <input
+                name="valValue{{index}}"
+                type="text"
+                class="form-control input-sm"
+                placeholder="ie: 127.0.0.1, localhost"
+                ng-model="val.value">
+          </div>
+          <div class="col-sm-1 col-xs-1" style="line-height: 30px">
+            <a class="point-cursor" ng-click="val.delete()" title="Delete {{ net.name + '.' + val.name }} ?">
+              <i class="fa fa-trash"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <div class="col-xs-12">
+      <button class="btn btn-default" ng-click="applyToAllInstances()">Apply to selection</button>
+      <span ng-show="message" class="text-{{message.type}}">{{ message.content }}</span>
+      <div class="pull-right">
+        <button class="btn btn-default" ng-click="allRandom()">All random</button>
+        <button class="btn btn-default" ng-click="toggleEach()">Toggle each</button>
+      </div>
+    </div>
+  </fieldset>
+</div>

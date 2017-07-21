@@ -1,0 +1,36 @@
+<div id="navbar" class="navbar navbar-inverse navbar-top navbar-fixed-top" ng-cloak>
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" ng-click="vm.isCollapsed = !vm.isCollapsed">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand navbar-img">
+        <img src="content/images/kevoree.png">
+      </a>
+    </div>
+    <div class="navbar-collapse collapse" uib-collapse="vm.isCollapsed">
+      <ul class="nav navbar-left navbar-nav">
+        <li ng-class="{active: vm.$state.includes('main')}">
+          <a data-ui-sref="main" ng-click="!vm.isCollapsed ? (vm.isCollapsed = !vm.isCollapsed):''">Model View</a>
+        </li>
+        <li ng-class="{active: vm.$state.includes('treeview')}">
+          <a data-ui-sref="treeview" ng-click="!vm.isCollapsed ? (vm.isCollapsed = !vm.isCollapsed):''">Tree View</a>
+        </li>
+        <li ng-class="{active: vm.$state.includes('libraries')}">
+          <a data-ui-sref="libraries" ng-click="!vm.isCollapsed ? (vm.isCollapsed = !vm.isCollapsed):''">Registry Libraries</a>
+        </li>
+        <li ng-class="{active: vm.$state.includes('kevscript')}">
+          <a data-ui-sref="kevscript" ng-click="!vm.isCollapsed ? (vm.isCollapsed = !vm.isCollapsed):''">KevScript Editor</a>
+        </li>
+      </ul>
+      <ul class="nav navbar-right navbar-nav">
+        <li ng-class="{active: vm.$state.includes('settings')}">
+          <a data-ui-sref="settings" ng-click="!vm.isCollapsed ? (vm.isCollapsed = !vm.isCollapsed):''">Settings</a>
+        </li>
+      </ul>
+    <div>
+  </div>
+</div>

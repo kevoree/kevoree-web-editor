@@ -1,59 +1,58 @@
-<!doctype html> <html class="no-js"> <head> <meta charset="utf-8"> <title>Kevoree Web Editor</title> <meta name="description" content="Kevoree Web Editor - Manager your Kevoree models directly from your browser"> <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0"> <!-- Place favicon.ico and apple-touch-icon.png in the root directory --> <link rel="stylesheet" href="styles/vendor.152792c1.css"> <link rel="stylesheet" href="styles/main.ef1ffac3.css">  <body ng-app="editorApp"> <!--[if lt IE 7]>
+<!doctype html><html class="no-js"><head><meta charset="utf-8"><title>Kevoree Web Editor</title><meta name="description" content="Kevoree Web Editor - Manage your Kevoree models directly from your browser"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0"><link rel="stylesheet" href="content/css/vendor-2b9b75870e.css"><link rel="stylesheet" href="content/css/main-8fb0099921.css"><link rel="shortcut icon" href="favicon.ico"></head><body ng-app="editorApp"><!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]--> <div ui-view="navbar"></div> <div id="container" class="container-fluid"> <div ui-view="content" class="row" loading-overlay drop-target="dndLoad($name, $data)"> </div> </div> <div id="bootstrap-container"> <style type="text/css" scoped>.bootstrap-loading .loading-message {
-				background-color: #333333;
-				bottom: 0;
-				left: 0;
-				opacity: 1.0;
-				position: fixed;
-				right: 0;
-				top: 0;
-				z-index: 999999;
-			}
+    <![endif]--><div ui-view="navbar"></div><div id="container"><div ui-view="content" loading-overlay drop-target="dndLoad($name, $data)"></div></div><div id="bootstrap-container"><style type="text/css" scoped="scoped">.bootstrap-loading .loading-message {
+        background-color: #333333;
+        bottom: 0;
+        left: 0;
+        opacity: 1.0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 999999;
+      }
 
-			.bootstrap-loading .loading-message.ng-leave {
-				opacity: 1.0;
-				transition: all linear 200ms;
-				-webkit-transition: all linear 200ms;
-			}
+      .bootstrap-loading .loading-message.ng-leave {
+        opacity: 1.0;
+        transition: all linear 200ms;
+        -webkit-transition: all linear 200ms;
+      }
 
-			.bootstrap-loading .loading-message.ng-leave-active {
-				opacity: 0;
-			}
+      .bootstrap-loading .loading-message.ng-leave-active {
+        opacity: 0;
+      }
 
-			.bootstrap-loading .messaging {
-				color: #FFFFFF;
-				font-family: monospace;
-				left: 0;
-				margin-top: -37px;
-				position: absolute;
-				right: 0;
-				text-align: center;
-				top: 50%;
-			}
+      .bootstrap-loading .messaging {
+        color: #FFFFFF;
+        font-family: monospace;
+        left: 0;
+        margin-top: -37px;
+        position: absolute;
+        right: 0;
+        text-align: center;
+        top: 50%;
+      }
 
-			.skip {
-				position: absolute;
-				bottom: 5px;
-				right: 5px;
-			}
+      .skip {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+      }
 
-			.bootstrap-loading h1 {
-				font-size: 20px;
-				line-height: 35px;
-				margin: 0 0 20px 0;
-			}
+      .bootstrap-loading h1 {
+        font-size: 20px;
+        line-height: 35px;
+        margin: 0 0 20px 0;
+      }
 
-			.bootstrap-loading p {
-				font-size: 16px;
-				line-height: 14px;
-				margin: 0;
-			}</style> <div class="bootstrap-loading"> <div class="loading-message"> <div class="messaging"> <h1>Kevoree Web Editor</h1> <p>is loading...</p> </div> </div> </div> </div> <!-- Google Analytics: change UA-XXXXX-X to be your site's ID --> <script>! function(A, n, g, u, l, a, r) {
-			A.GoogleAnalyticsObject = l, A[l] = A[l] || function() {
-					(A[l].q = A[l].q || []).push(arguments)
-				}, A[l].l = +new Date, a = n.createElement(g),
-				r = n.getElementsByTagName(g)[0], a.src = u, r.parentNode.insertBefore(a, r)
-		}(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-
-		ga('create', 'UA-61834488-1');
-		ga('send', 'pageview');</script> <script src="scripts/vendor.6c7dae60.js"></script> <script src="scripts/scripts.21d18fef.js"></script>  
+      .bootstrap-loading p {
+        font-size: 16px;
+        line-height: 14px;
+        margin: 0;
+      }</style><div class="bootstrap-loading"><div class="loading-message"><div class="messaging"><h1>Kevoree Web Editor</h1><p>is loading...</p></div></div></div></div><!-- Google Analytics: change UA-XXXXX-X to be your site's ID --><script>! function(A, n, g, u, l, a, r) {
+      A.GoogleAnalyticsObject = l, A[l] = A[l] || function() {
+          (A[l].q = A[l].q || []).push(arguments)
+        }, A[l].l = +new Date, a = n.createElement(g),
+        r = n.getElementsByTagName(g)[0], a.src = u, r.parentNode.insertBefore(a, r)
+    }(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+    ga('create', 'UA-61834488-1');
+    ga('send', 'pageview');</script><script src="app/vendor-2f6d231c52.js"></script><script src="app/app-16f7eddbc4.js"></script></body></html>
