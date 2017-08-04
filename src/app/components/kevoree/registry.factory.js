@@ -121,11 +121,7 @@
 
     function transformDu(du) {
       try {
-        var model = loader.loadModelFromString(du.model).get(0);
-        // TODO hacky way to get directly to the deployUnits
-        // because legacy-wise we upload a full model for DeployUnits on
-        // the registry but that is *not* useful => strip it down here
-        du.model = model.packages.array[0].deployUnits.array[0];
+        du.model = loader.loadModelFromString(du.model).get(0);
       } catch (err) {
         du.error = 'Unable to parse model';
       }
