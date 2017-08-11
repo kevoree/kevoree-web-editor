@@ -1,6 +1,6 @@
-(function () {
-  'use strict';
+'use strict';
 
+(function () {
   angular.module('editorApp')
     .component('truncate', {
       template: '<p class="text-justify" ng-bind-html="$ctrl.trustedHtml"></p><a ng-if="$ctrl.expandable" href ng-click="$ctrl.toggle()">{{ $ctrl.toggleText }}</a>',

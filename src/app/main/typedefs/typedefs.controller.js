@@ -144,7 +144,7 @@ angular.module('editorApp')
                 var node = model.findByPath(nodeElem.attr('data-path'));
                 if (node) {
                   instance = kFactory.createContainerNode();
-                  instance.name = 'node' + parseInt(Math.random() * 1000);
+                  instance.name = 'node' + parseInt(Math.random() * 1000, 10);
                   preProcess(instance);
                   model.addNodes(instance);
                   node.addHosts(instance);
@@ -152,7 +152,7 @@ angular.module('editorApp')
               });
             } else {
               instance = kFactory.createContainerNode();
-              instance.name = 'node' + parseInt(Math.random() * 1000);
+              instance.name = 'node' + parseInt(Math.random() * 1000, 10);
               preProcess(instance);
               model.addNodes(instance);
             }
@@ -160,7 +160,7 @@ angular.module('editorApp')
 
           case 'group':
             instance = kFactory.createGroup();
-            instance.name = 'group' + parseInt(Math.random() * 1000);
+            instance.name = 'group' + parseInt(Math.random() * 1000, 10);
             preProcess(instance);
             model.addGroups(instance);
             break;
@@ -171,7 +171,7 @@ angular.module('editorApp')
                 var node = model.findByPath(nodeElem.attr('data-path'));
                 if (node) {
                   instance = kFactory.createComponentInstance();
-                  instance.name = 'comp' + parseInt(Math.random() * 1000);
+                  instance.name = 'comp' + parseInt(Math.random() * 1000, 10);
                   preProcess(instance);
                   node.addComponents(instance);
                 }
@@ -187,7 +187,7 @@ angular.module('editorApp')
 
           case 'channel':
             instance = kFactory.createChannel();
-            instance.name = 'chan' + parseInt(Math.random() * 1000);
+            instance.name = 'chan' + parseInt(Math.random() * 1000, 10);
             preProcess(instance);
             model.addHubs(instance);
             break;

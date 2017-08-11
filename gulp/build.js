@@ -1,36 +1,34 @@
-'use strict';
+const fs = require('fs');
+const gulp = require('gulp');
+const lazypipe = require('lazypipe');
+const footer = require('gulp-footer');
+const sourcemaps = require('gulp-sourcemaps');
+const rev = require('gulp-rev');
+const htmlmin = require('gulp-htmlmin');
+const ngAnnotate = require('gulp-ng-annotate');
+const prefix = require('gulp-autoprefixer');
+const cssnano = require('gulp-cssnano');
+const uglify = require('gulp-uglify');
+const useref = require('gulp-useref');
+const revReplace = require('gulp-rev-replace');
+const plumber = require('gulp-plumber');
+const gulpIf = require('gulp-if');
+const handleErrors = require('./handle-errors');
 
-var fs = require('fs'),
-  gulp = require('gulp'),
-  lazypipe = require('lazypipe'),
-  footer = require('gulp-footer'),
-  sourcemaps = require('gulp-sourcemaps'),
-  rev = require('gulp-rev'),
-  htmlmin = require('gulp-htmlmin'),
-  ngAnnotate = require('gulp-ng-annotate'),
-  prefix = require('gulp-autoprefixer'),
-  cssnano = require('gulp-cssnano'),
-  uglify = require('gulp-uglify'),
-  useref = require('gulp-useref'),
-  revReplace = require('gulp-rev-replace'),
-  plumber = require('gulp-plumber'),
-  gulpIf = require('gulp-if'),
-  handleErrors = require('./handle-errors');
+const config = require('./config');
 
-var config = require('./config');
-
-var initTask = lazypipe()
+const initTask = lazypipe()
   .pipe(sourcemaps.init);
-var jsTask = lazypipe()
+const jsTask = lazypipe()
   .pipe(ngAnnotate)
   .pipe(uglify);
-var cssTask = lazypipe()
+const cssTask = lazypipe()
   .pipe(prefix)
   .pipe(cssnano);
 
-module.exports = function () {
-  var templates = fs.readFileSync(config.tmp + '/templates.js');
-  var manifest = gulp.src(config.revManifest);
+module.exports = () => {
+  const templates = fs.readFileSync(config.tmp + 'templates.js');
+  const manifest = gulp.src(config.revManifest);
 
   return gulp.src([config.app + '**/*.html',
     '!' + config.app + 'app/**/*.html',

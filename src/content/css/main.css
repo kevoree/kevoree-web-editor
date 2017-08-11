@@ -694,6 +694,10 @@ input.form-control.input-xs {
   .CodeMirror {
     height: 100%;
   }
+  .CodeMirror.cm-s-kevscript {
+    font-size: 1.1em;
+    font-family: Monaco, Menlo, "Andale Mono", "lucida console", "Courier New", monospace !important;
+  }
   .kevscript-editor-buttons {
     position: absolute;
     bottom: 15px;

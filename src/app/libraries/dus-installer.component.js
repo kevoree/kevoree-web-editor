@@ -1,6 +1,6 @@
-(function () {
-  'use strict';
+'use strict';
 
+(function () {
   angular.module('editorApp')
     .component('dusInstaller', {
       templateUrl: 'app/libraries/dus-installer.html',

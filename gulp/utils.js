@@ -1,6 +1,4 @@
-'use strict';
-
-var fs = require('fs');
+const fs = require('fs');
 
 module.exports = {
   endsWith: endsWith,
@@ -14,8 +12,8 @@ function endsWith(str, suffix) {
 
 // return the version number from `package.json` file
 function parseVersion() {
-  var pkgJson = fs.readFileSync('package.json', 'utf8');
-  var result = JSON.parse(pkgJson);
+  const pkgJson = fs.readFileSync('package.json', 'utf8');
+  const result = JSON.parse(pkgJson);
   if (result.version === null) {
     throw new Error('package.json is malformed. No version is defined');
   }

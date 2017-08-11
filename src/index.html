@@ -20,12 +20,14 @@
   <link rel="stylesheet" href="bower_components/devicon/devicon.css">
   <link rel="stylesheet" href="bower_components/devicon/devicon-colors.css">
   <!-- endinject -->
+  <!-- npm:css -->
+  <link rel="stylesheet" href="node_modules/cm-mode-kevscript/hint.css">
+  <link rel="stylesheet" href="node_modules/cm-mode-kevscript/theme.css">
+  <!-- endinject -->
   <!-- endbuild -->
 
   <!-- build:css content/css/main.css -->
   <!-- inject:css -->
-  <link rel="stylesheet" href="content/css/cm-kevscript.css">
-  <link rel="stylesheet" href="content/css/cm-kevscript-hint.css">
   <link rel="stylesheet" href="content/css/editor.css">
   <link rel="stylesheet" href="content/css/main.css">
   <!-- endinject -->
@@ -132,11 +134,6 @@
   <script src="bower_components/angular-ui-codemirror/ui-codemirror.js"></script>
   <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
   <script src="bower_components/angular-ui-notification/dist/angular-ui-notification.js"></script>
-  <script src="bower_components/kevoree-library/browser/kevoree-library.js"></script>
-  <script src="bower_components/kevoree-validator/browser/kevoree-validator.js"></script>
-  <script src="bower_components/tiny-conf/dist/tiny-conf.js"></script>
-  <script src="bower_components/kevoree-registry-client/build/browser/kevoree-registry-client.js"></script>
-  <script src="bower_components/kevoree-kevscript/browser/kevoree-kevscript.js"></script>
   <script src="bower_components/snap.svg/dist/snap.svg-min.js"></script>
   <script src="bower_components/snap.svg.zpd/snap.svg.zpd.js"></script>
   <script src="bower_components/highlightjs/highlight.pack.js"></script>
@@ -145,6 +142,16 @@
   <script src="bower_components/mustache.js/mustache.js"></script>
   <script src="bower_components/jquery-ui/jquery-ui.js"></script>
   <script src="bower_components/angular-dragdrop/src/angular-dragdrop.js"></script>
+  <!-- endinject -->
+  <!-- npm:js -->
+  <script src="node_modules/tiny-conf/tiny-conf.js"></script>
+  <script src="node_modules/kevoree-library/kevoree-library.js"></script>
+  <script src="node_modules/kevoree-validator/kevoree-validator.js"></script>
+  <script src="node_modules/kevoree-registry-client/kevoree-registry-client.js"></script>
+  <script src="node_modules/kevoree-kevscript/kevoree-kevscript.js"></script>
+  <script src="node_modules/cm-mode-kevscript/hint.js"></script>
+  <script src="node_modules/cm-mode-kevscript/lint.js"></script>
+  <script src="node_modules/cm-mode-kevscript/mode.js"></script>
   <!-- endinject -->
   <!-- endbuild -->
 
@@ -212,9 +219,6 @@
   <script src="app/components/kevoree/editor.factory.js"></script>
   <script src="app/components/dictionary/dictionary.component.js"></script>
   <script src="app/components/deploy-unit/dus-list.component.js"></script>
-  <script src="app/components/cm-kevscript/mode.js"></script>
-  <script src="app/components/cm-kevscript/lint.js"></script>
-  <script src="app/components/cm-kevscript/hint.js"></script>
   <script src="app/app.constants.js"></script>
   <script src="app/app.config.js"></script>
   <!-- endinject -->

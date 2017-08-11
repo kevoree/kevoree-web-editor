@@ -1,6 +1,6 @@
-(function () {
-  'use strict';
+'use strict';
 
+(function () {
   angular.module('editorApp')
     .controller('DusModalController', DusModalController);
 

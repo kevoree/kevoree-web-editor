@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('editorApp')
 	.config(function ($stateProvider, $urlRouterProvider, hotkeysProvider, hljsServiceProvider, NotificationProvider) {
   $urlRouterProvider.otherwise('/');

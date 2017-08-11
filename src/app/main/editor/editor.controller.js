@@ -71,7 +71,7 @@ angular.module('editorApp')
       switch (type) {
         case 'node':
           instance = kFactory.createContainerNode();
-          instance.name = 'node' + parseInt(Math.random() * 1000);
+          instance.name = 'node' + parseInt(Math.random() * 1000, 10);
           preProcess(instance);
           model.addNodes(instance);
           if (dropTarget) {
@@ -84,7 +84,7 @@ angular.module('editorApp')
 
         case 'group':
           instance = kFactory.createGroup();
-          instance.name = 'group' + parseInt(Math.random() * 1000);
+          instance.name = 'group' + parseInt(Math.random() * 1000, 10);
           preProcess(instance);
           kInstance.initFragmentDictionaries(instance);
           model.addGroups(instance);
@@ -92,7 +92,7 @@ angular.module('editorApp')
 
         case 'component':
           instance = kFactory.createComponentInstance();
-          instance.name = 'comp' + parseInt(Math.random() * 1000);
+          instance.name = 'comp' + parseInt(Math.random() * 1000, 10);
           preProcess(instance);
           if (dropTarget) {
             node = model.findByPath(dropTarget.attr('data-path'));
@@ -110,7 +110,7 @@ angular.module('editorApp')
 
         case 'channel':
           instance = kFactory.createChannel();
-          instance.name = 'chan' + parseInt(Math.random() * 1000);
+          instance.name = 'chan' + parseInt(Math.random() * 1000, 10);
           preProcess(instance);
           kInstance.initFragmentDictionaries(instance);
           model.addHubs(instance);

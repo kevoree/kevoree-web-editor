@@ -1,11 +1,8 @@
-'use strict';
+const gulp = require('gulp');
+const browserSync = require('browser-sync');
+const config = require('./config');
 
-var gulp = require('gulp'),
-  browserSync = require('browser-sync');
-
-var config = require('./config');
-
-module.exports = function () {
+module.exports = function serve() {
   browserSync({
     open: true,
     port: config.port,

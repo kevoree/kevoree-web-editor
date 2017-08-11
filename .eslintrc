@@ -1,44 +1,10 @@
 ---
+root: true
 extends:
-  - eslint:recommended
+  - kevoree
 env:
-  browser: true
-globals:
-  hljs: true
-  mina: true
-  Snap: true
-  jQuery: true
-  angular: true
-  TinyConf: true
-  Mustache: true
-  CodeMirror: true
-  KevoreeLibrary: true
-  KevoreeCommons: true
-  KevoreeValidator: true
-  KevoreeKevscript: true
-  KevoreeRegistryClient: true
+  node: true
+parserOptions:
+  ecmaVersion: 6
 rules:
-  no-control-regex: 0
-  wrap-iife:
-  - 2
-  - inside
-  eqeqeq: 2
-  no-use-before-define:
-  - 2
-  - nofunc
-  no-unused-vars:
-  - 2
-  - vars: local
-  no-multi-str: 2
-  no-irregular-whitespace: 2
-  semi:
-  - 2
-  - always
-  indent:
-  - error
-  - 2
-  - SwitchCase: 1
-  linebreak-style: 0
-  no-undef:
-    - 2
-    - typeof: true
+  no-console: 0

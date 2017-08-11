@@ -1,6 +1,6 @@
-(function () {
-  'use strict';
+'use strict';
 
+(function () {
   angular.module('editorApp')
     .component('dusList', {
       templateUrl: 'app/components/deploy-unit/dus-list.html',

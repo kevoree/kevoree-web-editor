@@ -1,9 +1,37 @@
 ---
-  # extends:
-  #   - angular
-  # rules:
-    # angular/json-functions: 0
-    # angular/di:
-    #   - 2
-    #   - $inject
-    # angular/di-unused: 2
+extends:
+  - kevoree
+env:
+  node: false
+  browser: true
+  commonjs: false
+  es6: false
+parserOptions:
+  ecmaVersion: 5
+  sourceType: script
+  ecmaFeatures:
+    modules: false
+    jsx: false
+globals:
+  hljs: true
+  mina: true
+  Snap: true
+  jQuery: true
+  angular: true
+  TinyConf: true
+  Mustache: true
+  CodeMirror: true
+  KevoreeLibrary: true
+  KevoreeCommons: true
+  KevoreeValidator: true
+  KevoreeKevscript: true
+  KevoreeRegistryClient: true
+rules:
+  no-var: 0
+  no-invalid-this: 0
+  no-control-regex: 0
+  strict:
+    - 2
+    - global
+  func-names: 0
+  default-case: 0

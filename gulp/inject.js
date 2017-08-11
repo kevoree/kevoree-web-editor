@@ -1,15 +1,12 @@
-'use strict';
-
-var gulp = require('gulp'),
-  plumber = require('gulp-plumber'),
-  inject = require('gulp-inject'),
-  naturalSort = require('gulp-natural-sort'),
-  angularFilesort = require('gulp-angular-filesort'),
-  bowerFiles = require('main-bower-files');
-
-var handleErrors = require('./handle-errors');
-
-var config = require('./config');
+const gulp = require('gulp');
+const plumber = require('gulp-plumber');
+const inject = require('gulp-inject');
+const naturalSort = require('gulp-natural-sort');
+const angularFilesort = require('gulp-angular-filesort');
+const bowerFiles = require('main-bower-files');
+const npmFiles = require('./npm-files');
+const handleErrors = require('./handle-errors');
+const config = require('./config');
 
 module.exports = {
   app: app,
@@ -37,10 +34,14 @@ function css() {
 }
 
 function vendor() {
-  var stream = gulp.src(config.app + 'index.html')
+  const stream = gulp.src(config.app + 'index.html')
     .pipe(plumber({ errorHandler: handleErrors }))
     .pipe(inject(gulp.src(bowerFiles(), { read: false }), {
       name: 'bower',
+      relative: true
+    }))
+    .pipe(inject(gulp.src(npmFiles(), { read: false }), {
+      name: 'npm',
       relative: true
     }))
     .pipe(gulp.dest(config.app));

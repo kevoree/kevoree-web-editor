@@ -1,12 +1,20 @@
 {
   "name": "kevoree-web-editor",
-  "version": "5.14.2",
-  "dependencies": {},
+  "version": "5.15.0",
+  "dependencies": {
+    "tiny-conf": "^1.1.0",
+    "kevoree-library": "^5.0.13",
+    "kevoree-validator": "^0.1.20",
+    "kevoree-registry-client": "^3.0.1",
+    "kevoree-kevscript": "^5.0.3",
+    "cm-mode-kevscript": "^2.0.5"
+  },
   "devDependencies": {
     "bower": "1.8.0",
     "browser-sync": "2.17.0",
     "del": "2.2.2",
     "eslint": "^3.19.0",
+    "eslint-config-kevoree": "^1.0.1",
     "eslint-config-angular": "0.5.0",
     "eslint-plugin-angular": "2.2.1",
     "event-stream": "3.3.4",
@@ -27,7 +35,6 @@
     "gulp-natural-sort": "0.1.1",
     "gulp-ng-annotate": "2.0.0",
     "gulp-ng-constant": "1.1.0",
-    "gulp-notify": "2.2.0",
     "gulp-plumber": "1.1.0",
     "gulp-rename": "1.2.2",
     "gulp-rev": "7.1.2",
@@ -68,6 +75,14 @@
   },
   "bugs": {
     "url": "https://github.com/kevoree/kevoree-web-editor/issues"
+  },
+  "browserModules": {
+    "tiny-conf": "dist/tiny-conf.js",
+    "kevoree-library": "browser/kevoree-library.js",
+    "kevoree-validator": "browser/kevoree-validator.js",
+    "kevoree-registry-client": "build/browser/kevoree-registry-client.js",
+    "kevoree-kevscript": "browser/kevoree-kevscript.js",
+    "cm-mode-kevscript": "dist/*.*"
   },
   "homepage": "https://github.com/kevoree/kevoree-web-editor#readme"
 }

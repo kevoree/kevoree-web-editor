@@ -1,6 +1,6 @@
-(function () {
-  'use strict';
+'use strict';
 
+(function () {
   angular.module('editorApp')
     .factory('kRegistry', KevoreeRegistryService);
 
@@ -46,7 +46,7 @@
     function setUrl(url) {
       var port;
       if (url.port && url.port.length > 0) {
-        port = parseInt(url.port);
+        port = parseInt(url.port, 10);
       } else {
         if (url.protocol === 'http:') {
           port = 80;

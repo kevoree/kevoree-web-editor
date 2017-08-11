@@ -74,7 +74,7 @@ angular.module('editorApp')
                   handler.apply(elem, args);
                 });
               }
-            }.bind(this);
+            };
 
             comp.provided.array.forEach(function (port) {
               port.bindings.array.forEach(redrawBinding);
@@ -83,7 +83,7 @@ angular.module('editorApp')
             comp.required.array.forEach(function (port) {
               port.bindings.array.forEach(redrawBinding);
             });
-          }.bind(this);
+          };
           instance.components.array.forEach(redrawBindings);
 
           // recursive redraw
@@ -135,7 +135,7 @@ angular.module('editorApp')
               if (elem) {
                 elem.data('endPtDrag').apply(elem, args);
               }
-            }.bind(this);
+            };
 
             comp.provided.array.forEach(function (port) {
               port.bindings.array.forEach(redrawBinding);
@@ -144,7 +144,7 @@ angular.module('editorApp')
             comp.required.array.forEach(function (port) {
               port.bindings.array.forEach(redrawBinding);
             });
-          }.bind(this);
+          };
           instance.components.array.forEach(redrawBindings);
 
           // recursive redraw

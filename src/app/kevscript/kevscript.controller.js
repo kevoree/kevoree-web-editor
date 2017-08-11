@@ -8,8 +8,20 @@
  * Controller of the editorApp kevscript editor page
  */
 angular.module('editorApp')
-  .controller('KevScriptCtrl', function ($rootScope, $scope, $uibModal, $timeout, $state, hotkeys, kEditor, kScript, saveFile, storage, Notification) {
+  .controller('KevScriptCtrl', function ($rootScope, $scope, $uibModal, $timeout, $state, hotkeys, kFactory, kEditor, kScript, saveFile, storage, Notification) {
     var editor = null;
+    var localModel = null;
+    var modelCompare = kFactory.createModelCompare();
+    var modelCloner = kFactory.createModelCloner();
+
+    function getModel() {
+      if (localModel) {
+        modelCompare.merge(localModel, kEditor.getModel()).applyOn(localModel);
+      } else {
+        localModel = modelCloner.clone(kEditor.getModel());
+      }
+      return localModel;
+    }
 
     function saveToFile(event) {
       if (event && event.preventDefault) {
@@ -72,14 +84,19 @@ angular.module('editorApp')
           $scope.merge();
         },
         'Ctrl-Space': function (cm) {
-          cm.showHint({ hint: CodeMirror.hint.kevscript, completeSingle: false, alignWithWord: false });
+          cm.showHint({
+            hint: CodeMirror.hint.kevscript,
+            getModel: getModel,
+            completeSingle: false,
+            alignWithWord: false
+          });
         },
         'Ctrl-S': saveToFile,
         'Ctrl-O': openFromFile
       },
       gutters: ['CodeMirror-lint-markers'],
       lint: {
-        getAnnotations: CodeMirror.lint.kevscript($scope.ctxVars),
+        getAnnotations: CodeMirror.lint.kevscript(kScript, getModel, $scope.ctxVars),
         async: true
       }
     };
@@ -108,18 +125,16 @@ angular.module('editorApp')
           $scope.editorState = 'linting';
         });
       });
-      editor.on('lintDone', function (error, lintErrors, model) {
+      editor.on('lintDone', function (result) {
         $timeout(function () {
           $scope.editorState = 'idle';
-          $scope.model = model;
-          $scope.error = error || lintErrors.filter(function (err) {
-            return err.severity === 'error';
-          })[0];
-          $scope.lintWarnings = lintErrors
-            .filter(function (error) {
-              return error.severity === 'warning';
-            });
+          $scope.model = result.model;
+          $scope.error = result.error;
+          $scope.lintWarnings = result.warnings;
           $scope.linting = false;
+          if (!result.error) {
+            localModel = result.model;
+          }
         });
       });
       editor.focus();
